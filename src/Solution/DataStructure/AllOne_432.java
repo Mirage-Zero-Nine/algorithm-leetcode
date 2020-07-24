@@ -17,10 +17,10 @@ import java.util.HashSet;
  */
 
 public class AllOne_432 {
-    private HashMap<String, Integer> key;        // key - count pair
-    private HashMap<Integer, Node> count;          // count - node pair, node stores all keys with same count
-    private Node min;
-    private Node max;
+    private final HashMap<String, Integer> key;        // key - count pair
+    private final HashMap<Integer, Node> count;          // count - node pair, node stores all keys with same count
+    private final Node min;
+    private final Node max;
 
     /**
      * Constructor.
@@ -40,7 +40,7 @@ public class AllOne_432 {
     }
 
     /**
-     * Inserts a new key with value 1. Or increments an existing key by 1.
+     * Inserts a new key with value 1, or increments an existing key by 1.
      *
      * @param key key to insert or increment
      */
@@ -84,7 +84,8 @@ public class AllOne_432 {
     }
 
     /**
-     * Decrements an existing key by 1. If Key's value is 1, remove it from the data structure.
+     * Decrements an existing key by 1.
+     * If Key's value is 1, remove it from the data structure.
      *
      * @param key key to decrement
      */
@@ -171,7 +172,7 @@ public class AllOne_432 {
      */
     static class Node {
         int count;
-        HashSet<String> set;
+        private final HashSet<String> set;
         Node previous;
         Node next;
 
