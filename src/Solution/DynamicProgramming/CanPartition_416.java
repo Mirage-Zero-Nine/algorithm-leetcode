@@ -1,5 +1,8 @@
 package Solution.DynamicProgramming;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 /**
  * Given a non-empty array containing only positive integers.
  * Find if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal.
@@ -52,5 +55,88 @@ public class CanPartition_416 {
         }
 
         return dp[nums.length][sum];
+    }
+
+    /**
+     * DFS with pruning, idea is same as the DP solution, select or not select.
+     * Keep a boolean array or a hash map to prune.
+     *
+     * @param nums given array
+     * @return if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal
+     */
+    public boolean canPartitionDFS(int[] nums) {
+
+        /* Corner case */
+        if (nums.length < 2) {
+            return false;
+        }
+
+        int sum = Arrays.stream(nums).sum();
+
+        if (sum % 2 == 1) {
+            return false;       // odd number can not be spilt to equal parts
+        }
+        Boolean[] visited = new Boolean[sum / 2 + 1];
+        visited[0] = true;
+
+        return dfs(nums, 0, sum / 2, visited);
+    }
+
+    /**
+     * DFS to check if array can be divided into 2 subsets.
+     * Idea is same to dynamic programming solution, select current element or not select.
+     * Keep a hash map as pruning.
+     *
+     * @param nums  given array
+     * @param index current index
+     * @param sum   current remaining sum
+     * @param m     hash map
+     * @return if the array can be divided into two parts
+     */
+    private boolean dfs(int[] nums, int index, int sum, HashMap<Integer, Boolean> m) {
+
+        if (m.containsKey(sum)) {
+            return m.get(sum);
+        }
+
+        if (index == nums.length || sum < nums[index]) {
+            return false;
+        }
+        if (sum == nums[index]) {
+            return true;
+        }
+
+        m.put(sum, dfs(nums, index + 1, sum - nums[index], m) || dfs(nums, index + 1, sum, m));
+
+        return m.get(sum);
+    }
+
+    /**
+     * DFS to check if array can be divided into 2 subsets.
+     * Idea is same to dynamic programming solution, select current element or not select.
+     * Keep a Boolean array as pruning.
+     *
+     * @param nums    given array
+     * @param index   current index
+     * @param sum     current remaining sum
+     * @param visited pruning
+     * @return if the array can be divided into two parts
+     */
+    private boolean dfs(int[] nums, int index, int sum, Boolean[] visited) {
+
+        if (visited[sum] != null) {
+            return visited[sum];
+        }
+
+        if (index == nums.length || sum < nums[index]) {
+            return false;
+        }
+
+        if (sum == nums[index]) {
+            return true;
+        }
+        visited[sum] = dfs(nums, index + 1, sum - nums[index], visited) || dfs(nums, index + 1, sum, visited);
+
+        return visited[sum];
     }
 }
