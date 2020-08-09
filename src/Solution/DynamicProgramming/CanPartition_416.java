@@ -30,10 +30,8 @@ public class CanPartition_416 {
             return false;
         }
 
-        int sum = 0;
-        for (int i : nums) {
-            sum += i;
-        }
+        int sum = Arrays.stream(nums).sum();
+
         if (sum % 2 == 1) {
             return false;       // odd number can not be spilt to equal parts
         }
@@ -76,6 +74,7 @@ public class CanPartition_416 {
         if (sum % 2 == 1) {
             return false;       // odd number can not be spilt to equal parts
         }
+        Arrays.sort(nums);
         Boolean[] visited = new Boolean[sum / 2 + 1];
         visited[0] = true;
 
