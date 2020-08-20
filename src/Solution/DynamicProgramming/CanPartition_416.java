@@ -75,8 +75,7 @@ public class CanPartition_416 {
             return false;       // odd number can not be spilt to equal parts
         }
         Arrays.sort(nums);
-        Boolean[] visited = new Boolean[sum / 2 + 1];
-        visited[0] = true;
+        Boolean[] visited = new Boolean[sum / 2 + 1];       // input only contains positive numbers, + 1 can be removed
 
         return dfs(nums, 0, sum / 2, visited);
     }
@@ -137,5 +136,12 @@ public class CanPartition_416 {
         visited[sum] = dfs(nums, index + 1, sum - nums[index], visited) || dfs(nums, index + 1, sum, visited);
 
         return visited[sum];
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new CanPartition_416().canPartitionDFS(new int[]{6, 4, 4, 3, 1}));       // true
+        System.out.println(new CanPartition_416().canPartitionDFS(new int[]{1, 3, 4, 4, 6}));       // true
+        System.out.println(new CanPartition_416().canPartitionDFS(new int[]{0, 0, 0, 0}));       // true
+        System.out.println(new CanPartition_416().canPartitionDFS(new int[]{10, 5, 4, 1}));       // true
     }
 }
