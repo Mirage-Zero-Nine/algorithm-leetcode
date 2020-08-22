@@ -16,13 +16,15 @@ public class MaxPathSum_124 {
     private int max = Integer.MIN_VALUE;
 
     /**
-     * Use a globe max value to store max path, and use a local max to store temporary path max.
+     * Pre-order traverse.
+     * Keep a global max to save the max path during the whole DFS.
+     * Return the local max (left subtree, right subtree) during DFS.
      *
      * @param root root node
      * @return max path in tree
      */
     public int maxPathSum(TreeNode root) {
-        traversal(root);
+        dfs(root);
         return max;
     }
 
@@ -32,13 +34,13 @@ public class MaxPathSum_124 {
      * @param r root node
      * @return max path in local tree
      */
-    private int traversal(TreeNode r) {
+    private int dfs(TreeNode r) {
         if (r == null) {
             return 0;
         }
 
-        int left = Math.max(0, traversal(r.left));
-        int right = Math.max(0, traversal(r.right));
+        int left = Math.max(0, dfs(r.left));
+        int right = Math.max(0, dfs(r.right));
         max = Math.max(max, left + right + r.val);      // globe max
 
         return Math.max(left, right) + r.val;       // local max
