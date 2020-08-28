@@ -13,8 +13,8 @@ import java.util.HashMap;
 public class LengthOfLongestSubstringTwoDistinct_159 {
     /**
      * Sliding window (two pointers).
-     * Use two pointers to point at the window start and window end.
-     * If distinct char is more than 2, then narrow the window size until all invalid char is excluded.
+     * Use two pointers to point at the start and the end of window.
+     * If distinct chars are more than 2, then narrow the window until all the invalid chars are excluded.
      *
      * @param s given string
      * @return length of the longest substring t that contains at most 2 distinct characters
