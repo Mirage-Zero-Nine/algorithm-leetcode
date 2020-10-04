@@ -14,8 +14,9 @@ import java.util.Arrays;
 public class ValidTree_261 {
     /**
      * Union find.
-     * Find first, if the vertices have same newest son, then they will create a loop in graph, which is invalid.
-     * Then, if two nodes have different newest son, union it to newest son.
+     * Find the newest son of nodes in each edge.
+     * If two vertices in the same edge have the same newest son, then there is a loop in graph, which is invalid.
+     * If they have different newest son, union the son together.
      *
      * @param n     n nodes
      * @param edges edges that connect vertices
@@ -28,31 +29,31 @@ public class ValidTree_261 {
             return false;       // if edges are more than nodes - 1, then it will definitely create a loop
         }
 
-        int[] connection = new int[n];        // save connections of each node
-        Arrays.fill(connection, -1);      // all nodes are independent at beginning
+        int[] root = new int[n];          // save connections of each node
+        Arrays.fill(root, -1);       // all nodes are independent at beginning
 
         for (int[] edge : edges) {
 
-            int r1 = find(edge[0], connection), r2 = find(edge[1], connection);     // find their newest son
+            int r1 = find(edge[0], root), r2 = find(edge[1], root);     // find their newest son
             if (r1 == r2) {     // if two nodes has same newest son, then the union operation will create a loop
                 return false;
             }
-            connection[r1] = r2;        // union
+            root[r1] = r2;        // union
         }
+
         return true;
     }
 
     /**
-     * Find newest son of each node.
-     * If current node is -1 (init value), then current node is newest son.
+     * Find newest son of given node.
+     * If current node is -1 (initial value), then current node itself is the newest son.
      *
-     * @param i    current node
-     * @param root array store root of each node
+     * @param vertex current node
+     * @param root   array store root of each node
      * @return newest son of node
      */
-    private int find(int i, int[] root) {
-
-        return (root[i] == -1) ? i : find(root[i], root);
+    private int find(int vertex, int[] root) {
+        return (root[vertex] == -1) ? vertex : find(root[vertex], root);
     }
 
     public static void main(String[] args) {
