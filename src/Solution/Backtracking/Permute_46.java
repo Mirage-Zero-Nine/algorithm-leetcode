@@ -1,8 +1,6 @@
 package Solution.Backtracking;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -22,39 +20,38 @@ public class Permute_46 {
      */
     public List<List<Integer>> permute(int[] nums) {
 
-        List<List<Integer>> out = new LinkedList<>();
+        List<List<Integer>> output = new ArrayList<>();
 
         /* Corner case */
-        if (nums.length == 0) {
-            return out;
+        if (nums == null || nums.length == 0) {
+            return output;
         }
 
-        Arrays.sort(nums);
-        backtracking(nums, new ArrayList<>(), out);
+        backtracking(output, new ArrayList<>(), nums);
 
-        return out;
+        return output;
     }
 
     /**
      * Backtracking to find all possible permutations.
      * The end point is when current temporary list reaching the size of given array.
      *
-     * @param nums given array
-     * @param tmp  temporary list
-     * @param res  output list
+     * @param output output list
+     * @param temp   temporary list
+     * @param nums   array to find all permutations
      */
-    private void backtracking(int[] nums, List<Integer> tmp, List<List<Integer>> res) {
+    private void backtracking(List<List<Integer>> output, List<Integer> temp, int[] nums) {
 
-        if (tmp.size() == nums.length) {
-            res.add(new ArrayList<>(tmp));
-        } else {
+        if (temp.size() == nums.length) {       // end point
+            output.add(new ArrayList<>(temp));
+            return;
+        }
 
-            for (int num : nums) {      // backtracking each element
-                if (!tmp.contains(num)) {
-                    tmp.add(num);
-                    backtracking(nums, tmp, res);
-                    tmp.remove(tmp.size() - 1);
-                }
+        for (int n : nums) {
+            if (!temp.contains(n)) {
+                temp.add(n);
+                backtracking(output, temp, nums);
+                temp.remove(temp.size() - 1);
             }
         }
     }
