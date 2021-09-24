@@ -29,13 +29,20 @@ public class IsBipartite_785 {
      * @return return true if and only if it is bipartite
      */
     public boolean isBipartite(int[][] graph) {
-        int[] color = new int[graph.length];
+
+        /* Corner case */
+        if (graph == null || graph.length == 0 || graph[0] == null) {
+            return false;
+        }
+
+        int[] nodeColor = new int[graph.length];
 
         for (int i = 0; i < graph.length; i++) {
-            if (color[i] == 0 && !dfs(color, graph, i, 1)) {        // two colors: 1 and -1
+            if (nodeColor[i] == 0 && !dfs(graph, nodeColor, i, 1)) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -45,20 +52,25 @@ public class IsBipartite_785 {
      * @param color record each node's color
      * @param graph given edges list
      * @param node  current node
-     * @param c     color to be used in current node
+     * @param color color to be used in current node
      * @return return true if and only if it can be colored by only 2 colors
      */
-    private boolean dfs(int[] color, int[][] graph, int node, int c) {
-        if (color[node] != 0) {
-            return color[node] == c;
-        }
-        color[node] = c;
+    private boolean dfs(int[][] graph, int[] nodeColor, int node, int color) {
 
-        for (int i = 0; i < graph[node].length; i++) {
-            if (!dfs(color, graph, graph[node][i], -c)) {
+        if (nodeColor[node] != 0) {
+            /*
+             * If current node has color, then it should be the same color.
+             * If not, the other color would be used, which is conflicted to not using same color in adjacent nodes. */
+            return nodeColor[node] == color;
+        }
+
+        nodeColor[node] = color;
+        for (int n : graph[node]) {
+            if (!dfs(graph, nodeColor, n, -color)) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -68,7 +80,7 @@ public class IsBipartite_785 {
      * @param graph given edges list
      * @return return true if and only if it is bipartite
      */
-    public boolean bfs(int[][] graph) {
+    public boolean isBipartiteBfs(int[][] graph) {
         int[] color = new int[graph.length];
 
         for (int i = 0; i < graph.length; i++) {
