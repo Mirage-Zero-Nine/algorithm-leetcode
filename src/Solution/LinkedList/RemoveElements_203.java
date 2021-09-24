@@ -13,26 +13,35 @@ import Lib.ListNode.ListNode;
 public class RemoveElements_203 {
     /**
      * Link previous node of node to be removed to this remove node's next.
+     * Skip the node sequence that all nodes in this sequence will need to be removed.
      *
      * @param head head of list
      * @param val  remove value
      * @return removed list head
      */
     public ListNode removeElements(ListNode head, int val) {
-        ListNode dummy = new ListNode(-1);
-        dummy.next = head;
-        ListNode current = head, previous = dummy;
 
-
-        while (current != null) {
-            if (current.val == val) {
-                previous.next = current.next;
-            } else {
-                previous = current;
-            }
-            current = current.next;
+        /* Corner case */
+        if (head == null) {
+            return head;
         }
 
-        return dummy.next;
+        ListNode dummyHead = new ListNode(-1);
+        dummyHead.next = head;
+        ListNode out = dummyHead;
+
+        while (dummyHead != null && dummyHead.next != null) {
+            if (dummyHead.next.val == val) {
+                ListNode current = dummyHead.next;
+                while (current != null && current.val == val) { // skip all nodes need to remove
+                    current = current.next;
+                }
+                dummyHead.next = current;
+            }
+
+            dummyHead = dummyHead.next;
+        }
+
+        return out.next;
     }
 }
