@@ -23,32 +23,61 @@ public class DetectCycle_142 {
      * => s = nr - m = (n - 1) * r + (r - m)
      * Take n = 1, using one pointer start at the beginning of list, another pointer start at meeting node.
      * All of them wake one step at a time.
-     * The first time they meeting each other is the start of the cycle.
+     * The first time they met each other is the start of the cycle.
      *
      * @param head head node of list
      * @return the node where the cycle begins, return null if there is no cycle
      */
     public ListNode detectCycle(ListNode head) {
 
-        /* Corner case */
         if (head == null || head.next == null) {
             return null;
         }
 
-        ListNode slow = head, fast = head;
+        ListNode node = findCycle(head);
+
+        if (node == null) {
+            return null;
+        }
+
+        return findCycleStart(head, node);
+    }
+
+    /**
+     * Check if given list is a cycle.
+     *
+     * @param head head of list
+     * @return if list is a cycle, return the node where two pointers meet; otherwise, return null
+     */
+    private ListNode findCycle(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
 
         while (fast != null && fast.next != null) {
-            slow = slow.next;
             fast = fast.next.next;
-
-            if (slow == fast) {     // found a cycle
-                while (head != slow) {
-                    head = head.next;       // move head (as a pointer) until slow and start meets
-                    slow = slow.next;       // actually I think this is not safe (memory)
-                }
-                return head;        // two nodes will meet at cycle start
+            slow = slow.next;
+            if (fast == slow) {
+                return fast;
             }
         }
         return null;
+    }
+
+    /**
+     * Find the start point of list with cycle.
+     *
+     * @param head head of list
+     * @param node node where 2 pointers meet
+     * @return start node of cycle
+     */
+    private ListNode findCycleStart(ListNode head, ListNode node) {
+        ListNode dummyHead = head;
+
+        while (dummyHead != node) {
+            dummyHead = dummyHead.next;
+            node = node.next;
+        }
+
+        return dummyHead;
     }
 }

@@ -26,23 +26,18 @@ public class HasCycle_141 {
             return false;
         }
 
+        ListNode fast = head;
         ListNode slow = head;
-        ListNode fast = head.next;
 
-        while (slow != null) {
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
 
-            if (slow.val == fast.val) {
+            if (fast == slow) {
                 return true;
             }
-
-            slow = slow.next;
-
-            if (fast.next != null && fast.next.next != null) {      // reaches the end of list if no cycle found
-                fast = fast.next.next;
-            } else {
-                return false;
-            }
         }
+
         return false;
     }
 }
