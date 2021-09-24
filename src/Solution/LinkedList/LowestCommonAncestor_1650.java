@@ -14,9 +14,10 @@ import Lib.Tree.BinaryTree.Node;
 
 public class LowestCommonAncestor_1650 {
     /**
-     * The tree node contains a pointer to its parent. Hence, the tree is actually a binary linked list.
-     * To find the LCA is actually to find the intersection of the two nodes.
-     * Start at each node, move to the parent node at each move. If reaches the root, move to the opposite start node.
+     * In this case, tree node contains a pointer to its parent. Hence, this tree is actually a binary linked list.
+     * Finding the LCA of these nodes are actually to find the intersection of the two nodes.
+     * Starting at each node, move toward the parent each time.
+     * If reaches the root (the end of the linked list), move to the opposite start node.
      * Finally, they will meet at a node, which is the LCA.
      *
      * @param p first node

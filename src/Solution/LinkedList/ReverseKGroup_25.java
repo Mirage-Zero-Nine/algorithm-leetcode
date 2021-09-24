@@ -38,13 +38,13 @@ public class ReverseKGroup_25 {
         ListNode begin = dummy;
         int i = 0;
         while (head != null) {
-            if (++i % k == 0) {
-                begin = reverse(begin, head.next);      // obtain end of reversed list
-                head = begin.next;                      // move to next reverse sub linked list
-            } else {
-                head = head.next;       // head works as local reverse end node
+            while (++i % k != 0) {
+                head = head.next;
             }
+            begin = reverse(begin, head.next);
+            head = begin.next;
         }
+
         return dummy.next;
     }
 
@@ -54,11 +54,11 @@ public class ReverseKGroup_25 {
      *
      * @param dummy dummy head node (not included in reverse)
      * @param end   end node (not included in reverse)
-     * @return next reverse start node
+     * @return the end of the reversed list
      */
     public ListNode reverse(ListNode dummy, ListNode end) {
         ListNode current = dummy.next;
-        ListNode first = current;     // first: first node to be reversed
+        ListNode first = current;     // first node in the list, will be the last node in the reversed list
         ListNode previous = dummy;
         ListNode next;
 

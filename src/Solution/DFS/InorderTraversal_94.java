@@ -16,31 +16,31 @@ import java.util.Stack;
 
 public class InorderTraversal_94 {
     /**
-     * Simply follow the in order traversal rule.
+     * Simply follow the in order traversal rule: left, root, right.
      * Use stack to temporary store node during the process.
      *
      * @param root root node
      * @return list of nodes in inorder traversal order
      */
     public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> output = new ArrayList<>();
 
-        List<Integer> res = new ArrayList<>();
-        Stack<TreeNode> s = new Stack<>();
-        TreeNode cur = root;
-
-        /* Traverse process */
-        while (cur != null || !s.isEmpty()) {
-
-            while (cur != null) {
-                s.add(cur);
-                cur = cur.left;
-            }
-
-            cur = s.pop();
-            res.add(cur.val);
-            cur = cur.right;
+        /* Corner case */
+        if (root == null) {
+            return output; // this is actually not required in this case
         }
 
-        return res;
+        dfs(root, output);
+        return output;
+    }
+
+    private void dfs(TreeNode root, List<Integer> output) {
+        if (root == null) {
+            return;
+        }
+
+        dfs(root.left, output); // traverse to left most node (which is actually always null)
+        output.add(root.val); // add root (which is the left most non-null node)
+        dfs(root.right, output); // go to the right sub-tree
     }
 }

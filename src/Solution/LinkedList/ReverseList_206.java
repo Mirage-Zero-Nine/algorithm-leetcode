@@ -25,13 +25,12 @@ public class ReverseList_206 {
             return head;
         }
 
-        ListNode previous = null;
-
-        while (head != null) {
-            ListNode next = head.next;
-            head.next = previous;
-            previous = head;
-            head = next;
+        ListNode previous = null, current = head, next;
+        while (current != null) {
+            next = current.next;
+            current.next = previous;
+            previous = current;
+            current = next;
         }
 
         return previous;

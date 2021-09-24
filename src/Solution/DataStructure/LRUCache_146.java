@@ -15,26 +15,49 @@ import java.util.*;
  */
 
 public class LRUCache_146 {
-    private int capacity;
-    private DoubleLinkedNode head;
-    private DoubleLinkedNode end;
-    private int c = 0;      // count total cache size
-    private HashMap<Integer, DoubleLinkedNode> map = new HashMap<>();
+
+    /**
+     * Two-way linked cache entry class.
+     */
+    static class Entry {
+        final int key;
+        int value;
+        Entry previous;
+        Entry next;
+
+        /**
+         * Initialization of entry
+         *
+         * @param key   cache key
+         * @param value cache value
+         */
+        Entry(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    private final int capacity;
+    private final HashMap<Integer, Entry> map;
+    private int count;
+    private final Entry end = new Entry(-1, -1);
+    private final Entry head = new Entry(-1, -1);
 
     /**
      * Structure of cache:
-     * Basically, use node to store key and value. A hash map in this cache is to store key-node pair for searching key.
-     * Cache works as a double linked list, which contains previous Cache and next Cache.
-     * When <code>put</code> operation finds a existing key, move corresponding node to top of the list.
-     * When put a new pair into cache, first check size to avoid oversize, then add this node to top of list.
-     * If cache is oversize, then remove last Cache in double linked list. And remove corresponding key as well.
+     * Basically, use a two-way linked list to store cache entry.
+     * The order of the list is newest at the top, oldest at the end.
+     * Keep a hashmap as index table to achieve O(1) look up complexity.
+     * For <code>get</code> operation, if entry exists, remove the entry from list, then move it to the top of the list.
+     * If <code>put</code> operation found an existing key, update map, remove entry from list, then move to the top.
+     * Otherwise, check the capacity.
+     * If over-sized, remove the last used entry (GC required) from list and index map. Then add the new entry.
      *
      * @param capacity cache capacity
      */
     public LRUCache_146(int capacity) {
         this.capacity = capacity;
-        this.head = new DoubleLinkedNode();
-        this.end = new DoubleLinkedNode();
+        this.map = new HashMap<>();
         head.next = end;
         end.previous = head;
     }
@@ -46,13 +69,13 @@ public class LRUCache_146 {
      * @return corresponding value, or -1.
      */
     public int get(int key) {
-        DoubleLinkedNode temp = map.get(key);
-        if (temp == null) {
+        Entry e = this.map.get(key);
+        if (e == null) {
             return -1;
         }
-
-        lastUsed(temp);
-        return temp.val;
+        removeEntryFromList(e);
+        insertToHead(e);
+        return e.value;
     }
 
     /**
@@ -64,80 +87,62 @@ public class LRUCache_146 {
      */
     public void put(int key, int value) {
 
-        DoubleLinkedNode node = map.get(key);
+        if (map.containsKey(key)) {
+            Entry e = map.get(key);
+            e.value = value;
+            removeEntryFromList(e);
+            insertToHead(e);
 
-        if (node == null) {
-            DoubleLinkedNode add = new DoubleLinkedNode();
-            add.key = key;
-            add.val = value;
-            c++;
-            if (c > capacity) {
-                map.remove(popEnd().key);
-                c--;
-            }
-            map.put(key, add);
-            insertHead(add);
-        } else {
-            map.get(key).val = value;
-            lastUsed(map.get(key));
+            return;
         }
+
+        if (++count > capacity) {
+            Entry last = end.previous;
+            map.remove(last.key);
+            removeEntryFromList(last);
+            deleteEntry(last);
+            count--;
+        }
+        Entry e = new Entry(key, value);
+        map.put(key, e);
+        insertToHead(e);
     }
 
     /**
-     * Move given node next to head node.
-     * Note that this node will be removed.
+     * Insert an entry to the top of the list (last recent used).
+     * Note that it regard every entry as new entry, no previous connection to it.
      *
-     * @param node last node in list
+     * @param e entry to be inserted
      */
-    private void lastUsed(DoubleLinkedNode node) {
-        removeNode(node);
-        insertHead(node);
+    private void insertToHead(Entry e) {
+        e.previous = head;
+        e.next = head.next;
+        head.next = e;
+        e.next.previous = e;
     }
 
     /**
-     * Remove given node.
+     * Delete entry from cache.
+     * This is actually not required in Java.
      *
-     * @param node given node
+     * @param e entry to be removed
      */
-    private void removeNode(DoubleLinkedNode node) {
-        DoubleLinkedNode pre = node.previous;
-        DoubleLinkedNode next = node.next;
-        pre.next = next;
-        next.previous = pre;
+    private void deleteEntry(Entry e) {
+        e.previous = null;
+        e.next = null;
     }
 
     /**
-     * Insert a new node to head.
+     * Remove (but not delete) an entry from list.
+     * e.g: a -> b -> c -> => a -> c, where b is
      *
-     * @param node node to be moved
+     * @param e entry to be removed from list
      */
-    private void insertHead(DoubleLinkedNode node) {
-        node.previous = head;
-        node.next = head.next;
-        head.next.previous = node;
-        head.next = node;
-    }
-
-    /**
-     * Remove last node in cache based on LRU policy.
-     * Hash map needs to know which key to remove, hence pop node is required.
-     *
-     * @return pop node
-     */
-    private DoubleLinkedNode popEnd() {
-        DoubleLinkedNode old = end.previous;
-        this.removeNode(old);
-        return old;
-    }
-
-    /**
-     * Node in cache, which is a double linked list.
-     */
-    static class DoubleLinkedNode {
-        public int key;                        // cache key
-        public int val;                        // value store in cache
-        public DoubleLinkedNode previous;      // previous cache block pointer
-        public DoubleLinkedNode next;          // next cache block pointer
+    private void removeEntryFromList(Entry e) {
+        e.previous.next = e.next;
+        e.next.previous = e.previous;
+        e.previous = null;
+        e.next = null;
     }
 
     public static void main(String[] args) {
