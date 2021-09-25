@@ -23,8 +23,9 @@ public class LowestCommonAncestor_235 {
      * @return lowest common ancestor
      */
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        int max = Math.max(p.val, q.val);
         while ((root.val - p.val) * (root.val - q.val) > 0) {
-            root = root.val > p.val ? root.left : root.right;
+            root = root.val > max ? root.left : root.right;
         }
         return root;
     }
