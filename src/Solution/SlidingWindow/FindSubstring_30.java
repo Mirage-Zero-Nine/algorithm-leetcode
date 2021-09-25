@@ -55,7 +55,18 @@ public class FindSubstring_30 {
         return output;
     }
 
-    private boolean isConcatenation(String s, int p, String[] words) {
+    /**
+     * Check if substring is a valid concatenation.
+     * A valid concatenation:
+     * 1. Substring contains all words, without any intervening characters.
+     * 2. Concatenation of each word in words exactly once.
+     *
+     * @param s     given string
+     * @param index start index
+     * @param words given words array
+     * @return if substring is a valid concatenation
+     */
+    private boolean isConcatenation(String s, int index, String[] words) {
         HashMap<String, Integer> foundCount = new HashMap<>();
         for (int i = 0; i < words.length; i++) { // try to find each word in substring
             TrieNode current = root;
@@ -63,11 +74,11 @@ public class FindSubstring_30 {
 
             for (int j = 0; j < words[0].length(); j++) { // each word has same length
 
-                if (p >= s.length() || current.next[s.charAt(p) - 'a'] == null) {
+                if (index >= s.length() || current.next[s.charAt(index) - 'a'] == null) {
                     return false;
                 }
-                current = current.next[s.charAt(p) - 'a'];
-                sb.append(s.charAt(p++));
+                current = current.next[s.charAt(index) - 'a'];
+                sb.append(s.charAt(index++));
             }
             String word = sb.toString();
 
