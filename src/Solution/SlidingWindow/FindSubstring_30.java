@@ -1,5 +1,6 @@
 package Solution.SlidingWindow;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,56 +16,94 @@ import java.util.List;
  */
 
 public class FindSubstring_30 {
+
+    private final TrieNode root = new TrieNode();
+    private final HashMap<String, Integer> wordCount = new HashMap<>();
+
     /**
-     * Use two maps to store expected appearance times and appeared times.
-     * One map to record the expected times of each word, the other map to record the times words have been seen.
-     * Then check for every possible position of i.
-     * Once an unexpected word was met or the times of some word is larger than its expected times, stop the check.
-     * If check is finished successfully, push i to the result indexes.
+     * Keep a trie to store all words.
+     * Traverse the string, if found a char in the matches any first word in trie, search the string if it is a word.
+     * If current substring is a word, check if it has been found too many in string.
+     * If all words in substring was found with correct count, put index to the output list.
+     * The time complexity is O(n) * k, where k is the length of each word (all words have same length).
+     * Not sure why it runs slow on LeetCode.
      *
-     * @param s     input string
-     * @param words input word list
-     * @return indices of word concatenation start
+     * @param s     given string
+     * @param words list of words
+     * @return all starting indices of substring(s) in s
      */
     public List<Integer> findSubstring(String s, String[] words) {
-        List<Integer> out = new LinkedList<>();
-
-        /* Corner case */
-        if (s.length() < 1 || words.length < 1) {
-            return out;
+        List<Integer> output = new ArrayList<>();
+        if (s == null || words == null || s.length() == 0 || words.length == 0) {
+            return output;
         }
 
-        HashMap<String, Integer> wordMap = new HashMap<>();     // save word appearance in words array
-        HashMap<String, Integer> stringMap = new HashMap<>();       // save word appearance in string
         for (String w : words) {
-            wordMap.put(w, wordMap.getOrDefault(w, 0) + 1);     // avoid corner case such as duplicated words in array or given string
+            wordCount.put(w, wordCount.getOrDefault(w, 0) + 1);
         }
 
-        for (int i = 0; i < s.length() - words[0].length() * words.length + 1; i++) {
-            int j = 0;
+        buildTrie(words);
 
-            while (j < words.length) {      // j is the words index that count # in words[]
-
-                /* Spilt string to a substring that has same length as given word */
-                String sub = s.substring(i + j * words[0].length(), i + (j + 1) * words[0].length());
-
-                if (wordMap.containsKey(sub)) {
-                    stringMap.put(sub, stringMap.getOrDefault(sub, 0) + 1);
-                    if (stringMap.get(sub) > wordMap.get(sub)) {
-                        break;      // substring contains more words than given array
-                    }
-                } else {
-                    break;      // current substring does not exist in words array
+        for (int i = 0; i < s.length(); i++) {
+            if (root.next[s.charAt(i) - 'a'] != null) {
+                if (isConcatenation(s, i, words)) {
+                    output.add(i);
                 }
-                j++;        // j + 1: next word in array
-            }
-
-            if (j == words.length) {
-                out.add(i);     // find all correct words in current substring
             }
         }
 
-        return out;
+        return output;
+    }
+
+    private boolean isConcatenation(String s, int p, String[] words) {
+        HashMap<String, Integer> foundCount = new HashMap<>();
+        for (int i = 0; i < words.length; i++) { // try to find each word in substring
+            TrieNode current = root;
+            StringBuilder sb = new StringBuilder();
+
+            for (int j = 0; j < words[0].length(); j++) { // each word has same length
+
+                if (p >= s.length() || current.next[s.charAt(p) - 'a'] == null) {
+                    return false;
+                }
+                current = current.next[s.charAt(p) - 'a'];
+                sb.append(s.charAt(p++));
+            }
+            String word = sb.toString();
+
+            int found = foundCount.getOrDefault(word, 0) + 1;
+            foundCount.put(word, found);
+            if (found > wordCount.get(word)) { // if too many words were found, then it is not a valid concatenation
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Trie node.
+     */
+    private static class TrieNode {
+        TrieNode[] next = new TrieNode[26];
+    }
+
+    /**
+     * Build trie with given words array.
+     *
+     * @param words given array
+     */
+    private void buildTrie(String[] words) {
+        for (String w : words) {
+            TrieNode current = root;
+            for (int i = 0; i < w.length(); i++) {
+                char c = w.charAt(i);
+                if (current.next[c - 'a'] == null) {
+                    current.next[c - 'a'] = new TrieNode();
+                }
+                current = current.next[c - 'a'];
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -80,5 +119,9 @@ public class FindSubstring_30 {
 
         final long endTime = System.currentTimeMillis();    // Timer
         System.out.println("Time: " + (endTime - startTime) + "ms");
+
+        s = "wordgoodgoodgoodbestword";
+        words = new String[]{"word", "good", "best", "word"};
+        System.out.println(findSubstringTest.findSubstring(s, words));
     }
 }
