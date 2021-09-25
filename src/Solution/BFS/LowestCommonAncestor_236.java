@@ -18,16 +18,15 @@ import java.util.Queue;
 
 public class LowestCommonAncestor_236 {
     /**
-     * Recursion DFS version.
-     * Three conditions:
-     * 1. p and q are under same node -> LCA is the node
+     * DFS (Post-order traverse).
+     * Two conditions:
+     * 1. p and q are under same tree node, or under different part of root's subtree -> this tree node is the LCA
      * 2. One of p or q is the LCA -> LCA is p or q
-     * 3. p and q are in different part of root's children -> LCA is root
-     * These conditions can be also implemented in sub tree.
-     * Do the DFS.
-     * If one node is found in the left sub tree, then search in the right sub tree.
-     * If the other node does not exist in right sub tree, then it is under the left sub tree.
-     * Otherwise, LCA is the root of current recursion.
+     * During the post-order traverse:
+     * - Based on how post-order traverse works, it will start at deepest node.
+     * - If found p or q, return current node, since LCA will be this node or its parents
+     * - If left subtree return null, then return the other half, since LCA will only be in the other half, or parents.
+     * - If both left and right has a return node, then the current node is LCA, return current node.
      *
      * @param root root node
      * @param p    first node
@@ -38,16 +37,19 @@ public class LowestCommonAncestor_236 {
 
         /* Corner case and end point */
         if (root == null || root.val == p.val || root.val == q.val) {
-            return root;
+            return root; // if LCA is one of the p or q, then the search can stop when hit p or q.
         }
 
-        TreeNode left = lowestCommonAncestor(root.left, p, q);      // search in left sub tree
-        TreeNode right = lowestCommonAncestor(root.right, p, q);        // search in right sub tree
+        TreeNode left = lowestCommonAncestor(root.left, p, q);   // search in left subtree
+        TreeNode right = lowestCommonAncestor(root.right, p, q); // search in right subtree
 
-        if (left != null && right != null) {
-            return root;        // found node in both left sub tree and right sub tree
+        if (left == null) {
+            return right; // right subtree may contain LCA which passed to parent node, or return null if no found
+        } else if (right == null) {
+            return left;  // no p or q in both subtree, return null
         }
-        return left == null ? right : left;     // it will exist
+
+        return root; // both node found in subtree, hence current node is LCA
     }
 
     /**
