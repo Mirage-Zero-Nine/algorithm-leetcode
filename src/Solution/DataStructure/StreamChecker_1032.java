@@ -19,8 +19,8 @@ public class StreamChecker_1032 {
         boolean isEnd;
     }
 
-    private LinkedList<Character> temp = new LinkedList<>();        // save part of stream
-    private TrieNode root = new TrieNode();
+    private final LinkedList<Character> temp = new LinkedList<>();        // save part of stream
+    private final TrieNode root = new TrieNode();
     private int max = 0;        // max size of list, which is the longest word in given array
 
     /**
