@@ -36,11 +36,11 @@ public class MinWindow_76 {
         }
 
         for (int i = 0; i < m; i++) {
-            if (count[s.charAt(i) - 'A']-- > 0) {
+            if (count[s.charAt(i) - 'A']-- > 0) { // find a char in t, one less to be found
                 rest--;
             }
-            while (rest == 0) {
-                if (count[s.charAt(start++) - 'A']++ == 0) {
+            while (rest == 0) { // all chars were found, try to shrink the window
+                if (count[s.charAt(start++) - 'A']++ == 0) { // current char in t, stop shrinking and record window size
                     rest++;
                 }
 

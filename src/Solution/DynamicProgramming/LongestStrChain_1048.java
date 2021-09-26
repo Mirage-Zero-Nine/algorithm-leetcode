@@ -26,29 +26,31 @@ public class LongestStrChain_1048 {
      * @return longest possible length of a word chain with words chosen from the given list of words
      */
     public int longestStrChain(String[] words) {
+
+        /* Corner case */
         if (words.length == 1) {
             return 1;
         }
 
-        Arrays.sort(words, new Comparator<String>() {       // sort list by length
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.length() - o2.length();
-            }
-        });
-        int max = 0;
+        Arrays.sort(words, Comparator.comparingInt(String::length));
+
         HashMap<String, Integer> map = new HashMap<>();
-        for (String s : words) {
-            int temp = 1;
-            for (int i = 0; i < s.length(); i++) {
-                String tmp1 = s.substring(0, i) + s.substring(i + 1);
-                if (map.containsKey(tmp1)) {
-                    temp = Math.max(map.get(tmp1) + 1, temp);
+        int max = 1;
+
+        for (String w : words) {
+            int chainLength = 1; // string chain starts at 1
+
+            for (int i = 0; i < w.length(); i++) {
+                String predecessor = w.substring(0, i) + w.substring(i + 1); // remove one character to build predecessor
+                if (map.containsKey(predecessor)) { // if this predecessor contains in words list
+                    chainLength = Math.max(chainLength, map.get(predecessor) + 1); // chain length + 1
                 }
+
+                map.put(w, chainLength);
+                max = Math.max(max, chainLength);
             }
-            map.put(s, temp);
-            max = Math.max(temp, max);
         }
+
         return max;
     }
 

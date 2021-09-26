@@ -25,13 +25,12 @@ public class MaxSubArray_53 {
             return 0;
         }
 
-        int max = Integer.MIN_VALUE, current = 0;
-
+        int sum = 0, max = Integer.MIN_VALUE;
         for (int n : nums) {
-            current += n;
-            max = Math.max(max, current);
-            if (current < 0) {
-                current = 0;
+            sum += n;
+            max = Math.max(sum, max);
+            if (sum < 0) {
+                sum = 0;
             }
         }
 
