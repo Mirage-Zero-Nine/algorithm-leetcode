@@ -15,8 +15,8 @@ public class LargestRectangleArea_84 {
     /**
      * Monotone stack problem.
      * Traverse all elements in array and find each increasing subarray.
-     * If increasing subarray is ended, then calculate rectangle size starts from largest element in subarray.
-     * The initially length of rectangle is 1 (itself).
+     * If increasing subarray is ended, then calculate rectangle size starts from the largest element in subarray.
+     * The initial length of rectangle is 1 (itself).
      * With the pop of stack, length increased by 1 each time until value at top of stack is smaller than current element.
      * For each deceasing area, simply count the area with itself and compared with max.
      * Note that if stack is empty, current element is the smallest element in current subarray.
