@@ -18,13 +18,14 @@ public class IsMatch_10 {
     /**
      * Dynamic programming with 2D table.
      * Each time, find current matched string and pattern. Check if string matches pattern before current matched part.
-     * State transition:
-     * If (p.charAt(j) == s.charAt(i) || p.charAt(j) == '.') ->  dp[i + 1][j + 1] = dp[i][j]
+     * State transition (i and j are index in 2D DP array, so dp[i][j] means if s(0, i - 1) and p(0, j - 1) is a match).
+     * If (p.charAt(j - 1) == s.charAt(i - 1) || p.charAt(j - 1) == '.'): dp[i][j] = dp[i - 1][j - 1]
      * If (p.charAt(j) == '*'):
-     * 1. p(j - 2) could only be matched for 0 time.
-     * 2. Match p(j - 2) for 1 time.
-     * 3. Match p(j - 1) for n times.
-     * 4. Match p in format as ".*" 0 ~ n times.
+     * a. Match char (one before *) 0 time: dp[i][j] = dp[i][j - 2] (check if pattern before CHAR* can match string)
+     * b. Match previous char from 1 to n times:
+     * b1. Match char exact 1 time: dp[i][j] = dp[i][j - i] (check if pattern before * can match string)
+     * b2. Match char more than 1 time: dp[i][j] = dp[i - 1][j] (check if pattern can match previous string)
+     * b3. One extra case: match .* for 1 to n times: dp[i][j] = dp[i][j - 2] (check if previous pattern is a match)
      * If no condition satisfied, return false.
      *
      * @param s string
@@ -38,55 +39,46 @@ public class IsMatch_10 {
             return false;
         }
 
-        int ls = s.length();
-        int lp = p.length();
+        int stringLength = s.length();
+        int patternLength = p.length();
 
-        boolean[][] dp = new boolean[ls + 1][lp + 1];
-        dp[0][0] = true;
-        for (int i = 1; i <= lp; i++) {
+        boolean[][] dp = new boolean[stringLength + 1][patternLength + 1];
+        dp[0][0] = true; // base case, also could be regarded as "null is a match"
+        for (int i = 1; i <= patternLength; i++) {
             if (p.charAt(i - 1) == '*') {
                 dp[0][i] = dp[0][i - 2];        // for the case of pattern starts with .*
             }
         }
 
-        for (int i = 1; i <= ls; i++) {
-            for (int j = 1; j <= lp; j++) {
+        for (int i = 1; i <= stringLength; i++) {
+            for (int j = 1; j <= patternLength; j++) {
 
                 /*
-                 * If current char matches, or pattern is '.', then dp[i][j] = dp[i - 1][j - 1].
-                 * Both pattern char and string char is matched, check string and pattern before matched. */
+                 * Case 1: if current char matches, or pattern is '.', then dp[i][j] = dp[i - 1][j - 1].
+                 * dp[i - 1][j - 1] means check if p(0, j - 2) can match s(0, i - 2) */
                 if (s.charAt(i - 1) == p.charAt(j - 1) || p.charAt(j - 1) == '.') {
                     dp[i][j] = dp[i - 1][j - 1];
                 }
 
                 /*
-                 * If p.charAt(j - 1) == '*', then matched pattern will be:
-                 * 1. p(j - 2) could only be matched for 0 time.
-                 * 2. Match p(j - 2) for 1 time.
-                 * 3. Match p(j - 1) for n times.
-                 * 4. Match p in format as ".*" 0 ~ n times. */
+                 * Case 2: current char in pattern is '*'. There should be a char before '*' to match.
+                 * 1: char before '*' matches 0 time: dp[i][j] = dp[i][j - 2] (check if pattern before '*' matches
+                 * 2: char before '*' matches 1 to n times:
+                 * 2.1: char before '*' matches 1 time: dp[i][j] = dp[i][j - i]
+                 * 2.2: char before '*' matches n times: dp[i][j] = dp[i - 1][j]
+                 * 2.3: char before '*' is '.': dp[i][j] = dp[i][j - 2] */
                 if (p.charAt(j - 1) == '*') {
 
-                    /*
-                     * If s(i - 1) != p(j - 2) && p(j - 2) != '.', then no match found in p.
-                     * p(j - 2) could only be matched for 0 time.
-                     * Check if string matches pattern before '*' and its previous char. */
-                    if (s.charAt(i - 1) != p.charAt(j - 2) && p.charAt(j - 2) != '.') {
+                    if (s.charAt(i - 1) != p.charAt(j - 2) && p.charAt(j - 2) != '.') { // char before '*' matches 0 time
                         dp[i][j] = dp[i][j - 2];
-                    } else {
-
-                        /*
-                         * Otherwise, there are three conditions:
-                         * 1. Match p(j - 2) for 1 time: dp[i][j - 1]
-                         * 2. Match p(j - 1) for n times: dp[i - 1][j] (this is actually only matched in s, not in p)
-                         * 3. Match p in format as ".*" 0 ~ n times: dp[i - 1][j] || dp[i][j - 1] || dp[i][j - 2] */
+                    } else { // char before '*' at least match one time
                         dp[i][j] = dp[i - 1][j] || dp[i][j - 1] || dp[i][j - 2];
                     }
                 }
             }
         }
 
-        return dp[ls][lp];
+        return dp[stringLength][patternLength];
     }
 
     /**
@@ -188,14 +180,18 @@ public class IsMatch_10 {
         IsMatch_10 test = new IsMatch_10();
         String s = "ab";
         String p = ".*";
-        System.out.println(test.dfsImplementation(s, p));     // T
+        System.out.println(test.dfsImplementation(s, p)); // T
 
         s = "mississippi";
         p = "mis*is*p*.";
-        System.out.println(test.dfsImplementation(s, p));     // F
+        System.out.println(test.dfsImplementation(s, p)); // F
 
         s = "aasdfasdfasdfasdfas";
         p = "aasdf.*asdf.*asdf.*asdf.*s";
-        System.out.println(test.dfsImplementation(s, p));     // T
+        System.out.println(test.dfsImplementation(s, p)); // T
+
+        s = "aasdfasdfasdfasdfas";
+        p = "aasdf.*asdf.*asdf.*asdf.*s";
+        System.out.println(test.dfsImplementation(s, p)); // T
     }
 }
