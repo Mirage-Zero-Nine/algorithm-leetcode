@@ -13,9 +13,9 @@ import java.util.HashMap;
 public class LengthOfLongestSubstring_3 {
     /**
      * Sliding window problem.
-     * The begin of sliding window should be the next index of last duplicated character.
+     * The beginning of sliding window should be the next index of last duplicated character.
      * Each time, right pointer is trying to enlarge window size by one.
-     * If it contains a duplicated char, then the left bound should be set to largest index without duplicated char.
+     * If it contains a duplicated char, then the left bound should be set to the largest index without duplicated char.
      * The largest index of current char is saved in map, and the window without duplicated one should be next of it.
      *
      * @param s input string
