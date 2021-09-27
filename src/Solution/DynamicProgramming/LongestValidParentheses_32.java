@@ -15,7 +15,7 @@ public class LongestValidParentheses_32 {
     /**
      * Traverse given string for two times, set two counter "left" and "right" to count "(", ")" respectively.
      * First from left to right, if left equals to right and none of them are 0, then one valid length is found.
-     * Compare current length to max length. If larger then switch it. Then reset both counters.
+     * Compare current length to max length. If it is larger, then switch it. Then reset both counters.
      * When first traverse completed, traverse string from right to left with same process.
      * The second traverse is to avoid that right parenthesis is more than left parenthesis in given string.
      * For example, when string is )))))()(), then the max counter will never be triggered.
@@ -38,7 +38,7 @@ public class LongestValidParentheses_32 {
     }
 
     /**
-     * Find length of longest valid parentheses substring by traversing given string.
+     * Find length of the longest valid parentheses substring by traversing given string.
      * Use a for loop to traverse string.
      * Therefore, if starts from left to right, start index is 0, end index is string's length.
      * If traverse from right to left, start index is -(string's length + 1), since for loop is fixed.
