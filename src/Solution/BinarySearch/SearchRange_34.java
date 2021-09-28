@@ -15,45 +15,67 @@ import java.util.Arrays;
 public class SearchRange_34 {
     /**
      * Two rounds of binary search.
-     * First round find the lower bound of target, and second bound find higher bound of target.
+     * First round find the lower bound of target, and second bound find upper bound of target.
+     * Note that in second round, since the "/" operation is rounded to the lowest integer, add 1 to find the upper bound.
      *
      * @param nums   input int array
      * @param target target int
      * @return starting and ending position, return [-1, -1] if target is not found
      */
     public int[] searchRange(int[] nums, int target) {
-        int[] result = new int[2];
-        result[0] = findFirstLast(nums, target, true);
-        result[1] = findFirstLast(nums, target, false);
-        return result;
+        int[] out = new int[]{-1, -1};
+        if (nums.length == 0) {
+            return out;
+        }
+
+        out[0] = findStart(nums, target);
+        out[1] = findEnd(nums, target);
+
+        return out;
     }
 
     /**
-     * Find boundary of target.
+     * Find the beginning position of the range by implementing the binary search.
      *
      * @param nums   given array
-     * @param target target
-     * @param first  is finding first element
-     * @return index of start or end of target
+     * @param target target number
+     * @return starting position of the given target value
      */
-    private int findFirstLast(int[] nums, int target, boolean first) {
-        int index = -1;
+    private int findStart(int[] nums, int target) {
         int left = 0, right = nums.length - 1;
-
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left) / 2;
-
-            if (target < nums[mid] || (first && target == nums[mid])) {     // find lower bound in first binary search
-                right = mid - 1;
-            } else {
+            if (nums[mid] < target) { // nums[mid] < target: go right, since nums[mid] was excluded
                 left = mid + 1;
-            }
-
-            if (nums[mid] == target) {
-                index = mid;
+            } else { // otherwise, go left with mid as right boundary, since it could be the starting position
+                right = mid;
             }
         }
-        return index;
+
+        return nums[left] == target ? left : -1;
+    }
+
+    /**
+     * Find the ending position of the range by implementing the binary search.
+     * Note that when calculating mid, add one to the normal method since "/" will always round it to the smaller value.
+     *
+     * @param nums   given array
+     * @param target target number
+     * @return ending position of the given target value
+     */
+    private int findEnd(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2 + 1; // / 2 is rounded to the lowest integer, move to the next right
+            if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                left = mid;
+            }
+
+        }
+
+        return nums[left] == target ? left : -1;
     }
 
     public static void main(String[] args) {
