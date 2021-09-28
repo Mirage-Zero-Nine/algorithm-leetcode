@@ -17,7 +17,7 @@ import java.util.Queue;
 
 public class RightSideView_199 {
     /**
-     * DFS.
+     * DFS (pre-order traverse).
      * Traverse right subtree first, add each rightmost child that first meet in each level.
      *
      * @param root root node
@@ -34,7 +34,7 @@ public class RightSideView_199 {
     }
 
     /**
-     * DFS traversal.
+     * Pre-order traverse.
      * Each time, try to reach the rightmost child of each node.
      * The "first" node can be found by checking level and output list size.
      * The total number of accept nodes are same as level of tree.

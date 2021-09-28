@@ -14,7 +14,9 @@ package Solution.BinarySearch;
 public class FindMin_153 {
     /**
      * Binary search. The minimum element will be at left part, or right part if rotated.
-     * There may be a "pivot" in the array lead a reverse, find minimum 2 int in array and finally return minor one.
+     * - Escape condition: left == right (and it's the min value)
+     * - If nums[mid] >= nums[right] (actually since no duplication in array, equal will not happen), then go right and excluded mid.
+     * - Otherwise, go left. However, mid will be included, since it could be the min value (start of the rotation).
      *
      * @param nums given int array
      * @return min value in array
@@ -27,18 +29,17 @@ public class FindMin_153 {
         }
 
         int left = 0, right = nums.length - 1;
+        while (left < right) { // escape when left == right
+            int mid = left + (right - left) / 2;
 
-        while (left <= right) {
-            int middle = left + (right - left) / 2;
-
-            if (nums[middle] >= nums[right]) {      // nums[middle] >= nums[right], min value at right part
-                left = middle + 1;
-            } else {                                // nums[middle] < nums[right], left part contains minimum element
-                right = middle;                     // middle could be min value
+            if (nums[mid] >= nums[right]) { // go right, excluded nums[mid] since it's already larger than nums[right]
+                left = mid + 1;
+            } else {
+                right = mid; // go left, mid could be the minimum, so included
             }
         }
 
-        return nums[right];
+        return nums[left]; // return left or right does not make a difference
     }
 
     public static void main(String[] args) {

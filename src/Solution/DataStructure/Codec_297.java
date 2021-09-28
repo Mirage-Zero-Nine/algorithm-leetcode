@@ -18,7 +18,6 @@ import java.util.Queue;
  */
 
 public class Codec_297 {
-
     /**
      * Encodes a tree to a single string by DFS.
      *
@@ -27,24 +26,25 @@ public class Codec_297 {
      */
     public String serialize(TreeNode root) {
         StringBuilder sb = new StringBuilder();
-        encode(root, sb);
+        serialize(root, sb);
         return sb.toString();
     }
 
     /**
      * DFS to encode tree to string. Use "#" to mark null nodes.
      *
-     * @param r  root node
-     * @param sb string builder to save tree value.
+     * @param root root node
+     * @param sb   string builder to save tree value.
      */
-    private void encode(TreeNode r, StringBuilder sb) {
-        if (r == null) {
-            sb.append("#").append(',');
+    private void serialize(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            sb.append('#').append(',');
             return;
         }
-        sb.append(r.val).append(',');
-        encode(r.left, sb);
-        encode(r.right, sb);
+
+        sb.append(root.val).append(',');
+        serialize(root.left, sb);
+        serialize(root.right, sb);
     }
 
 
@@ -56,7 +56,9 @@ public class Codec_297 {
      */
     public TreeNode deserialize(String data) {
         Queue<String> nodes = new LinkedList<>(Arrays.asList(data.split(",")));
-        return decode(nodes);
+        TreeNode root = deserialize(nodes);
+
+        return root;
     }
 
     /**
@@ -66,22 +68,20 @@ public class Codec_297 {
      * @param q queue stores serialized node value
      * @return deserialized root of tree
      */
-    private TreeNode decode(Queue<String> q) {
+    private TreeNode deserialize(Queue<String> q) {
         if (q.isEmpty()) {
             return null;
         }
 
-        String val = q.poll();
-
-        if (val.equals("#")) {
+        String data = q.poll();
+        if (data.equals("#")) {
             return null;
         }
 
-        TreeNode r = new TreeNode(Integer.parseInt(val));
+        TreeNode r = new TreeNode(Integer.parseInt(data));
 
-        r.left = decode(q);
-        r.right = decode(q);
-
+        r.left = deserialize(q);
+        r.right = deserialize(q);
         return r;
     }
 }
