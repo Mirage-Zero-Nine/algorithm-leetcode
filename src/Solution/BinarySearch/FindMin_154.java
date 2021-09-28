@@ -13,11 +13,11 @@ package Solution.BinarySearch;
 
 public class FindMin_154 {
     /**
-     * Modified binary search.
-     * Originally, to find min value in rotate sorted array is to find the lower part each time.
-     * To avoid the duplicated value, simply shrink the right bound when mid of array is equal to right.
-     * In this situation, the min value will either be in the right, or the duplicated one is the min value.
-     * Either way, the right duplicated one can be ignored.
+     * Modified binary search, idea is almost the same when array contains no duplicated elements.
+     * - Escape condition: left == right (and it's the min value)
+     * - If nums[mid] > nums[right], then go right and excluded mid.
+     * - If nums[mid] < nums[right], go left and included mid, since it could be the min value (start of the rotation).
+     * - If nums[mid] == nums[right], there is a duplication, shrink the right boundary.
      *
      * @param nums given array
      * @return minimum value in array
@@ -30,24 +30,19 @@ public class FindMin_154 {
         }
 
         int left = 0, right = nums.length - 1;
-
-        while (left < right) {
-
+        while (left < right) { // escape when left == right
             int mid = left + (right - left) / 2;
 
-            /*
-             * Rightmost should be larger than middle value in array if in normal ascending array.
-             * Therefore, if mid value is larger than rightmost value in array, then the minimum element is at right. */
-            if (nums[right] < nums[mid]) {      // abnormal sub array
+            if (nums[mid] > nums[right]) { // go right, excluded nums[mid] since it's already larger than nums[right]
                 left = mid + 1;
             } else if (nums[mid] < nums[right]) {
-                right = mid;
+                right = mid; // go left, mid could be the minimum, so included
             } else {
-                right--;        // duplicate value from middle to the end of array, narrow the searching range
+                right--; // excluded duplicated element
             }
         }
 
-        return nums[left];      // after the while loop, left == right
+        return nums[right]; // return left or right does not make a difference
     }
 
     public static void main(String[] args) {

@@ -13,11 +13,11 @@ package Solution.Array;
 public class FirstMissingPositive_41 {
     /**
      * Traverse array three times.
-     * Smallest missing positive integer can only be in [1, n + 1] (all inclusive).
-     * First, replace all non-positive numbers to array's length.
+     * Smallest missing positive integer can only be in [1, n + 1] (all-inclusive).
+     * First, replace all non-positive numbers to array's length + 1, so that in second traverse these numbers can be excluded.
      * In second traversal, find nums[i] such that its absolute value is smaller than array's length.
      * Mark its representative index's value to negative.
-     * i.e, abs(nums[i]) = 5, then nums[4] = - nums[4]
+     * i.e., abs(nums[i]) = 5, then nums[4] = - nums[4]
      * The reason to use absolute value is to save while loop compare to swapping method.
      *
      * @param nums input int array
