@@ -17,24 +17,26 @@ import java.util.Arrays;
 public class SortColors_75 {
     /**
      * Three pointers.
-     * First pointer points at 0 in array, where that index should be filled with 0.
-     * The second pointer points at last position of array, where it should be filled with 2.
-     * The last index is the loop index, where to swap all elements are not 1 to corresponding pointer.
+     * First pointer points p0 at 0 in array, where that index should be filled with 0.
+     * The second pointer p2 points at last position of array, where it should be filled with 2.
+     * The last pointer p1 is the loop index, where to swap all elements are not 1 to corresponding pointer.
+     * During the traverse, only considerate p1. If nums[p1] is not 1, then swap it to 0 or 2.
+     * After swap, move p1 back since it may swap 0 or 2 to the current position.
      *
      * @param nums given array
      */
     public void sortColors(int[] nums) {
         int p0 = 0, p2 = nums.length - 1;      // two pointers point at position of 0 and 2
 
-        for (int i = 0; i <= p2; i++) {
-            if (nums[i] == 0 && i != p0) {
-                swap(nums, i, p0);      // swap 0 to front of array where it should be all with 0
+        for (int p1 = 0; p1 <= p2; p1++) {
+            if (nums[p1] == 0 && p1 != p0) {
+                swap(nums, p1, p0);      // swap 0 to front of array where it should be all with 0
                 p0++;
-                i--;        // one step back to check if swapped value is 2
-            } else if (nums[i] == 2 && i != p2) {
-                swap(nums, i, p2);      // swap 2 to end of array where it should be all with 2
+                p1--;        // one step back to check if swapped value is 2
+            } else if (nums[p1] == 2 && p1 != p2) {
+                swap(nums, p1, p2);      // swap 2 to end of array where it should be all with 2
                 p2--;
-                i--;        // one step back to check if swapped value is 2
+                p1--;        // one step back to check if swapped value is 0
             }
         }
     }
