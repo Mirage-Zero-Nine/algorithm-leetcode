@@ -1,6 +1,6 @@
 package Solution.Map;
 
-import java.util.TreeSet;
+import java.util.HashSet;
 
 /**
  * Given an array of integers and an integer k.
@@ -14,32 +14,35 @@ import java.util.TreeSet;
 
 public class ContainsNearbyDuplicate_219 {
     /**
-     * Use TreeSet to save and sort value in array.
-     * If found same one in TreeSet, then return true.
-     * The reason of using a TreeSet is that it can directly return the closest number to given number.
+     * Sliding window with a hash set.
+     * Use a hash set to store the elements during the traverse.
+     * Also keep a window of size k. Remove elements from hash set after window passed.
+     * Since nums[i] and nums[j] are required within a distance of k, instead of exactly k, hash set would suffice.
+     * Because if there is a duplicated element within k distance, it would be found right away.
      *
      * @param nums given array
      * @param k    max absolute difference between i and j
-     * @return whether there are two distinct indices i and j in array
+     * @return whether there are two distinct indices i and j in array and nums[i] = nums[j]
      */
     public boolean containsNearbyDuplicate(int[] nums, int k) {
 
+        /* Corner case */
         if (k < 1 || nums.length < 1) {
             return false;
         }
 
-        TreeSet<Integer> m = new TreeSet<>();
+        HashSet<Integer> s = new HashSet<>();
 
         for (int i = 0; i < nums.length; i++) {
-            Integer floor = m.floor(nums[i]);
-            if (floor != null && floor == nums[i]) {
+            if (s.contains(nums[i])) {
                 return true;
             }
-            m.add(nums[i]);
+            s.add(nums[i]);
             if (i >= k) {
-                m.remove(nums[i - k]);
+                s.remove(nums[i - k]);
             }
         }
+
         return false;
     }
 }

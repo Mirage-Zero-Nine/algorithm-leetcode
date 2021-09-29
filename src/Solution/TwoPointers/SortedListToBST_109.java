@@ -34,7 +34,7 @@ public class SortedListToBST_109 {
     /**
      * Use two pointers to find root node.
      * Fast node moves two time faster than slow node.
-     * In this way, if fast node reaches the end, slow node will accurately at the mid of list, which is root.
+     * In this way, if fast node reaches the end, slow node will be at the middle of list, which is the root.
      *
      * @param head head node
      * @param tail end node
@@ -42,19 +42,19 @@ public class SortedListToBST_109 {
      */
     public TreeNode builder(ListNode head, ListNode tail) {
 
-        ListNode slow = head;       // find root (in the mid of linked list)
-        ListNode fast = head;       // two time faster move speed
-
         if (head == tail) {
             return null;
         }
 
+        ListNode fast = head, slow = head;
+
         while (fast != tail && fast.next != tail) {
-            fast = fast.next.next;      // when fast reaches the end, slow will be at mid of list
-            slow = slow.next;           // stop at root
+            fast = fast.next.next;
+            slow = slow.next;
         }
 
         TreeNode root = new TreeNode(slow.val);
+
         root.left = builder(head, slow);
         root.right = builder(slow.next, tail);
 
