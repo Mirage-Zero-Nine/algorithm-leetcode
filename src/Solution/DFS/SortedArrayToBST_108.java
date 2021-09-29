@@ -21,8 +21,8 @@ public class SortedArrayToBST_108 {
     public TreeNode sortedArrayToBST(int[] nums) {
 
         /* Corner case */
-        if (nums.length < 2) {
-            return (nums.length == 0 ? null : new TreeNode(nums[0]));
+        if (nums.length == 0) {
+            return null;
         }
 
         return builder(nums, 0, nums.length - 1);
@@ -30,24 +30,25 @@ public class SortedArrayToBST_108 {
 
     /**
      * Pre-order traverse.
+     * Note that root located at middle of the sorted array.
      *
-     * @param num   given num array
-     * @param start start index
-     * @param end   end index
+     * @param nums  given num array
+     * @param left  start index
+     * @param right right index
      * @return root of height balanced BST
      */
-    private TreeNode builder(int[] num, int start, int end) {
+    private TreeNode builder(int[] nums, int left, int right) {
 
-        if (start > end) {      // end point of recursion
+        if (left > right) {
             return null;
         }
 
-        int mid = start + (end - start) / 2;        // avoid overflow
+        int mid = left + (right - left) / 2; // root located at middle of the sorted array
+        TreeNode root = new TreeNode(nums[mid]);
 
-        TreeNode root = new TreeNode(num[mid]);
+        root.left = builder(nums, left, mid - 1); // left subtree, like binary search
+        root.right = builder(nums, mid + 1, right);
 
-        root.left = builder(num, start, mid - 1);
-        root.right = builder(num, mid + 1, end);
         return root;
     }
 }

@@ -1,6 +1,9 @@
 package Solution.Intervals;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Given a collection of intervals, merge all overlapping intervals.
@@ -12,7 +15,7 @@ import java.util.*;
 
 public class Merge_56 {
     /**
-     * First of all, sort the array by each interval's first element (interval start).
+     * First, sort the array by each interval's first element (interval start).
      * After sorting, interval[i][0] <= interval[i + 1][0].
      * If interval[i + 1][0] > interval[i][1], then there is no overlap. Add previous interval to result.
      * Otherwise, there is an overlap. interval[i + 1][0] will be merged into previous interval.
@@ -29,10 +32,8 @@ public class Merge_56 {
             return intervals;
         }
 
-        List<int[]> out = new LinkedList<>();
-
+        List<int[]> out = new ArrayList<>();
         Arrays.sort(intervals, Comparator.comparingInt(i -> i[0]));     // sort intervals by start
-
         int start = intervals[0][0], end = intervals[0][1];
 
         for (int[] i : intervals) {
@@ -41,7 +42,7 @@ public class Merge_56 {
                 out.add(new int[]{start, end});     // previous overlap is ended, add to output
                 start = i[0];                       // new interval's start and end
                 end = i[1];
-            } else {                        // otherwise, there is a overlap
+            } else {                        // otherwise, there is an overlap
                 end = Math.max(end, i[1]);  // find the end of current overlap based on larger ending value
             }
         }
