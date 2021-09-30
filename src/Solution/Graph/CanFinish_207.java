@@ -29,33 +29,38 @@ public class CanFinish_207 {
             return true;
         }
 
-        HashMap<Integer, List<Integer>> m = new HashMap<>();        // prerequisite -> course pair
+        HashMap<Integer, List<Integer>> m = new HashMap<>(); // prerequisite course -> course
         int[] indegree = new int[numCourses];
         Queue<Integer> q = new LinkedList<>();
 
-        for (int[] arr : prerequisites) {
-            indegree[arr[0]]++;
-            if (!m.containsKey(arr[1])) {
-                m.put(arr[1], new LinkedList<>());
+        for (int[] relationship : prerequisites) {
+            indegree[relationship[0]]++;
+
+            if (!m.containsKey(relationship[1])) {
+                m.put(relationship[1], new ArrayList<>());
             }
-            m.get(arr[1]).add(arr[0]);
+
+            m.get(relationship[1]).add(relationship[0]);
         }
 
-        for (int i = 0; i < indegree.length; i++) {
+        for (int i = 0; i < indegree.length; i++) { // remove each layer, starts from indegree == 0
             if (indegree[i] == 0) {
-                q.add(i);       // find nodes with 0 indegree
+                q.add(i);
             }
         }
 
-        int count = 0;      // count total reachable nodes
+        int count = 0;
         while (!q.isEmpty()) {
+            int course = q.poll(); // get course with 0 indegree
+            count++; // count total course taken, in case there is missing course
 
-            int course = q.poll();
-            count++;
+            List<Integer> nextCourse = m.get(course);
 
-            for (int i = 0; m.get(course) != null && i < m.get(course).size(); i++) {     // avoid null when reaches end of graph
-                if (--indegree[m.get(course).get(i)] == 0) {        // remove nodes with 0 indegree
-                    q.add(m.get(course).get(i));        // add 0 indegree node after removing
+            for (int i = 0; nextCourse != null && i < nextCourse.size(); i++) { // get next available course
+                int next = nextCourse.get(i);
+                indegree[next]--;
+                if (indegree[next] == 0) {
+                    q.add(next); // add next course with 0 indegree
                 }
             }
         }
