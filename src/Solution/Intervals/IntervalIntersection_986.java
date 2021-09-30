@@ -1,6 +1,7 @@
 package Solution.Intervals;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Given two lists of closed intervals, each list of intervals is pairwise disjoint and in sorted order.
@@ -18,23 +19,24 @@ public class IntervalIntersection_986 {
      * If end of overlapped interval is equal to the interval in list A, then move pointer in list A.
      * Otherwise, move pointer at list B.
      *
-     * @param A first array
-     * @param B second array
+     * @param firstList  first array
+     * @param secondList second array
      * @return intersection of these two interval lists
      */
-    public int[][] intervalIntersection(int[][] A, int[][] B) {
-        int p1 = 0, p2 = 0, start, end;
-        LinkedList<int[]> out = new LinkedList<>();
+    public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {
+        int p1 = 0, p2 = 0, start, end, m = firstList.length, n = secondList.length;
+        List<int[]> out = new ArrayList<>();
 
-        while (p1 < A.length && p2 < B.length) {
-            start = Math.max(A[p1][0], B[p2][0]);
-            end = Math.min(A[p1][1], B[p2][1]);
+        while (p1 < m && p2 < n) {
+            int[] first = firstList[p1], second = secondList[p2];
+            start = Math.max(first[0], second[0]); // find if there is an overlap
+            end = Math.min(first[1], second[1]);
 
             if (start <= end) {
                 out.add(new int[]{start, end});
             }
 
-            if (end == A[p1][1]) {
+            if (end == first[1]) {
                 p1++;
             } else {
                 p2++;

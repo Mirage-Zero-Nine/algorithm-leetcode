@@ -24,13 +24,13 @@ public class CanAttendMeetings_252 {
         }
 
         Arrays.sort(intervals, Comparator.comparingInt(i -> i[0]));
-        int[] tmp = intervals[0];
+        int[] temp = intervals[0];
 
         for (int i = 1; i < intervals.length; i++) {
-            if (tmp[1] > intervals[i][0]) {
+            if (temp[1] > intervals[i][0]) {
                 return false;
             }
-            tmp = intervals[i];
+            temp = intervals[i];
         }
 
         return true;

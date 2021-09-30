@@ -1,7 +1,7 @@
 package Solution.Intervals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -34,22 +34,21 @@ public class Insert_57 {
             return intervals;
         }
 
-        // Arrays.sort(intervals, Comparator.comparingInt(i -> i[0]));
-        List<int[]> out = new LinkedList<>();
-        int[] tmp = newInterval;
-
+        List<int[]> out = new ArrayList<>();
+        int[] temp = newInterval;
         for (int[] i : intervals) {
-            if (tmp[0] > i[1]) {
+
+            if (temp[0] > i[1]) { // case 1: not reached yet (start > end)
                 out.add(i);
-            } else if (tmp[1] < i[0]) {     // interval has been merged or no overlap
-                out.add(tmp);
-                tmp = i;                    // set tmp to current interval
-            } else {
-                tmp[0] = Math.min(tmp[0], i[0]);
-                tmp[1] = Math.max(tmp[1], i[1]);
+            } else if (temp[1] < i[0]) { // case 2: new interval is added
+                out.add(temp);
+                temp = i; // replaced with new sorted non-overlapped interval, since all intervals need to be added
+            } else { // there is overlap, merge two intervals by finding minimum start and maximum end
+                temp = new int[]{Math.min(temp[0], i[0]), Math.max(temp[1], i[1])};
             }
         }
-        out.add(tmp);
+
+        out.add(temp);
 
         return out.toArray(new int[out.size()][]);
     }
