@@ -27,40 +27,38 @@ public class CombinationSum_39 {
      * @return result int list
      */
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
-        List<List<Integer>> res = new LinkedList<>();
+        List<List<Integer>> out = new LinkedList<>();
 
         /* Corner case */
         if (candidates.length < 1) {
-            return res;
+            return out;
         }
 
-        /* Sort array to avoid duplication and use backtracking to find all combinations */
-        Arrays.sort(candidates);
+        Arrays.sort(candidates); // sort to avoid duplication during backtracking
 
-        backtracking(res, new ArrayList<>(), candidates, target, 0);
-        return res;
+        backtracking(out, new ArrayList<>(), candidates, target, 0);
+        return out;
     }
 
     /**
      * Backtracking to find all combination that the sum is target.
      *
-     * @param result     result array list
+     * @param output     result array list
      * @param temp       temp array list, if combination is found it will be added to result
      * @param candidates input candidates
      * @param remain     current input int, compare to target to check whether current combination correct
      * @param start      start position in array for current traversal
      */
-    private void backtracking(List<List<Integer>> result, List<Integer> temp, int[] candidates, int remain, int start) {
+    private void backtracking(List<List<Integer>> output, List<Integer> temp, int[] candidates, int remain, int start) {
 
         if (remain == 0) {
-            result.add(new ArrayList<>(temp));
+            output.add(new ArrayList<>(temp));
         }
         if (remain > -1) {       // if remain < 0, then current int can not be the result
 
-            /* Iter rest elements in array */
             for (int i = start; i < candidates.length; i++) {
                 temp.add(candidates[i]);
-                backtracking(result, temp, candidates, remain - candidates[i], i);
+                backtracking(output, temp, candidates, remain - candidates[i], i);
                 temp.remove(temp.size() - 1);      // if it is not a possible combination, remove and continue
             }
         }
