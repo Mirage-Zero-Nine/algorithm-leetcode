@@ -29,8 +29,8 @@ public class ValidTree_261 {
             return false;       // if edges are more than nodes - 1, then it will definitely create a loop
         }
 
-        int[] root = new int[n];          // save connections of each node
-        Arrays.fill(root, -1);       // all nodes are independent at beginning
+        int[] root = new int[n];    // save connections of each node
+        Arrays.fill(root, -1); // all nodes are independent at beginning
 
         for (int[] edge : edges) {
 
@@ -38,7 +38,7 @@ public class ValidTree_261 {
             if (r1 == r2) {     // if two nodes has same newest son, then the union operation will create a loop
                 return false;
             }
-            root[r1] = r2;        // union
+            root[r1] = r2; // union two nodes
         }
 
         return true;
