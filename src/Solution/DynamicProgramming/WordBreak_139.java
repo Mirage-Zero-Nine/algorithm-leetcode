@@ -31,13 +31,12 @@ public class WordBreak_139 {
             return false;
         }
 
-        HashSet<String> dict = new HashSet<>(wordDict);
-
+        HashSet<String> set = new HashSet<>(wordDict);
         boolean[] dp = new boolean[s.length() + 1];
-        dp[0] = true;       // avoid first char is found in dictionary but marked as false
+        dp[0] = true;
 
-        for (int i = 1; i < dp.length; i++) {       // iter string
-            for (int j = i - 1; j >= 0; j--) {
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = i - 1; j >= 0 && !dp[i]; j--) {
 
                 /*
                  * Split string into s(0, j) and s(j, i).
@@ -45,7 +44,7 @@ public class WordBreak_139 {
                  * 1. (0, j) can be previously found in set
                  * 2. s(j, i) can be found in set
                  * Then s(0, i) can be divided. */
-                if (dp[j] && dict.contains(s.substring(j, i))) {
+                if (dp[j] && set.contains(s.substring(j, i))) {
                     dp[i] = true;
                     break;
                 }
