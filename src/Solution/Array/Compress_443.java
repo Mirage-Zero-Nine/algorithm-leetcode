@@ -18,7 +18,8 @@ package Solution.Array;
 
 public class Compress_443 {
     /**
-     * Simply traverse the array and count the appearance of chars. Note that the result should be added to input array.
+     * Simply traverse the array and count the appearance of chars.
+     * Note that the input array should be modified to the compress string as well (see examples from the question).
      *
      * @param chars given array
      * @return length of compressed array
