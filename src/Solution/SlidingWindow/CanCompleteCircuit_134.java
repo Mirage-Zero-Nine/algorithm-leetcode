@@ -19,8 +19,11 @@ package Solution.SlidingWindow;
 
 public class CanCompleteCircuit_134 {
     /**
-     * If total gas can cover all cost of gas, then there will be a available start location.
-     * Traverse array, if current tank can not cover the cost at current station, set start location at next location.
+     * If total gas can cover all cost of gas, then there will be an available start location.
+     * Assume the start position is 0, then calculate the cost in each station.
+     * If it can not cover the cost from previous station to current station, then set the start location to the next.
+     * Meanwhile, add the cost from start location to current location. This will be checked after traverse complete.
+     * If the remaining gas can cover the cost, the remaining gas should be more than the need before start location.
      * Finally, if total gas can not cover total cost, then return -1. Otherwise, return start location.
      *
      * @param gas  amount of gas
@@ -34,19 +37,20 @@ public class CanCompleteCircuit_134 {
             return -1;
         }
 
-        int size = gas.length, sum = 0, count = 0, total = 0;
+        int totalCost = 0, currentSum = 0, start = 0; // assume start position is 0
 
-        for (int i = 0; i < size; ++i) {
-            sum += gas[i] - cost[i];
-            if (sum < 0) {
-                total += sum;
-                sum = 0;
-                count = i + 1;
+        for (int i = 0; i < gas.length; i++) {
+            int currentCost = gas[i] - cost[i]; // cost from previous station to current station
+            currentSum += currentCost;
+            if (currentSum < 0) { // if this station is not reachable, set start location to next position
+                totalCost += currentSum; // add cost from start to this position
+                start = i + 1;
+                currentSum = 0;
             }
         }
 
-        total += sum;
+        totalCost += currentSum;
 
-        return total < 0 ? -1 : count;
+        return totalCost < 0 ? -1 : start;
     }
 }
