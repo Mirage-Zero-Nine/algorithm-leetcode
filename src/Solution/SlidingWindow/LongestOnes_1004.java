@@ -12,26 +12,26 @@ package Solution.SlidingWindow;
 public class LongestOnes_1004 {
     /**
      * Sliding window problem.
-     * Each time, if current window contains more than k 0, then shrink the window until there is only at most k 0.
+     * Each time, if current window contains more than k zeros, then shrink it until there is only at most k zeros.
      *
      * @param nums given array
      * @param k    change up to K values from 0 to 1
      * @return maximum number of consecutive 1s in this array if you can flip at most one 0
      */
     public int longestOnes(int[] nums, int k) {
-        int left = 0, n = nums.length, max = 0, count = 0;
+        int start = 0, n = nums.length, max = 0;
 
         for (int i = 0; i < n; i++) {
             if (nums[i] != 1) {
-                count++;
+                k--;
             }
-            while (count > k) {
-                if (nums[left] != 1) {
-                    count--;
+            while (k < 0) {
+                if (nums[start] != 1) {
+                    k++;
                 }
-                left++;
+                start++;
             }
-            max = Math.max(i - left + 1, max);
+            max = Math.max(i - start + 1, max);
         }
 
         return max;
