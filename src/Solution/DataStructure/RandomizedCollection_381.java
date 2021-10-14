@@ -16,17 +16,17 @@ import java.util.*;
  */
 
 public class RandomizedCollection_381 {
-    private HashMap<Integer, HashSet<Integer>> m;
-    private ArrayList<Integer> l;
+    private final HashMap<Integer, HashSet<Integer>> map;
+    private final List<Integer> list;
 
     /**
      * Initialize data structure.
      * Use a hash map to save val and its different location.
-     * And a array list to store value, the index of each value is store in hash map for O(1) access.
+     * And an array list to store value, the index of each value is store in hash map for O(1) access.
      */
     public RandomizedCollection_381() {
-        m = new HashMap<>();
-        l = new ArrayList<>();
+        map = new HashMap<>();
+        list = new ArrayList<>();
     }
 
     /**
@@ -38,14 +38,14 @@ public class RandomizedCollection_381 {
      */
     public boolean insert(int val) {
 
-        if (!m.containsKey(val)) {
+        if (!map.containsKey(val)) {
             HashSet<Integer> s = new HashSet<>();
-            m.put(val, s);
+            map.put(val, s);
         }
-        m.get(val).add(l.size());
-        l.add(val);
+        map.get(val).add(list.size());
+        list.add(val);
 
-        return m.get(val).size() == 1;
+        return map.get(val).size() == 1;
     }
 
     /**
@@ -60,27 +60,27 @@ public class RandomizedCollection_381 {
      * @return true if the collection contained the specified element, false otherwise
      */
     public boolean remove(int val) {
-        if (!m.containsKey(val)) {
+        if (!map.containsKey(val)) {
             return false;
         }
 
-        int loc = m.get(val).iterator().next();     // obtain location to be removed
-        m.get(val).remove(loc);                     // remove this location
-        int end = l.size() - 1;
+        int location = map.get(val).iterator().next();     // obtain location to be removed
+        map.get(val).remove(location);                     // remove this location
+        int end = list.size() - 1;
 
-        if (loc < l.size() - 1) {       // if not removing last element in list
-            int last = l.get(end);     // get last element
-            l.set(loc, last);                   // replace removing position's element
-            l.remove(end);
-            m.get(last).add(loc);
-            m.get(last).remove(end);
+        if (location < list.size() - 1) {       // if not removing last element in list
+            int last = list.get(end);     // get last element
+            list.set(location, last);                   // replace removing position's element
+            list.remove(end);
+            map.get(last).add(location);
+            map.get(last).remove(end);
         } else {
-            l.remove(end);         // remove last element in list
-            m.get(val).remove(end);
+            list.remove(end);         // remove last element in list
+            map.get(val).remove(end);
         }
 
-        if (m.get(val).isEmpty()) {
-            m.remove(val);
+        if (map.get(val).isEmpty()) {
+            map.remove(val);
         }
 
         return true;
@@ -91,7 +91,7 @@ public class RandomizedCollection_381 {
      * Get a random element from the collection.
      */
     public int getRandom() {
-        return l.get((int) (Math.random() * l.size()));
+        return list.get((int) (Math.random() * list.size()));
     }
 
     public static void main(String[] args) {
