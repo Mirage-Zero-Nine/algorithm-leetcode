@@ -16,13 +16,13 @@ import java.util.*;
  */
 
 public class RandomizedCollection_381 {
-    private final HashMap<Integer, HashSet<Integer>> map;
-    private final List<Integer> list;
+    private final HashMap<Integer, HashSet<Integer>> map; // store the value and its index in the list
+    private final List<Integer> list; // store all the values for randomized get, should be an array list
 
     /**
      * Initialize data structure.
      * Use a hash map to save val and its different location.
-     * And an array list to store value, the index of each value is store in hash map for O(1) access.
+     * And an array list to store value, the index of each value is store in hash map for O(1) randomized access.
      */
     public RandomizedCollection_381() {
         map = new HashMap<>();
@@ -51,10 +51,8 @@ public class RandomizedCollection_381 {
     /**
      * Removes a value from the collection.
      * Returns true if the collection contained the specified element.
-     * First, obtain the location of removing element in map.
-     * If value is in the last of array, direct remove it.
-     * Otherwise, replace the remove location with last element of list, and then remove the last element in array.
-     * Update the new index of replaced element in hash map.
+     * Obtain one index of the value in hash map. Replace this element with the end of the array to remove this element.
+     * Then update location of the element used in replacement in map.
      *
      * @param val remove val
      * @return true if the collection contained the specified element, false otherwise
@@ -64,20 +62,20 @@ public class RandomizedCollection_381 {
             return false;
         }
 
-        int location = map.get(val).iterator().next();     // obtain location to be removed
-        map.get(val).remove(location);                     // remove this location
+        int index = map.get(val).iterator().next();     // obtain location to be removed
+        map.get(val).remove(index);                     // remove this location
         int end = list.size() - 1;
 
-        if (location < list.size() - 1) {       // if not removing last element in list
+        if (index < list.size() - 1) {       // if not removing last element in list
             int last = list.get(end);     // get last element
-            list.set(location, last);                   // replace removing position's element
-            list.remove(end);
-            map.get(last).add(location);
+            list.set(index, last);                   // replace removing position's element
+            map.get(last).add(index);
             map.get(last).remove(end);
         } else {
-            list.remove(end);         // remove last element in list
             map.get(val).remove(end);
         }
+
+        list.remove(end);         // remove last element from list
 
         if (map.get(val).isEmpty()) {
             map.remove(val);
