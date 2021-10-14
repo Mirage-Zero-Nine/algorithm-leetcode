@@ -42,7 +42,7 @@ public class LongestValidParentheses_32 {
      * Use a for loop to traverse string.
      * Therefore, if starts from left to right, start index is 0, end index is string's length.
      * If traverse from right to left, start index is -(string's length + 1), since for loop is fixed.
-     * End index under this situation is 0.
+     * Ending index under this situation is 0.
      *
      * @param s     given string
      * @param start start index of string
@@ -81,7 +81,7 @@ public class LongestValidParentheses_32 {
      * @param s input parentheses string
      * @return longest valid parentheses length
      */
-    public int stack(String s) {
+    public int longestValidParenthesesStack(String s) {
 
         /* Corner case */
         if (s.length() < 2) {
@@ -125,7 +125,7 @@ public class LongestValidParentheses_32 {
      * @param s input string
      * @return longest valid parentheses length
      */
-    public int dp(String s) {
+    public int longestValidParenthesesDP(String s) {
 
         int[] dp = new int[s.length()];        // save temp max
         int maxParentheses = 0;
