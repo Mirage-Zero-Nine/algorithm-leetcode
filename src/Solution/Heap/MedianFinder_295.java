@@ -19,8 +19,8 @@ import java.util.Queue;
  */
 
 public class MedianFinder_295 {
-    private Queue<Integer> small;
-    private Queue<Integer> large;
+    private final Queue<Integer> small;
+    private final Queue<Integer> large;
     private boolean even = true;        // initially, the size of 2 heaps are both 0, which is even
 
     /**
@@ -33,8 +33,8 @@ public class MedianFinder_295 {
      * Add given element to small heap first, then poll out the top of small heap, add the polled element to large heap.
      */
     public MedianFinder_295() {
-        small = new PriorityQueue<>((o1, o2) -> o2 - o1);               // max heap stores smaller part of stream
-        large = new PriorityQueue<>();                                  // min heap stores larger part of stream
+        small = new PriorityQueue<>((o1, o2) -> o2 - o1); // max heap stores smaller part of stream
+        large = new PriorityQueue<>();                    // min heap stores larger part of stream
     }
 
     /**
@@ -68,10 +68,6 @@ public class MedianFinder_295 {
      * @return median value in stream
      */
     public double findMedian() {
-        if (even) {
-            return (small.peek() + large.peek()) / 2.0;
-        } else {
-            return (double) large.peek();       // if total length is odd, then return top of small heap
-        }
+        return even ? (small.peek() + large.peek()) / 2.0 : (double) large.peek();
     }
 }
