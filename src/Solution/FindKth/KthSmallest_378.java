@@ -1,5 +1,8 @@
 package Solution.FindKth;
 
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
 /**
  * Given a n x n matrix where each of the rows and columns are sorted in ascending order.
  * Find the kth smallest element in the matrix.
@@ -72,4 +75,34 @@ public class KthSmallest_378 {
         }
         return count;
     }
+
+/**
+ * Keep a min heap and started at each row's start position.
+ * Since each of the rows and columns are sorted, it can be guaranteed this is the smallest element for each row.
+ * Each time, poll out the top of the heap and add the next element in current row to the heap.
+ * After k times, the top of the heap is required element.
+ *
+ * @param matrix given matrix
+ * @param k      kth smallest element
+ * @return kth smallest element in the sorted order
+ */
+public int kthSmallestMinHeap(int[][] matrix, int k) {
+    int m = matrix.length, n = matrix[0].length, out = -1;
+    PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o[0]));
+
+    for (int i = 0; i < m; i++) {
+        pq.add(new int[]{matrix[i][0], i, 0}); // line's start element, row #, column #
+    }
+
+    for (int i = 0; i < k; i++) {
+        int[] top = pq.poll();
+        int row = top[1], column = top[2];
+        out = top[0];
+        if (column + 1 < n) {
+            pq.offer(new int[]{matrix[row][column + 1], row, column + 1});
+        }
+    }
+
+    return out;
+}
 }
