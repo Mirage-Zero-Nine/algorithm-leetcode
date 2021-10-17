@@ -27,7 +27,7 @@ public class LengthOfLongestSubstringKDistinct_340 {
             return s.length();
         }
 
-        HashMap<Character, Integer> m = new HashMap<>();
+        HashMap<Character, Integer> m = new HashMap<>(); // count char frequency in the window
         int start = 0, count = 0, max = 0;
 
         for (int i = 0; i < s.length(); i++) {
