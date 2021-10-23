@@ -26,32 +26,33 @@ public class LevelOrder_102 {
      * @return level order traversal of its nodes' values
      */
     public List<List<Integer>> levelOrder(TreeNode root) {
-        List<List<Integer>> out = new ArrayList<>();
+        List<List<Integer>> output = new ArrayList<>();
 
         /* Corner case */
         if (root == null) {
-            return out;
+            return output;
         }
 
         Queue<TreeNode> q = new LinkedList<>();
         q.add(root);
+
         while (!q.isEmpty()) {
-            int size = q.size();        // current level size
-            List<Integer> cache = new ArrayList<>();
+            int size = q.size(); // size of current layer
+            List<Integer> currentLayer = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                TreeNode temp = q.poll();
-                if (temp != null) {
-                    cache.add(temp.val);
-                    if (temp.left != null) {
-                        q.add(temp.left);       // add child to queue
-                    }
-                    if (temp.right != null) {
-                        q.add(temp.right);      // add child to queue
-                    }
+                TreeNode currentNode = q.poll();
+                currentLayer.add(currentNode.val);
+                if (currentNode.left != null) {
+                    q.add(currentNode.left);
+                }
+                if (currentNode.right != null) {
+                    q.add(currentNode.right);
                 }
             }
-            out.add(new ArrayList<>(cache));
+
+            output.add(currentLayer);
         }
-        return out;
+
+        return output;
     }
 }
