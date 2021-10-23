@@ -22,7 +22,7 @@ public class MinDays_1482 {
     /**
      * Binary search to search the minimum waiting days.
      * The left bound is 1, right bound is the max possible value in array.
-     * Each time, try to find if current mid value can make m bouquets.
+     * Each time, try to find if current mid-value can make m bouquets.
      * To find the number of bouquets can be made in current array, simply traverse the array and count.
      *
      * @param bloomDay given array

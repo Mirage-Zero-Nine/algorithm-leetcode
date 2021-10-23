@@ -25,18 +25,19 @@ public class Search_704 {
             return -1;
         }
 
-        int l = 0, r = nums.length - 1;
+        int left = 0, right = nums.length - 1;
 
-        while (l <= r) {
-            int m = (l + r) >>> 1;      //  right shift 1 bit, equals divide 2
+        while (left <= right) {
+            int m = (left + right) >>> 1;      //  right shift 1 bit, equals divided by 2
             if (target == nums[m]) {
                 return m;
             } else if (target > nums[m]) {
-                l = m + 1;
+                left = m + 1;
             } else {
-                r = m - 1;
+                right = m - 1;
             }
         }
+
         return -1;
     }
 }
