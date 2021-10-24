@@ -17,7 +17,7 @@ public class NextPermutation_31 {
     /**
      * This problem is actually to find the next larger number based on given number.
      * Start at last digit of number, and find the increasing order of digits from right to left.
-     * The increasing order means this sequence is the largest number and no more larger can be found.
+     * The increasing order means this sequence is the largest number and no larger sequence can be found.
      * Find the minimum value in increasing array that is larger than left value next to increasing array.
      * Swap these two elements and reverse the increasing array.
      * The reason of reversing is that, the order of permutation is from small to large.
