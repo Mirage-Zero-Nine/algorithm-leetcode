@@ -58,6 +58,7 @@ public class SearchRange_34 {
     /**
      * Find the ending position of the range by implementing the binary search.
      * Note that when calculating mid, add one to the normal method since "/" will always round it to the smaller value.
+     * Therefore, need to add 1 to the mid.
      *
      * @param nums   given array
      * @param target target number
@@ -72,7 +73,6 @@ public class SearchRange_34 {
             } else {
                 left = mid;
             }
-
         }
 
         return nums[left] == target ? left : -1;
