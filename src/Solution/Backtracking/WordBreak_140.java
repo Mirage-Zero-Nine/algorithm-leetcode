@@ -34,33 +34,33 @@ public class WordBreak_140 {
      * Backtracking with hash map to store previous result.
      * Use hash map to store previous result to avoid TLE.
      *
-     * @param s   string
-     * @param dic given word dictionary
-     * @param m   hash map store previous result
+     * @param s    string
+     * @param dict given word dictionary
+     * @param map  hash map store previous result
      * @return all possible sentences
      */
-    private List<String> backtracking(String s, List<String> dic, HashMap<String, List<String>> m) {
+    private List<String> backtracking(String s, List<String> dict, HashMap<String, List<String>> map) {
 
-        if (m.containsKey(s)) {
-            return m.get(s);        // avoid duplication
+        if (map.containsKey(s)) {
+            return map.get(s);        // avoid duplication
         }
 
         List<String> out = new ArrayList<>();       // save all combination under current result
 
-        for (String w : dic) {
+        for (String word : dict) {
 
-            if (s.startsWith(w)) {
-                if (s.substring(w.length()).length() == 0) {
-                    out.add(w);     // if it is last word in given string
+            if (s.startsWith(word)) {
+                if (s.substring(word.length()).length() == 0) {
+                    out.add(word);     // if it is last word in given string
                 } else {
-                    for (String subWord : backtracking(s.substring(w.length()), dic, m)) {
-                        out.add(w + " " + subWord);     // find all words in substring and add to current result
+                    for (String substring : backtracking(s.substring(word.length()), dict, map)) {
+                        out.add(word + " " + substring);     // find all words in substring and add to current result
                     }
                 }
             }
         }
 
-        m.put(s, out);
+        map.put(s, out);
         return out;
     }
 

@@ -136,7 +136,7 @@ public class FindLadders_126 {
      * @param wordList  middle words
      * @return all shortest transformation sequence(s) from beginWord to endWord
      */
-    public List<List<String>> BFSWithMap(String beginWord, String endWord, List<String> wordList) {
+    public List<List<String>> findLaddersBFS(String beginWord, String endWord, List<String> wordList) {
 
         Set<String> wordSet = new HashSet<>(wordList);
 
@@ -145,48 +145,48 @@ public class FindLadders_126 {
             return new LinkedList<>();
         }
 
-        Queue<String> q = new LinkedList<>();
-        q.add(beginWord);
+        Queue<String> queue = new LinkedList<>();
+        queue.add(beginWord);
 
-        HashMap<String, List<List<String>>> m = new HashMap<>();
-        List<String> init = new LinkedList<>();
-        init.add(beginWord);
-        m.put(beginWord, new LinkedList<>());
-        m.get(beginWord).add(init);
+        HashMap<String, List<List<String>>> map = new HashMap<>();
+        List<String> list = new LinkedList<>(); // beginWord need to be included in path
+        list.add(beginWord);
+        map.put(beginWord, new LinkedList<>());
+        map.get(beginWord).add(list);
         boolean found = false;
 
-        while (!q.isEmpty() && !wordSet.isEmpty() && !found) {
-            int size = q.size();
-            HashSet<String> current = new HashSet<>();      // save current layer's visited word
+        while (!queue.isEmpty() && !wordSet.isEmpty() && !found) {
+            int size = queue.size();
+            HashSet<String> currentSet = new HashSet<>();      // save current layer's visited word
 
             for (int n = 0; n < size; n++) {
-                String word = q.poll();
-                List<List<String>> tmp = m.get(word);
-                for (int i = 0; i < word.length(); i++) {
-                    char[] arr = word.toCharArray();
+                String currentWord = queue.poll();
+                List<List<String>> tmp = map.get(currentWord);
+                for (int i = 0; i < currentWord.length(); i++) {
+                    char[] array = currentWord.toCharArray();
                     for (int j = 0; j < 26; j++) {
 
-                        arr[i] = (char) (j + 'a');
-                        String w = new String(arr);
-                        if (wordSet.contains(w) && !w.equals(word) && tmp != null) {
-                            q.add(w);
+                        array[i] = (char) (j + 'a');
+                        String word = new String(array);
+                        if (wordSet.contains(word) && !word.equals(currentWord) && tmp != null) {
+                            queue.add(word);
                             for (List<String> path : tmp) {
                                 List<String> next = new LinkedList<>(path);
-                                next.add(w);
-                                m.putIfAbsent(w, new LinkedList<>());
-                                m.get(w).add(next);
-                                current.add(w);
-                                found |= endWord.equals(w);
+                                next.add(word);
+                                map.putIfAbsent(word, new LinkedList<>());
+                                map.get(word).add(next);
+                                currentSet.add(word);
+                                found |= endWord.equals(word);
                             }
                         }
                     }
                 }
-                m.remove(word);
+                map.remove(currentWord);
             }
-            wordSet.removeAll(current);
+            wordSet.removeAll(currentSet);
         }
 
-        return m.getOrDefault(endWord, new LinkedList<>());
+        return map.getOrDefault(endWord, new LinkedList<>());
     }
 
     public static void main(String[] args) {

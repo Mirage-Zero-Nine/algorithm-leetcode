@@ -30,20 +30,24 @@ public class LadderLength_127 {
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
 
         /* Corner case */
-        if (wordList.size() == 0 || !wordList.contains(endWord)) {
+        if (beginWord == null || beginWord.length() == 0 || endWord == null || endWord.length() == 0 || wordList == null || wordList.size() == 0) {
             return 0;
         }
 
-        Queue<String> q = new LinkedList<>();
-        Set<String> s = new HashSet<>(wordList);
-        q.add(beginWord);
+        Queue<String> queue = new LinkedList<>();
+        Set<String> set = new HashSet<>(wordList);
+        if (!set.contains(endWord)) {
+            return 0;
+        }
+
+        queue.add(beginWord);
         int out = 1;
 
-        while (!q.isEmpty()) {
-            int size = q.size();
+        while (!queue.isEmpty()) {
+            int size = queue.size();
 
             for (int i = 0; i < size; i++) {
-                String current = q.remove();
+                String current = queue.remove();
 
                 if (current.equals(endWord)) {
                     return out;
@@ -55,9 +59,9 @@ public class LadderLength_127 {
                     for (char letter = 'a'; letter <= 'z'; letter++) {
                         arr[j] = letter;
                         String tmp = new String(arr);
-                        if (s.contains(tmp)) {
-                            q.offer(tmp);
-                            s.remove(tmp);
+                        if (set.contains(tmp)) {
+                            queue.add(tmp);
+                            set.remove(tmp);
                         }
                     }
                 }
