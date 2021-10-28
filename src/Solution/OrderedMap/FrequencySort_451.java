@@ -55,7 +55,6 @@ public class FrequencySort_451 {
      * @param s given string
      * @return string sorted in decreasing order based on the frequency of the characters
      */
-    @SuppressWarnings("unchecked")
     public String frequencySortBucketSort(String s) {
 
         /* Corner case */
@@ -69,20 +68,23 @@ public class FrequencySort_451 {
             map.put(current, map.getOrDefault(current, 0) + 1);
         }
 
-        List<Character>[] bucket = new List[s.length() + 1];
+        /*
+         * Java actually does not allow generic array.
+         * Replace it with ArrayList with fixed initial capacity, which is the same as generic array. */
+        List<List<Character>> bucket = new ArrayList<>(s.length() + 1);
+        for (int i = 0; i < s.length() + 1; i++) {
+            bucket.add(new ArrayList<>());
+        }
         for (Character c : map.keySet()) {
             int frequency = map.get(c);
-            if (bucket[frequency] == null) {
-                bucket[frequency] = new ArrayList<>();
-            }
-            bucket[frequency].add(c);
+            bucket.get(frequency).add(c);
         }
 
         StringBuilder sb = new StringBuilder();
 
-        for (int i = bucket.length - 1; i >= 0; i--) {
-            if (bucket[i] != null) {
-                List<Character> current = bucket[i];
+        for (int i = bucket.size() - 1; i >= 0; i--) {
+            if (bucket.get(i) != null) {
+                List<Character> current = bucket.get(i);
                 for (Character c : current) {
                     for (int j = 0; j < map.get(c); j++) {
                         sb.append(c);
@@ -97,5 +99,6 @@ public class FrequencySort_451 {
     public static void main(String[] args) {
         FrequencySort_451 frequencySort_451 = new FrequencySort_451();
         System.out.println(frequencySort_451.frequencySort("tree"));
+        System.out.println(frequencySort_451.frequencySortBucketSort("tree"));
     }
 }
