@@ -34,17 +34,10 @@ public class WordBreak_139 {
         HashSet<String> set = new HashSet<>(wordDict);
         boolean[] dp = new boolean[s.length() + 1];
         dp[0] = true;
-
         for (int i = 1; i < dp.length; i++) {
-            for (int j = i - 1; j >= 0 && !dp[i]; j--) {
-
-                /*
-                 * Split string into s(0, j) and s(j, i).
-                 * There are two conditions:
-                 * 1. (0, j) can be previously found in set
-                 * 2. s(j, i) can be found in set
-                 * Then s(0, i) can be divided. */
-                if (dp[j] && set.contains(s.substring(j, i))) {
+            for (int j = i - 1; j >= 0; j--) {
+                String tmp = s.substring(j, i);
+                if (dp[j] && set.contains(tmp)) {
                     dp[i] = true;
                     break;
                 }
