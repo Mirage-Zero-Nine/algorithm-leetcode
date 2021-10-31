@@ -10,7 +10,9 @@ import java.util.Queue;
 /**
  * Given an n-ary tree, return the level order traversal of its nodes' values.
  *
- * @author oliverzh
+ * @author BorisMirage
+ * Time: 2021/10/31 11:23
+ * Created with IntelliJ IDEA
  */
 
 public class LevelOrder_429 {
@@ -22,6 +24,8 @@ public class LevelOrder_429 {
      */
     public List<List<Integer>> levelOrder(Node root) {
         List<List<Integer>> output = new ArrayList<>();
+
+        /* Corner case */
         if (root == null) {
             return output;
         }
