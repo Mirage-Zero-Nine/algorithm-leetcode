@@ -22,30 +22,31 @@ public class TopKFrequent_347 {
      * @param k    k most frequent elements
      * @return k most frequent elements
      */
-    public List<Integer> heap(int[] nums, int k) {
-        List<Integer> out = new LinkedList<>();
-        HashMap<Integer, Integer> m = new HashMap<>();
+    @SuppressWarnings("ConstantConditions")
+    public int[] heap(int[] nums, int k) {
+        Map<Integer, Integer> m = new HashMap<>();
 
         for (int n : nums) {
             m.put(n, m.getOrDefault(n, 0) + 1);
         }
 
-        PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>(new Comparator<Map.Entry<Integer, Integer>>() {
+        PriorityQueue<Integer> pq = new PriorityQueue<>(new Comparator<Integer>() {
             @Override
-            public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
-                return o1.getValue() - o2.getValue();
+            public int compare(Integer o1, Integer o2) {
+                return m.get(o1) - m.get(o2); // min heap
             }
         });
 
-        for (Map.Entry<Integer, Integer> e : m.entrySet()) {
-            pq.add(e);
+        for (Integer n : m.keySet()) {
+            pq.add(n);
             if (pq.size() > k) {
                 pq.poll();
             }
         }
 
-        for (int i = 0; i < k; i++) {
-            out.add(pq.poll().getKey());
+        int[] out = new int[k];
+        for (int i = k - 1; i >= 0; i--) {
+            out[i] = pq.poll();
         }
 
         return out;
@@ -61,11 +62,10 @@ public class TopKFrequent_347 {
      * @param k    k most frequent elements
      * @return k most frequent elements
      */
-    public List<Integer> topKFrequent(int[] nums, int k) {
+    public int[] topKFrequent(int[] nums, int k) {
 
         Map<Integer, Integer> m = new HashMap<>();
         List<Integer>[] bucket = new List[nums.length + 1];     // index is the frequency, value is elements with this frequency
-        List<Integer> out = new ArrayList<>();
 
         for (int n : nums) {
             m.put(n, m.getOrDefault(n, 0) + 1);
@@ -78,10 +78,14 @@ public class TopKFrequent_347 {
             }
             bucket[frequency].add(key);
         }
+
+        int[] out = new int[k];
+        int index = 0;
         for (int pos = bucket.length - 1; pos >= 0; pos--) {
+
             if (bucket[pos] != null) {
-                for (int i = 0; i < bucket[pos].size() && out.size() < k; i++) {
-                    out.add(bucket[pos].get(i));
+                for (int i = 0; i < bucket[pos].size() && index < k; i++) {
+                    out[index++] = bucket[pos].get(i);
                 }
             }
         }
@@ -97,10 +101,9 @@ public class TopKFrequent_347 {
      * @param k    k most frequent elements
      * @return k most frequent elements
      */
-    public List<Integer> twoHashMap(int[] nums, int k) {
-        List<Integer> out = new LinkedList<>();
-
-        HashMap<Integer, Integer> m = new HashMap<>();     // save the key - frequency pair
+    public int[] twoHashMap(int[] nums, int k) {
+        int[] out = new int[k];
+        HashMap<Integer, Integer> m = new HashMap<>();     // number and its frequency
 
         for (int num : nums) {
             m.put(num, m.getOrDefault(num, 0) - 1);
@@ -110,7 +113,7 @@ public class TopKFrequent_347 {
         list.sort(Map.Entry.comparingByValue());       // sort map based on value instead of key
 
         for (int i = 0; i < k; i++) {
-            out.add(list.get(i).getKey());
+            out[i] = list.get(i).getKey();
         }
 
         return out;
@@ -120,6 +123,6 @@ public class TopKFrequent_347 {
         TopKFrequent_347 test = new TopKFrequent_347();
 
         // output should be [3,4,6,2,5]
-        System.out.println(test.twoHashMap(new int[]{1, 3, 5, 5, 6, 3, 4, 4, 6, 4, 2, 2, 3, 4, 5, 6, 7, 8, 9, 0, 6, 4, 3, 3, 1, 2}, 5));
+        System.out.println(Arrays.toString(test.twoHashMap(new int[]{1, 3, 5, 5, 6, 3, 4, 4, 6, 4, 2, 2, 3, 4, 5, 6, 7, 8, 9, 0, 6, 4, 3, 3, 1, 2}, 5)));
     }
 }
