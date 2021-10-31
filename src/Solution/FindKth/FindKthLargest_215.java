@@ -101,7 +101,7 @@ public class FindKthLargest_215 {
      * @param k    kth largest element
      * @return kth largest element in an unsorted array
      */
-    public int minHeap(int[] nums, int k) {
+    public int findKthLargestMinHeap(int[] nums, int k) {
 
         PriorityQueue<Integer> pq = new PriorityQueue<>();
 
