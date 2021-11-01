@@ -34,9 +34,9 @@ public class NumSubseq_1498 {
         }
 
         while (left <= right) {
-            if (nums[left] + nums[right] > target) {        // the largest value meets condition
+            if (nums[left] + nums[right] > target) {
                 right--;
-            } else {
+            } else {  // nums[left] + nums[right] <= target: the largest value meets condition
                 out = (out + powers[right - left++]) % mod;
             }
         }
