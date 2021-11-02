@@ -62,31 +62,27 @@ public class FrequencySort_451 {
             return s;
         }
 
-        HashMap<Character, Integer> map = new HashMap<>();
+        Map<Character, Integer> map = new HashMap<>();
         for (int i = 0; i < s.length(); i++) {
-            char current = s.charAt(i);
-            map.put(current, map.getOrDefault(current, 0) + 1);
+            int frequency = map.getOrDefault(s.charAt(i), -1) + 1;  // frequency started at 0 to align with bucket index
+            map.put(s.charAt(i), frequency);
         }
 
-        /*
-         * Java actually does not allow generic array.
-         * Replace it with ArrayList with fixed initial capacity, which is the same as generic array. */
-        List<List<Character>> bucket = new ArrayList<>(s.length() + 1);
-        for (int i = 0; i < s.length() + 1; i++) {
+        List<List<Character>> bucket = new ArrayList<>(s.length());
+        for (int i = 0; i < s.length(); i++) {
             bucket.add(new ArrayList<>());
         }
+
         for (Character c : map.keySet()) {
             int frequency = map.get(c);
             bucket.get(frequency).add(c);
         }
 
         StringBuilder sb = new StringBuilder();
-
         for (int i = bucket.size() - 1; i >= 0; i--) {
-            if (bucket.get(i) != null) {
-                List<Character> current = bucket.get(i);
-                for (Character c : current) {
-                    for (int j = 0; j < map.get(c); j++) {
+            if (bucket.get(i).size() > 0) {
+                for (Character c : bucket.get(i)) {
+                    for (int j = 0; j <= i; j++) {
                         sb.append(c);
                     }
                 }
