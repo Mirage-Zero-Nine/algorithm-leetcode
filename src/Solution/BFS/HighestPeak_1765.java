@@ -25,7 +25,7 @@ public class HighestPeak_1765 {
      * Implement BFS at each water point.
      * During BFS, at each point, all its neighbors' height is 1 higher than current point.
      *
-     * @param isWater given metrix
+     * @param isWater given matrix
      * @return integer matrix height of size m x n where height[i][j] is cell (i, j)'s height
      */
     public int[][] highestPeak(int[][] isWater) {
