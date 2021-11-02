@@ -138,45 +138,49 @@ public class FindLadders_126 {
      */
     public List<List<String>> findLaddersBFS(String beginWord, String endWord, List<String> wordList) {
 
-        Set<String> wordSet = new HashSet<>(wordList);
-
         /* Corner case */
-        if (wordList.size() == 0 || !wordList.contains(endWord)) {
+        if (wordList == null || wordList.size() == 0) {
             return new LinkedList<>();
         }
 
-        Queue<String> queue = new LinkedList<>();
-        queue.add(beginWord);
+        Set<String> wordSet = new HashSet<>(wordList);
+        if (!wordSet.contains(endWord)) {
+            return new ArrayList<>();
+        }
 
-        HashMap<String, List<List<String>>> map = new HashMap<>();
-        List<String> list = new LinkedList<>(); // beginWord need to be included in path
-        list.add(beginWord);
-        map.put(beginWord, new LinkedList<>());
-        map.get(beginWord).add(list);
-        boolean found = false;
+        Map<String, List<List<String>>> map = new HashMap<>(); // key: word; value: all the paths to this word
+        List<String> begin = new ArrayList<>();
+        begin.add(beginWord);
+        map.put(beginWord, new ArrayList<>());
+        map.get(beginWord).add(begin); // add initial path to the map: beginWord -> {{beginWord}}
 
-        while (!queue.isEmpty() && !wordSet.isEmpty() && !found) {
-            int size = queue.size();
-            HashSet<String> currentSet = new HashSet<>();      // save current layer's visited word
+        Queue<String> q = new LinkedList<>();
+        q.add(beginWord);
+        boolean isFound = false; // break BFS when the target word is found
 
-            for (int n = 0; n < size; n++) {
-                String currentWord = queue.poll();
-                List<List<String>> tmp = map.get(currentWord);
-                for (int i = 0; i < currentWord.length(); i++) {
+        while (!q.isEmpty() && !wordSet.isEmpty() && !isFound) {
+            int size = q.size();
+            Set<String> currentSet = new HashSet<>();
+
+            for (int i = 0; i < size; i++) { // iterate all the words in the queue
+                String currentWord = q.poll();
+                List<List<String>> previousPaths = map.get(currentWord); // get all the paths to current word
+
+                for (int j = 0; j < currentWord.length(); j++) {
                     char[] array = currentWord.toCharArray();
-                    for (int j = 0; j < 26; j++) {
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        array[j] = c;
+                        String nextWord = new String(array);
+                        isFound |= nextWord.equals(endWord);
 
-                        array[i] = (char) (j + 'a');
-                        String word = new String(array);
-                        if (wordSet.contains(word) && !word.equals(currentWord) && tmp != null) {
-                            queue.add(word);
-                            for (List<String> path : tmp) {
-                                List<String> next = new LinkedList<>(path);
-                                next.add(word);
-                                map.putIfAbsent(word, new LinkedList<>());
-                                map.get(word).add(next);
-                                currentSet.add(word);
-                                found |= endWord.equals(word);
+                        if (wordSet.contains(nextWord) && !nextWord.equals(currentWord) && previousPaths != null) {
+                            q.add(nextWord);
+                            map.putIfAbsent(nextWord, new ArrayList<>());
+                            currentSet.add(nextWord);
+                            for (List<String> list : previousPaths) { // append next available word to the end of each path
+                                List<String> newPath = new ArrayList<>(list);
+                                newPath.add(nextWord);
+                                map.get(nextWord).add(newPath);
                             }
                         }
                     }
@@ -186,7 +190,7 @@ public class FindLadders_126 {
             wordSet.removeAll(currentSet);
         }
 
-        return map.getOrDefault(endWord, new LinkedList<>());
+        return map.get(endWord) == null ? new ArrayList<>() : map.get(endWord);
     }
 
     public static void main(String[] args) {
