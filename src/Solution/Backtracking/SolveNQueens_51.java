@@ -24,7 +24,7 @@ public class SolveNQueens_51 {
      * @return list contains all solutions that distinct board configuration of the n-queens' placement
      */
     public List<List<String>> solveNQueens(int n) {
-        List<List<String>> res = new ArrayList<>();
+        List<List<String>> reoutput = new ArrayList<>();
         char[][] chessBoard = new char[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -32,26 +32,26 @@ public class SolveNQueens_51 {
             }
         }
 
-        backtracking(res, chessBoard, 0);
-        return res;
+        backtracking(reoutput, chessBoard, 0);
+        return reoutput;
     }
 
     /**
      * Use backtracking to traverse each possible place in chess board
      *
-     * @param res        result list
+     * @param output     result list
      * @param chessBoard char array that represent chess board
-     * @param c          column number of current position
+     * @param column     column number of current position
      */
-    private void backtracking(List<List<String>> res, char[][] chessBoard, int c) {
-        if (c == chessBoard.length) {
-            res.add(output(chessBoard));
+    private void backtracking(List<List<String>> output, char[][] chessBoard, int column) {
+        if (column == chessBoard.length) {
+            output.add(output(chessBoard));
         }
         for (int i = 0; i < chessBoard.length; i++) {
-            if (isValid(chessBoard, i, c)) {
-                chessBoard[i][c] = 'Q';
-                backtracking(res, chessBoard, c + 1);
-                chessBoard[i][c] = '.';
+            if (isValid(chessBoard, i, column)) {
+                chessBoard[i][column] = 'Q';
+                backtracking(output, chessBoard, column + 1);
+                chessBoard[i][column] = '.';
             }
         }
 

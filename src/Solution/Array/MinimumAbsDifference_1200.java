@@ -1,7 +1,7 @@
 package Solution.Array;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,21 +25,25 @@ public class MinimumAbsDifference_1200 {
      * @return all pairs of elements with the minimum absolute difference of any two elements
      */
     public List<List<Integer>> minimumAbsDifference(int[] arr) {
+
+        /* Corner case */
+        if (arr == null || arr.length == 0) {
+            return new LinkedList<>();
+        }
+
         Arrays.sort(arr);
-        int min = Integer.MAX_VALUE, n = arr.length;
+        List<List<Integer>> out = new LinkedList<>();
+        int min = Integer.MAX_VALUE;
 
-        List<List<Integer>> out = new ArrayList<>();
-
-        for (int i = 1; i < n; i++) {
-            if (Math.abs(arr[i - 1] - arr[i]) <= min) {
-                if (Math.abs(arr[i - 1] - arr[i]) < min) {
-                    out = new ArrayList<>();
-                    min = Math.abs(arr[i - 1] - arr[i]);
+        for (int i = 1; i < arr.length; i++) {
+            int diff = Math.abs(arr[i] - arr[i - 1]);
+            if (diff <= min) {
+                List<Integer> pair = Arrays.asList(arr[i-1], arr[i]);
+                if (diff != min) {
+                    out = new LinkedList<>();
                 }
-                List<Integer> tmp = new ArrayList<>();
-                tmp.add(arr[i - 1]);
-                tmp.add(arr[i]);
-                out.add(tmp);
+                out.add(pair);
+                min = diff;
             }
         }
 
