@@ -149,8 +149,9 @@ public class FindLadders_126 {
         }
 
         Map<String, List<List<String>>> map = new HashMap<>(); // key: word; value: all the paths to this word
-        List<String> begin = new ArrayList<>();
-        begin.add(beginWord);
+        List<String> begin = new ArrayList<String>(){{
+            add(beginWord);
+        }};
         map.put(beginWord, new ArrayList<>());
         map.get(beginWord).add(begin); // add initial path to the map: beginWord -> {{beginWord}}
 
