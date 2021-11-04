@@ -17,6 +17,7 @@ package Solution.Others;
 public class CountAndSay_38 {
     /**
      * nth sequence is based on (n - 1)th sequence.
+     * Simply "count" the number of consecutive digits, append the count and the digit itself to the nth sequence.
      *
      * @param n nth term
      * @return nth term of the count-and-say sequence
@@ -30,21 +31,19 @@ public class CountAndSay_38 {
 
         String out = "11";
 
-        for (int i = 2; i < n; i++) {
-
-            int count = 1;
-            StringBuilder round = new StringBuilder();
-
-            for (int j = 1; j < out.length(); j++) {        // next sequence is based on current sequence
-                if (out.charAt(j - 1) == out.charAt(j)) {
+        for (int i = 3; i <= n; i++) {
+            StringBuilder sb = new StringBuilder(); // build nth sequence based on (n - 1)th sequence
+            int count = 1; // count same digit
+            for (int j = 1; j < out.length(); j++) { // count (n - 1)th sequence to build nth sequence
+                if (out.charAt(j) == out.charAt(j - 1)) {
                     count++;
                 } else {
-                    round.append(count).append(out.charAt(j - 1));
+                    sb.append(count).append(out.charAt(j - 1));
                     count = 1;
                 }
             }
-            round.append(count).append(out.charAt(out.length() - 1));
-            out = round.toString();
+            sb.append(count).append(out.charAt(out.length() - 1));
+            out = sb.toString();
         }
 
         return out;
