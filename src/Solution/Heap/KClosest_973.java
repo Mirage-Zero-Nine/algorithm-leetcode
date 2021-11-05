@@ -15,29 +15,33 @@ import java.util.PriorityQueue;
 
 public class KClosest_973 {
     /**
-     * Use a heap to store K points
+     * Use a max heap to store K points
      *
      * @param points given points list
-     * @param K      K nearest points
+     * @param k      K nearest points
      * @return K closest points to the origin (0, 0)
      */
-    public int[][] kClosest(int[][] points, int K) {
+    public int[][] kClosest(int[][] points, int k) {
 
-        PriorityQueue<int[]> q = new PriorityQueue<>(K, new Comparator<int[]>() {
+        PriorityQueue<int[]> pq = new PriorityQueue<>(k, new Comparator<int[]>() { // {distance, index of point}
             public int compare(int[] a, int[] b) {
-                return a[0] - b[0];
+                return b[0] - a[0];  // max heap
             }
         });
 
         for (int i = 0; i < points.length; i++) {
-            q.add(new int[]{(int) Math.pow(points[i][0], 2) + (int) Math.pow(points[i][1], 2), i});
+            pq.add(new int[]{(int) Math.pow(points[i][0], 2) + (int) Math.pow(points[i][1], 2), i});
+            if (pq.size() > k) {
+                pq.poll();
+            }
         }
 
-        int[][] out = new int[K][2];
+        int[][] out = new int[k][2];
 
-        for (int i = 0; i < K; i++) {
-            out[i] = points[q.poll()[1]];
+        for (int i = 0; !pq.isEmpty() && i < k; i++) {
+            out[i] = points[pq.poll()[1]];
         }
+
         return out;
     }
 }

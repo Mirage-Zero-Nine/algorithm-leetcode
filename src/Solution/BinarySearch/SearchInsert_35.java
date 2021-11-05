@@ -14,6 +14,7 @@ public class SearchInsert_35 {
     /**
      * Binary search.
      * Find target, or next value larger than target.
+     * Note there are n + 1 positions for insertion (target is larger than max value in array).
      *
      * @param nums   input int array
      * @param target target int
@@ -26,7 +27,7 @@ public class SearchInsert_35 {
             return (target > nums[nums.length - 1]) ? nums.length : 0;
         }
 
-        int n = nums.length, left = 0, right = n;
+        int n = nums.length, left = 0, right = n; // there are n + 1 positions to insert (larger than max value in array)
 
         while (left < right) { // find target, or next value larger than target
             int mid = left + (right - left) / 2;
