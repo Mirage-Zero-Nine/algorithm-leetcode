@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implement the class SubrectangleQueries_1476 which receives a matrix of integers and supports two methods:
+ * Implement the class SubrectangleQueries which receives a matrix of integers and supports two methods:
  * 1. updateSubrectangle(int row1, int col1, int row2, int col2, int newValue)
  * Updates all values with newValue from upper left coordinate is (row1,col1) to bottom right coordinate is (row2,col2).
  * 2. getValue(int row, int col)
