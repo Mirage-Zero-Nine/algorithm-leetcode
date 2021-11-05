@@ -11,11 +11,15 @@ package Solution.TwoPointers;
 public class IsOneEditDistance_161 {
     /**
      * Two pointers. If the char that point at is different, the try to remove, replace or delete it.
+     * There are 2 cases:
+     * 1. If the 2 strings are having the same length, replace current char.
+     * 2. If the 2 strings are having different length, then delete or insert a char at current position.
+     * Insert and remove are actually same thing.
      * Replace: check the rest of string is same.
      * Remove: check the longer one after removing one char is equal to the other string.
      * Insert: check the shorter one is equal to the other one after adding a char.
      * Note that if two strings are equal, then they are not one edit distance.
-     * The replace/remove/insert should happened exact one time.
+     * The replace/remove/insert should happen in exact one time.
      *
      * @param s first string
      * @param t second string
@@ -30,11 +34,11 @@ public class IsOneEditDistance_161 {
 
         while (p1 < n1 && p2 < n2) {
             if (s.charAt(p1) != t.charAt(p2)) {
-                if (n1 == n2) {     // replace
+                if (n1 == n2) { // if the two strings are having the same length, replace it
                     return s.substring(p1 + 1).equals(t.substring(p2 + 1));
-                } else if (n1 > n2) {       // remove or insert
+                } else if (n1 > n2) { // if the first string is longer than second one, delete current char in first string
                     return t.equals(s.substring(0, p1) + s.substring(p1 + 1));
-                } else {                    // remove or insert
+                } else {
                     return s.equals(t.substring(0, p2) + t.substring(p2 + 1));
                 }
             }
