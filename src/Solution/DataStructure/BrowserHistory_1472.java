@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * You have a browser of one tab where you start on the homepage and you can visit another url, get back in the history number of steps or move forward in the history number of steps.
- * Implement the BrowserHistory_1472 class:
+ * Implement the BrowserHistory class:
  * 1. BrowserHistory_1472(string homepage) Initializes the object with the homepage of the browser.
  * 2. void visit(string url) visits url from the current page. It clears up all the forward history.
  * 3. string back(int steps) Move steps back in history.

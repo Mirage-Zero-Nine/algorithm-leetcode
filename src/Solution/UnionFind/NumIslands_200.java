@@ -65,7 +65,7 @@ public class NumIslands_200 {
     }
 
     /**
-     * Use union find to connect all nodes that are connected and count all islands.
+     * Implement union find to connect all nodes that are connected and count all islands.
      *
      * @param grid given grid
      * @return number of islands
