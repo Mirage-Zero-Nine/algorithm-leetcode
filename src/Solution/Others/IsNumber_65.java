@@ -9,13 +9,56 @@ package Solution.Others;
  */
 
 public class IsNumber_65 {
+
+    /**
+     * Straight forward solution.
+     * Trim the string first, then keep 3 boolean to check:
+     * 1. Is there a '.' before current position?
+     * 2. Is there a 'e' or 'E' before current position?
+     * 3. Is there a number before current position?
+     * Then check the string to see if it is valid.
+     *
+     * @param s given string
+     * @return is given string a valid number
+     */
+    public boolean isNumber(String s) {
+        s = s.trim();
+        boolean hasPoint = false;
+        boolean hasE = false;
+        boolean hasNumber = false;
+        for (int i = 0; i < s.length(); i++) {
+            if ('0' <= s.charAt(i) && s.charAt(i) <= '9') { // case 1: normal digit
+                hasNumber = true; // digit in given string
+            } else if (s.charAt(i) == '.') { // case 2: a point
+                if (hasE || hasPoint) { // '.' should not coming after e, and only one '.' is allowed in a valid number
+                    return false;
+                }
+                hasPoint = true;
+            } else if (s.charAt(i) == 'e' || s.charAt(i) == 'E') { // case 3: e
+                if (hasE || !hasNumber) { // only one e is allowed in a valid number, and e should come after digit
+                    return false;
+                }
+                hasE = true;
+                hasNumber = false; // there should be at least one digit after e
+            } else if (s.charAt(i) == '-' || s.charAt(i) == '+') { // case 4: -/+
+                if (i != 0 && s.charAt(i - 1) != 'e' && s.charAt(i) != 'E') {
+                    return false; // it could only be at first char in string, or immediate after an 'e'
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return hasNumber;
+    }
+
     /**
      * Regular expression.
      *
      * @param s given string
      * @return if the given string can be interpreted as a decimal number
      */
-    public boolean isNumber(String s) {
+    public boolean isNumberRegex(String s) {
         return (s != null) && s.trim().matches("[-+]?(\\d+\\.?|\\.\\d+)\\d*(e[-+]?\\d+)?");
     }
 
