@@ -1,6 +1,7 @@
 package Solution.DataStructure;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -16,12 +17,15 @@ import java.util.TreeMap;
  */
 
 public class TimeMap_981 {
-    private HashMap<String, TreeMap<Integer, String>> m = new HashMap<>();
+    private final HashMap<String, TreeMap<Integer, String>> map;
 
     /**
-     * Initialize of map.
+     * Keep a hash map.
+     * The key of hash map is the given key.
+     * The value of the hash map is a tree map that sorts all value under same key by timestamp.
      */
     public TimeMap_981() {
+        this.map = new HashMap<>();
     }
 
     /**
@@ -32,11 +36,8 @@ public class TimeMap_981 {
      * @param t given time stamp
      */
     public void set(String k, String v, int t) {
-        if (!m.containsKey(k)) {
-            m.put(k, new TreeMap<>());
-        }
-
-        m.get(k).put(t, v);
+        map.putIfAbsent(k, new TreeMap<>());
+        map.get(k).put(t, v);
     }
 
     /**
@@ -49,10 +50,10 @@ public class TimeMap_981 {
      * @return a value such that set(key, value, timestamp_prev) was called previously
      */
     public String get(String k, int t) {
-        if (!m.containsKey(k)) {
+        if (!map.containsKey(k)) {
             return "";
         }
-        HashMap.Entry<Integer, String> e = m.get(k).floorEntry(t);
+        Map.Entry<Integer, String> e = map.get(k).floorEntry(t);
         return (e == null) ? "" : e.getValue();
     }
 }
