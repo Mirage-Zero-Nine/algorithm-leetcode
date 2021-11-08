@@ -37,20 +37,17 @@ public class CanCompleteCircuit_134 {
             return -1;
         }
 
-        int totalCost = 0, currentSum = 0, start = 0; // assume start position is 0
-
-        for (int i = 0; i < gas.length; i++) {
-            int currentCost = gas[i] - cost[i]; // cost from previous station to current station
-            currentSum += currentCost;
-            if (currentSum < 0) { // if this station is not reachable, set start location to next position
-                totalCost += currentSum; // add cost from start to this position
+        int n = gas.length, totalCost = 0, currentCost = 0, start = 0;
+        for (int i = 0; i < n; i++) {
+            currentCost += gas[i] - cost[i]; // cost from previous station to current station
+            if (currentCost < 0) { // if this station is not reachable, set start location to next position
+                totalCost += currentCost; // add cost from start to this position
+                currentCost = 0;
                 start = i + 1;
-                currentSum = 0;
             }
         }
 
-        totalCost += currentSum;
-
-        return totalCost < 0 ? -1 : start;
+        totalCost += currentCost; // check if current gas in tank could cover previous cost
+        return totalCost >= 0 ? start : -1;
     }
 }
