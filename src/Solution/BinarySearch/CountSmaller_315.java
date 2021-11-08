@@ -94,7 +94,7 @@ public class CountSmaller_315 {
      * @param nums given array
      * @return smaller numbers after self
      */
-    private List<Integer> brutal(int[] nums) {
+    public List<Integer> brutal(int[] nums) {
         List<Integer> out = new LinkedList<>();
 
         if (nums.length == 0) {
