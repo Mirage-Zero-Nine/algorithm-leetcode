@@ -1,5 +1,7 @@
 package Solution.FindKth;
 
+import java.util.Arrays;
+
 /**
  * Given an unsorted array nums, reorder it such that nums[0] < nums[1] > nums[2] < nums[3]....
  *
@@ -9,24 +11,67 @@ package Solution.FindKth;
  */
 
 public class WiggleSort_324 {
+
+    /**
+     * Find the median of array first, then fill the array with the elements that:
+     * 1. Placing elements smaller than median to the last even slots.
+     * 2. Placing elements larger than median to the first odd slots.
+     * 3. Medians are put into the remaining slots.
+     *
+     * @param nums given array
+     */
     public void wiggleSort(int[] nums) {
+        int[] copy = Arrays.copyOf(nums, nums.length);
+        Arrays.sort(copy);
 
-        int median = findMedian(nums);
         int n = nums.length;
-        int left = 0, i = 0, right = n - 1;
-
-        while (i <= right) {
-
-            if (nums[newIndex(i, n)] > median) {
-                swap(nums, newIndex(left++, n), newIndex(i++, n));
-            } else if (nums[newIndex(i, n)] < median) {
-                swap(nums, newIndex(right--, n), newIndex(i, n));
-            } else {
-                i++;
+        int left = (n + 1) / 2 - 1; // index of median in array
+        int right = n - 1; // index of the largest element in array
+        for (int i = 0; i < nums.length; i++) {   // copy large values on odd indexes
+            if (i % 2 == 1) {
+                nums[i] = copy[right];
+                right--;
+            } else { // copy values decrementing from median on even indexes
+                nums[i] = copy[left];
+                left--;
             }
         }
     }
 
+    /**
+     * Find the median of array first, then fill the array with the elements that:
+     * 1. Placing elements smaller than median to the last even slots.
+     * 2. Placing elements larger than median to the first odd slots.
+     * 3. Medians are put into the remaining slots.
+     * Implemented the quick selection and the index mapping method to reduce space complexity from O(n) to O(1).
+     *
+     * @param nums given array
+     */
+    public void wiggleSortIndexMapping(int[] nums) {
+
+        int median = findMedian(nums); // find the median by implementing quick selection
+        int n = nums.length;
+        int left = 0, index = 0, right = n - 1;
+
+        while (index <= right) {
+
+            if (nums[newIndex(index, n)] > median) { // placing elements larger than median to the first odd slots.
+                swap(nums, newIndex(left++, n), newIndex(index++, n));
+            } else if (nums[newIndex(index, n)] < median) { // placing elements smaller than median to the last even slots.
+                swap(nums, newIndex(right--, n), newIndex(index, n));
+            } else {
+                index++;
+            }
+        }
+    }
+
+    /**
+     * Index mapping.
+     *
+     * @param index index in array
+     * @param n     length of the array
+     * @return mapped index in array
+     */
     private int newIndex(int index, int n) {
         return (1 + 2 * index) % (n | 1);
     }
@@ -78,6 +123,7 @@ public class WiggleSort_324 {
     private int partition(int[] array, int left, int right) {
         // Random r = new Random();
         // int pivotIndex = r.nextInt((right - left) + 1) + left;
+
         int pivotIndex = left + (right - left) / 2;
         int pivot = array[pivotIndex];
         swap(array, pivotIndex, right);     // swap elements to the end of range
