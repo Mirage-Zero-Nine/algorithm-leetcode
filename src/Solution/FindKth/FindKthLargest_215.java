@@ -54,31 +54,32 @@ public class FindKthLargest_215 {
      * Quick selection, make elements value between [0, leftBound] are all >= pivot.
      *
      * @param array given array
-     * @param left  left index
-     * @param right right index
+     * @param start start index
+     * @param end   end index
      * @return pivot position
      */
-    private int partition(int[] array, int left, int right) {
+    private int partition(int[] array, int start, int end) {
         // Random r = new Random();
         // int pivotIndex = r.nextInt((right - left) + 1) + left;
-
-        int pivotIndex = left + (right - left) / 2;
+        int pivotIndex = start + (end - start) / 2;
         int pivot = array[pivotIndex];
-        swap(array, pivotIndex, right);     // swap elements to the end of range
+        swap(array, pivotIndex, end);     // swap elements to the end of range
 
-        int leftBound = left;
-        int rightBound = right - 1;         // set right bound to right - 1 to exclude pivot
-        while (leftBound <= rightBound) {
-            if (array[leftBound] >= pivot) {
-                leftBound++;
-            } else if (array[rightBound] < pivot) {
-                rightBound--;
+        int left = start;
+        int right = end - 1;         // set right bound to right - 1 to exclude pivot
+
+        while (left <= right) {
+            if (array[left] >= pivot) {
+                left++;
+            } else if (array[right] < pivot) {
+                right--;
             } else {
-                swap(array, leftBound++, rightBound--);
+                swap(array, left++, right--);
             }
         }
-        swap(array, leftBound, right);
-        return leftBound;
+
+        swap(array, left, end);
+        return left;
     }
 
     /**
@@ -117,6 +118,7 @@ public class FindKthLargest_215 {
 
     public static void main(String[] args) {
         FindKthLargest_215 test = new FindKthLargest_215();
+        System.out.println(test.findKthLargest(new int[]{3, 2, 1, 5, 6, 4}, 2));
         System.out.println(test.findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));
         System.out.println(test.findKthLargest(new int[]{3, 2, 1, 5, 6, 4}, 2));
         System.out.println(test.findKthLargest(new int[]{5, 2, 4, 1, 3, 6, 0}, 4));
