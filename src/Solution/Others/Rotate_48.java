@@ -16,11 +16,9 @@ package Solution.Others;
 
 public class Rotate_48 {
     /**
-     * <p>
      * Rotate image in clockwise:
      * 1. Flip each row along with mid row of matrix (matrix.length / 2).
      * 2. Flip each element along with diagonal from up-left to down-right.
-     * <p>
      * Rotate image in anti-clockwise:
      * 1. Flip each column along with mid column of matrix (matrix[0].length / 2).
      * 2. Flip each element along with diagonal from up-left to down-right.

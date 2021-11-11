@@ -17,15 +17,15 @@ public class GetRow_119 {
      * @return kth index row of the Pascal's triangle.
      */
     public List<Integer> getRow(int rowIndex) {
-        List<Integer> res = new ArrayList<>();
-        res.add(1);
+        List<Integer> output = new ArrayList<>();
+        output.add(1);
         for (int i = 0; i < rowIndex; i++) {
-            for (int j = 0; j < res.size() - 1; j++) {
-                res.set(j, res.get(j) + res.get(j + 1));
+            for (int j = 0; j < output.size() - 1; j++) {
+                output.set(j, output.get(j) + output.get(j + 1));
             }
-            res.add(0, 1);
+            output.add(0, 1);
         }
-        return res;
+        return output;
     }
 
     public static void main(String[] args) {

@@ -12,8 +12,7 @@ public class ZigZagConversion_6 {
     /**
      * Base on zig zag division, input string can be divided into blocks based on index.
      * Blocks that contains chars that placed in same column and place in same diagonal.
-     * For instance, string = "abcdefghijk", numRows = 4,
-     * then string can be divided into abcd|ef|ghij|k
+     * For instance, string = "abcdefghijk", numRows = 4, then string can be divided into abcd|ef|ghij|k
      * These blocks' indexes reflect to represented row, which is the output basis.
      *
      * @param s       input string

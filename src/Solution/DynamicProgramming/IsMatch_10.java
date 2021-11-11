@@ -43,10 +43,10 @@ public class IsMatch_10 {
         int patternLength = p.length();
 
         boolean[][] dp = new boolean[stringLength + 1][patternLength + 1];
-        dp[0][0] = true; // base case, also could be regarded as "null is a match"
+        dp[0][0] = true; // base case, also could be regarded as "null" is a match
         for (int i = 1; i <= patternLength; i++) {
-            if (p.charAt(i - 1) == '*') {
-                dp[0][i] = dp[0][i - 2];        // for the case of pattern starts with .*
+            if (p.charAt(i - 1) == '*') { // if a pattern starts with a char and a *, for example, b*
+                dp[0][i] = dp[0][i - 2];  // then the "b*" could match an empty string
             }
         }
 

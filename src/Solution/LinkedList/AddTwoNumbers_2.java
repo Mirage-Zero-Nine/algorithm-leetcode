@@ -64,7 +64,7 @@ public class AddTwoNumbers_2 {
      * @return result in ListNode
      */
     public ListNode addTwoNumbersRecursion(ListNode l1, ListNode l2) {
-        return helper(l1, l2, 0);
+        return addTwoNumbersRecursion(l1, l2, 0);
     }
 
     /**
@@ -76,7 +76,7 @@ public class AddTwoNumbers_2 {
      * @param carry carry from previous sum
      * @return sum of two nodes
      */
-    private ListNode helper(ListNode n1, ListNode n2, int carry) {
+    private ListNode addTwoNumbersRecursion(ListNode n1, ListNode n2, int carry) {
 
         /* Corner case and end point */
         if (n1 == null && n2 == null && carry == 0) {
@@ -91,7 +91,7 @@ public class AddTwoNumbers_2 {
         }
 
         ListNode current = new ListNode(carry % 10);        // create a node to store this digit
-        current.next = helper((n1 == null) ? null : n1.next, (n2 == null) ? null : n2.next, carry / 10);
+        current.next = addTwoNumbersRecursion((n1 == null) ? null : n1.next, (n2 == null) ? null : n2.next, carry / 10);
 
         return current;
     }
