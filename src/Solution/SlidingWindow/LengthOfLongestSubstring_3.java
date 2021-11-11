@@ -12,11 +12,12 @@ import java.util.HashMap;
 
 public class LengthOfLongestSubstring_3 {
     /**
-     * Sliding window problem.
-     * The beginning of sliding window should be the next index of last duplicated character.
-     * Each time, right pointer is trying to enlarge window size by one.
-     * If it contains a duplicated char, then the left bound should be set to the largest index without duplicated char.
-     * The largest index of current char is saved in map, and the window without duplicated one should be next of it.
+     * Sliding window. Keep a hash map to store the char-index pair.
+     * The beginning of window is the earliest non-duplicated char in string.
+     * If there is a char found in map, check the last appearance.
+     * If the last appearance is in current substring, then set the start position to the next of duplicated char.
+     * This excluded counting duplicated char to substring.
+     * Otherwise, the duplicated char is outside the substring, do nothing.
      *
      * @param s input string
      * @return max sub-string length
@@ -29,27 +30,29 @@ public class LengthOfLongestSubstring_3 {
         }
 
         HashMap<Character, Integer> m = new HashMap<>();
-        int last = -1;      // index of latest duplicated character
-        int max = 0;
-
+        int lastNonDuplicatedChar = 0, maxWindow = 1;
         for (int i = 0; i < s.length(); i++) {
-            if (m.containsKey(s.charAt(i))) {       // if current char is duplicated
-                last = Math.max(last, m.get(s.charAt(i)));      // update sliding window to later one of duplicated char
+            if (m.containsKey(s.charAt(i))) {
+                /*
+                 * If there is a duplicated char, then the start position depends on the duplicated char position.
+                 * If the last appearance of it is in current substring, set start to the next position of duplicated char.
+                 * Otherwise, there is no impact for current substring. */
+                lastNonDuplicatedChar = Math.max(lastNonDuplicatedChar, m.get(s.charAt(i)) + 1);
             }
-
+            maxWindow = Math.max(i - lastNonDuplicatedChar + 1, maxWindow);
             m.put(s.charAt(i), i);
-            max = Math.max(i - last, max);
         }
 
-        return max;
+        return maxWindow;
     }
 
     public static void main(String[] args) {
         LengthOfLongestSubstring_3 test = new LengthOfLongestSubstring_3();
         System.out.println(test.lengthOfLongestSubstring("abcabcbb"));       // 3
         System.out.println(test.lengthOfLongestSubstring("tmmzuxt"));       // 5
-        System.out.println(test.lengthOfLongestSubstring("a"));
+        System.out.println(test.lengthOfLongestSubstring("a"));         // 1
         System.out.println(test.lengthOfLongestSubstring("dvdf"));      // 3
+        System.out.println(test.lengthOfLongestSubstring("cdd"));      // 2
     }
 }
 
