@@ -1,6 +1,8 @@
 package Solution.TwoPointers;
 
-import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Write a function that takes a string as input and reverse only the vowels of a string.
@@ -24,11 +26,11 @@ public class ReverseVowels_345 {
             return s;
         }
 
-        String v = "aeiouAEIOU";
-        HashSet<Character> vowel = new HashSet<>();
-        for (int i = 0; i < v.length(); i++) {
-            vowel.add(v.charAt(i));
-        }
+        char[] v = "aeiouAEIOU".toCharArray();
+        Set<Character> vowel = IntStream
+                .range(0, v.length)
+                .mapToObj(i -> v[i])
+                .collect(Collectors.toSet());
 
         char[] arr = s.toCharArray();
         int left = 0, right = s.length() - 1;

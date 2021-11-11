@@ -59,9 +59,9 @@ public class RemoveInterval_1272 {
      * @param j   right boundary of interval
      */
     private void helper(List<List<Integer>> out, int i, int j) {
-        List<Integer> l = new LinkedList<>();
-        l.add(i);
-        l.add(j);
-        out.add(l);
+        out.add(new LinkedList<Integer>() {{
+            add(i);
+            add(j);
+        }});
     }
 }
