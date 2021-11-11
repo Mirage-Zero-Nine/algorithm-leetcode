@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 public class NumSmallerByFrequency_1170 {
     /**
-     * Use binary search to find how many string in words has higher score.
+     * Use binary search to find how many strings in words has higher score.
      *
      * @param queries given queries
      * @param words   given words
@@ -23,14 +23,16 @@ public class NumSmallerByFrequency_1170 {
      */
     public int[] numSmallerByFrequency(String[] queries, String[] words) {
         int[] q = new int[queries.length], w = new int[words.length];
+
         for (int i = 0; i < q.length; i++) {
             q[i] = countScore(queries[i]);
         }
         for (int i = 0; i < w.length; i++) {
             w[i] = countScore(words[i]);
         }
+
         Arrays.sort(w);
-        int[] ans = new int[q.length];
+        int[] out = new int[q.length];
         for (int i = 0; i < q.length; i++) {
             int l = 0, r = w.length - 1;
             while (l <= r) {
@@ -41,9 +43,9 @@ public class NumSmallerByFrequency_1170 {
                     r = mid - 1;
                 }
             }
-            ans[i] = w.length - l;
+            out[i] = w.length - l;
         }
-        return ans;
+        return out;
     }
 
     /**
@@ -54,11 +56,13 @@ public class NumSmallerByFrequency_1170 {
      */
     private int countScore(String str) {
         int[] arr = new int[26];
-        for (char ch : str.toCharArray())
+        for (char ch : str.toCharArray()) {
             arr[ch - 'a']++;
+        }
         for (int i = 0; i < 26; i++) {
-            if (arr[i] != 0)
+            if (arr[i] != 0) {
                 return arr[i];
+            }
         }
         return 0;
     }

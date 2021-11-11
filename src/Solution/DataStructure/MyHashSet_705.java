@@ -1,5 +1,6 @@
 package Solution.DataStructure;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,8 +21,8 @@ import java.util.List;
  */
 
 public class MyHashSet_705 {
-    LinkedList<Integer>[] arr;
-    int MAX_SIZE = 256;
+    List<Integer>[] arr;
+    int MAX_SIZE = 256; // set initial max capacity to 256
     int size;
 
     /**
@@ -45,7 +46,7 @@ public class MyHashSet_705 {
             arr[index] = new LinkedList<>();
         }
 
-        LinkedList<Integer> tmp = arr[index];
+        List<Integer> tmp = arr[index];
 
         for (int i : tmp) {
             if (i == key) {
@@ -80,11 +81,11 @@ public class MyHashSet_705 {
     }
 
     /**
-     * Rehashing to make hash set more balanced.
+     * Rehashing when total elements are more than 75% of total capacity to make hash set more balanced.
      */
     private void rehashing() {
         MAX_SIZE *= 2;
-        LinkedList<Integer>[] newArr = new LinkedList[MAX_SIZE];
+        List<Integer>[] newArr = new LinkedList[MAX_SIZE];
 
         for (List<Integer> l : arr) {
             if (l != null) {
