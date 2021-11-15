@@ -18,7 +18,7 @@ public class FindTarget_653 {
 
     /**
      * DFS searching and use set to store previously visited value.
-     * If find a correct value, return true.
+     * If a correct value was found, return true.
      * Note that this method is obviously faster than using stack.
      *
      * @param root root node

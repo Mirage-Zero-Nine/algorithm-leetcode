@@ -64,11 +64,8 @@ public class MostVisitedPattern_1152 {
                 }
             }
         }
-        String[] arr = maxSequence.split(",");
-        List<String> res = new ArrayList<>();
-        Collections.addAll(res, arr);
 
-        return res;
+        return new ArrayList<>(Arrays.asList(maxSequence.split(",")));
     }
 
     private Set<String> subsequence(List<String> list) {

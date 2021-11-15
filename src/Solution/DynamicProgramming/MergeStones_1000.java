@@ -20,7 +20,7 @@ public class MergeStones_1000 {
      * stones[i] ~ stones[j] will merge as much as possible.
      * State transition:
      * dp[i][j] = min(dp[i][j], dp[i][m] + dp[m+1][j])
-     * if((j - i) % (K - 1) == 0), then stone(i) to stone(j) is mergeable, add merge value to dp[i][j].
+     * if (j - i) % (K - 1) == 0, then stone(i) to stone(j) can be merged, add merge value to dp[i][j].
      *
      * @param stones given stones array
      * @param K      each move merging exactly K consecutive piles into one pile

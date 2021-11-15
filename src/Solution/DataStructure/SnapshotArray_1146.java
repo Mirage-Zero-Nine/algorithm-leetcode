@@ -21,7 +21,7 @@ public class SnapshotArray_1146 {
     private int id = 0;
 
     /**
-     * Use two hash map as snapshot.
+     * Use two hash maps as snapshot.
      *
      * @param length given length
      */

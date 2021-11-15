@@ -33,7 +33,7 @@ public class TrapRainWater_407 {
             return 0;
         }
 
-        PriorityQueue<Cell> queue = new PriorityQueue<>(1);     // use heap instead of queue
+        PriorityQueue<Cell> pq = new PriorityQueue<>(1);     // use heap instead of queue
 
         int r = heightMap.length;
         int c = heightMap[0].length;
@@ -43,21 +43,21 @@ public class TrapRainWater_407 {
         for (int i = 0; i < r; i++) {
             visited[i][0] = true;
             visited[i][c - 1] = true;
-            queue.offer(new Cell(i, 0, heightMap[i][0]));
-            queue.offer(new Cell(i, c - 1, heightMap[i][c - 1]));
+            pq.offer(new Cell(i, 0, heightMap[i][0]));
+            pq.offer(new Cell(i, c - 1, heightMap[i][c - 1]));
         }
         for (int i = 0; i < c; i++) {
             visited[0][i] = true;
             visited[r - 1][i] = true;
-            queue.offer(new Cell(0, i, heightMap[0][i]));
-            queue.offer(new Cell(r - 1, i, heightMap[r - 1][i]));
+            pq.offer(new Cell(0, i, heightMap[0][i]));
+            pq.offer(new Cell(r - 1, i, heightMap[r - 1][i]));
         }
 
         int[][] xy = new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
         int max = 0;
 
-        while (!queue.isEmpty()) {
-            Cell cell = queue.poll();       // obtain shortest cell in queue
+        while (!pq.isEmpty()) {
+            Cell cell = pq.poll();       // obtain shortest cell in queue
 
             for (int[] coord : xy) {        // BFS to find all neighbor
                 int newRow = cell.row + coord[0];
@@ -65,13 +65,16 @@ public class TrapRainWater_407 {
                 if (newRow > 0 && newRow < r && newCol > 0 && newCol < c && !visited[newRow][newCol]) {
                     visited[newRow][newCol] = true;
                     max += Math.max(0, cell.height - heightMap[newRow][newCol]);
-                    queue.offer(new Cell(newRow, newCol, Math.max(heightMap[newRow][newCol], cell.height)));
+                    pq.offer(new Cell(newRow, newCol, Math.max(heightMap[newRow][newCol], cell.height)));
                 }
             }
         }
         return max;
     }
 
+    /**
+     * Cell class with override comparator.
+     */
     static class Cell implements Comparable<Cell> {
         int row, col, height;
 
