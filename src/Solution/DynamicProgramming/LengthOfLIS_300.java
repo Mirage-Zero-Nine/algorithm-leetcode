@@ -1,7 +1,7 @@
 package Solution.DynamicProgramming;
 
 /**
- * Given an unsorted array of integers, find the length of longest increasing sub sequence.
+ * Given an unsorted array of integers, find the length of longest increasing subsequence.
  *
  * @author BorisMirage
  * Time: 2019/06/23 14:42

@@ -13,6 +13,8 @@ import java.util.List;
 
 public class GetRow_119 {
     /**
+     * Iteratively update the array from the end to the beginning.
+     *
      * @param rowIndex kth index
      * @return kth index row of the Pascal's triangle.
      */

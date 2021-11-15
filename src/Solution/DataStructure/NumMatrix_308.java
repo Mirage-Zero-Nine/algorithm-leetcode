@@ -10,14 +10,14 @@ package Solution.DataStructure;
  * Created with IntelliJ IDEA
  */
 
-class NumMatrix_308 {
+public class NumMatrix_308 {
 
     private SegmentTree2D root;             // root node
     private int ROW = 0, COLUMN = 0;        // total row and column in matrix
     private int[][] matrix;                 // given matrix
 
     /**
-     * Use a 2D segment tree to create the range sum.
+     * Implement a 2D segment tree to create the range sum.
      * Update unit value by traverse to bottom of tree.
      * Find range sum by collect all range sum that is within given range.
      *

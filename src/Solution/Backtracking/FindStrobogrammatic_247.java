@@ -16,7 +16,7 @@ import java.util.List;
 
 public class FindStrobogrammatic_247 {
     /**
-     * Use recursion to find all combination.
+     * Backtracking to find all the combinations.
      *
      * @param n given n
      * @return all strobogrammatic number
@@ -35,29 +35,31 @@ public class FindStrobogrammatic_247 {
     private List<String> recursion(int c, int n) {
 
         /* For even n */
-        if (c == 0) return new ArrayList<>(Collections.singletonList(""));
+        if (c == 0) {
+            return new ArrayList<>(Collections.singletonList(""));
+        }
 
         /* For odd n */
-        if (c == 1) return new ArrayList<>(Arrays.asList("0", "1", "8"));
+        if (c == 1) {
+            return new ArrayList<>(Arrays.asList("0", "1", "8"));
+        }
 
         List<String> l = recursion(c - 2, n);
-
-        /* This list is individual in each recursion, so create a new list for avoiding invalid result */
-        List<String> res = new ArrayList<>();
+        List<String> output = new ArrayList<>();
 
         for (String s : l) {
 
-            /* As result output string center */
-            /* "0" is invalid when it is put in first and last */
+            /* As result output string center
+             * "0" is invalid when it is put in first and last */
             if (c != n) {
-                res.add("0" + s + "0");
+                output.add("0" + s + "0");
             }
 
-            res.add("1" + s + "1");
-            res.add("6" + s + "9");
-            res.add("8" + s + "8");
-            res.add("9" + s + "6");
+            output.add("1" + s + "1");
+            output.add("6" + s + "9");
+            output.add("8" + s + "8");
+            output.add("9" + s + "6");
         }
-        return res;
+        return output;
     }
 }

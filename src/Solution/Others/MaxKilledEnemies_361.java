@@ -13,7 +13,7 @@ package Solution.Others;
 
 public class MaxKilledEnemies_361 {
     /**
-     * Traverse whole array and use a counter and a array to record each row and column's max.
+     * Traverse whole array and use a counter and an array to record each row and column's max.
      *
      * @param grid given 2D array
      * @return max E can be removed
