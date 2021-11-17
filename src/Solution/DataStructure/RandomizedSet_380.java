@@ -1,8 +1,6 @@
 package Solution.DataStructure;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Design a data structure that supports all following operations in average O(1) time.
@@ -17,8 +15,8 @@ import java.util.HashMap;
  */
 
 public class RandomizedSet_380 {
-    private HashMap<Integer, Integer> location;     // key: val, val: location
-    private ArrayList<Integer> list;
+    private final Map<Integer, Integer> map;  // val-index pair
+    private final List<Integer> list;         // stores all the values
 
     /**
      * Initialize data structure.
@@ -26,8 +24,8 @@ public class RandomizedSet_380 {
      * And a array list to store value, the index of each value is store in hash map for O(1) access.
      */
     public RandomizedSet_380() {
-        location = new HashMap<>();
-        list = new ArrayList<>();
+        map = new HashMap<>();
+        list = new ArrayList<>(); // ArrayList to guarantee O(1) get
     }
 
     /**
@@ -38,10 +36,10 @@ public class RandomizedSet_380 {
      * @return true if val is not in collection, false otherwise
      */
     public boolean insert(int val) {
-        if (location.containsKey(val)) {
+        if (map.containsKey(val)) {
             return false;
         }
-        location.put(val, list.size());
+        map.put(val, list.size()); // put element to the last of the list
         list.add(val);
         return true;
     }
@@ -49,26 +47,23 @@ public class RandomizedSet_380 {
     /**
      * Removes a value from the set. Returns true if the set contained the specified element.
      * First, obtain the location of removing element in map.
-     * If value is in the last of array, direct remove it.
-     * Otherwise, replace the remove location with last element of list, and then remove the last element in array.
+     * Replace the remove location with last element of list, and then remove the last element in array.
      * Update the new index of replaced element in hash map.
      *
      * @param val remove val
      * @return true if the collection contained the specified element, false otherwise
      */
     public boolean remove(int val) {
-
-        if (!location.containsKey(val)) {
+        if (!map.containsKey(val)) {
             return false;
         }
-        int loc = location.get(val);
-        if (loc < list.size()) {
-            int last = list.get(list.size() - 1);
-            Collections.swap(list, loc, list.size() - 1);
-            location.put(last, loc);
-            list.remove(list.size() - 1);
-            location.remove(val);
-        }
+        int index = map.get(val); // index of value need to be removed
+        int lastElement = list.get(list.size() - 1); // last element in the list
+        Collections.swap(list, index, list.size() - 1); // swap the item to be removed and the last element in list
+        map.put(lastElement, index); // update the new index of previous last element in list
+        list.remove(list.size() - 1);
+        map.remove(val);
+
         return true;
     }
 

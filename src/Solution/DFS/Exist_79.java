@@ -13,8 +13,9 @@ package Solution.DFS;
 
 public class Exist_79 {
     /**
-     * DFS.
+     * Backtracking.
      * Start from first char in word, then find adjacent cell until current cell is unavailable or all char was found.
+     * Time complexity: O(m * n * 4^s).
      *
      * @param board input 2D char board
      * @param word  input word string
@@ -46,13 +47,13 @@ public class Exist_79 {
      */
     private boolean dfs(char[][] board, String word, int i, int j, int l) {
 
-        /* Check coord availability */
+        /* Check availability */
         if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] != word.charAt(l)) {
             return false;
         }
 
         if (l == word.length() - 1 && board[i][j] == word.charAt(l)) {
-            return true;        // end point
+            return true; // at the end of the string
         }
 
         char temp = board[i][j];

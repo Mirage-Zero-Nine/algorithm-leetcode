@@ -32,52 +32,42 @@ public class FindOrder_210 {
             return new int[]{};
         }
 
-        HashMap<Integer, List<Integer>> m = new HashMap<>();        // prerequisite - course pair
+        Map<Integer, List<Integer>> m = new HashMap<>();        // prerequisite - course pair
         int[] indegree = new int[numCourses];
         Queue<Integer> q = new LinkedList<>();
 
         for (int[] arr : prerequisites) {
             indegree[arr[0]]++;
             if (!m.containsKey(arr[1])) {
-                m.put(arr[1], new LinkedList<>());
+                m.put(arr[1], new ArrayList<>());
             }
             m.get(arr[1]).add(arr[0]);
         }
 
-        LinkedList<Integer> out = new LinkedList<>();
+        List<Integer> out = new ArrayList<>();
 
         for (int i = 0; i < indegree.length; i++) {
             if (indegree[i] == 0) {
-                q.add(i);       // find nodes with 0 indegree
+                q.add(i);       // find nodes with 0 indegree, which should be the first course to take
                 out.add(i);
             }
         }
 
-        int count = 0;      // count total reachable nodes
         while (!q.isEmpty()) {
-
-            int course = q.poll();
-            count++;
-
-            /* Remove the connections with nodes that indegree is 0 (indegree - 1) */
-            for (int i = 0; m.get(course) != null && i < m.get(course).size(); i++) {     // avoid Null pointer when reaches end of graph
-
-                if (--indegree[m.get(course).get(i)] == 0) {
-                    q.add(m.get(course).get(i));        // add 0 indegree node after removing
-                    out.add(m.get(course).get(i));
+            int current = q.poll();
+            if (m.containsKey(current)) {
+                List<Integer> nextCourses = m.get(current);
+                for (Integer nextCourse : nextCourses) {
+                    if (--indegree[nextCourse] == 0) { // if the next course's indegree is 0, then it's available
+                        q.add(nextCourse);             // add to the queue and find its children class
+                        out.add(nextCourse);           // also add to output
+                    }
                 }
             }
         }
 
-        if (count == numCourses) {
-            int[] res = new int[out.size()];
-
-            for (int i = 0; i < out.size(); i++) {
-                res[i] = out.get(i);
-            }
-
-            return res;
-        }
-        return new int[0];
+        return out.size() == numCourses ? out.stream() // if the number of available course equals to the total course, return the list
+                .mapToInt(Integer::intValue)
+                .toArray() : new int[0];
     }
 }

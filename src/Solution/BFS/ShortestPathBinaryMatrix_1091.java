@@ -4,13 +4,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * In an N by N square grid, each cell is either empty (0) or blocked (1).
- * A clear path from top-left to bottom-right has length k if and only if it is composed of cells C_1, C_2, ..., C_k such that:
- * Adjacent cells C_i and C_{i+1} are connected 8-directionally (ie., they are different and share an edge or corner)
- * C_1 is at location (0, 0) (ie. has value grid[0][0])
- * C_k is at location (N-1, N-1) (ie. has value grid[N-1][N-1])
- * If C_i is located at (r, c), then grid[r][c] is empty (ie. grid[r][c] == 0).
- * Return the length of the shortest such clear path from top-left to bottom-right.  If such a path does not exist, return -1.
+ * Given an n x n binary matrix grid, return the length of the shortest clear path in the matrix.
+ * If there is no clear path, return -1.
+ * A clear path in a binary matrix is a path from the top-left cell (i.e., (0, 0)) to the bottom-right cell (i.e., (n - 1, n - 1)) such that:
+ * 1. All the visited cells of the path are 0.
+ * 2. All the adjacent cells of the path are 8-directionally connected (i.e., they are different and they share an edge or a corner).
+ * The length of a clear path is the number of visited cells of this path.
  *
  * @author BorisMirage
  * Time: 2019/07/17 12:45
@@ -18,7 +17,8 @@ import java.util.Queue;
  */
 public class ShortestPathBinaryMatrix_1091 {
     /**
-     * The start location and end location is fixed, and the direction is fixed. Hence, use BFS instead of DFS.
+     * Implement BFS to find the shortest path in matrix.
+     * Each time, add all available neighbors to the queue.
      *
      * @param grid given grid
      * @return shortest path length
@@ -27,40 +27,40 @@ public class ShortestPathBinaryMatrix_1091 {
 
         int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, -1}, {-1, 1}, {-1, -1}, {1, 1}};
 
+        /* Corner case */
         if (grid[0][0] == 1 || grid[grid.length - 1][grid.length - 1] == 1) {
             return -1;
         }
 
+        int m = grid.length;
         boolean[][] visited = new boolean[grid.length][grid.length];
         visited[0][0] = true;
-        Queue<int[]> queue = new LinkedList<>();
-        queue.add(new int[]{0, 0});
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[]{0, 0});
 
-        int ans = 0;
+        int length = 0;
 
-        while (!queue.isEmpty()) {
-            int size = queue.size();
+        while (!q.isEmpty()) {
+            int size = q.size();
+            while (size-- > 0) {
+                int[] current = q.poll();
 
-            for (int i = 0; i < size; i++) {
-
-                int[] pop = queue.remove();
-
-                if (pop[0] == pop[1] && pop[1] == grid.length - 1) {
-                    return ans + 1;
+                if (current[0] == m - 1 && current[1] == m - 1) {
+                    return ++length;
                 }
 
-                for (int j = 0; j < 8; j++) {
-                    int xx = directions[j][0] + pop[0];
-                    int yy = directions[j][1] + pop[1];
-
-                    if (xx >= 0 && xx < grid.length && yy >= 0 && yy < grid.length && !visited[xx][yy] && grid[xx][yy] == 0) {
-                        queue.add(new int[]{xx, yy});
+                for (int[] d : directions) {
+                    int xx = d[0] + current[0];
+                    int yy = d[1] + current[1];
+                    if (xx >= 0 && xx < m && yy >= 0 && yy < m && !visited[xx][yy] && grid[xx][yy] == 0) {
                         visited[xx][yy] = true;
+                        q.add(new int[]{xx, yy});
                     }
                 }
             }
-            ans++;
+            length++;
         }
+
         return -1;
     }
 }

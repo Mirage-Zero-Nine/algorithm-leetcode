@@ -42,7 +42,7 @@ public class Codec_297 {
             return;
         }
 
-        sb.append(root.val).append(',');
+        sb.append(root.val).append(','); // avoid using '+', only append to StringBuilder to reduce time
         serialize(root.left, sb);
         serialize(root.right, sb);
     }
@@ -50,15 +50,14 @@ public class Codec_297 {
 
     /**
      * Decodes your encoded data to tree.
+     * Split the data by ",", then build a queue based on split array.
+     * Build the tree based on same pre-order traverse.
      *
      * @param data encoded string
      * @return deserialized root of tree
      */
     public TreeNode deserialize(String data) {
-        Queue<String> nodes = new LinkedList<>(Arrays.asList(data.split(",")));
-        TreeNode root = deserialize(nodes);
-
-        return root;
+        return deserialize(new LinkedList<>(Arrays.asList(data.split(","))));
     }
 
     /**
