@@ -27,28 +27,26 @@ public class Calculate_224 {
     public int calculate(String s) {
 
         Stack<Integer> stack = new Stack<>();
+        int p = 0, sign = 1;  // avoid empty stack when meeting first operand
+        stack.push(0);  // initially, sign will always be positive
 
-        stack.push(0);
-        int sign = 1, num;      // initially, sign will always be positive
-
-        for (int i = 0; i < s.length(); i++) {
-
-            if (Character.isDigit(s.charAt(i))) {
-                num = s.charAt(i) - '0';
-                while (i < s.length() - 1 && Character.isDigit(s.charAt(i + 1))) {      // calculate current numbers
-                    num = num * 10 + (s.charAt(++i) - '0');
+        while (p < s.length()) {
+            if (Character.isDigit(s.charAt(p))) {
+                int num = 0;
+                while (p < s.length() && Character.isDigit(s.charAt(p))) { // find current number
+                    num = num * 10 + (s.charAt(p++) - '0');
                 }
-
-                stack.push(stack.pop() + sign * num);      // calculate previous sum and current integer with sign
-            } else if (s.charAt(i) == '+') {
+                p--;
+                stack.push(stack.pop() + num * sign); // calculate previous sum and current integer with sign
+            } else if (s.charAt(p) == '+') {
                 sign = 1;
-            } else if (s.charAt(i) == '-') {
+            } else if (s.charAt(p) == '-') {
                 sign = -1;
-            } else if (s.charAt(i) == '(') {        // calculate the sum in brackets, push the initially sum 0
+            } else if (s.charAt(p) == '(') { // calculate the sum in brackets
                 stack.push(sign);
-                stack.push(0);        // bracket should be considered as a new calculation, and push a new init 0
-                sign = 1;                   // initial operator in brackets is positive
-            } else if (s.charAt(i) == ')') {
+                stack.push(0); // initially, the sum in bracket is 0
+                sign = 1;            // initial operator in brackets is positive
+            } else if (s.charAt(p) == ')') {
 
                 /*
                  * Pop out three items to calculate sum within current bracket pair.
@@ -57,9 +55,10 @@ public class Calculate_224 {
                  * Third item: previous sum outside of bracket pair. */
                 stack.push(stack.pop() * stack.pop() + stack.pop());
             }
+            p++;
         }
 
-        return stack.pop();     // top of stack is always the result of current expression
+        return stack.pop();
     }
 
     public static void main(String[] args) {

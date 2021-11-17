@@ -11,8 +11,9 @@ package Solution.TwoPointers;
 
 public class MoveZeroes_283 {
     /**
-     * Traverse the array.
-     * If current element is not 0, then try to swap it with first 0 in array. Then move the index of first 0.
+     * Traverse the array. Keep a pointer started at 0 since the non-zero elements needs to keep original order.
+     * Each time, if a non-zero element is found, swap it to the pointer's position and fill current position to 0.
+     * Note that the swap only take place when two elements are in different positions.
      *
      * @param nums given array
      */
@@ -23,14 +24,15 @@ public class MoveZeroes_283 {
             return;
         }
 
-        int index = 0;        // position of 0
+        int index = 0;
+
         for (int i = 0; i < nums.length; i++) {
-            if (nums[i] != 0) {     // if current element is not 0, then try to swap it with 0 in previous part of array
-                if (index != i) {   // if current position is same as assumed swap position, then pass it
+            if (nums[i] != 0) { // found a non-zero element, swap to the beginning of the array
+                if (index != i) {
                     nums[index] = nums[i];
                     nums[i] = 0;
                 }
-                index++;            // move to next potential position of 0
+                index++;
             }
         }
     }

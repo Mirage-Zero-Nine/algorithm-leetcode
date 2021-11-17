@@ -15,7 +15,7 @@ import java.util.List;
 public class RemoveInvalidParentheses_301 {
     /**
      * Iterate all chars in given string.
-     * If find any invalid pair in string, backtrack to find all possible valid parentheses.
+     * If any invalid pair was found in string, backtrack to find all possible valid parentheses.
      * Finally, reverse string and do it again.
      *
      * @param s given parentheses pairs
@@ -51,7 +51,6 @@ public class RemoveInvalidParentheses_301 {
             }
 
             if (right > left) {     // if right is more than left, then current parenthesis is invalid pair
-
                 for (int j = invalid; j <= i; j++) {      // find all possible position to remove one invalid pair
 
                     /*
@@ -72,7 +71,7 @@ public class RemoveInvalidParentheses_301 {
 
         /*
          * Check reversed string in each iteration.
-         * This is to find if left parenthesis is more than right parenthesis. */
+         * This is to check if left parenthesis is more than right parenthesis. */
         String reversed = new StringBuilder(s).reverse().toString();
         if (open == '(') {
             checkInvalid(output, reversed, 0, 0, ')', '(');

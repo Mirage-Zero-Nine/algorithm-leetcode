@@ -12,14 +12,15 @@ import Lib.Tree.BinaryTree.TreeNode;
 
 public class InvertTree_226 {
     /**
-     * Traverse to bottom to tree and invert child of it.
+     * DFS. Started at leaf node, swap left and right subtree.
+     * Then back to previous level and keep swapping until reaches root.
      *
      * @param root root node
      * @return inverted tree
      */
     public TreeNode invertTree(TreeNode root) {
 
-        /* End point */
+        /* Corner case */
         if (root == null) {
             return root;
         }
