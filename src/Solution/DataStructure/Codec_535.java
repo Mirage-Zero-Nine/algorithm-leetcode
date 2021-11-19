@@ -15,8 +15,8 @@ import java.util.HashMap;
  */
 
 public class Codec_535 {
-    private HashMap<String, String> tinyUrlMap = new HashMap<>();
-    private HashMap<String, String> longUrlMap = new HashMap<>();
+    private final HashMap<String, String> tinyUrlMap = new HashMap<>();
+    private final HashMap<String, String> longUrlMap = new HashMap<>();
 
     /**
      * Use hash code and system nano time as the key of tiny URL.
