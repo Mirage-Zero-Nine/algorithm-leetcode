@@ -14,8 +14,8 @@ public class LengthOfLongestSubstring_3 {
     /**
      * Sliding window. Keep a hash map to store the char-index pair.
      * The beginning of window is the earliest non-duplicated char in string.
-     * If there is a char found in map, check the last appearance.
-     * If the last appearance is in current substring, then set the start position to the next of duplicated char.
+     * If there is a char found in map, check its last appearance in given string.
+     * If its last appearance is in current substring, then set the start position to the next of duplicated char.
      * This excluded counting duplicated char to substring.
      * Otherwise, the duplicated char is outside the substring, do nothing.
      *
