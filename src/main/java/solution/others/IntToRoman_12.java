@@ -60,11 +60,4 @@ public class IntToRoman_12 {
 
         return result.toString();
     }
-
-    public static void main(String[] args) {
-
-        /* IntToRoman_12 Test */
-        IntToRoman_12 intToRomanTest = new IntToRoman_12();
-        System.out.println(intToRomanTest.intToRoman(100));
-    }
 }
