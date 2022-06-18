@@ -57,11 +57,4 @@ public class RomanToInt_13 {
         }
         return result;
     }
-
-    public static void main(String[] args) {
-
-        /* RomanToInt_13 Test */
-        RomanToInt_13 romanIntTest = new RomanToInt_13();
-        System.out.println(romanIntTest.romanToInt("MCMXCIV"));
-    }
 }
