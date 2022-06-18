@@ -26,6 +26,6 @@ hs_err_pid*
 out/
 
 *.iml
-*.xml
 
 *.DS_Store
+target/
