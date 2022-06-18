@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class SnapshotArray_1146 {
 
-    private final Map<Integer, HashMap<Integer, Integer>> m = new HashMap<>();
+    private final Map<Integer, Map<Integer, Integer>> m = new HashMap<>();
     private final Map<Integer, Integer> t = new HashMap<>();      // temp map save states of each value
     private int id = 0;
 
@@ -66,14 +66,5 @@ public class SnapshotArray_1146 {
             }
         }
         return 0;
-    }
-
-    public static void main(String[] args) {
-        SnapshotArray_1146 test = new SnapshotArray_1146(2);
-        test.snap();
-        test.get(1, 0);
-        test.get(0, 0);
-        test.set(1, 8);
-        System.out.println(test.get(1, 0));
     }
 }
