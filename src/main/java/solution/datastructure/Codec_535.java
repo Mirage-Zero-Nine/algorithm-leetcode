@@ -1,6 +1,7 @@
 package solution.datastructure;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TinyURL is a URL shortening service.
@@ -15,8 +16,8 @@ import java.util.HashMap;
  */
 
 public class Codec_535 {
-    private final HashMap<String, String> tinyUrlMap = new HashMap<>();
-    private final HashMap<String, String> longUrlMap = new HashMap<>();
+    private final Map<String, String> tinyUrlMap = new HashMap<>();
+    private final Map<String, String> longUrlMap = new HashMap<>();
 
     /**
      * Use hash code and system nano time as the key of tiny URL.
