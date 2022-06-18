@@ -19,10 +19,10 @@ public class RomanToInt13Test {
     @Test
     public void test() {
         for (int i = 0; i < romanGenerator().size(); i++) {
-            assertEquals(test.romanToInt(romanGenerator().get(i)), i + 1);
+            assertEquals(i + 1, test.romanToInt(romanGenerator().get(i)));
         }
-        assertEquals(test.romanToInt("LVIII"), 58);
-        assertEquals(test.romanToInt("MCMXCIV"), 1994);
+        assertEquals(58, test.romanToInt("LVIII"));
+        assertEquals(1994, test.romanToInt("MCMXCIV"));
     }
 
     private List<String> romanGenerator() {
