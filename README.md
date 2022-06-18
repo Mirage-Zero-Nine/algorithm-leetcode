@@ -2,4 +2,4 @@
 
 A project includes Leetcode algorithm problem solutions. 
 
-Now build in `maven`, includes unit test (still in progress).
+To include formal unit test, this project uses `maven` to build the test dependency. Run `mvn clean install` first to build the project.
