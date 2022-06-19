@@ -1,5 +1,7 @@
 package playground;
 
+import com.google.common.collect.Lists;
+
 import java.util.*;
 
 /**
@@ -13,7 +15,7 @@ import java.util.*;
 public class WordLadderIII {
     /**
      * Modify from word ladder II, the only difference is that in hash map, there is no need to store all paths.
-     * Direct over write previous path if find a new one.
+     * Direct overwrite previous path if it finds a new one.
      *
      * @param beginWord begin word
      * @param endWord   end word
@@ -24,7 +26,7 @@ public class WordLadderIII {
 
         /* Corner case */
         if (beginWord == null || endWord == null || wordList == null) {
-            return null;
+            return Lists.newArrayList();
         }
         if (beginWord.equals(endWord)) {
             return Collections.singletonList(beginWord);
@@ -33,7 +35,7 @@ public class WordLadderIII {
         Set<String> set = new HashSet<>(wordList);      // convert input list to hash set
         Queue<String> q = new LinkedList<>();           // BFS queue
         q.add(beginWord);
-        HashMap<String, List<String>> m = new HashMap<>();      // key: word, value: path to current word
+        Map<String, List<String>> m = new HashMap<>();      // key: word, value: path to current word
         List<String> initPath = new LinkedList<>();             // all path starts at begin word
         m.put(beginWord, initPath);
         m.get(beginWord).add(beginWord);
@@ -69,34 +71,6 @@ public class WordLadderIII {
             set.removeAll(currentLayer);        // avoid duplication
         }
 
-        return m.getOrDefault(endWord, new LinkedList<>());
-    }
-
-    public static void main(String[] args) {
-        WordLadderIII test = new WordLadderIII();
-        String b = "hit";
-        String e = "cog";
-        List<String> l = Arrays.asList("hot", "dog", "lot", "log", "cog", "hop", "tot", "hog");
-        System.out.println(test.wordLadderIII(b, e, l));
-
-        b = "a";
-        e = "d";
-        l = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
-        System.out.println(test.wordLadderIII(b, e, l));
-
-        b = "red";
-        e = "tax";
-        l = Arrays.asList("ted", "tex", "red", "tax", "tad", "hop", "rex", "pee");
-        System.out.println(test.wordLadderIII(b, e, l));
-
-        b = "ted";
-        e = "tax";
-        l = Arrays.asList("ted", "tex", "red", "abc", "tad", "hop", "rex", "pee");
-        System.out.println(test.wordLadderIII(b, e, l));
-
-        b = "a";
-        e = "a";
-        l = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
-        System.out.println(test.wordLadderIII(b, e, l));
+        return m.getOrDefault(endWord, new ArrayList<>());
     }
 }
