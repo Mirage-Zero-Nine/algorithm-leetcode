@@ -1,6 +1,10 @@
 package solution.unionfind;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  * You are given a string s, and an array of pairs of indices where pairs[i] = [a, b] indicates 2 indices of the string.
@@ -35,7 +39,7 @@ public class SmallestStringWithSwaps_1202 {
         /*
          * Key: root of each char.
          * Value: chars under same root(connected). */
-        HashMap<Integer, PriorityQueue<Character>> m = new HashMap<>();
+        Map<Integer, PriorityQueue<Character>> m = new HashMap<>();
 
         for (int i = 0; i < n; i++) {
             int r = uf.find(i);
@@ -101,22 +105,5 @@ public class SmallestStringWithSwaps_1202 {
 
             return father[x];
         }
-    }
-
-    public static void main(String[] args) {
-        ArrayList<Integer> a = new ArrayList<>(
-                Arrays.asList(0, 3)
-        );
-        ArrayList<Integer> a1 = new ArrayList<>(
-                Arrays.asList(1, 2)
-        );
-        ArrayList<Integer> a2 = new ArrayList<>(
-                Arrays.asList(0, 2)
-        );
-        List<List<Integer>> tmp = new ArrayList<>();
-        tmp.add(a);
-        tmp.add(a1);
-        tmp.add(a2);
-        System.out.println(new SmallestStringWithSwaps_1202().smallestStringWithSwaps("dcab", tmp));
     }
 }
