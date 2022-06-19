@@ -1,6 +1,8 @@
 package solution.bfs;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * On an 8x8 chessboard, there can be multiple Black Queens and one White King.
@@ -29,7 +31,6 @@ public class QueensAttacktheKing_1222 {
 
         boolean[][] q = new boolean[8][8];      // locate all queens
 
-
         for (int[] queen : queens) {
             q[queen[0]][queen[1]] = true;
         }
@@ -53,14 +54,6 @@ public class QueensAttacktheKing_1222 {
 
             }
         }
-
         return out;
-    }
-
-    public static void main(String[] args) {
-        int[][] queens = new int[][]{{5, 6}, {7, 7}, {2, 1}, {0, 7}, {1, 6}, {5, 1}, {3, 7}, {0, 3}, {4, 0}, {1, 2}, {6, 3}, {5, 0}, {0, 4}, {2, 2}, {1, 1}, {6, 4}, {5, 4}, {0, 0}, {2, 6}, {4, 5}, {5, 2}, {1, 4}, {7, 5}, {2, 3}, {0, 5}, {4, 2}, {1, 0}, {2, 7}, {0, 1}, {4, 6}, {6, 1}, {0, 6}, {4, 3}, {1, 7}};
-        int[] king = new int[]{3, 4};
-
-        System.out.println(new QueensAttacktheKing_1222().queensAttacktheKing(queens, king));
     }
 }
