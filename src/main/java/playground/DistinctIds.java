@@ -1,6 +1,10 @@
 package playground;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Minimum number of distinct elements after removing m item.
@@ -21,12 +25,12 @@ public class DistinctIds {
      * @param mi  m items to be removed
      * @return ids left in array after remove
      */
-    public static int distinctIds(int[] arr, int n, int mi) {
-        HashMap<Integer, Integer> m = new HashMap<>();
+    public int distinctIds(int[] arr, int n, int mi) {
+        Map<Integer, Integer> m = new HashMap<>();
         for (int j : arr) {
             m.put(j, m.getOrDefault(j, 0) + 1);
         }
-        LinkedList<Integer> l = new LinkedList<>();
+        List<Integer> l = new LinkedList<>();
         for (Integer i : m.keySet()) {
             l.add(m.get(i));
         }
@@ -41,12 +45,5 @@ public class DistinctIds {
             }
         }
         return count;
-    }
-
-    public static void main(String[] args) {
-
-        int[] arr = {1, 2, 3, 1, 2, 2, 3};
-        int m = 6;
-        System.out.println(distinctIds(arr, arr.length, m));
     }
 }
