@@ -35,17 +35,19 @@ public class AddTwoNumbers_2 {
         ListNode current = dummy;
 
         while (l1 != null || l2 != null) {
-            int v1 = (l1 == null) ? 0 : l1.val;
-            int v2 = (l2 == null) ? 0 : l2.val;
-
-            carry = carry + v1 + v2;
+            if (l1 != null) {
+                carry += l1.val;
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                carry += l2.val;
+                l2 = l2.next;
+            }
 
             current.next = new ListNode(carry % 10);        // link node to (sum/10)
             current = current.next;                             // move result to its next
 
             carry = carry / 10;
-            l1 = (l1 == null) ? null : l1.next;
-            l2 = (l2 == null) ? null : l2.next;
         }
 
         if (carry != 0) {
