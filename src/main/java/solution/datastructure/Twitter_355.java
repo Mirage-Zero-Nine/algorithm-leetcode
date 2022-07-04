@@ -1,6 +1,14 @@
 package solution.datastructure;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 /**
  * Design a simplified version of Twitter where users can post tweets, follow/unfollow another user, and is able to see the 10 most recent tweets in the user's news feed.
@@ -133,20 +141,5 @@ public class Twitter_355 {
             followingMap.put(userId, set); // a user always "following" itself
         }
         userTweetMap.putIfAbsent(userId, new LinkedList<>());
-    }
-
-    public static void main(String[] args) {
-        Twitter_355 twitter = new Twitter_355();
-        twitter.postTweet(1, 5); // User 1 posts a new tweet (id = 5).
-        System.out.println(twitter.getNewsFeed(1));  // User 1's news feed should return a list with 1 tweet id -> [5]. return [5]
-        twitter.follow(1, 2);    // User 1 follows user 2.
-        twitter.postTweet(2, 6); // User 2 posts a new tweet (id = 6).
-        System.out.println(twitter.getNewsFeed(1));  // User 1's news feed should return a list with 2 tweet ids -> [6, 5]. Tweet id 6 should precede tweet id 5 because it is posted after tweet id 5.
-        twitter.unfollow(1, 2);  // User 1 unfollows user 2.
-        System.out.println(twitter.getNewsFeed(1)); // User 1's news feed should return a list with 1 tweet id -> [5], since user 1 is no longer following user 2.
-
-        twitter = new Twitter_355();
-        twitter.follow(1, 5);
-        System.out.println(twitter.getNewsFeed(1));
     }
 }
