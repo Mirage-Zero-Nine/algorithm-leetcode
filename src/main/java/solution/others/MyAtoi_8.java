@@ -62,14 +62,4 @@ public class MyAtoi_8 {
 
         return (int) tmp * sign;
     }
-
-    public static void main(String[] args) {
-
-        MyAtoi_8 test = new MyAtoi_8();
-        System.out.println(test.myAtoi("   - 321"));      // 0
-        System.out.println(test.myAtoi("  -0012a42"));    // -12
-        System.out.println(test.myAtoi("   +0 123"));     // 0
-        System.out.println(test.myAtoi("    010"));       // 10
-        System.out.println(test.myAtoi("9223372036854775808"));       // 2147483647 (larger than long)
-    }
 }
