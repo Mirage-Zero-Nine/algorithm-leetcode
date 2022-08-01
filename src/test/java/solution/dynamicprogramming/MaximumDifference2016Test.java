@@ -16,7 +16,7 @@ public class MaximumDifference2016Test {
     @Test
     public void test() {
         assertEquals(4, test.maximumDifference(new int[]{7, 1, 5, 4}));
-        assertEquals(4, test.maximumDifference(new int[]{9, 4, 3, 2}));
-        assertEquals(4, test.maximumDifference(new int[]{1, 5, 2, 10}));
+        assertEquals(-1, test.maximumDifference(new int[]{9, 4, 3, 2}));
+        assertEquals(9, test.maximumDifference(new int[]{1, 5, 2, 10}));
     }
 }

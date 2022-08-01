@@ -1,7 +1,7 @@
 package solution.map;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 

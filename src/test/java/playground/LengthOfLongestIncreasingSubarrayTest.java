@@ -1,8 +1,7 @@
 package playground;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author BorisMirage
@@ -16,11 +15,11 @@ public class LengthOfLongestIncreasingSubarrayTest {
     @Test
     public void test() {
         int[] testArray = new int[]{5, 2, 4, 1, 8, 9, 7};
-        assertEquals(test.longestSubarray(testArray), 3);
+        Assertions.assertEquals(test.longestSubarray(testArray), 3);
     }
 
     @Test
     public void testEmpty() {
-        assertEquals(test.longestSubarray(new int[0]), 0);
+        Assertions.assertEquals(test.longestSubarray(new int[0]), 0);
     }
 }

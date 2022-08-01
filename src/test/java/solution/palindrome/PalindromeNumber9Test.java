@@ -1,10 +1,7 @@
 package solution.palindrome;
 
-import org.junit.Test;
-import solution.palindrome.PalindromeNumber_9;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author BorisMirage
@@ -17,7 +14,7 @@ public class PalindromeNumber9Test {
 
     @Test
     public void test(){
-        assertTrue(test.isPalindrome(9));
-        assertTrue(test.isPalindrome(121));
+        Assertions.assertTrue(test.isPalindrome(9));
+        Assertions.assertTrue(test.isPalindrome(121));
     }
 }

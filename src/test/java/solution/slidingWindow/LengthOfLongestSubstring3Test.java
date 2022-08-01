@@ -1,9 +1,8 @@
 package solution.slidingWindow;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import solution.slidingwindow.LengthOfLongestSubstring_3;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author BorisMirage
@@ -16,13 +15,13 @@ public class LengthOfLongestSubstring3Test {
 
     @Test
     public void test() {
-        assertEquals(3, test.lengthOfLongestSubstring("abcabcbb"));
-        assertEquals(5, test.lengthOfLongestSubstring("tmmzuxt"));
-        assertEquals(1, test.lengthOfLongestSubstring("a"));
-        assertEquals(3, test.lengthOfLongestSubstring("dvdf"));
-        assertEquals(2, test.lengthOfLongestSubstring("cdd"));
-        assertEquals(4, test.lengthOfLongestSubstring("abcd"));
-        assertEquals(0, test.lengthOfLongestSubstring(""));
-        assertEquals(0, test.lengthOfLongestSubstring(null));
+        Assertions.assertEquals(3, test.lengthOfLongestSubstring("abcabcbb"));
+        Assertions.assertEquals(5, test.lengthOfLongestSubstring("tmmzuxt"));
+        Assertions.assertEquals(1, test.lengthOfLongestSubstring("a"));
+        Assertions.assertEquals(3, test.lengthOfLongestSubstring("dvdf"));
+        Assertions.assertEquals(2, test.lengthOfLongestSubstring("cdd"));
+        Assertions.assertEquals(4, test.lengthOfLongestSubstring("abcd"));
+        Assertions.assertEquals(0, test.lengthOfLongestSubstring(""));
+        Assertions.assertEquals(0, test.lengthOfLongestSubstring(null));
     }
 }
