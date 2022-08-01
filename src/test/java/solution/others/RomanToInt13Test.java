@@ -1,11 +1,10 @@
 package solution.others;
 
 import com.google.common.collect.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author BorisMirage
@@ -19,10 +18,14 @@ public class RomanToInt13Test {
     @Test
     public void test() {
         for (int i = 0; i < romanGenerator().size(); i++) {
-            assertEquals(i + 1, test.romanToInt(romanGenerator().get(i)));
+            Assertions.assertEquals(i + 1, test.romanToInt(romanGenerator().get(i)));
         }
-        assertEquals(58, test.romanToInt("LVIII"));
-        assertEquals(1994, test.romanToInt("MCMXCIV"));
+    }
+
+    @Test
+    public void testSpecialCase() {
+        Assertions.assertEquals(58, test.romanToInt("LVIII"));
+        Assertions.assertEquals(1994, test.romanToInt("MCMXCIV"));
     }
 
     private List<String> romanGenerator() {

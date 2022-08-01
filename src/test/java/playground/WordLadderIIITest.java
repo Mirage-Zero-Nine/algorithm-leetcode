@@ -3,7 +3,7 @@ package playground;
 import com.google.common.collect.Lists;
 import lombok.Builder;
 import lombok.Value;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 

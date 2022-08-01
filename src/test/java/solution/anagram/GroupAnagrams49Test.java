@@ -2,7 +2,8 @@ package solution.anagram;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,9 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-
 
 /**
  * @author BorisMirage
@@ -30,7 +28,7 @@ public class GroupAnagrams49Test {
         List<List<String>> actual = test.groupAnagrams(testArray).stream().sorted(Comparator.comparingInt(List::size)).collect(Collectors.toList());
         Iterator<Set<String>> expected = expectedResult().iterator();
         actual.forEach(
-                list -> assertEquals(expected.next(), new HashSet<>(list))
+                list -> Assertions.assertEquals(expected.next(), new HashSet<>(list))
         );
     }
 
@@ -38,7 +36,7 @@ public class GroupAnagrams49Test {
     public void testEmpty() {
         List<List<String>> actual = test.groupAnagrams(new String[]{});
         List<List<String>> expected = new ArrayList<>();
-        assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     private List<Set<String>> expectedResult() {
