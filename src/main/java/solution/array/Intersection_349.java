@@ -1,6 +1,8 @@
 package solution.array;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Given two arrays, find their unique common element.
