@@ -13,7 +13,7 @@ import java.util.Stack;
 
 public class NumArray_307 {
 
-    private node root;
+    private SegmentTreeNode root;
 
     /**
      * Create a segment tree to store, find and update elements in array.
@@ -36,13 +36,13 @@ public class NumArray_307 {
      * @param max  right bound in array
      * @return constructed segment tree
      */
-    private node segmentTreeBuilder(int[] nums, int min, int max) {
+    private SegmentTreeNode segmentTreeBuilder(int[] nums, int min, int max) {
 
         if (min > max) {
             return null;
         } else {
 
-            node n = new node(min, max);        // create node at current location
+            SegmentTreeNode n = new SegmentTreeNode(min, max);        // create node at current location
             if (min == max) {
                 n.value = nums[min];        // leaf of tree
             } else {
@@ -77,7 +77,7 @@ public class NumArray_307 {
      * @param val value to be updated
      * @param i   index of element in nums
      */
-    private void updateNode(node n, int val, int i) {
+    private void updateNode(SegmentTreeNode n, int val, int i) {
 
         if (n.min == n.max) {       // found node to update
             n.value = val;
@@ -114,7 +114,7 @@ public class NumArray_307 {
      * @param end   end index
      * @return sum of given range of array
      */
-    private int findRangeSum(node n, int start, int end) {
+    private int findRangeSum(SegmentTreeNode n, int start, int end) {
 
         if (n.min == start && n.max == end) {       // identical range
             return n.value;
@@ -136,54 +136,21 @@ public class NumArray_307 {
     /**
      * Node in segment tree.
      */
-    private static class node {
+    static class SegmentTreeNode {
 
         int min, max;       // left bound and right bound of array (inclusive)
         int value = 0;      // value store in node
 
-        node left, right;        // left child and right child
+        SegmentTreeNode left, right;        // left child and right child
 
         /**
          * @param min left bound of node
          * @param max right bound of node
          */
-        public node(int min, int max) {
+        public SegmentTreeNode(int min, int max) {
             this.min = min;
             this.max = max;
         }
-    }
-
-    /**
-     * Print all nodes in tree by in-order traversal.
-     */
-    public void printAllNodes() {
-        Stack<node> s = new Stack<>();
-
-        if (root == null) {
-            System.out.println("Root node is NULL!");
-        }
-
-        while (this.root != null || !s.isEmpty()) {
-            while (this.root != null) {
-                s.add(this.root);
-                this.root = this.root.left;
-            }
-            this.root = s.pop();
-            System.out.println("Node Value: " + this.root.value);
-            System.out.println("min: " + this.root.min + ", max: " + this.root.max);
-            this.root = this.root.right;
-        }
-    }
-
-    /**
-     * Unit test.
-     *
-     * @param args given arguments
-     */
-    public static void main(String[] args) {
-        NumArray_307 test = new NumArray_307(new int[]{0, 9, 5, 7, 3});
-        System.out.println(test.sumRange(4, 4));
-//        test.printAllNodes();
     }
 }
 
