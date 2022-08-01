@@ -13,7 +13,7 @@ import java.util.Stack;
 
 public class NumArray_307 {
 
-    private SegmentTreeNode root;
+    private final SegmentTreeNode root;
 
     /**
      * Create a segment tree to store, find and update elements in array.
