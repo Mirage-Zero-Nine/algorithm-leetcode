@@ -1,6 +1,10 @@
 package solution.bfs;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * Given beginWord and endWord and a dictionary's word list.
@@ -25,7 +29,7 @@ public class LadderLength_127 {
      * @param beginWord begin word
      * @param endWord   target word
      * @param wordList  middle words
-     * @return length of shortest transformation sequence
+     * @return length of the shortest transformation sequence
      */
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
 
@@ -70,21 +74,5 @@ public class LadderLength_127 {
         }
 
         return 0;
-    }
-
-    public static void main(String[] args) {
-        String b = "hit";
-        String e = "cog";
-        String[] tmp = new String[]{"hot", "dot", "dog", "lot", "cog"};
-        List<String> l = Arrays.asList(tmp);
-
-        LadderLength_127 test = new LadderLength_127();
-        System.out.println(test.ladderLength(b, e, l));
-
-        b = "a";
-        e = "c";
-        tmp = new String[]{"a", "b", "c"};
-        l = Arrays.asList(tmp);
-        System.out.println(test.ladderLength(b, e, l));
     }
 }
