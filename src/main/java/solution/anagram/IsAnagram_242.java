@@ -2,6 +2,7 @@ package solution.anagram;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Given two strings s and t , write a function to determine if t is an anagram of s.
@@ -65,26 +66,20 @@ public class IsAnagram_242 {
             return s.charAt(0) == t.charAt(0);
         }
 
-        Map<Character, Integer> m = new HashMap<>();
-        int countUsedChar = 0;
+        Map<Character, Integer> map = new HashMap<>();
 
         for (int i = 0; i < s.length(); i++) {
-            m.put(s.charAt(i), m.getOrDefault(s.charAt(i), 0) + 1);
+            map.putIfAbsent(s.charAt(i), 0);
+            map.putIfAbsent(t.charAt(i), 0);
+
+            map.put(s.charAt(i), map.get(s.charAt(i)) + 1);
+            map.put(t.charAt(i), map.get(t.charAt(i)) - 1);
         }
 
-        for (int i = 0; i < t.length(); i++) {
-            char currentChar = t.charAt(i);
-            Integer currentCount = m.get(currentChar);
-            if (currentCount == null || currentCount == 0) {
-                return false;
-            }
-
-            if (currentCount == 1) {
-                countUsedChar++;        // this char in both s and t now have same occurrence
-            }
-            m.put(t.charAt(i), currentCount - 1);
-        }
-
-        return countUsedChar == m.size();
+        // if they are anagram, then all values in map entry should be 0
+        return map.entrySet().stream()
+                .filter(e -> e.getValue() != 0)
+                .collect(Collectors.toSet())
+                .size() == 0;
     }
 }
