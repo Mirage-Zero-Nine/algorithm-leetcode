@@ -1,9 +1,14 @@
 package solution.anagram;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Given an array of strings, group anagrams together.
+ * Given an array of strings strs, group the anagrams together. You can return the answer in any order.
+ * strs[i] consists of lowercase English letters.
  *
  * @author BorisMirage
  * Time: 2018/06/25 10:14
@@ -34,13 +39,8 @@ public class GroupAnagrams_49 {
             Arrays.sort(w);
             String key = String.valueOf(w);          // use sorted char as key in hash map
 
-            if (m.containsKey(key)) {
-                m.get(key).add(s);        // if the key is in map, append it to anagram group list
-            } else {
-                List<String> temp = new ArrayList<>();
-                temp.add(s);
-                m.put(key, temp);               // otherwise, put a new key and a new list into map
-            }
+            m.putIfAbsent(key, new ArrayList<>());
+            m.get(key).add(s);
         }
 
         return new ArrayList<>(m.values());
