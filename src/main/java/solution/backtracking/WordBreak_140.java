@@ -1,6 +1,8 @@
 package solution.backtracking;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Given a non-empty string s and a dictionary wordDict containing a list of non-empty words.
@@ -62,13 +64,5 @@ public class WordBreak_140 {
 
         map.put(s, out);
         return out;
-    }
-
-    public static void main(String[] args) {
-        String[] wordDict = {"apple", "pen", "applepen", "pine", "pineapple"};
-        List<String> l = new ArrayList<>(Arrays.asList(wordDict));
-
-        WordBreak_140 test = new WordBreak_140();
-        System.out.println(test.wordBreak("pineapplepenapple", l));
     }
 }
