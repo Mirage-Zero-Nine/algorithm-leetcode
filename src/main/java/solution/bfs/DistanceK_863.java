@@ -2,7 +2,14 @@ package solution.bfs;
 
 import library.tree.binarytree.TreeNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * We are given a binary tree (with root node root), a target node, and an integer value K.
@@ -171,32 +178,5 @@ public class DistanceK_863 {
                 dfs(root.right, target, map);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-
-        root.left.left = new TreeNode(4);
-        root.left.right = new TreeNode(5);
-        root.right.left = new TreeNode(6);
-        root.right.right = new TreeNode(7);
-
-        root.left.left.left = new TreeNode(8);
-        root.left.left.right = new TreeNode(9);
-
-//        root.right.left = new TreeNode(6);
-//        root.right.right = new TreeNode(7);
-//        root.right.left.left = new TreeNode(14);
-//        root.right.left.right = new TreeNode(15);
-//
-//        root.right.right.left = new TreeNode(12);
-//        root.right.right.right = new TreeNode(13);
-//
-//        root.right.right.right.right = new TreeNode(16);
-//        root.right.right.right.right.right = new TreeNode(17);
-
-        System.out.println(new DistanceK_863().distanceK(root, new TreeNode(4), 2));
     }
 }

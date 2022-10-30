@@ -105,11 +105,11 @@ public class TreeParser {
     }
 
     /**
-     * Print all nodes from tree in pre order.
+     * Print all nodes from tree in pre-order.
      *
      * @param root root of tree
      */
-    public static void printAll(TreeNode root) {
+    public static List<Integer> convertToList(TreeNode root) {
         List<Integer> tmp = new LinkedList<>();
         Stack<TreeNode> s = new Stack<>();
         s.push(root);
@@ -123,10 +123,7 @@ public class TreeParser {
             }
         }
 
-        System.out.println(tmp);
-    }
-
-    public static void main(String[] args) {
-        printAll(deserialize("1,2,3,4,5,6,7,8,9,10"));
+//        System.out.println(tmp);
+        return tmp;
     }
 }
