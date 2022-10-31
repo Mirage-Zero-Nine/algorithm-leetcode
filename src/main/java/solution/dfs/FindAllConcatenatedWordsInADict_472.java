@@ -1,6 +1,11 @@
 package solution.dfs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Given a non-empty string s and a dictionary wordDict containing a list of non-empty words.
@@ -13,7 +18,7 @@ import java.util.*;
 
 public class FindAllConcatenatedWordsInADict_472 {
     /**
-     * Sort the word list, then from shortest word, check if current word can be formed by shorter words.
+     * Sort the word list, then from the shortest word, check if current word can be formed by shorter words.
      * The sub-problem is actually word break I.
      * Time complexity: O(n * m ^ 2), where n is the length of list, m is the length of longest word in given list.
      *
@@ -25,7 +30,7 @@ public class FindAllConcatenatedWordsInADict_472 {
         Arrays.sort(words, Comparator.comparingInt(String::length));
 
         List<String> out = new ArrayList<>();
-        HashSet<String> dictionary = new HashSet<>();       // store all possibles words that can form longer words
+        Set<String> dictionary = new HashSet<>();       // store all possibles words that can form longer words
 
         for (String w : words) {
 
@@ -49,7 +54,7 @@ public class FindAllConcatenatedWordsInADict_472 {
      * @param start      start index
      * @return if s can be segmented into a space-separated sequence of one or more dictionary words
      */
-    private boolean wordBreak(String s, HashSet<String> dictionary, int[] mem, int start) {
+    private boolean wordBreak(String s, Set<String> dictionary, int[] mem, int start) {
 
         if (dictionary.contains(s)) {
             return true;
