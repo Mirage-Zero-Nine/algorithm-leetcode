@@ -1,6 +1,13 @@
 package solution.dfs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * There are n cities connected by m flights. Each flight starts from city u and arrives at v with a price w.
@@ -31,10 +38,7 @@ public class FindCheapestPrice_787 {
         Map<Integer, List<int[]>> map = new HashMap<>(); // departure city -> list of destination and price
 
         for (int[] f : flights) {
-            if (!map.containsKey(f[0])) {
-                map.put(f[0], new ArrayList<>());
-            }
-
+            map.putIfAbsent(f[0], new ArrayList<>());
             map.get(f[0]).add(new int[]{f[1], f[2]});     // src -> dest, cost
         }
 
@@ -69,10 +73,10 @@ public class FindCheapestPrice_787 {
                 stopsForCity[departure] = remainingStop;
 
                 if (remainingStop > 0 && map.containsKey(departure)) {
-                    for (int[] f : map.get(departure)) {
-                        int next = f[0], nextCost = f[1];
+                    map.get(departure).forEach(dest -> {
+                        int next = dest[0], nextCost = dest[1];
                         pq.add(new int[]{cost + nextCost, next, remainingStop - 1});
-                    }
+                    });
                 }
             }
         }
@@ -91,19 +95,19 @@ public class FindCheapestPrice_787 {
      * @return the cheapest price from src to dst with up to k stops, return -1 if no such path
      */
     public int findCheapestPriceDFS(int n, int[][] flights, int src, int dst, int k) {
-        Map<Integer, List<int[]>> m = new HashMap<>();
+        Map<Integer, List<int[]>> map = new HashMap<>();
 
         for (int[] f : flights) {
-            if (!m.containsKey(f[0])) {
-                m.put(f[0], new ArrayList<>());
+            if (!map.containsKey(f[0])) {
+                map.put(f[0], new ArrayList<>());
             }
 
-            m.get(f[0]).add(new int[]{f[1], f[2]});     // src -> dest, cost
+            map.get(f[0]).add(new int[]{f[1], f[2]});     // src -> dest, cost
         }
 
         int[] minCost = new int[]{Integer.MAX_VALUE};
 
-        dfs(m, src, dst, k + 1, 0, minCost);     // k stop means at most k middle city can reach
+        dfs(map, src, dst, k + 1, 0, minCost);     // k stop means at most k middle city can reach
 
         return minCost[0] == Integer.MAX_VALUE ? -1 : minCost[0];
     }
@@ -111,14 +115,14 @@ public class FindCheapestPrice_787 {
     /**
      * DFS to find the cheapest price.
      *
-     * @param m       graph with departure location and destination location and price
+     * @param map     graph with departure location and destination location and price
      * @param src     current departure city
      * @param dst     destination city
      * @param k       remaining stop
      * @param cost    current cost
      * @param minCost min cost
      */
-    private void dfs(Map<Integer, List<int[]>> m, int src, int dst, int k, int cost, int[] minCost) {
+    private void dfs(Map<Integer, List<int[]>> map, int src, int dst, int k, int cost, int[] minCost) {
 
         if (k < 0 || cost > minCost[0]) {
             return;
@@ -129,13 +133,13 @@ public class FindCheapestPrice_787 {
             return;
         }
 
-        if (!m.containsKey(src)) {
+        if (!map.containsKey(src)) {
             return;
         }
 
-        for (int[] f : m.get(src)) {
+        for (int[] f : map.get(src)) {
             if (cost + f[1] < minCost[0]) {
-                dfs(m, f[0], dst, k - 1, cost + f[1], minCost);
+                dfs(map, f[0], dst, k - 1, cost + f[1], minCost);
             }
         }
     }
