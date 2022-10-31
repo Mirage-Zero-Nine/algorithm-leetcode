@@ -1,6 +1,13 @@
 package solution.bfs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * There are n people, each person has a unique id between 0 and n-1.
@@ -30,35 +37,33 @@ public class WatchedVideosByFriends_1311 {
      */
     public List<String> watchedVideosByFriends(List<List<String>> watchedVideos, int[][] friends, int id, int level) {
 
-        HashMap<String, Integer> frequency = new HashMap<>();
-
+        Map<String, Integer> frequency = new HashMap<>();
         boolean[] visited = new boolean[friends.length];
         visited[id] = true;
-        Queue<Integer> q = new LinkedList<>();
-        q.add(id);
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(id);
 
         while (level-- > 0) {       // BFS to find kth friend
-            int size = q.size();
+            int size = queue.size();
 
             for (int i = 0; i < size; i++) {
-                int current = q.poll();
+                int current = queue.poll();
                 for (int next : friends[current]) {
                     if (!visited[next]) {
                         visited[next] = true;
-                        q.add(next);
+                        queue.add(next);
                     }
                 }
             }
         }
 
-        for (Integer n : q) {       // build frequency based on kth friends
+        for (Integer n : queue) {       // build frequency based on kth friends
             for (String v : watchedVideos.get(n)) {
                 frequency.put(v, frequency.getOrDefault(v, 0) + 1);
             }
         }
 
-        List<String> out = new LinkedList<>(frequency.keySet());
-
+        List<String> out = new ArrayList<>(frequency.keySet());
         out.sort((o1, o2) -> {
             if (frequency.get(o1).equals(frequency.get(o2))) {
                 return o1.compareTo(o2);
@@ -82,7 +87,7 @@ public class WatchedVideosByFriends_1311 {
      */
     public List<String> watchedVideosByFriendsGraph(List<List<String>> watchedVideos, int[][] friends, int id, int level) {
 
-        HashMap<Integer, HashSet<Integer>> friendship = new HashMap<>();
+        Map<Integer, Set<Integer>> friendship = new HashMap<>();
 
         for (int i = 0; i < friends.length; i++) {      // build friendship graph
             for (int j = 0; j < friends[i].length; j++) {
@@ -91,30 +96,30 @@ public class WatchedVideosByFriends_1311 {
             }
         }
 
-        Queue<Integer> q = new LinkedList<>();
-        int size = q.size();
-        q.add(id);
-        HashSet<Integer> people = new HashSet<>();
+        Queue<Integer> queue = new LinkedList<>();
+        int size = queue.size();
+        queue.add(id);
+        Set<Integer> people = new HashSet<>();
         people.add(id);
 
         while (level >= 0) {        // BFS to find kth friend
 
             for (int i = 0; i < size; i++) {
-                int current = q.poll();
-                HashSet<Integer> next = friendship.get(current);
+                int current = queue.poll();
+                Set<Integer> next = friendship.get(current);
                 for (Integer n : next) {
                     if (people.add(n)) {
-                        q.add(n);
+                        queue.add(n);
                     }
                 }
             }
             level--;
-            size = q.size();
+            size = queue.size();
         }
 
-        HashMap<String, Integer> frequency = new HashMap<>();       // build frequency based on kth friends
+        Map<String, Integer> frequency = new HashMap<>();       // build frequency based on kth friends
 
-        for (int i : q) {
+        for (int i : queue) {
             for (String v : watchedVideos.get(i)) {
                 frequency.put(v, frequency.getOrDefault(v, 0) + 1);
             }
@@ -140,11 +145,8 @@ public class WatchedVideosByFriends_1311 {
      * @param b seconding person
      * @param m friendship graph
      */
-    private void addFriend(int a, int b, HashMap<Integer, HashSet<Integer>> m) {
-
-        if (!m.containsKey(a)) {
-            m.put(a, new HashSet<>());
-        }
+    private void addFriend(int a, int b, Map<Integer, Set<Integer>> m) {
+        m.putIfAbsent(a, new HashSet<>());
         m.get(a).add(b);
     }
 }
