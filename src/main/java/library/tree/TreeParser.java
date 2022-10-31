@@ -1,11 +1,13 @@
 package library.tree;
 
+import com.google.common.collect.Lists;
 import library.tree.binarytree.TreeNode;
 
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Stack;
 
 /**
  * Serialize and deserialize tree.
@@ -30,34 +32,11 @@ public class TreeParser {
             return "null";
         }
 
+        Deque<Integer> inorderDeque = generateInorder(root);
         StringBuilder sb = new StringBuilder();
-        Queue<TreeNode> queue = new LinkedList<>();
-        queue.offer(root);
+        inorderDeque.forEach(node -> sb.append(node).append(","));
 
-        while (!queue.isEmpty()) {
-            TreeNode cur = queue.poll();
-
-            if (cur == null) {
-                sb.append("#,");
-            } else {
-                sb.append(cur.val).append(",");
-                queue.offer(cur.left);
-                queue.offer(cur.right);
-            }
-        }
-
-        int i = sb.length();
-        while (i >= 0) {        // compress string
-            if (!sb.substring(i - 2, i).equals("#,")) {
-                break;
-            }
-
-            i -= 2;
-        }
-
-        sb.setLength(i);
-
-        return sb.toString();
+        return sb.substring(0, sb.length() - 1);
     }
 
     /**
@@ -68,34 +47,34 @@ public class TreeParser {
      */
     public static TreeNode deserialize(String data) {
 
-        String[] arr = data.split(",");
+        String[] array = data.split(",");
 
         /* Corner case */
-        if (arr.length == 0) {
+        if (array.length == 0) {
             throw new IllegalArgumentException();
         }
-        if (arr.length == 1 && (arr[0].equals("#") || arr[0].equals("null"))) {
+        if (array.length == 1 && (array[0].equals("#") || array[0].equals("null"))) {
             return null;
         }
 
-        TreeNode root = new TreeNode(Integer.parseInt(arr[0]));
-        Queue<TreeNode> q = new LinkedList<>();
-        q.offer(root);
+        TreeNode root = new TreeNode(Integer.parseInt(array[0]));
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
         int i = 1;
-        while (i < arr.length) {
-            TreeNode current = q.poll();
+        while (i < array.length) {
+            TreeNode current = queue.poll();
 
-            TreeNode left = (arr[i].equals("#") || arr[i].equals("null")) ? null : new TreeNode(Integer.parseInt(arr[i]));
-            TreeNode right = (++i >= arr.length || (arr[i].equals("#") || arr[i].equals("null"))) ? null : new TreeNode(Integer.parseInt(arr[i]));
+            TreeNode left = (array[i].equals("#") || array[i].equals("null")) ? null : new TreeNode(Integer.parseInt(array[i]));
+            TreeNode right = (++i >= array.length || (array[i].equals("#") || array[i].equals("null"))) ? null : new TreeNode(Integer.parseInt(array[i]));
 
             current.left = left;
             current.right = right;
 
             if (left != null) {
-                q.offer(left);
+                queue.offer(left);
             }
             if (right != null) {
-                q.offer(right);
+                queue.offer(right);
             }
 
             i++;
@@ -110,20 +89,45 @@ public class TreeParser {
      * @param root root of tree
      */
     public static List<Integer> convertToList(TreeNode root) {
-        List<Integer> tmp = new LinkedList<>();
-        Stack<TreeNode> s = new Stack<>();
-        s.push(root);
 
-        while (!s.isEmpty()) {
-            root = s.pop();
-            while (root != null) {
-                tmp.add(root.val);
-                s.push(root.right);
-                root = root.left;
+        /* Corner case */
+        if (root == null) {
+            return Lists.newArrayList((Integer) null);
+        }
+
+        Deque<Integer> inorderDeque = generateInorder(root);
+
+        return new ArrayList<>(inorderDeque);
+    }
+
+    /**
+     * Generate a deque contains all nodes in in-order.
+     * Filter all null nodes append to the last of the deque.
+     *
+     * @param root root of the tree
+     * @return deque contains all nodes in in-order
+     */
+    private static Deque<Integer> generateInorder(TreeNode root) {
+        Deque<Integer> inorderDeque = new LinkedList<>();
+        Deque<TreeNode> deque = new LinkedList<>();
+        deque.offer(root);
+
+        while (!deque.isEmpty()) {
+            TreeNode current = deque.poll();
+
+            if (current == null) {
+                inorderDeque.addLast(null);
+            } else {
+                inorderDeque.addLast(current.val);
+                deque.addLast(current.left);
+                deque.addLast(current.right);
             }
         }
 
-//        System.out.println(tmp);
-        return tmp;
+        while (inorderDeque.peekLast() == null) {
+            inorderDeque.pollLast();
+        }
+
+        return inorderDeque;
     }
 }
