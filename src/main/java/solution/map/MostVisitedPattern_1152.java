@@ -1,6 +1,13 @@
 package solution.map;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * You are given 3 arrays: username, timestamp and website of the same length N.
@@ -52,6 +59,7 @@ public class MostVisitedPattern_1152 {
             if (list.size() < 3) {
                 continue;
             }
+
             // build users' all 3-sequences, use set in case duplicated 3-sequences
             Set<String> subsequence = subsequence(list);
             for (String seq : subsequence) {
@@ -70,14 +78,14 @@ public class MostVisitedPattern_1152 {
 
     private Set<String> subsequence(List<String> list) {
         int n = list.size();
-        Set<String> res = new HashSet<>();
+        Set<String> output = new HashSet<>();
         for (int i = 0; i < n - 2; i++) {
             for (int j = i + 1; j < n - 1; j++) {
                 for (int k = j + 1; k < n; k++) {
-                    res.add(list.get(i) + "," + list.get(j) + "," + list.get(k));
+                    output.add(list.get(i) + "," + list.get(j) + "," + list.get(k));
                 }
             }
         }
-        return res;
+        return output;
     }
 }
