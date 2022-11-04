@@ -1,6 +1,11 @@
 package solution.orderedmap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Given a string s, sort it in decreasing order based on the frequency of the characters.
@@ -28,13 +33,15 @@ public class FrequencySort_451 {
             return s;
         }
 
-        HashMap<Character, Integer> map = new HashMap<>();
+        Map<Character, Integer> map = new HashMap<>();
         for (int i = 0; i < s.length(); i++) {
             char current = s.charAt(i);
             map.put(current, map.getOrDefault(current, 0) + 1);
         }
 
-        PriorityQueue<Map.Entry<Character, Integer>> pq = new PriorityQueue<>((a, b) -> b.getValue() - a.getValue());
+        Queue<Map.Entry<Character, Integer>> pq = new PriorityQueue<>(
+                (a, b) -> b.getValue() - a.getValue()
+        );
         pq.addAll(map.entrySet());
 
         StringBuilder sb = new StringBuilder();
@@ -90,11 +97,5 @@ public class FrequencySort_451 {
         }
 
         return sb.toString();
-    }
-
-    public static void main(String[] args) {
-        FrequencySort_451 frequencySort_451 = new FrequencySort_451();
-        System.out.println(frequencySort_451.frequencySort("tree"));
-        System.out.println(frequencySort_451.frequencySortBucketSort("tree"));
     }
 }
