@@ -1,6 +1,7 @@
 package solution.trie;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Given a 2D board and a list of words from the dictionary, find all words in the board.

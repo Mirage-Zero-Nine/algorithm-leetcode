@@ -1,6 +1,11 @@
 package solution.graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
 /**
  * There are a total of n courses have to take, labeled from 0 to n-1.
@@ -29,7 +34,7 @@ public class CanFinish_207 {
             return true;
         }
 
-        HashMap<Integer, List<Integer>> m = new HashMap<>(); // prerequisite course -> course
+        Map<Integer, List<Integer>> m = new HashMap<>(); // prerequisite course -> course
         int[] indegree = new int[numCourses];
         Queue<Integer> q = new LinkedList<>();
 
@@ -75,7 +80,7 @@ public class CanFinish_207 {
      * @param prerequisites course - prerequisite pair
      * @return if is it possible to finish all courses
      */
-    private boolean intArray(int numCourses, int[][] prerequisites) {
+    public boolean intArray(int numCourses, int[][] prerequisites) {
 
         /* Corner case */
         if (numCourses < 1 || prerequisites.length < 1) {

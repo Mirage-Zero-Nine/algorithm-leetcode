@@ -21,9 +21,9 @@ import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class MyHashSet_705 {
-    List<Integer>[] arr;
-    int MAX_SIZE = 256; // set initial max capacity to 256
-    int size;
+    private List<Integer>[] arr;
+    private int MAX_SIZE = 256; // set initial max capacity to 256
+    private int size;
 
     /**
      * Initialize hash set.
@@ -35,7 +35,7 @@ public class MyHashSet_705 {
 
     /**
      * Add value to hash set.
-     * Note that hash set will not contains duplicated value.
+     * Note that hash set will not contain duplicated value.
      *
      * @param key value to be added
      */

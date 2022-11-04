@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 public class MyHashMap_706 {
-    private LinkedList<Cell>[] map;
+    private List<Cell>[] map;
     int MAX_SIZE = 256;
     int size;
 
@@ -42,7 +42,7 @@ public class MyHashMap_706 {
         }
 
         Cell tmp = new Cell(key, value);
-        LinkedList<Cell> l = map[index];
+        List<Cell> l = map[index];
 
         for (Cell c : l) {
             if (c.key == key) {
@@ -71,7 +71,7 @@ public class MyHashMap_706 {
             return -1;
         }
 
-        LinkedList<Cell> l = map[index];
+        List<Cell> l = map[index];
 
         for (Cell c : l) {
             if (c.key == key) {
@@ -93,7 +93,7 @@ public class MyHashMap_706 {
             return;
         }
 
-        LinkedList<Cell> l = map[index];
+        List<Cell> l = map[index];
 
         l.removeIf(c -> c.key == key);
 
@@ -107,7 +107,7 @@ public class MyHashMap_706 {
     private void rehashing() {
         MAX_SIZE *= 2;
 
-        LinkedList<Cell>[] tmp = new LinkedList[MAX_SIZE];
+        List<Cell>[] tmp = new LinkedList[MAX_SIZE];
 
         for (List<Cell> l : map) {
             if (l != null) {
@@ -127,7 +127,7 @@ public class MyHashMap_706 {
     /**
      * Cell used in map.
      */
-    static class Cell {
+    private static class Cell {
         int key;
         int val;
 
@@ -135,11 +135,5 @@ public class MyHashMap_706 {
             this.key = key;
             this.val = val;
         }
-    }
-
-    public static void main(String[] args) {
-        MyHashMap_706 test = new MyHashMap_706();
-        test.put(1, 1);
-        System.out.println(test.get(1));
     }
 }
