@@ -1,6 +1,10 @@
 package solution.heap;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  * Given a non-empty list of words, return the k most frequent elements.
@@ -23,8 +27,8 @@ public class TopKFrequent_692 {
      */
     public List<String> topKFrequent(String[] words, int k) {
 
-        LinkedList<String> out = new LinkedList<>();
-        HashMap<String, Integer> m = new HashMap<>();
+        List<String> out = new LinkedList<>();
+        Map<String, Integer> m = new HashMap<>();
 
         for (String w : words) {
             m.put(w, m.getOrDefault(w, 0) + 1);

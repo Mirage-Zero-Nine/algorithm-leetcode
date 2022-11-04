@@ -35,12 +35,4 @@ public class RemoveDuplicates_26 {
         }
         return slow;
     }
-
-    public static void main(String[] args) {
-
-        /* RemoveDuplicates_26 Test */
-        RemoveDuplicates_26 removeDuplicatesTest = new RemoveDuplicates_26();
-        int[] test = {1, 2, 3, 4};
-        System.out.println(removeDuplicatesTest.removeDuplicates(test));
-    }
 }
