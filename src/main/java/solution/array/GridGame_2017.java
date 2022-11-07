@@ -34,8 +34,11 @@ public class GridGame_2017 {
      * @return the number of points collected by the second robot
      */
     public long gridGame(int[][] grid) {
-        long topSum = Arrays.stream(grid[0]).asLongStream().sum(), bottomSum = 0;
-        long score = Long.MAX_VALUE;
+        long topSum = Arrays.stream(grid[0])
+                .asLongStream()
+                .sum();
+        long bottomSum = 0, score = Long.MAX_VALUE;
+
         for (int i = 0; i < grid[0].length; i++) {
             topSum -= grid[0][i];
             score = Math.min(score, Math.max(topSum, bottomSum));
