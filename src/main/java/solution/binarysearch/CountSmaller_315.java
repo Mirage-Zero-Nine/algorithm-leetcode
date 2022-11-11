@@ -110,11 +110,6 @@ public class CountSmaller_315 {
         }
         return out;
     }
-
-    public static void main(String[] args) {
-        CountSmaller_315 test = new CountSmaller_315();
-        System.out.println(test.countSmaller(new int[]{2, 8, 5, 7, 1, 3}));
-    }
 }
 
 
