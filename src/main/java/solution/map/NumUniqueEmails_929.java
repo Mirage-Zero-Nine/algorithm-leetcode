@@ -1,6 +1,7 @@
 package solution.map;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Every email consists of a local name and a domain name, separated by the @ sign.
@@ -29,7 +30,7 @@ public class NumUniqueEmails_929 {
      * @return different addresses actually receive mails
      */
     public int numUniqueEmails(String[] emails) {
-        HashSet<String> set = new HashSet<>();
+        Set<String> set = new HashSet<>();
         for (String s : emails) {
             String[] tmp = s.split("@");
             StringBuilder sb = new StringBuilder();
@@ -45,6 +46,7 @@ public class NumUniqueEmails_929 {
             sb.append("@").append(tmp[1]);
             set.add(sb.toString());
         }
+
         return set.size();
     }
 }
