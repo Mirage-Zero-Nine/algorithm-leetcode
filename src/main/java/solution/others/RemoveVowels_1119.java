@@ -18,14 +18,13 @@ public class RemoveVowels_1119 {
     public String removeVowels(String s) {
         StringBuilder sb = new StringBuilder();
 
-        int n = s.length();
-
-        for (int i = 0; i < n; i++) {
-            char ch = s.charAt(i);
-            if (ch != 'a' && ch != 'e' && ch != 'i' && ch != 'o' && ch != 'u') {
-                sb.append(ch);
-            }
-        }
+        s.chars().forEach(
+                c -> {
+                    if ((char) c != 'a' && (char) c != 'e' && (char) c != 'i' && (char) c != 'o' && (char) c != 'u') {
+                        sb.append((char) c);
+                    }
+                }
+        );
 
         return sb.toString();
     }
