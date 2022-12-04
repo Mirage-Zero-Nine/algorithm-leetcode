@@ -1,6 +1,5 @@
 package solution.bfs;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -129,75 +128,5 @@ public class FindLadders_126 {
             dfs(out, tmp, w, end, m);
             tmp.remove(0);
         }
-    }
-
-    /**
-     * Save each path while completing BFS using hash map and two hash sets.
-     * Hash map stores the path from begin word to current word.
-     * Hash set stores all words in given word list and all words during each layer of BFS (to avoid duplication).
-     * Each time, if word poll out from queue can form up a new word in list, add new word to the end of each list.
-     * Based on character of BFS, if end word is reached, the path will be the shortest.
-     *
-     * @param beginWord begin word
-     * @param endWord   target word
-     * @param wordList  middle words
-     * @return all shortest transformation sequence(s) from beginWord to endWord
-     */
-    public List<List<String>> findLaddersBFS(String beginWord, String endWord, List<String> wordList) {
-
-        /* Corner case */
-        if (wordList == null || wordList.size() == 0) {
-            return new LinkedList<>();
-        }
-
-        Set<String> wordSet = new HashSet<>(wordList);
-        if (!wordSet.contains(endWord)) {
-            return new ArrayList<>();
-        }
-
-        Map<String, List<List<String>>> map = new HashMap<>(); // key: word; value: all the paths to this word
-        List<String> begin = new ArrayList<String>() {{
-            add(beginWord);
-        }};
-        map.put(beginWord, new ArrayList<>());
-        map.get(beginWord).add(begin); // add initial path to the map: beginWord -> {{beginWord}}
-
-        Queue<String> q = new LinkedList<>();
-        q.add(beginWord);
-        boolean isFound = false; // break BFS when the target word is found
-
-        while (!q.isEmpty() && !wordSet.isEmpty() && !isFound) {
-            int size = q.size();
-            Set<String> currentSet = new HashSet<>();
-
-            for (int i = 0; i < size; i++) { // iterate all the words in the queue
-                String currentWord = q.poll();
-                List<List<String>> previousPaths = map.get(currentWord); // get all the paths to current word
-
-                for (int j = 0; j < currentWord.length(); j++) {
-                    char[] array = currentWord.toCharArray();
-                    for (char c = 'a'; c <= 'z'; c++) {
-                        array[j] = c;
-                        String nextWord = new String(array);
-                        isFound |= nextWord.equals(endWord);
-
-                        if (wordSet.contains(nextWord) && !nextWord.equals(currentWord) && previousPaths != null) {
-                            q.add(nextWord);
-                            map.putIfAbsent(nextWord, new ArrayList<>());
-                            currentSet.add(nextWord);
-                            for (List<String> list : previousPaths) { // append next available word to the end of each path
-                                List<String> newPath = new ArrayList<>(list);
-                                newPath.add(nextWord);
-                                map.get(nextWord).add(newPath);
-                            }
-                        }
-                    }
-                }
-                map.remove(currentWord);
-            }
-            wordSet.removeAll(currentSet);
-        }
-
-        return map.get(endWord) == null ? new ArrayList<>() : map.get(endWord);
     }
 }
