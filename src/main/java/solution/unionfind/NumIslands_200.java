@@ -13,6 +13,11 @@ package solution.unionfind;
  */
 
 public class NumIslands_200 {
+
+    private static final char one = '1';
+    private static final char two = '2';
+    private static final int[] direction = new int[]{0, 1, 0, -1, 0};
+
     /**
      * DFS.
      * When reaches a '1' then do DFS start at this point and mark all accessible point as visited.
@@ -22,23 +27,22 @@ public class NumIslands_200 {
      * @return number of connected '1'
      */
     public int numIslands(char[][] grid) {
-        int count = 0;
 
-        /* Corner case */
-        if (grid.length < 1) {
-            return count;
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
         }
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-
-                if (grid[i][j] == '1') {
-                    count += 1;
-                    grid[i][j] = '0';
+        int row = grid.length, col = grid[0].length;
+        int count = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == one) {
                     dfs(grid, i, j);
+                    count++;
                 }
             }
         }
+
         return count;
     }
 
@@ -46,20 +50,17 @@ public class NumIslands_200 {
      * DFS to access all accessible points based on current point.
      *
      * @param grid given grid
-     * @param i    coord x
-     * @param j    coord y
+     * @param x    coord x
+     * @param y    coord y
      */
-    private void dfs(char[][] grid, int i, int j) {
-        int[] direction = {1, -1, 0, 0, 0, 0, 1, -1};
-        grid[i][j] = '0';
+    private void dfs(char[][] grid, int x, int y) {
+        grid[x][y] = two;
 
-        for (int k = 0; k < 4; k++) {
-
-            int nextX = i + direction[k];
-            int nextY = j + direction[k + 4];
-
-            if (nextX > -1 && nextX < grid.length && nextY > -1 && nextY < grid[0].length && grid[nextX][nextY] == '1') {
-                dfs(grid, nextX, nextY);
+        for (int i = 0; i < direction.length - 1; i++) {
+            int xx = x + direction[i];
+            int yy = y + direction[i + 1];
+            if (xx >= 0 && xx < grid.length && yy >= 0 && yy < grid[0].length && grid[xx][yy] == one) {
+                dfs(grid, xx, yy);
             }
         }
     }
@@ -70,7 +71,7 @@ public class NumIslands_200 {
      * @param grid given grid
      * @return number of islands
      */
-    public int unionFind(char[][] grid) {
+    public int numIslandsUnionFind(char[][] grid) {
 
         /* Corner case */
         if (grid == null || grid.length == 0 || grid[0].length == 0) {
@@ -88,7 +89,7 @@ public class NumIslands_200 {
                     for (int[] d : distance) {
                         int x = i + d[0];
                         int y = j + d[1];
-                        if (x >= 0 && x < rows && y >= 0 && y < cols && grid[x][y] == '1') {
+                        if (x >= 0 && x < rows && y >= 0 && y < cols && grid[x][y] == one) {
                             int id1 = i * cols + j;
                             int id2 = x * cols + y;
                             uf.union(id1, id2);
@@ -116,7 +117,7 @@ public class NumIslands_200 {
             father = new int[grid.length * grid[0].length];     // contains all nodes in 2D array
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[0].length; j++) {
-                    if (grid[i][j] == '1') {
+                    if (grid[i][j] == one) {
                         int id = i * grid[0].length + j;
                         father[id] = id;
                         count++;
