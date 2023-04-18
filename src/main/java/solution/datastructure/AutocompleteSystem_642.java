@@ -1,6 +1,11 @@
 package solution.datastructure;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Design a search autocomplete system for a search engine.
@@ -20,7 +25,7 @@ import java.util.*;
  */
 
 public class AutocompleteSystem_642 {
-    private List<Character> l = new LinkedList<>();     // history list
+    private List<Character> historyList = new ArrayList<>();     // history list
     private TrieNode root;      // root node of trie
     private TrieNode tmp;       // current trie node for next search
     private int p = 0;          // pointer point at current char for searching
@@ -47,33 +52,33 @@ public class AutocompleteSystem_642 {
      * @return result list, if input is '#' or not exist, return empty list
      */
     public List<String> input(char c) {
-        List<String> out = new LinkedList<>();
+        List<String> out = new ArrayList<>();
 
         if (c == '#') {
             StringBuilder sb = new StringBuilder();
-            for (Character ch : l) {
+            for (Character ch : historyList) {
                 sb.append(ch);
             }
             root = build(new String[]{sb.toString()}, new int[]{1});        // if input is '#', update trie
-            l = new LinkedList<>();
+            historyList = new ArrayList<>();
             tmp = root;
             p = 0;
 
-            return new LinkedList<>();
+            return new ArrayList<>();
         }
 
-        l.add(c);
+        historyList.add(c);
 
         /*
          * If input char is not in trie, stop moving pointer forward.
          * The history list will not reset until accept a '#'.
          * Therefore, if a input char is not found in trie, then the later input char will always return empty list. */
-        if (!tmp.child.containsKey(l.get(p))) {
-            return new LinkedList<>();
+        if (!tmp.child.containsKey(historyList.get(p))) {
+            return new ArrayList<>();
         }
-        tmp = tmp.child.get(l.get(p++));
+        tmp = tmp.child.get(historyList.get(p++));
 
-        PriorityQueue<Map.Entry<String, Integer>> pq = new PriorityQueue<>((o1, o2) -> {
+        Queue<Map.Entry<String, Integer>> pq = new PriorityQueue<>((o1, o2) -> {
             if (o2.getValue().equals(o1.getValue())) {
                 return o1.getKey().compareTo(o2.getKey());
             }
@@ -119,38 +124,7 @@ public class AutocompleteSystem_642 {
      * Constructor of trie node.
      */
     static class TrieNode {
-        HashMap<Character, TrieNode> child = new HashMap<>();       // save child node of current node
-        HashMap<String, Integer> sentence = new HashMap<>();        // save each node's relating sentence and count
-    }
-
-    public static void main(String[] args) {
-        String[] s = new String[]{"i love you", "island", "iroman", "i love leetcode"};
-        int[] time = {5, 3, 2, 2};
-        AutocompleteSystem_642 test = new AutocompleteSystem_642(s, time);
-        System.out.println(test.input('i'));
-        System.out.println(test.input(' '));
-        System.out.println(test.input('a'));
-        System.out.println(test.input('#'));
-        System.out.println(test.input('i'));
-        System.out.println(test.input(' '));
-        System.out.println(test.input('a'));
-        System.out.println(test.input('#'));
-        System.out.println(test.input('i'));
-        System.out.println(test.input(' '));
-        System.out.println(test.input('a'));
-        System.out.println(test.input('#'));
-
-        // ["i love you","island","i love leetcode"],
-        // ["i love you","i love leetcode"],
-        // [],
-        // [],
-        // ["i love you","island","i love leetcode"],
-        // ["i love you","i love leetcode","i a"],
-        // ["i a"],
-        // [],
-        // ["i love you","island","i a"],
-        // ["i love you","i a","i love leetcode"],
-        // ["i a"],
-        // []
+        private final Map<Character, TrieNode> child = new HashMap<>();       // save child node of current node
+        private final Map<String, Integer> sentence = new HashMap<>();        // save each node's relating sentence and count
     }
 }

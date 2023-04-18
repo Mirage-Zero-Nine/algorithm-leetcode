@@ -13,7 +13,9 @@ import java.util.List;
 
 public class Permute_46 {
     /**
-     * Use backtracking to traverse each possibility.
+     * Basic backtracking.
+     * Iterate all possible combination by implementing backtracking array.
+     * Keep an int array to record visited position to avoid duplication.
      *
      * @param nums input array
      * @return all possible permutations
@@ -27,31 +29,34 @@ public class Permute_46 {
             return output;
         }
 
-        backtracking(output, new ArrayList<>(), nums);
+        int[] visited = new int[nums.length];   // int array to record which element was used
+        backtracking(output, new ArrayList<>(), visited, nums);
 
         return output;
     }
 
     /**
      * Backtracking to find all possible permutations.
-     * The end point is when current temporary list reaching the size of given array.
+     * The base case is when current temporary list is the same size of the given array.
      *
-     * @param output output list
-     * @param temp   temporary list
-     * @param nums   array to find all permutations
+     * @param output  output list
+     * @param tmp     temporary list
+     * @param visited int array to record which element was used
+     * @param nums    array to find all permutations
      */
-    private void backtracking(List<List<Integer>> output, List<Integer> temp, int[] nums) {
+    private void backtracking(List<List<Integer>> output, List<Integer> tmp, int[] visited, int[] nums) {
 
-        if (temp.size() == nums.length) {       // end point
-            output.add(new ArrayList<>(temp));
-            return;
-        }
-
-        for (int n : nums) {
-            if (!temp.contains(n)) {
-                temp.add(n);
-                backtracking(output, temp, nums);
-                temp.remove(temp.size() - 1);
+        if (tmp.size() == visited.length) {
+            output.add(new ArrayList<>(tmp));
+        } else {
+            for (int i = 0; i < nums.length; i++) {
+                if (visited[i] == 0) {
+                    visited[i] = 1;
+                    tmp.add(nums[i]);
+                    backtracking(output, tmp, visited, nums);
+                    tmp.remove(tmp.size() - 1);
+                    visited[i] = 0;
+                }
             }
         }
     }

@@ -1,6 +1,9 @@
 package solution.graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * For an undirected graph with tree characteristics, we can choose any node as the root.
@@ -31,7 +34,7 @@ public class FindMinHeightTrees_310 {
      * @return list of MHT root
      */
     public List<Integer> findMinHeightTrees(int n, int[][] edges) {
-        List<Integer> result = new LinkedList<>();
+        List<Integer> result = new ArrayList<>();
 
         /* Corner case */
         if (n < 3) {
@@ -79,13 +82,5 @@ public class FindMinHeightTrees_310 {
         }
 
         return result;
-    }
-
-    public static void main(String[] args) {
-        FindMinHeightTrees_310 test = new FindMinHeightTrees_310();
-        int[][] arr = {{0, 1}, {6, 1}, {7, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 8}};
-        System.out.println(test.findMinHeightTrees(9, arr));
-        arr = new int[][]{{0, 1}, {6, 1}, {7, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}};
-        System.out.println(test.findMinHeightTrees(8, arr));
     }
 }

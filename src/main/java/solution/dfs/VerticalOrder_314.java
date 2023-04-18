@@ -2,7 +2,8 @@ package solution.dfs;
 
 import library.tree.binarytree.TreeNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author BorisMirage
@@ -24,12 +25,12 @@ public class VerticalOrder_314 {
      */
     public List<List<Integer>> verticalOrder(TreeNode root) {
 
-        LinkedList<int[]> list = new LinkedList<>();
+        List<int[]> list = new ArrayList<>();
 
         dfs(root, 0, 0, list);
 
-        List<List<Integer>> out = new LinkedList<>();
-        List<Integer> l = new ArrayList<>();
+        List<List<Integer>> out = new ArrayList<>();
+        List<Integer> temp = new ArrayList<>();
         list.sort((o1, o2) -> {
             if (o1[0] == o2[0] && o1[1] != o2[1]) {
                 return o1[1] - o2[1];
@@ -38,20 +39,20 @@ public class VerticalOrder_314 {
         });
 
         if (list.size() != 0) {
-            int distance = list.getFirst()[0];
+            int distance = list.get(0)[0];
 
             while (!list.isEmpty()) {
-                int[] arr = list.getFirst();
-                list.removeFirst();
+                int[] arr = list.get(0);
+                list.remove(0);
                 if (distance != arr[0]) {
                     distance = arr[0];
-                    out.add(new ArrayList<>(l));
-                    l = new ArrayList<>();
+                    out.add(new ArrayList<>(temp));
+                    temp = new ArrayList<>();
                 }
-                l.add(arr[2]);
+                temp.add(arr[2]);
             }
-            if (l.size() != 0) {
-                out.add(l);
+            if (temp.size() != 0) {
+                out.add(temp);
             }
         }
 
@@ -65,7 +66,7 @@ public class VerticalOrder_314 {
      * @param distance horizon distance
      * @param height   height of current node
      */
-    private void dfs(TreeNode root, int distance, int height, LinkedList<int[]> list) {
+    private void dfs(TreeNode root, int distance, int height, List<int[]> list) {
         if (root == null) {
             return;
         }

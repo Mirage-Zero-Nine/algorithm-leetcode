@@ -2,6 +2,8 @@ package solution.datastructure;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implement a data structure supporting the following operations:
@@ -17,8 +19,8 @@ import java.util.HashSet;
  */
 
 public class AllOne_432 {
-    private final HashMap<String, Integer> key;        // key - count pair
-    private final HashMap<Integer, Node> count;          // count - node pair, node stores all keys with same count
+    private final Map<String, Integer> stringMap;  // key and its count
+    private final Map<Integer, Node> countMap;     // count - node pair, node stores all keys with same count
     private final Node min;
     private final Node max;
 
@@ -30,8 +32,8 @@ public class AllOne_432 {
      * Achieve O(1) update frequency without sort: HashMap, key is the frequency, value is the address of node in list.
      */
     public AllOne_432() {
-        key = new HashMap<>();
-        count = new HashMap<>();
+        stringMap = new HashMap<>();
+        countMap = new HashMap<>();
 
         min = new Node(0, new HashSet<>());
         max = new Node(Integer.MAX_VALUE, new HashSet<>());
@@ -45,42 +47,35 @@ public class AllOne_432 {
      * @param key key to insert or increment
      */
     public void inc(String key) {
+        int currentCount = stringMap.getOrDefault(key, 0);
+        int nextCount = currentCount + 1;
 
-        if (this.key.containsKey(key)) {      // key exist, increment key count by 1
-            int currentCount = this.key.get(key);       // current key's frequency
-            int nextCount = currentCount + 1;
+        if (stringMap.containsKey(key)) {      // key exist, increment key count by 1
+            Node tmp, currentNode = countMap.get(currentCount);
 
-            this.key.put(key, nextCount);               // update frequency
-            Node tmp, currentNode = count.get(currentCount);
-
-            if (count.containsKey(nextCount)) {     // if there exist key at next frequency, then directly add it
-                tmp = count.get(nextCount);
-                tmp.add(key);
+            if (countMap.containsKey(nextCount)) {     // if there exist key at next frequency, then directly add it
+                tmp = countMap.get(nextCount);
             } else {                                // otherwise, create a new node
                 tmp = new Node(nextCount, new HashSet<>());
-                tmp.add(key);
-                count.put(nextCount, tmp);
+                countMap.put(nextCount, tmp);
                 insertNode(currentNode, tmp);
             }
+            tmp.keySet.add(key);
 
-            currentNode.remove(key);        // remove key in previous frequency
-            if (currentNode.set.isEmpty()) {        // if previous node is empty, remove it
-                count.remove(currentCount);
-                removeNode(currentNode);
-            }
+            currentNode.keySet.remove(key);        // remove key in previous frequency
+            checkNodeToBeRemoved(currentNode);
 
         } else {        // key does not exist, insert new key
-            this.key.put(key, 1);
-
-            if (count.containsKey(1)) {
-                count.get(1).add(key);
+            if (countMap.containsKey(nextCount)) {
+                countMap.get(nextCount).keySet.add(key);
             } else {
-                Node tmp = new Node(1, new HashSet<>());
+                Node tmp = new Node(nextCount, new HashSet<>());
                 insertNode(min, tmp);
-                tmp.add(key);
-                count.put(1, tmp);
+                tmp.keySet.add(key);
+                countMap.put(nextCount, tmp);
             }
         }
+        stringMap.put(key, nextCount);               // update frequency
     }
 
     /**
@@ -91,37 +86,33 @@ public class AllOne_432 {
      */
     public void dec(String key) {
 
-        if (!this.key.containsKey(key)) {
+        if (!this.stringMap.containsKey(key)) {
             return;
         }
 
-        int currentCount = this.key.get(key);
+        int currentCount = this.stringMap.get(key);
         int nextCount = currentCount - 1;
 
-        Node currentNode = count.get(currentCount);
-        currentNode.remove(key);
+        Node currentNode = countMap.get(currentCount);
+        currentNode.keySet.remove(key);
 
-        if (nextCount != 0) {       // if count of the key is larger than 1, then keep it in the structure
-            this.key.put(key, nextCount);       // update frequency
+        if (nextCount != 0) {       // if count of the key is larger than 1, keep it in the structure
+            this.stringMap.put(key, nextCount);       // update frequency
             Node tmp;
 
-            if (count.containsKey(nextCount)) {
-                tmp = count.get(nextCount);
-                tmp.add(key);
+            if (countMap.containsKey(nextCount)) {
+                tmp = countMap.get(nextCount);
             } else {
                 tmp = new Node(nextCount, new HashSet<>());
-                tmp.add(key);
-                count.put(nextCount, tmp);
+                countMap.put(nextCount, tmp);
                 insertNode(currentNode.previous, tmp);
             }
+            tmp.keySet.add(key);
         } else {                // otherwise, it will be removed
-            this.key.remove(key);
+            this.stringMap.remove(key);
         }
 
-        if (currentNode.set.isEmpty()) {
-            count.remove(currentCount);
-            removeNode(currentNode);
-        }
+        checkNodeToBeRemoved(currentNode);
     }
 
     /**
@@ -168,69 +159,44 @@ public class AllOne_432 {
     }
 
     /**
-     * Node store the frequency of string and all strings under this frequency.
+     * Check if current node contains any key, if not, remove the node from double linked list.
+     *
+     * @param currentNode check if node needs to be removed
+     */
+    private void checkNodeToBeRemoved(Node currentNode) {
+        if (currentNode.keySet.isEmpty()) {
+            countMap.remove(currentNode.count);
+            removeNode(currentNode);
+        }
+    }
+
+    /**
+     * Double linked list node store the frequency of string and all strings under this frequency.
      */
     static class Node {
-        int count;
-        private final HashSet<String> set;
-        Node previous;
-        Node next;
+        private final int count;
+        private final Set<String> keySet;
+        private Node previous;
+        private Node next;
 
         /**
          * Constructor.
          *
-         * @param count frequency of string
-         * @param set   all strings under this frequency
+         * @param count  frequency of string
+         * @param keySet all strings under this frequency
          */
-        Node(int count, HashSet<String> set) {
+        Node(int count, HashSet<String> keySet) {
             this.count = count;
-            this.set = set;
+            this.keySet = keySet;
         }
 
         /**
-         * Add a new string to the set
-         *
-         * @param key new string
-         */
-        public void add(String key) {
-            this.set.add(key);
-        }
-
-        /**
-         * Remove a string from set.
-         *
-         * @param key string to be removed
-         */
-        public void remove(String key) {
-            this.set.remove(key);
-        }
-
-        /**
-         * Get one string from the set.
+         * Randomly return a string from the hash set.
          *
          * @return one string from the set
          */
         public String getKey() {
-            return set.iterator().next();
+            return keySet.iterator().next();
         }
-    }
-
-    public static void main(String[] args) {
-        AllOne_432 test = new AllOne_432();
-        System.out.println(test.getMaxKey());
-        System.out.println(test.getMinKey());
-        test.inc("hello");
-        test.inc("goodbye");
-        test.inc("hello");
-        test.inc("hello");
-        System.out.println(test.getMaxKey());       // hello
-        test.inc("leet");       // 1
-        test.inc("code");       // 1
-        test.inc("leet");       // 2
-        test.dec("hello");      // 2
-        test.inc("leet");       // 3
-        test.inc("code");       // 2
-        test.inc("code");       // 3
-        System.out.println(test.getMaxKey());       // leet/code
     }
 }
