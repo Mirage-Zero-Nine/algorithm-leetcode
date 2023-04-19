@@ -1,6 +1,7 @@
 package solution.array;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Given a list of non-negative numbers and a target integer k.
@@ -23,7 +24,7 @@ public class CheckSubarraySum_523 {
      * @return if the array has a continuous subarray of size at least 2 that sums up to a multiple of k
      */
     public boolean checkSubarraySum(int[] nums, int k) {
-        HashMap<Integer, Integer> m = new HashMap<>();
+        Map<Integer, Integer> m = new HashMap<>();
         m.put(0, -1);
 
         int prefixSum = 0;
@@ -48,16 +49,16 @@ public class CheckSubarraySum_523 {
     }
 
     /**
-     * Normal traversal approach, slow but simple.
+     * Normal traversal approach, slow but simple. (Note: this method will TLE).
      * Calculate the prefix sum, then traverse the array.
-     * If from (0, i) there exist an prefix sum that the difference is the multiple of k, return true.
+     * If from (0, i) there exist a prefix sum that the difference is the multiple of k, return true.
      * Note that this approach has to deal with lots of corner case.
      *
      * @param nums given int array
      * @param k    multiple of k
      * @return if the array has a continuous subarray of size at least 2 that sums up to a multiple of k
      */
-    public boolean traverseArray(int[] nums, int k) {
+    public boolean checkSubarraySumByTraverseArray(int[] nums, int k) {
 
         /* Corner case */
         if (nums.length < 2) {

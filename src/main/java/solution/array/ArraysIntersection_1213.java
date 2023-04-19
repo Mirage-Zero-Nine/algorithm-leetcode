@@ -1,6 +1,6 @@
 package solution.array;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,11 +23,11 @@ public class ArraysIntersection_1213 {
      */
     public List<Integer> arraysIntersection(int[] arr1, int[] arr2, int[] arr3) {
         int p1 = 0, p2 = 0, p3 = 0;
-        LinkedList<Integer> out = new LinkedList<>();
+        List<Integer> output = new ArrayList<>();
 
         while (p1 < arr1.length && p2 < arr2.length && p3 < arr3.length) {
             if (arr1[p1] == arr2[p2] && arr2[p2] == arr3[p3]) {
-                out.add(arr1[p1]);
+                output.add(arr1[p1]);
                 p1++;
                 p2++;
                 p3++;
@@ -40,6 +40,6 @@ public class ArraysIntersection_1213 {
             }
         }
 
-        return out;
+        return output;
     }
 }
