@@ -1,7 +1,5 @@
 package solution.datastructure;
 
-import java.util.HashMap;
-
 /**
  * Implement a trie with insert, search, and startsWith methods.
  *
@@ -16,7 +14,8 @@ public class Trie_208 {
      * Initialize of Trie.
      */
     public Trie_208() {
-        root = new TrieNode();
+        // create root trie node
+        root = new TrieNode('-');
     }
 
     /**
@@ -27,17 +26,18 @@ public class Trie_208 {
      * @param word word to be inserted to trie
      */
     public void insert(String word) {
-        TrieNode tmp = root;
+        TrieNode current = root;  // current trie node
 
         for (int i = 0; i < word.length(); i++) {
-            if (tmp.child.get(word.charAt(i)) == null) {
-                TrieNode n = new TrieNode();
-                tmp.child.put(word.charAt(i), n);
+
+            int index = word.charAt(i) - 'a';
+            if (current.child[index] == null) {
+                current.child[index] = new TrieNode(word.charAt(i));
             }
-            tmp = tmp.child.get(word.charAt(i));
+            current = current.child[index];
         }
 
-        tmp.isEnd = true;
+        current.isLastChar = true;
     }
 
     /**
@@ -47,8 +47,8 @@ public class Trie_208 {
      * @return if word is in trie
      */
     public boolean search(String word) {
-        TrieNode tmp = findEnd(word);
-        return tmp != null && tmp.isEnd;
+        TrieNode lastNode = findLastTrieNode(word);
+        return lastNode != null && lastNode.isLastChar;
     }
 
     /**
@@ -58,7 +58,7 @@ public class Trie_208 {
      * @return if prefix is in trie
      */
     public boolean startsWith(String prefix) {
-        return findEnd(prefix) != null;
+        return findLastTrieNode(prefix) != null;
     }
 
     /**
@@ -67,45 +67,42 @@ public class Trie_208 {
      * @param w given string
      * @return longest reachable TrieNode, or null if given string contains char that is not exist in trie.
      */
-    private TrieNode findEnd(String w) {
-        TrieNode tmp = root;
+    private TrieNode findLastTrieNode(String w) {
+        TrieNode current = root;
 
         for (int i = 0; i < w.length(); i++) {
-            if (tmp.child.get(w.charAt(i)) == null) {
+            int index = w.charAt(i) - 'a';
+            if (current.child[index] == null) {
                 return null;
             }
-            tmp = tmp.child.get(w.charAt(i));
+            current = current.child[index];
         }
 
-        return tmp;
+        return current;
     }
+
+//    /**
+//     * Nodes in trie.
+//     * Hash map can be a more generic choice, but consuming more memory.
+//     */
+//    static class TrieNodeWithMap {
+//        public HashMap<Character, TrieNode> child = new HashMap<>();
+//        boolean isLastChar = false;
+//
+//        TrieNodeWithMap() {
+//        }
+//    }
 
     /**
-     * Nodes in trie.
+     * TrieNode with array to replace hash map. Less generic but consuming less memory.
      */
     static class TrieNode {
-        public HashMap<Character, TrieNode> child = new HashMap<>();
-        boolean isEnd = false;
+        TrieNode[] child = new TrieNode[26];
+        boolean isLastChar = false;
+        char character;
 
-        /**
-         * Constructor of TrieNode.
-         */
-        TrieNode() {
+        TrieNode(char c) {
+            character = c;
         }
-    }
-
-    public static void main(String[] args) {
-        Trie_208 test = new Trie_208();
-        test.insert("app");
-        test.insert("apple");
-        test.insert("beer");
-        test.insert("add");
-        test.insert("jam");
-        test.insert("rental");
-        System.out.println(test.search("app"));
-        System.out.println(test.search("apps"));
-        System.out.println(test.startsWith("beer"));
-        test.insert("app");
-        System.out.println(test.search("app"));
     }
 }
