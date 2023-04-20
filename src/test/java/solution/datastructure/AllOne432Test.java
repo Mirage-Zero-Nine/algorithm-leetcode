@@ -31,6 +31,30 @@ public class AllOne432Test {
     }
 
     @Test
+    public void test() {
+        test.inc("a");
+        assertEquals("a", test.getMinKey());
+        assertEquals("a", test.getMaxKey());
+
+        test.inc("b");
+        test.inc("b");
+        test.inc("c");
+        test.inc("c");
+        test.inc("c");
+        assertEquals("a", test.getMinKey());
+        assertEquals("c", test.getMaxKey());
+        assertEquals("a", test.getMinKey());
+        assertEquals("c", test.getMaxKey());
+
+        test.dec("b");
+        test.dec("b");
+        assertEquals("a", test.getMinKey());
+        test.dec("a");
+        assertEquals("c", test.getMaxKey());
+        assertEquals("c", test.getMinKey());
+    }
+
+    @Test
     public void testAllOne() {
 
 
