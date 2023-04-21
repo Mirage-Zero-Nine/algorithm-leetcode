@@ -2,7 +2,9 @@ package solution.graph;
 
 import library.graph.Node;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph.
@@ -27,7 +29,7 @@ public class CloneGraph_133 {
      */
     public Node cloneGraph(Node node) {
 
-        HashMap<Integer, Node> map = new HashMap<>();
+        Map<Integer, Node> map = new HashMap<>();
         return dfs(node, map);
     }
 
@@ -38,7 +40,7 @@ public class CloneGraph_133 {
      * @param map  map to store previous visited nodes
      * @return start node of original graph
      */
-    private Node dfs(Node node, HashMap<Integer, Node> map) {
+    private Node dfs(Node node, Map<Integer, Node> map) {
 
         /* Corner case */
         if (node == null) {
