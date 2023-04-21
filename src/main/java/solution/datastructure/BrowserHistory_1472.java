@@ -19,8 +19,8 @@ import java.util.List;
  */
 
 public class BrowserHistory_1472 {
-    List<String> history = new ArrayList<>();
-    int position = 0;
+    private final List<String> history = new ArrayList<>();
+    private int position = 0;
 
     /**
      * Keep a linked list to store the visited pages. Use an integer as the current position.
