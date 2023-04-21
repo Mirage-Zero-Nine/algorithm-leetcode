@@ -2,7 +2,10 @@ package solution.dfs;
 
 import library.tree.binarytree.TreeNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Given a binary tree, return the vertical order traversal of its nodes values.
@@ -29,8 +32,9 @@ public class VerticalTraversal_987 {
      * @return list of non-empty reports in order of X coordinate
      */
     public List<List<Integer>> verticalTraversal(TreeNode root) {
+
         // save node value based on horizon distance and node height
-        PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> {
+        Queue<int[]> pq = new PriorityQueue<>((o1, o2) -> {
             if (o1[0] == o2[0]) {
                 if (o1[1] == o2[1]) {
                     return o1[2] - o2[2];
@@ -42,8 +46,8 @@ public class VerticalTraversal_987 {
 
         dfs(root, 0, 0, pq);
 
-        List<List<Integer>> out = new LinkedList<>();
-        List<Integer> l = new ArrayList<>();
+        List<List<Integer>> out = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
 
         if (pq.size() != 0) {
             int distance = pq.peek()[0];
@@ -52,13 +56,13 @@ public class VerticalTraversal_987 {
 
                 if (distance != arr[0]) {
                     distance = arr[0];
-                    out.add(new ArrayList<>(l));
-                    l = new ArrayList<>();
+                    out.add(new ArrayList<>(list));
+                    list = new ArrayList<>();
                 }
-                l.add(arr[2]);
+                list.add(arr[2]);
             }
-            if (l.size() != 0) {
-                out.add(l);
+            if (list.size() != 0) {
+                out.add(list);
             }
         }
         return out;
@@ -71,7 +75,7 @@ public class VerticalTraversal_987 {
      * @param distance horizon distance
      * @param height   height of current node
      */
-    private void dfs(TreeNode root, int distance, int height, PriorityQueue<int[]> pq) {
+    private void dfs(TreeNode root, int distance, int height, Queue<int[]> pq) {
 
         /* Corner case */
         if (root == null) {
