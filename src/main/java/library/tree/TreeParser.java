@@ -3,11 +3,7 @@ package library.tree;
 import com.google.common.collect.Lists;
 import library.tree.binarytree.TreeNode;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Serialize and deserialize tree.
@@ -47,7 +43,9 @@ public class TreeParser {
      */
     public static TreeNode deserialize(String data) {
 
-        String[] array = data.split(",");
+        String[] array = Arrays.stream(data.split(","))
+                .map(String::trim)
+                .toArray(String[]::new);
 
         /* Corner case */
         if (array.length == 0) {
