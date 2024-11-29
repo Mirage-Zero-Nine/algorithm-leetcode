@@ -25,7 +25,7 @@ public class MinimumSumSubarray {
     public int minimumSumSubarray(List<Integer> nums, int l, int r) {
 
         // corner cases
-        if (nums.size() < 1 || l < 1 || r < 1 || r > nums.size() || l > r) {
+        if (nums.isEmpty() || l < 1 || r < 1 || r > nums.size() || l > r) {
             return -1;
         }
 
