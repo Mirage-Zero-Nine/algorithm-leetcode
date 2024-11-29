@@ -63,7 +63,6 @@ public class MinWindow_727 {
                 }
 
                 startS = Math.max(startS, tmp);     // set start position to the window with smaller size
-
                 if (minWindow > (endS - startS + 1)) {      // replace only when finding a minor window
                     minWindow = (endS - startS + 1);
                     out = s.substring(startS, endS);
@@ -72,11 +71,5 @@ public class MinWindow_727 {
         }
 
         return out;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new MinWindow_727().minWindow("cnhczmccqouqadqtmjjzl", "ccouq"));      // ccqouq
-        System.out.println(new MinWindow_727().minWindow("cnhczmccqouqadqtmjjzl", "cm"));      // czm
-        System.out.println(new MinWindow_727().minWindow("abcdebdde", "bde"));      // bcde
     }
 }
