@@ -24,7 +24,7 @@ public class MinWindow_76 {
     public String minWindow(String s, String t) {
 
         /* Corner case */
-        if (s.length() < 1 || t.length() < 1) {
+        if (s.isEmpty() || t.isEmpty()) {
             return "";
         }
 
@@ -56,6 +56,6 @@ public class MinWindow_76 {
 
     public static void main(String[] args) {
         MinWindow_76 test = new MinWindow_76();
-        System.out.println(test.minWindow("ADOBECODEBANC", "ABC"));
+        System.out.println();
     }
 }
