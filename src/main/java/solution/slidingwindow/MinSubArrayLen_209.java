@@ -14,6 +14,7 @@ public class MinSubArrayLen_209 {
     /**
      * Sliding window.
      * Shrink the window if current subarray sum is larger than target sum and find the minimum one.
+     * @see MinimumSumSubarray
      *
      * @param s    given target sum
      * @param nums given positive array
@@ -31,10 +32,5 @@ public class MinSubArrayLen_209 {
         }
 
         return window % (n + 1);
-    }
-
-    public static void main(String[] args) {
-        MinSubArrayLen_209 test = new MinSubArrayLen_209();
-        System.out.println(test.minSubArrayLen(7, new int[]{2, 3, 1, 2, 4, 3}));
     }
 }
