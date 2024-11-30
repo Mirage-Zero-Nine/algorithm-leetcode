@@ -13,48 +13,39 @@ import java.util.Map;
 
 public class LengthOfLongestSubstring_3 {
     /**
-     * Sliding window. Keep a hash map to store the char-index pair.
-     * Keep a sliding window, which its start is the last non-duplicate char, and the end is current char in for loop.
+     * Sliding window.
+     * The starting point of window is the index of the last non-duplicate char, and the end is current char.
      * If current char is a duplicated char, check its last appearance in given string.
      * If its last appearance is in current substring, then set the start position to the next of duplicated char.
-     * This excluded counting duplicated char to substring.
-     * Otherwise, the duplicated char is outside the substring, in current substring there is no duplication.
+     * Keep a hash map to store the pair of char and its last appearance index.
      *
      * @param s input string
      * @return max sub-string length
      */
     public int lengthOfLongestSubstring(String s) {
 
-        /* Corner case */
-        if (s == null || s.length() == 0) {
+        // corner case
+        if (s == null || s.isEmpty()) {
             return 0;
         }
 
-        Map<Character, Integer> m = new HashMap<>();
-        int windowStart = 0, maxWindow = 1;
-        for (int i = 0; i < s.length(); i++) {
-            if (m.containsKey(s.charAt(i))) {
-                /*
-                 * If there is a duplicated char, then the start position depends on the duplicated char position.
-                 * If its last appearance is in current substring, set start to the next position of duplicated char.
-                 * Otherwise, there is no impact for current substring. */
-                windowStart = Math.max(windowStart, m.get(s.charAt(i)) + 1);
+        int start = 0, end = 0, maxWindow = Integer.MIN_VALUE;
+        Map<Character, Integer> map = new HashMap<>();
+        while (end < s.length()) {
+
+            if (map.containsKey(s.charAt(end))) {
+                // current window ends at a char that is found before
+                // to ensure the window only contains the non-duplicated char
+                // either move the window start to the next char of the previous-seeing ending char
+                // or keep the window start in place, depends on which one is later
+                start = Math.max(start, map.get(s.charAt(end)) + 1);
             }
-            maxWindow = Math.max(i - windowStart + 1, maxWindow);
-            m.put(s.charAt(i), i);
+
+            maxWindow = Math.max(maxWindow, end - start + 1);
+            map.put(s.charAt(end), end++);  // put it to map, and move to next char
         }
 
         return maxWindow;
-    }
-
-    public static void main(String[] args) {
-        LengthOfLongestSubstring_3 test = new LengthOfLongestSubstring_3();
-        System.out.println(test.lengthOfLongestSubstring("abcabcbb"));       // 3
-        System.out.println(test.lengthOfLongestSubstring("tmmzuxt"));       // 5
-        System.out.println(test.lengthOfLongestSubstring("a"));         // 1
-        System.out.println(test.lengthOfLongestSubstring("dvdf"));      // 3
-        System.out.println(test.lengthOfLongestSubstring("cdd"));      // 2
-        System.out.println(test.lengthOfLongestSubstring("abcd"));      // 4
     }
 }
 
