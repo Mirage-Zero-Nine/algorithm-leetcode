@@ -16,12 +16,14 @@ import java.util.List;
 public class MinimumSumSubarray {
     /**
      * For every window size from l to r, loop the array to find the minimum sum with current window size.
-     * @see MinSubArrayLen_209
      *
      * @param nums given array
      * @param l    min window size
      * @param r    max window size
      * @return minimum sum of such a subarray that's larger than 0
+     * @see LengthOfLongestSubstring_3
+     * @see MinWindow_76
+     * @see MinSubArrayLen_209
      */
     public int minimumSumSubarray(List<Integer> nums, int l, int r) {
 
