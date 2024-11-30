@@ -20,6 +20,8 @@ public class MinWindow_76 {
      * @param s first string
      * @param t second string
      * @return minimum window in S which will contain all the characters in T
+     * @see LengthOfLongestSubstring_3
+     * @see MinimumSumSubarray
      */
     public String minWindow(String s, String t) {
 

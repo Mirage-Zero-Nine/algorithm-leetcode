@@ -21,6 +21,8 @@ public class LengthOfLongestSubstring_3 {
      *
      * @param s input string
      * @return max sub-string length
+     * @see MinWindow_76
+     * @see MinimumSumSubarray
      */
     public int lengthOfLongestSubstring(String s) {
 
