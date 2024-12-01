@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Created with IntelliJ IDEA
  */
 
-public class LengthOfLongestSubstring3Test {
+public class LengthOfLongestSubstring_3Test {
     private final LengthOfLongestSubstring_3 test = new LengthOfLongestSubstring_3();
 
     @Test
