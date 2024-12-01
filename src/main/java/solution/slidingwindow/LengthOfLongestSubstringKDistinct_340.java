@@ -1,6 +1,7 @@
 package solution.slidingwindow;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Given a string, find the length of the longest substring T that contains at most k distinct characters.
@@ -23,11 +24,11 @@ public class LengthOfLongestSubstringKDistinct_340 {
     public int lengthOfLongestSubstringKDistinct(String s, int k) {
 
         /* Corner case */
-        if (s.length() < k) {
-            return s.length();
+        if (s == null || s.length() < k) {
+            return s == null ? 0 : s.length();
         }
 
-        HashMap<Character, Integer> m = new HashMap<>(); // count char frequency in the window
+        Map<Character, Integer> m = new HashMap<>(); // count char frequency in the window
         int start = 0, count = 0, max = 0;
 
         for (int i = 0; i < s.length(); i++) {
@@ -57,8 +58,8 @@ public class LengthOfLongestSubstringKDistinct_340 {
     public int lengthOfLongestSubstringKDistinctBucket(String s, int k) {
 
         /* Corner case */
-        if (s.length() < k) {
-            return s.length();
+        if (s == null || s.length() < k) {
+            return s == null ? 0 : s.length();
         }
 
         int[] map = new int[256];
@@ -83,11 +84,5 @@ public class LengthOfLongestSubstringKDistinct_340 {
         }
 
         return max;
-    }
-
-    public static void main(String[] args) {
-        LengthOfLongestSubstringKDistinct_340 test = new LengthOfLongestSubstringKDistinct_340();
-        System.out.println(test.lengthOfLongestSubstringKDistinctBucket("eceba", 2));
-        System.out.println(test.lengthOfLongestSubstringKDistinctBucket("aa", 2));
     }
 }
