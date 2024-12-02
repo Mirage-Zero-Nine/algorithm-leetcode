@@ -1,6 +1,7 @@
 package solution.datastructure;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Design and implement a data structure for Least Recently Used (LRU) cache.
@@ -15,149 +16,115 @@ import java.util.*;
  */
 
 public class LRUCache_146 {
-
-    /**
-     * Two-way linked cache entry class.
-     */
-    static class Entry {
-        final int key;
-        int value;
-        Entry previous;
-        Entry next;
-
-        /**
-         * Initialization of entry
-         *
-         * @param key   cache key
-         * @param value cache value
-         */
-        Entry(int key, int value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
-
     private final int capacity;
-    private final HashMap<Integer, Entry> map;
-    private int count;
-    private final Entry end = new Entry(-1, -1);
-    private final Entry head = new Entry(-1, -1);
+    private final Map<Integer, Node> map = new HashMap<>(); // key - value pair
+    private final Node first = new Node();
+    private final Node last = new Node();
 
     /**
-     * Structure of cache:
-     * Basically, use a two-way linked list to store cache entry.
-     * The order of the list is newest at the top, oldest at the end.
-     * Keep a hashmap as index table to achieve O(1) look up complexity.
-     * For <code>get</code> operation, if entry exists, remove the entry from list, then move it to the top of the list.
-     * If <code>put</code> operation found an existing key, update map, remove entry from list, then move to the top.
-     * Otherwise, check the capacity.
-     * If over-sized, remove the last used entry (GC required) from list and index map. Then add the new entry.
+     * To achieve O(1) for get / put operation, a hash map with key - value pair is required.
+     * To achieve O(1) for LRU remove operation, a customized double linked node is required.
+     * The node needs to be put in map as well to achieve O(1) when retrieving / updating / removing the node.
      *
-     * @param capacity cache capacity
+     * @param capacity given capacity of cache
      */
     public LRUCache_146(int capacity) {
         this.capacity = capacity;
-        this.map = new HashMap<>();
-        head.next = end;
-        end.previous = head;
+        first.next = last;
+        last.previous = first;
     }
 
     /**
-     * <code>get</code> operation. Return -1 if key is not found in cache.
+     * Retrieving value from cache. This would also move the cache entry to the most recently used entry.
      *
-     * @param key requesting key
-     * @return corresponding value, or -1.
+     * @param key identifier for getting value
+     * @return value of the key in cache, or return -1 if key does not present in cache
      */
     public int get(int key) {
-        Entry e = this.map.get(key);
-        if (e == null) {
+        if (!map.containsKey(key)) {
             return -1;
         }
-        removeEntryFromList(e);
-        insertToHead(e);
-        return e.value;
+        Node node = map.get(key);
+        removeNode(node);
+        addToFirst(node);
+        return map.get(key).value;
     }
 
     /**
-     * <code>put</code> operation, put new key-value pair into cache.
-     * If cache is oversize, it will remove Least Recently Used (LRU) Cache store in cache.
+     * Put new key - value pair to cache, or update existing value in cache.
      *
-     * @param key   new key
-     * @param value new value
+     * @param key   given key
+     * @param value given value
      */
     public void put(int key, int value) {
-
-        if (map.containsKey(key)) {
-            Entry e = map.get(key);
-            e.value = value;
-            removeEntryFromList(e);
-            insertToHead(e);
-
+        if (capacity == 0) {
             return;
         }
 
-        if (++count > capacity) {
-            Entry last = end.previous;
-            map.remove(last.key);
-            removeEntryFromList(last);
-            deleteEntry(last);
-            count--;
+        // if a duplicated key is added, update the value and move the node to the top
+        if (map.containsKey(key)) {
+            Node node = map.get(key);
+            node.value = value;
+            removeNode(node);
+            addToFirst(node);
+            return;
         }
-        Entry e = new Entry(key, value);
-        map.put(key, e);
-        insertToHead(e);
+
+        Node node = new Node();
+        node.key = key;
+        node.value = value;
+
+        // evict cache if reaches the capacity
+        if (map.size() == capacity) {
+            removeLast();
+        }
+
+        addToFirst(node);
+        map.put(key, node);
     }
 
     /**
-     * Insert an entry to the top of the list (last recent used).
-     * Note that it regard every entry as new entry, no previous connection to it.
+     * Unlink node from linked list.
      *
-     * @param e entry to be inserted
+     * @param node given node
      */
-    private void insertToHead(Entry e) {
-        e.previous = head;
-        e.next = head.next;
-        head.next = e;
-        e.next.previous = e;
+    private void removeNode(Node node) {
+        Node previousNode = node.previous;
+        Node nextNode = node.next;
+        previousNode.next = nextNode;
+        nextNode.previous = previousNode;
     }
 
     /**
-     * Delete entry from cache.
-     * This is actually not required in Java.
+     * Add node to the top of the list.
      *
-     * @param e entry to be removed
+     * @param node given node
      */
-    private void deleteEntry(Entry e) {
-        e.previous = null;
-        e.next = null;
+    private void addToFirst(Node node) {
+        node.next = first.next;
+        node.previous = first;
+        first.next.previous = node;
+        first.next = node;
     }
 
     /**
-     * Remove (but not delete) an entry from list.
-     * e.g: a -> b -> c -> => a -> c, where b is
-     *
-     * @param e entry to be removed from list
+     * Unlink last node in linked list. Also remove the key entry in hash map.
      */
-    private void removeEntryFromList(Entry e) {
-        e.previous.next = e.next;
-        e.next.previous = e.previous;
-        e.previous = null;
-        e.next = null;
+    private void removeLast() {
+        Node lastNode = last.previous;
+        removeNode(lastNode);
+        map.remove(lastNode.key);
     }
 
-    public static void main(String[] args) {
-        LRUCache_146 testCache = new LRUCache_146(2);
-
-        testCache.put(1, 1);
-        testCache.put(2, 2);
-        System.out.println(testCache.get(1));
-        testCache.put(3, 3);
-        System.out.println(testCache.get(2));
-        testCache.put(4, 4);
-        System.out.println(testCache.get(1));
-        System.out.println(testCache.get(3));
-        System.out.println(testCache.get(4));
-        System.out.println(testCache);
+    /**
+     * Customized double linked list node.
+     * Double link is required to achieve O(1) get for the node instead of traversing the list.
+     */
+    static class Node {
+        Node next;
+        Node previous;
+        int key;
+        int value;
     }
 }
 
