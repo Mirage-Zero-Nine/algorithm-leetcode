@@ -2,6 +2,7 @@ package solution.datastructure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
@@ -16,83 +17,58 @@ import java.util.List;
  */
 
 public class MinStack_155 {
-    private final List<Integer> stack = new ArrayList<>();         // work as stack
-    private final List<Integer> minStack = new ArrayList<>();      // save min value from current value
-    private int min = Integer.MAX_VALUE;
+    private final List<Integer> values;
+    private final List<Integer> minValues;
 
     /**
-     * Initialize min stack.
+     * Two lists, one maintains all the values added to the list.
+     * The other list stores all the min values.
+     * Add the new pushed value to min list when it's less than or equal to the current min value.
      */
     public MinStack_155() {
-
+        values = new ArrayList<>();
+        minValues = new ArrayList<>();
     }
 
     /**
-     * Push element into stack
+     * Push value to the list.
      *
-     * @param x push element
+     * @param val value to be added
      */
-    public void push(int x) {
-        stack.add(x);
-        if (x <= min) {     // if x is smaller than min value, replace min value and add it to stack
-            min = x;
-            minStack.add(x);
+    public void push(int val) {
+        values.add(val);
+        if (minValues.isEmpty() || val <= minValues.getLast()) {
+            minValues.add(val);
         }
     }
 
     /**
-     * Pop out top of stack (latest inserted value)
+     * Remove the value at top.
      */
     public void pop() {
-        if (minStack.size() > 0 && stack.size() > 0 && stack.get(stack.size() - 1) == min) {
-            minStack.remove(minStack.size() - 1);
-            min = (minStack.size() == 0) ? Integer.MAX_VALUE : minStack.get(minStack.size() - 1);
+        if (!values.isEmpty()) {
+            if (Objects.equals(values.getLast(), minValues.getLast())) {
+                minValues.removeLast();
+            }
+            values.removeLast();
         }
-        stack.remove(stack.size() - 1);
     }
 
     /**
-     * @return top of stack (latest inserted value)
+     * Return the top value.
+     *
+     * @return top value
      */
     public int top() {
-        return stack.get(stack.size() - 1);
+        return values.isEmpty() ? -1 : values.getLast();
     }
 
     /**
-     * @return min value in stack
+     * Return min value.
+     *
+     * @return min value
      */
     public int getMin() {
-        return min;
-    }
-
-    public static void main(String[] args) {
-        MinStack_155 test = new MinStack_155();
-
-        test.push(2147483646);
-        test.push(2147483646);
-        test.push(2147483647);
-        test.top();
-        test.pop();
-        System.out.println(test.getMin());
-        test.pop();
-        System.out.println(test.getMin());
-        test.pop();
-        test.push(2147483647);
-        test.top();
-        System.out.println(test.getMin());
-        test.push(-2147483648);
-
-//        test.push(395);
-//        System.out.println(test.getMin());
-//        test.top();
-//        System.out.println(test.getMin());
-//        test.push(276);
-//        test.push(29);
-//        System.out.println(test.getMin());
-//        test.push(-482);
-//        System.out.println(test.getMin());
-//        test.pop();
-//        test.push(-108);
-//        test.push(-251);
+        return minValues.isEmpty() ? -1 : minValues.getLast();
     }
 }
