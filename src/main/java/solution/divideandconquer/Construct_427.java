@@ -22,6 +22,8 @@ public class Construct_427 {
      * Divide and conquer.
      * Divide the grid into 4 sub-grids with half of the length.
      * When the size is 1 for the grid, create a new node with value and set it as leaf node to return.
+     * Time complexity: O(n^2 * lgn)
+     * Space complexity: O(lgn) for recursing stack.
      *
      * @param grid given grid
      * @return the root of the Quad-Tree representing grid
