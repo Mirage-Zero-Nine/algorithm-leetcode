@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
  */
 
 public class NumIslands200Test {
-    private final NumIslands_200 solution = new NumIslands_200();
+    private final NumIslands_200 test = new NumIslands_200();
 
     @Test
     public void test() {
@@ -22,7 +22,7 @@ public class NumIslands200Test {
                 {'1', '1', '0', '0', '0'},
                 {'0', '0', '0', '0', '0'}
         };
-        assertEquals(1, solution.numIslands(grid1));
+        assertEquals(1, test.numIslands(grid1));
 
         char[][] grid2 = {
                 {'1', '1', '0', '0', '0'},
@@ -30,62 +30,86 @@ public class NumIslands200Test {
                 {'0', '0', '1', '0', '0'},
                 {'0', '0', '0', '1', '1'}
         };
-        assertEquals(3, solution.numIslands(grid2));
+        assertEquals(3, test.numIslands(grid2));
     }
 
     @Test
-    public void testUf1(){
-
+    public void testBfs() {
         char[][] grid1 = {
                 {'1', '1', '1', '1', '0'},
                 {'1', '1', '0', '1', '0'},
                 {'1', '1', '0', '0', '0'},
                 {'0', '0', '0', '0', '0'}
         };
+        assertEquals(1, test.numIslandsBFS(grid1));
 
-        assertEquals(1, solution.numIslandsUnionFind(grid1));
-    }
-
-    @Test
-    public void testUf2(){
         char[][] grid2 = {
                 {'1', '1', '0', '0', '0'},
                 {'1', '1', '0', '0', '0'},
                 {'0', '0', '1', '0', '0'},
                 {'0', '0', '0', '1', '1'}
         };
-        assertEquals(3, solution.numIslandsUnionFind(grid2));
+        assertEquals(3, test.numIslandsBFS(grid2));
+    }
+
+
+    @Test
+    public void testUf() {
+        char[][] grid1 = {
+                {'1', '1', '1', '1', '0'},
+                {'1', '1', '0', '1', '0'},
+                {'1', '1', '0', '0', '0'},
+                {'0', '0', '0', '0', '0'}
+        };
+        assertEquals(1, test.numIslandsUnionFind(grid1));
+
+        char[][] grid2 = {
+                {'1', '1', '0', '0', '0'},
+                {'1', '1', '0', '0', '0'},
+                {'0', '0', '1', '0', '0'},
+                {'0', '0', '0', '1', '1'}
+        };
+        assertEquals(3, test.numIslandsUnionFind(grid2));
+        char[][] grid3 = {
+                {'1', '1', '1', '1', '0'},
+                {'1', '1', '0', '1', '0'},
+                {'1', '1', '0', '1', '0'},
+                {'0', '0', '0', '0', '0'}
+        };
+        assertEquals(1, test.numIslandsUnionFind(grid3));
     }
 
     @Test
     public void testNumIslandsNullInput() {
-        assertEquals(0, solution.numIslands(null));
+        assertEquals(0, test.numIslands(null));
+        assertEquals(0, test.numIslandsBFS(null));
+        assertEquals(0, test.numIslandsUnionFind(null));
+
     }
 
     @Test
     public void testNumIslandsEmptyInput() {
         char[][] grid = new char[][]{};
-        assertEquals(0, solution.numIslands(grid));
+        assertEquals(0, test.numIslands(grid));
+        assertEquals(0, test.numIslandsBFS(grid));
+        assertEquals(0, test.numIslandsUnionFind(grid));
+
     }
 
     @Test
     public void testNumIslandsInvalidInput1() {
         char[][] grid = new char[][]{{'1', '0'}, {'0'}};
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> solution.numIslands(grid));
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> solution.numIslandsUnionFind(grid));
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> test.numIslands(grid));
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> test.numIslandsUnionFind(grid));
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> test.numIslandsBFS(grid));
     }
 
     @Test
     public void testNumIslandsNoIslands() {
-        NumIslands_200 numIslands = new NumIslands_200();
         char[][] grid = new char[][]{{'0', '0', '0'}, {'0', '0', '0'}, {'0', '0', '0'}};
-        assertEquals(0, numIslands.numIslands(grid));
-    }
+        assertEquals(0, test.numIslands(grid));
+        assertEquals(0, test.numIslandsUnionFind(grid));
+        assertEquals(0, test.numIslandsBFS(grid));
 
-    @Test
-    public void testNumIslandsOneIsland() {
-        NumIslands_200 numIslands = new NumIslands_200();
-        char[][] grid = new char[][]{{'1', '1', '0'}, {'1', '1', '0'}, {'0', '0', '1'}};
-        assertEquals(2, numIslands.numIslands(grid));
     }
 }
