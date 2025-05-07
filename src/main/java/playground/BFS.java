@@ -2,8 +2,10 @@ package playground;
 
 import library.tree.binarytree.TreeNode;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * @author BorisMirage
@@ -20,35 +22,31 @@ public class BFS {
      */
     public List<List<Integer>> breadthFirstSearch(TreeNode root) {
 
-        List<List<Integer>> out = new LinkedList<>();
-
         if (root == null) {
-            return out;
+            return new ArrayList<>();
         }
 
-        LinkedList<TreeNode> layer = new LinkedList<>();
-        layer.add(root);
-        while (!layer.isEmpty()) {
-
-            int size = layer.size();
-            List<Integer> temp = new LinkedList<>();
-
-            /* Tree level iteration */
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        List<List<Integer>> output = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            List<Integer> list = new ArrayList<>();
             for (int i = 0; i < size; i++) {
-                TreeNode c = layer.getFirst();
-                if (c.left != null) {
-                    layer.addLast(c.left);
+                TreeNode current = queue.poll();
+                if (current != null) {
+                    if (current.left != null) {
+                        queue.add(current.left);
+                    }
+                    if (current.right != null) {
+                        queue.add(current.right);
+                    }
+                    list.add(current.val);
                 }
-                if (c.right != null) {
-                    layer.addLast(c.right);
-                }
-                temp.add(c.val);
-                layer.removeFirst();
             }
-
-            /* Add layer */
-            out.add(temp);
+            output.add(list);
         }
-        return out;
+
+        return output;
     }
 }
