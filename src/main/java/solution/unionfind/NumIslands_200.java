@@ -1,5 +1,8 @@
 package solution.unionfind;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * Given a 2d grid map of '1's (land) and '0's (water)
  * Count the number of islands.
@@ -13,10 +16,6 @@ package solution.unionfind;
  */
 
 public class NumIslands_200 {
-
-    private static final char one = '1';
-    private static final char two = '2';
-    private static final int[] direction = new int[]{0, 1, 0, -1, 0};
 
     /**
      * DFS.
@@ -32,11 +31,10 @@ public class NumIslands_200 {
             return 0;
         }
 
-        int row = grid.length, col = grid[0].length;
-        int count = 0;
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                if (grid[i][j] == one) {
+        int width = grid.length, height = grid[0].length, count = 0;
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (grid[i][j] == '1') {
                     dfs(grid, i, j);
                     count++;
                 }
@@ -54,15 +52,61 @@ public class NumIslands_200 {
      * @param y    coord y
      */
     private void dfs(char[][] grid, int x, int y) {
-        grid[x][y] = two;
 
-        for (int i = 0; i < direction.length - 1; i++) {
-            int xx = x + direction[i];
-            int yy = y + direction[i + 1];
-            if (xx >= 0 && xx < grid.length && yy >= 0 && yy < grid[0].length && grid[xx][yy] == one) {
-                dfs(grid, xx, yy);
+        if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length || grid[x][y] != '1') {
+            return;
+        }
+
+        grid[x][y] = '2';
+
+        dfs(grid, x + 1, y);
+        dfs(grid, x, y + 1);
+        dfs(grid, x - 1, y);
+        dfs(grid, x, y - 1);
+    }
+
+    /**
+     * BFS implementation.
+     *
+     * @param grid given grid
+     * @return number of connected '1'
+     */
+    public int numIslandsBFS(char[][] grid) {
+
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
+
+        int count = 0;
+        int[] direction = new int[]{0, 1, 0, -1, 0};
+        Queue<int[]> queue = new LinkedList<>();
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == '1') {
+
+                    queue.add(new int[]{i, j});
+
+                    while (!queue.isEmpty()) {
+                        int[] poll = queue.poll();
+                        int x = poll[0], y = poll[1];
+
+                        if (grid[x][y] == '1') {
+                            grid[x][y] = '2';
+                            for (int k = 0; k < 4; k++) {
+                                int nx = x + direction[k], ny = y + direction[k + 1];
+                                if (nx >= 0 && nx < grid.length && ny >= 0 && ny < grid[0].length && grid[nx][ny] == '1') {
+                                    queue.add(new int[]{nx, ny});
+                                }
+                            }
+                        }
+                    }
+                    count++;
+                }
             }
         }
+
+        return count;
     }
 
     /**
@@ -89,7 +133,7 @@ public class NumIslands_200 {
                     for (int[] d : distance) {
                         int x = i + d[0];
                         int y = j + d[1];
-                        if (x >= 0 && x < rows && y >= 0 && y < cols && grid[x][y] == one) {
+                        if (x >= 0 && x < rows && y >= 0 && y < cols && grid[x][y] == '1') {
                             int id1 = i * cols + j;
                             int id2 = x * cols + y;
                             uf.union(id1, id2);
@@ -117,7 +161,7 @@ public class NumIslands_200 {
             father = new int[grid.length * grid[0].length];     // contains all nodes in 2D array
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[0].length; j++) {
-                    if (grid[i][j] == one) {
+                    if (grid[i][j] == '1') {
                         int id = i * grid[0].length + j;
                         father[id] = id;
                         count++;
