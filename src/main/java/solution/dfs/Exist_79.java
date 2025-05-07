@@ -1,5 +1,7 @@
 package solution.dfs;
 
+import java.util.Arrays;
+
 /**
  * Given a 2D board and a word, find if the word exists in the grid.
  * The same letter cell may not be used more than once.
@@ -12,6 +14,9 @@ package solution.dfs;
  */
 
 public class Exist_79 {
+
+    private static final int[][] DIRECTIONS = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
     /**
      * Backtracking.
      * Start from first char in word, then find adjacent cell until current cell is unavailable or all char was found.
@@ -23,9 +28,13 @@ public class Exist_79 {
      */
     public boolean exist(char[][] board, String word) {
 
+        if (board == null || board.length == 0 || board[0].length == 0 || word == null || word.isEmpty()) {
+            return false;
+        }
+
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                if (board[i][j] == word.charAt(0) && dfs(board, word, i, j, 0)) {
+                if (board[i][j] == word.charAt(0) && dfs(board, i, j, word, 0)) {
                     return true;
                 }
             }
@@ -35,43 +44,31 @@ public class Exist_79 {
 
     /**
      * Similar to path searching in maze, entry is the word's first char in board, exit is the last char (if exist).
-     * Hence, recursively traverse each possible cell in board, if found available cell then continue searching.
+     * Hence, recursively traverse each possible cell in the board, if found available cell then continue searching.
      * In the end, if traverse to the end of string, return true, otherwise return false.
      *
      * @param board input 2D char board
      * @param word  input word string
      * @param i     current cell row
      * @param j     current cell column
-     * @param l     current char index
+     * @param index current index at the given word
      * @return true if word is found, false otherwise
      */
-    private boolean dfs(char[][] board, String word, int i, int j, int l) {
+    private boolean dfs(char[][] board, int i, int j, String word, int index) {
 
-        /* Check availability */
-        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] != word.charAt(l)) {
+        if (i >= board.length || j >= board[0].length || i < 0 || j < 0 || board[i][j] != word.charAt(index)) {
             return false;
         }
 
-        if (l == word.length() - 1 && board[i][j] == word.charAt(l)) {
-            return true; // at the end of the string
+        if (index == word.length() - 1) {
+            return true;
         }
 
-        char temp = board[i][j];
-        board[i][j] = 0;        // marked current char as visited
-
-        boolean exist = dfs(board, word, i + 1, j, l + 1)
-                || dfs(board, word, i, j + 1, l + 1)
-                || dfs(board, word, i - 1, j, l + 1)
-                || dfs(board, word, i, j - 1, l + 1);
-
-        board[i][j] = temp;     // recover char for next backtracking
-
-        return exist;
-    }
-
-    public static void main(String[] args) {
-        Exist_79 existTest = new Exist_79();
-        char[][] board = {{'A', 'B', 'C', 'E'}, {'S', 'F', 'C', 'S'}, {'A', 'D', 'E', 'E'}};
-        System.out.println(existTest.exist(board, "ABCZZ"));
+        char tmp = board[i][j];
+        board[i][j] = '#'; // mark as "visited"
+        boolean found = Arrays.stream(DIRECTIONS)
+                .anyMatch(dir -> dfs(board, i + dir[0], j + dir[1], word, index + 1));
+        board[i][j] = tmp;
+        return found;
     }
 }
