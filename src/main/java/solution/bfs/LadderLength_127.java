@@ -33,46 +33,59 @@ public class LadderLength_127 {
      */
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
 
-        /* Corner case */
-        if (beginWord == null || beginWord.length() == 0 || endWord == null || endWord.length() == 0 || wordList == null || wordList.size() == 0) {
+        if (beginWord == null || beginWord.isEmpty() || endWord == null || endWord.isEmpty() || wordList == null || wordList.isEmpty()) {
             return 0;
         }
+
+        Set<String> words = new HashSet<>(wordList);
+        if (!words.contains(endWord)) {
+            return 0;
+        }
+
+        return bfs(beginWord, endWord, words);
+    }
+
+    /**
+     * Implementation of BFS.
+     *
+     * @param beginWord begin word
+     * @param endWord   target word
+     * @param words     middle words
+     * @return length of the shortest transformation sequence
+     */
+    private int bfs(String beginWord, String endWord, Set<String> words) {
 
         Queue<String> queue = new LinkedList<>();
-        Set<String> set = new HashSet<>(wordList);
-        if (!set.contains(endWord)) {
-            return 0;
-        }
-
         queue.add(beginWord);
-        int out = 1;
-
+        int length = 1;
         while (!queue.isEmpty()) {
             int size = queue.size();
 
             for (int i = 0; i < size; i++) {
-                String current = queue.remove();
-
-                if (current.equals(endWord)) {
-                    return out;
-                }
-
-                for (int j = 0; j < current.length(); j++) {
-                    char[] arr = current.toCharArray();
-
-                    for (char letter = 'a'; letter <= 'z'; letter++) {
-                        arr[j] = letter;
-                        String tmp = new String(arr);
-                        if (set.contains(tmp)) {
-                            queue.add(tmp);
-                            set.remove(tmp);
+                String word = queue.poll();
+                if (word != null) {
+                    if (word.equals(endWord)) {
+                        return length;
+                    }
+                    char[] wordArr = word.toCharArray();
+                    for (int j = 0; j < word.length(); j++) {
+                        for (char c = 'a'; c <= 'z'; c++) {
+                            if (wordArr[j] != c) {
+                                char currentChar = wordArr[j];
+                                wordArr[j] = c;
+                                String tmp = new String(wordArr);
+                                if (words.contains(tmp)) {
+                                    queue.add(tmp);
+                                    words.remove(tmp);
+                                }
+                                wordArr[j] = currentChar;
+                            }
                         }
                     }
                 }
             }
-            out++;
+            length++;
         }
-
         return 0;
     }
 }
