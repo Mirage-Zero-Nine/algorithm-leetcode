@@ -18,67 +18,68 @@ import java.util.List;
 
 public class NumIslands2_305 {
     /**
-     * Union find.
-     * Each time, when convert a new water cell to land, check its neighbor.
-     * If this neighbor is not connected to current island, union it and reduce island number by 1.
-     * Note that avoid the duplication that a cell is repeatedly converted to land.
+     * Use Union-Find to track connected components for the number of islands after each position is added.
      *
-     * @param m         m rows
-     * @param n         n columns
-     * @param positions list of positions to operate
-     * @return count the number of islands after each addLand operation
+     * @param m         The number of rows in the grid.
+     * @param n         The number of columns in the grid.
+     * @param positions A 2D array representing the positions to add to the grid.
+     * @return A list of integers, where each element represents the number of islands after adding the corresponding position.
      */
     public List<Integer> numIslands2(int m, int n, int[][] positions) {
-        List<Integer> out = new ArrayList<>();
+        List<Integer> output = new ArrayList<>();
 
-        /* Corner case */
-        if (m <= 0 || n <= 0) {
-            return out;
+        // corner case
+        if (m <= 0 || n <= 0 || positions == null || positions.length == 0 || positions[0].length == 0) {
+            return output;
         }
 
-        int[] d = new int[]{1, -1, 0, 0, 0, 0, 1, -1};
+        // union find: root of each position
         int[] root = new int[m * n];
         Arrays.fill(root, -1);
         int count = 0;
+        int[] direction = {0, 1, 0, -1, 0};
 
         for (int[] p : positions) {
-            int r = n * p[0] + p[1];        // new land
-            if (root[r] == -1) {        // avoid duplication
-                root[r] = r;
+            int currentPosition = n * p[0] + p[1];  // convert 2D coordinates to 1D index
+            if (root[currentPosition] == -1) {
+                root[currentPosition] = currentPosition;
                 count++;
 
                 for (int i = 0; i < 4; i++) {
-                    int xx = d[i] + p[0], yy = d[i + 4] + p[1];
-                    int id = n * xx + yy;
-                    if (xx >= 0 && xx < m && yy >= 0 && yy < n && root[id] != -1) {
-                        int f = find(root, id);
-                        if (r != f) {       // find island next to current island
-                            root[r] = f;
-                            r = f;          // reset root for next neighbor
+                    int nx = p[0] + direction[i], ny = p[1] + direction[i + 1];
+                    int newPosition = n * nx + ny;
+
+                    // if the adjacent cell is part of an existing island, merge these 2 islands and reduce the count
+                    // they are already connected if they already have the same root, merging them would not reduce the number of islands
+                    if (nx >= 0 && nx < m && ny >= 0 && ny < n && root[newPosition] != -1) {
+                        int rootOfCurrentPosition = find(currentPosition, root), rootOfNewPosition = find(newPosition, root);
+                        if (rootOfCurrentPosition != rootOfNewPosition) {
+                            // merge the two islands by setting the root of one island to the root of the other (union)
+                            root[rootOfCurrentPosition] = rootOfNewPosition;
                             count--;
                         }
                     }
                 }
             }
-
-            out.add(count);
+            output.add(count);
         }
-
-        return out;
+        return output;
     }
 
     /**
-     * Find root of given id.
+     * Finds the root of the set containing 'value' with path compression.
      *
-     * @param root array stores root of each node
-     * @param id   find id
-     * @return root of current node
+     * @param value the element to find the root for.
+     * @param root  the parent array representing the disjoint-set structure
+     * @return the root of the set 'value' belongs to.
      */
-    public int find(int[] root, int id) {
-        while (id != root[id]) {
-            root[id] = root[root[id]];
-            id = root[id];
+    private int find(int value, int[] root) {
+
+        // find root of given position
+        while (root[value] != value) {
+            root[value] = root[root[value]];
+            value = root[value];
         }
-        return id;
+        return value;
     }
 }

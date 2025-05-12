@@ -1,7 +1,5 @@
 package solution.divideandconquer;
 
-import java.util.Arrays;
-
 /**
  * Given an array of integers nums, sort the array in ascending order and return it.
  *
