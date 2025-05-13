@@ -1,5 +1,6 @@
 package solution.bfs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,107 +27,123 @@ import java.util.Set;
 
 public class FindLadders_126 {
     /**
-     * Use BFS to find if shortest path exists, and build graph mapping current word to previous word.
-     * Then use DFS to search from end to beginning to construct each path.
+     * BFS + DFS.
+     * BFS to build the graph, with a hash map to maintain a list of all words that can be converted to current word in one step.
+     * After BFS completed (graph building), implement DFS to construct all paths from end word to start word using the hasp map built in BFS.
      *
-     * @param beginWord begin word
-     * @param endWord   target word
-     * @param wordList  middle words
-     * @return all shortest transformation sequence(s) from beginWord to endWord
+     * @param beginWord The starting word.
+     * @param endWord   The target word.
+     * @param wordList  The list of valid words to use in the ladder.
+     * @return A list paths where each path represents the shortest ladder from beginWord to endWord. Returns an empty list if no such path exists.
      */
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
 
-        /* Corner case */
-        if (wordList.size() == 0 || !wordList.contains(endWord)) {
-            return new LinkedList<>();
+        // corner case
+        if (beginWord.equals(endWord)) {
+            return new ArrayList<>();
         }
 
-        Set<String> set = new HashSet<>(wordList);
-        Map<String, List<String>> m = new HashMap<>();
-        List<List<String>> out = new LinkedList<>();
+        Map<String, List<String>> map = new HashMap<>();
+        Set<String> words = new HashSet<>(wordList);
+        List<List<String>> output = new ArrayList<>();
 
-        if (bfs(beginWord, endWord, new HashSet<>(set), m)) {       // if shortest path exists
-            List<String> tmp = new LinkedList<>();
+        // BFS to build the graph and check if the shortest path exists
+        if (bfs(beginWord, endWord, words, map)) {
+            List<String> tmp = new ArrayList<>();
             tmp.add(endWord);
-            dfs(out, tmp, endWord, beginWord, m);       // search from end to begin
+
+            // if the shortest path exists, implement DFS to construct the paths
+            dfs(endWord, beginWord, tmp, output, map);
         }
 
-        return out;
+        return output;
     }
 
     /**
-     * BFS to build the graph. The graph is reversed, key is current word, and value is all words from previous level.
+     * Performs BFS to build a map of word dependencies.
+     * The map stores, for each word, a list of its predecessors.
+     * The BFS ensures it's through the shortest possible sequence of transformations.
      *
-     * @param begin      begin word
-     * @param end        end word
-     * @param dictionary all middle words
-     * @param m          graph mapping current word to previous word
-     * @return if the shortest path exists
+     * @param begin The starting word for the BFS.
+     * @param end   The target word for the BFS.
+     * @param words The set of valid words.
+     * @param map   The map to store the word dependencies.
+     * @return True if a path from begin to end exists, false otherwise.
      */
-    private boolean bfs(String begin, String end, Set<String> dictionary, Map<String, List<String>> m) {
+    private boolean bfs(String begin, String end, Set<String> words, Map<String, List<String>> map) {
+
         Queue<String> q = new LinkedList<>();
         q.add(begin);
-        boolean success = false;
+        boolean found = false;
         while (!q.isEmpty()) {
-            HashSet<String> level = new HashSet<>();
+            Set<String> usedWords = new HashSet<>();
             int size = q.size();
-            while (size-- > 0) {
-                String current = q.poll();
+            for (int i = 0; i < size; i++) {
 
-                char[] tmp = current.toCharArray();
-                for (int j = 0; j < tmp.length; j++) {
-                    char original = tmp[j];
+                String current = q.poll();
+                if (current.equals(end)) {
+                    found = true;
+                }
+                char[] arr = current.toCharArray();
+
+                for (int j = 0; j < arr.length; j++) {
+                    char tmp = arr[j];
                     for (char c = 'a'; c <= 'z'; c++) {
-                        tmp[j] = c;
-                        String word = new String(tmp);      // next word
-                        if (word.equals(end)) {
-                            success = true;
-                        }
-                        if (c != original && dictionary.contains(word)) {
-                            if (!level.contains(word)) {
-                                List<String> next = new LinkedList<>();
-                                next.add(current);
-                                m.put(word, next);
-                                q.offer(word);
-                                level.add(word);
+                        arr[j] = c;
+                        String w = new String(arr);
+
+                        if (c != tmp && words.contains(w)) {
+                            List<String> previous;
+
+                            // there may be multiple predecessors that could be converted to current word
+                            if (!usedWords.contains(w)) {
+                                previous = new ArrayList<>();
+                                q.add(w);
+                                usedWords.add(w);
                             } else {
-                                List<String> next = m.get(word);
-                                next.add(current);
-                                m.put(word, next);
+                                previous = map.get(w);
                             }
+
+                            // update the map to store all words that can be converted to current word for later DFS tracking
+                            previous.add(current);
+                            map.put(w, previous);
                         }
                     }
-                    tmp[j] = original;
+                    arr[j] = tmp;
                 }
             }
-            dictionary.removeAll(level);
+            words.removeAll(usedWords);
         }
 
-        return success;
+        return found;
     }
 
     /**
-     * DFS to find all shortest paths based on pre-build graph.
-     * Search starts from end word, and ends at begin word.
+     * Performs DFS to construct the ladders from the map generated by BFS.
+     * Starting at the endWord, it looks up the predecessors of the endWord in the map.
+     * For each predecessor, it adds it to the beginning of the current list.
+     * Recursively calls dfs to find the path from that predecessor back to the beginWord.
      *
-     * @param out     output list
-     * @param tmp     temporary list
-     * @param current current word
-     * @param end     end word
-     * @param m       graph mapping current word to previous word
+     * @param begin  The current word in the DFS.
+     * @param end    The target word.
+     * @param tmp    The current ladder being constructed.
+     * @param output The list to store the completed ladders.
+     * @param map    The map of word dependencies generated by BFS.
      */
-    private void dfs(List<List<String>> out, List<String> tmp, String current, String end, Map<String, List<String>> m) {
+    private void dfs(String begin, String end, List<String> tmp, List<List<String>> output, Map<String, List<String>> map) {
 
-        if (current.equals(end)) {
-            out.add(new LinkedList<>(tmp));
+        if (begin.equals(end)) {
+            output.add(new ArrayList<>(tmp));
             return;
         }
 
-        List<String> next = m.get(current);
-        for (String w : next) {
-            tmp.add(0, w);
-            dfs(out, tmp, w, end, m);
-            tmp.remove(0);
+        // the list contains all words that can be converted to current word with one char flip
+        for (String s : map.get(begin)) {
+            tmp.addFirst(s);
+
+            // go through each of the predecessors until reaches the beginning word
+            dfs(s, end, tmp, output, map);
+            tmp.removeFirst();
         }
     }
 }
