@@ -1,7 +1,7 @@
 package solution.dynamicprogramming;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Given a non-empty array containing only positive integers.
@@ -93,7 +93,7 @@ public class CanPartition_416 {
      * @param m     hash map
      * @return if the array can be divided into two parts
      */
-    private boolean dfs(int[] nums, int index, int sum, HashMap<Integer, Boolean> m) {
+    private boolean dfs(int[] nums, int index, int sum, Map<Integer, Boolean> m) {
 
         if (m.containsKey(sum)) {
             return m.get(sum);
@@ -135,8 +135,7 @@ public class CanPartition_416 {
         if (sum == nums[index]) {
             return true;
         }
-        visited[sum] = dfs(nums, index + 1, sum - nums[index], visited) || dfs(nums, index + 1, sum, visited);
 
-        return visited[sum];
+        return dfs(nums, index + 1, sum - nums[index], visited) || dfs(nums, index + 1, sum, visited);
     }
 }
