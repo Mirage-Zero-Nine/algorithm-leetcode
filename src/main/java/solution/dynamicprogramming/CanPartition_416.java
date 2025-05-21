@@ -14,7 +14,13 @@ import java.util.HashMap;
 
 public class CanPartition_416 {
     /**
-     * 0/1 Knapsack problem.
+     * First, check if the sum of the array is odd. Odd sum can not be divided.
+     * Then it's 0/1 Knapsack problem: select items from array to have it sum equals to the target sum (total / 2).
+     * Build a 1D boolean array for DP with size (total / 2) + 1.
+     * dp[i] is true if it's possible to achieve a sum of i using a subset of the numbers from nums.
+     * Then, loop the elements in array. From the range [target - num, target], filling the dp[i] with:
+     * 1. It's already true (which means current element does not need to be selected).
+     * 2. It can be obtained by adding current element to a previous subset (dp[i - num]).
      * State transition:
      * dp[i][j] = dp[i - 1][j - nums[i - 1]] || dp[i - 1][j]
      * dp[i - 1][j - nums[i - 1]]: choose nums[i], and if j - nums[i] can make up sum, dp[i][j] can.
@@ -25,34 +31,30 @@ public class CanPartition_416 {
      */
     public boolean canPartition(int[] nums) {
 
-        /* Corner case */
-        if (nums.length < 2) {
+        // corner case
+        if (nums == null || nums.length < 2) {
             return false;
         }
 
         int sum = Arrays.stream(nums).sum();
-
-        if (sum % 2 == 1) {
-            return false;       // odd number can not be spilt to equal parts
+        if (sum % 2 != 0) {
+            return false;
         }
 
-        sum /= 2;
-        boolean[][] dp = new boolean[nums.length + 1][sum + 1];     // dp[i][j]: if 0 to i in nums can reach sum of j
+        int target = sum / 2;
+        boolean[] dp = new boolean[target + 1];
+        dp[0] = true;
 
-        for (int i = 0; i < dp.length; i++) {
-            dp[i][0] = true;
-        }
-
-        for (int i = 1; i < dp.length; i++) {
-            for (int j = 1; j < dp[0].length; j++) {
-
-                if (j - nums[i - 1] >= 0) {     // choose current nums[i]
-                    dp[i][j] = dp[i - 1][j - nums[i - 1]] || dp[i - 1][j];
-                }
+        // considering each element
+        for (int n : nums) {
+            for (int i = target; i >= n; i--) {
+                // either current subset sum is already reaching the current target sum
+                // or by adding the current element to a previous set
+                dp[i] = dp[i] || dp[i - n];
             }
         }
 
-        return dp[nums.length][sum];
+        return dp[target];
     }
 
     /**
@@ -64,8 +66,8 @@ public class CanPartition_416 {
      */
     public boolean canPartitionDFS(int[] nums) {
 
-        /* Corner case */
-        if (nums.length < 2) {
+        // corner case
+        if (nums == null || nums.length < 2) {
             return false;
         }
 
@@ -136,12 +138,5 @@ public class CanPartition_416 {
         visited[sum] = dfs(nums, index + 1, sum - nums[index], visited) || dfs(nums, index + 1, sum, visited);
 
         return visited[sum];
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new CanPartition_416().canPartitionDFS(new int[]{6, 4, 4, 3, 1}));       // true
-        System.out.println(new CanPartition_416().canPartitionDFS(new int[]{1, 3, 4, 4, 6}));       // true
-        System.out.println(new CanPartition_416().canPartitionDFS(new int[]{0, 0, 0, 0}));       // true
-        System.out.println(new CanPartition_416().canPartitionDFS(new int[]{10, 5, 4, 1}));       // true
     }
 }
