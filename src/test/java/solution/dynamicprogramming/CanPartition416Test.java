@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
  */
 
 public class CanPartition416Test {
-    private CanPartition_416 test = new CanPartition_416();
+    private final CanPartition_416 test = new CanPartition_416();
 
     @Test
     public void test() {
