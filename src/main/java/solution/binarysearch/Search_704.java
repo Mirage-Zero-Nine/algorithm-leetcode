@@ -13,6 +13,8 @@ package solution.binarysearch;
 public class Search_704 {
     /**
      * Basic binary search.
+     * If the target is greater than nums[mid], it searches the right half by updating left = mid + 1.
+     * If the target is less than nums[mid], it searches the left half by updating right = mid - 1.
      *
      * @param nums   given array
      * @param target target number
@@ -20,24 +22,28 @@ public class Search_704 {
      */
     public int search(int[] nums, int target) {
 
-        /* Corner case */
-        if (nums.length < 1) {
+        // corner case
+        if (nums == null || nums.length < 1) {
             return -1;
         }
 
         int left = 0, right = nums.length - 1;
 
         while (left <= right) {
-            int m = (left + right) >>> 1;      //  right shift 1 bit, equals divided by 2
-            if (target == nums[m]) {
-                return m;
-            } else if (target > nums[m]) {
-                left = m + 1;
-            } else {
-                right = m - 1;
+
+            // avoid index overflow
+            int mid = left + (right - left) / 2;
+
+            if (target == nums[mid]) {
+                return mid;
+            }
+            if (target > nums[mid]) {
+                left = mid + 1;
+            }
+            if (target < nums[mid]) {
+                right = mid - 1;
             }
         }
-
         return -1;
     }
 }
