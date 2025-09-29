@@ -1,5 +1,9 @@
 package solution.map;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * There is a special keyboard with all keys in a single row.
  * Given a string keyboard of length 26 indicating the layout of the keyboard, initially your finger is at index 0.
@@ -14,35 +18,31 @@ package solution.map;
 
 public class CalculateTime_1165 {
     /**
-     * Use a char array to record the mapping relation.
+     * Calculates the total time required to type a given word on a custom keyboard layout.
      *
-     * @param keyboard given string representing keyboard
-     * @param word     given word
-     * @return how much time it takes to type it with one finger
+     * @param keyboard a 26‑character string representing the order of keys on the keyboard. The first character is at index 0.
+     * @param word     the string to be typed using the keyboard. It consists only of characters present in {@code keyboard}.
+     * @return the sum of absolute differences between successive key positions, i.e., the total time taken to type {@code word}.
      */
     public int calculateTime(String keyboard, String word) {
-        if (word.length() == 0) {
+
+        // corner case
+        if (keyboard == null || keyboard.length() != 26 || word == null || word.isEmpty()) {
             return 0;
         }
 
-        int[] arr = new int[26];
-        for (int i = 0; i < 26; i++) {
-            arr[keyboard.charAt(i) - 'a'] = i;
-        }
+        Map<Character, Integer> map = IntStream.range(0, keyboard.length())
+                .boxed()
+                .collect(Collectors.toMap(
+                        keyboard::charAt, i -> i));
 
-        int total = 0, pre = 0;
-
+        int output = 0, cursor = 0;
         for (int i = 0; i < word.length(); i++) {
-            int tmp = arr[word.charAt(i) - 'a'];
-            if (i == 0) {
-                total += tmp;
-                pre = total;
-            } else {
-                total = total + Math.abs(pre - tmp);
-                pre = tmp;
-            }
+            int currentPosition = map.get(word.charAt(i));
+            output += Math.abs(currentPosition - cursor);
+            cursor = currentPosition;
         }
 
-        return total;
+        return output;
     }
 }
