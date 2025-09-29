@@ -1,14 +1,17 @@
 package solution.map;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * Given a paragraph and a list of banned words, return the most frequent word that is not in the list of banned words.
+ * Given a paragraph and a list of banned words, return the most frequent word not in the list of banned words.
  * It is guaranteed there is at least one word that isn't banned, and that the answer is unique.
  * Words in the list of banned words are given in lowercase, and free of punctuation.
- * Words in the paragraph are not case sensitive.
+ * Words in the paragraph are not case-sensitive.
  * The answer is in lowercase.
  * Note:
  * 1. 1 <= paragraph.length <= 1000.
@@ -26,42 +29,54 @@ import java.util.TreeMap;
 
 public class MostCommonWord_819 {
     /**
-     * Split the given string first, then use a tree map to count word frequency.
-     * Use a hash set to check excluded words.
-     * Tree map can sort words in alphabet order, which is actually unnecessary in this problem.
+     * Finds the most common non-banned word in a given paragraph. The method returns the word that
+     * appears the most times in the paragraph, excluding any words that are present in the banned list.
+     * The comparison is case-insensitive.
+     * The method processes the paragraph by extracting alphabetic words, converting them to lowercase,
+     * and counting their occurrences. Any words found in the banned list are ignored. If there is a tie
+     * between multiple words, the one that appears first in the paragraph is returned.
      *
-     * @param paragraph given string
-     * @param banned    banned words
-     * @return the most frequent word that is not in the list of banned words
+     * @param paragraph The input paragraph, which is a string containing words separated by spaces and punctuation.
+     *                  It can be a mixture of uppercase and lowercase letters.
+     *                  If the paragraph is empty or null, the method will return an empty string.
+     * @param banned    An array of words that should be excluded from the count. The comparison is case-insensitive.
+     *                  If the banned array is null, it will be treated as an empty list.
+     * @return The most common word in lowercase in the paragraph that is not in the banned list.
      */
     public String mostCommonWord(String paragraph, String[] banned) {
 
-        /* Corner case */
-        if (paragraph == null || paragraph.length() == 0) {
-            return paragraph;
+        // corner case
+        if (paragraph == null || paragraph.isEmpty() || banned == null) {
+            return "";
         }
 
-        String[] array = paragraph.replaceAll("\\W+", " ").toLowerCase().split("\\s+");
-        HashSet<String> set = new HashSet<>();
-        TreeMap<String, Integer> map = new TreeMap<>();
+        Set<String> bannedSet = Arrays.stream(banned)
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
 
-        Collections.addAll(set, banned);
+        Map<String, Integer> map = new HashMap<>();
+        int max = 0, end = 0;
+        String output = null;
 
-        for (String s : array) {
-            if (!set.contains(s)) {
-                map.put(s, map.getOrDefault(s.toLowerCase(), 0) + 1);
+        while (end < paragraph.length()) {
+            while (end < paragraph.length() && !Character.isAlphabetic(paragraph.charAt(end))) {
+                end++;
+            }
+            StringBuilder sb = new StringBuilder();
+            while (end < paragraph.length() && Character.isAlphabetic(paragraph.charAt(end))) {
+                sb.append(paragraph.charAt(end++));
+            }
+            String currentWord = sb.toString().toLowerCase();
+
+            if (!bannedSet.contains(currentWord)) {
+                map.put(currentWord, map.getOrDefault(currentWord, 0) + 1);
+                if (max < map.get(currentWord)) {
+                    max = map.get(currentWord);
+                    output = currentWord;
+                }
             }
         }
 
-        int count = Integer.MIN_VALUE;
-        String out = "";
-        for (String s : map.keySet()) {
-            if (map.get(s) > count) {
-                count = map.get(s);
-                out = s;
-            }
-        }
-
-        return out;
+        return Objects.requireNonNull(output).toLowerCase();
     }
 }
