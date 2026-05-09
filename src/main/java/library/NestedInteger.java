@@ -1,6 +1,7 @@
 package library;
 
 import java.util.List;
+import java.util.LinkedList;
 
 /**
  * Nested integer class.
@@ -18,6 +19,7 @@ public class NestedInteger {
      * Constructor initializes an empty nested list.
      */
     public NestedInteger() {
+        this.list = new LinkedList<>();
     }
 
     /**
@@ -56,6 +58,8 @@ public class NestedInteger {
      */
     public void setInteger(int value) {
         this.val = value;
+        this.isInteger = true;
+        this.list = null;
     }
 
     /**
@@ -64,6 +68,10 @@ public class NestedInteger {
      * @param ni new NestedInteger
      */
     public void add(NestedInteger ni) {
+        if (list == null) {
+            list = new LinkedList<>();
+        }
+        isInteger = false;
         list.add(ni);
     }
 

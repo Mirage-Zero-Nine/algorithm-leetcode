@@ -1,6 +1,8 @@
 package solution.dynamicprogramming;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Given a non-empty string s and a dictionary wordDict containing a list of non-empty words

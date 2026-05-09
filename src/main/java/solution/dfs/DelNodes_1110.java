@@ -29,8 +29,11 @@ public class DelNodes_1110 {
      * @return the roots of the trees in the remaining forest
      */
     public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
+        out.clear();
+        s.clear();
+
         if (root == null) {
-            return null;
+            return out;
         }
 
         for (int value : to_delete) {
@@ -38,7 +41,7 @@ public class DelNodes_1110 {
         }
 
         dfs(root, true);
-        return this.out;
+        return out;
     }
 
     /**

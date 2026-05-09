@@ -1,6 +1,7 @@
 package solution.unionfind;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Equations are given in the format A / B = k, where A and B are variables represented as strings, k is a real number.

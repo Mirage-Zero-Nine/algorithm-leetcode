@@ -1,0 +1,13 @@
+@@ -9,8 +9,8 @@
+     @Test
+     public void testBasic() {
+         SubrectangleQueries_1476 test = new SubrectangleQueries_1476(new int[][]{{1, 2, 1}, {4, 3, 4}, {3, 2, 1}, {1, 1, 1}});
+-        assertEquals(1, test.getValue(0, 0));
+-        assertEquals(4, test.getValue(1, 1));
++        assertEquals(1, test.getValue(0, 0));
++        assertEquals(3, test.getValue(1, 1));
+         test.updateSubrectangle(0, 0, 3, 2, 5);
+-        assertEquals(5, test.getValue(0, 0));
+-        assertEquals(3, test.getValue(0, 2));
++        assertEquals(5, test.getValue(0, 0));
++        assertEquals(5, test.getValue(0, 2));

@@ -1,6 +1,6 @@
 package solution.others;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A transaction is possibly invalid if:

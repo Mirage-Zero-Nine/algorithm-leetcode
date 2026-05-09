@@ -1,6 +1,6 @@
 package solution.slidingwindow;
-
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A string S of lowercase letters is given.

@@ -25,49 +25,32 @@ public class Trap_42 {
      */
     public int trap(int[] height) {
 
-        /* Corner case */
         if (height.length < 3) {
             return 0;
         }
 
-        int max = 0, left = 0, right = height.length - 1;
-
-        while (left < right && height[left] <= height[left + 1]) {       // find first non-increasing element
-            left++;
-        }
-        while (left < right && height[right] <= height[right - 1]) {    // find first non-decreasing element
-            right--;
-        }
-
-        if (left >= right) {        // if no valid "pit" can be found
-            return 0;
-        }
-
+        int left = 0, right = height.length - 1;
+        int leftMax = 0, rightMax = 0;
+        int water = 0;
         while (left < right) {
-
-            int leftHeight = height[left], rightHeight = height[right];
-
-            /*
-             * The previous stop condition assure that there must be water within left and right.
-             * And also, height[left + 1] will surely be smaller than height[left], and so to right.
-             * Therefore, the decreasing subarray next to left can trap water, and so to right.
-             * Once the end of decreasing subarray is found, restart to find decreasing subarray. */
-            if (leftHeight < rightHeight) {
-
-                while (left < right && leftHeight > height[left + 1]) {
-                    max += leftHeight - height[left++];
+            if (height[left] <= height[right]) {
+                if (height[left] >= leftMax) {
+                    leftMax = height[left];
+                } else {
+                    water += leftMax - height[left];
                 }
                 left++;
             } else {
-
-                while (left < right && rightHeight > height[right - 1]) {
-                    max += rightHeight - height[right--];
+                if (height[right] >= rightMax) {
+                    rightMax = height[right];
+                } else {
+                    water += rightMax - height[right];
                 }
                 right--;
             }
         }
 
-        return max;
+        return water;
     }
 
     /**

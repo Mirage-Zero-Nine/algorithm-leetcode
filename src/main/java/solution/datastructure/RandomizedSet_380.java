@@ -1,6 +1,9 @@
 package solution.datastructure;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Design a data structure that supports all following operations in average O(1) time.

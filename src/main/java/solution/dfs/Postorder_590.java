@@ -46,8 +46,10 @@ public class Postorder_590 {
             return;
         }
 
-        for (Node n : root.children) {
-            dfs(n, out);
+        if (root.children != null) {
+            for (Node n : root.children) {
+                dfs(n, out);
+            }
         }
 
         out.add(root.val);
