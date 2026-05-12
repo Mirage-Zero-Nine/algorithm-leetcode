@@ -50,7 +50,9 @@ public class BoundedBlockingQueue_1188 {
      */
     public void enqueue(int element) throws InterruptedException {
         enqueue.acquire();
-        q.add(element);
+        synchronized (q) {
+            q.add(element);
+        }
         dequeue.release();
     }
 
@@ -62,7 +64,10 @@ public class BoundedBlockingQueue_1188 {
      */
     public int dequeue() throws InterruptedException {
         dequeue.acquire();
-        int val = q.poll();
+        int val;
+        synchronized (q) {
+            val = q.poll();
+        }
         enqueue.release();
         return val;
     }
@@ -73,6 +78,8 @@ public class BoundedBlockingQueue_1188 {
      * @return size of blocking queue
      */
     public int size() {
-        return q.size();
+        synchronized (q) {
+            return q.size();
+        }
     }
 }

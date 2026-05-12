@@ -1,6 +1,13 @@
 package solution.intervals;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A city's skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance.

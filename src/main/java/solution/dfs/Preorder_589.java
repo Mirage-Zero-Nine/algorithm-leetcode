@@ -48,8 +48,10 @@ public class Preorder_589 {
 
         out.add(root.val);
 
-        for (Node n : root.children) {
-            dfs(n, out);
+        if (root.children != null) {
+            for (Node n : root.children) {
+                dfs(n, out);
+            }
         }
     }
 }

@@ -1,7 +1,5 @@
 package solution.stack;
-
-
-import java.util.*;
+import java.util.Stack;
 
 /**
  * Given an absolute path for a file (Unix-style), simplify it.

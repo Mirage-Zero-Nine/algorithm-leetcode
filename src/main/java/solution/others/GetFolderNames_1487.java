@@ -1,6 +1,6 @@
 package solution.others;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Given an array of strings names of size n.

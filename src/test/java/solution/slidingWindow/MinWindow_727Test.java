@@ -1,4 +1,4 @@
-package solution.slidingWindow;
+package solution.slidingwindow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -33,8 +33,10 @@ public class CloneTree_1490 {
         Node tmp = new Node(root.val);
         List<Node> children = new LinkedList<>();
 
-        for (Node n : root.children) {
-            children.add(cloneTree(n));
+        if (root.children != null) {
+            for (Node n : root.children) {
+                children.add(cloneTree(n));
+            }
         }
         tmp.children = children;
 

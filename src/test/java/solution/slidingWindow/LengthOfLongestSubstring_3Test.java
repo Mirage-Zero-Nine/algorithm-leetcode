@@ -1,4 +1,4 @@
-package solution.slidingWindow;
+package solution.slidingwindow;
 
 
 import org.junit.jupiter.api.Test;

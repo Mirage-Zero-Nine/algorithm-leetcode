@@ -30,7 +30,7 @@ public class FindClosestElements_658 {
     public List<Integer> findClosestElements(int[] arr, int k, int x) {
         int left = 0, right = arr.length - k - 1;       // range of all possible start of subarray with size k + 1
 
-        while (left <= right) {      // binary search for start index of k elements
+        while (left < right) {      // binary search for start index of k elements
             int mid = left + (right - left) / 2;
 
             if (x - arr[mid] > arr[mid + k] - x) {      // finally, arr[i] should be closer to x compare to arr[i + k]

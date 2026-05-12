@@ -1,6 +1,6 @@
 package solution.greedy;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.TreeMap;
 
 /**
  * You are given a series of video clips from a sporting event that lasted T seconds.

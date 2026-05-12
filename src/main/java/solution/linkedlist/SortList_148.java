@@ -106,6 +106,6 @@ public class SortList_148 {
             dummy = dummy.next;
         }
 
-        return previous;
+        return dummy;
     }
 }

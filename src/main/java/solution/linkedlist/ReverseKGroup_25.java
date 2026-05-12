@@ -28,21 +28,25 @@ public class ReverseKGroup_25 {
      */
     public ListNode reverseKGroup(ListNode head, int k) {
 
-        /* Corner case */
-        if (head == null || head.next == null || k == 1) {
+        if (head == null || k <= 1) {
             return head;
         }
 
         ListNode dummy = new ListNode(-1);
         dummy.next = head;
-        ListNode begin = dummy;
-        int i = 0;
-        while (head != null) {
-            while (++i % k != 0) {
-                head = head.next;
+        ListNode groupPrev = dummy;
+
+        while (true) {
+            ListNode kth = groupPrev;
+            for (int i = 0; i < k && kth != null; i++) {
+                kth = kth.next;
             }
-            begin = reverse(begin, head.next);
-            head = begin.next;
+            if (kth == null) {
+                break;
+            }
+
+            ListNode groupNext = kth.next;
+            groupPrev = reverse(groupPrev, groupNext);
         }
 
         return dummy.next;

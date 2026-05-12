@@ -57,10 +57,11 @@ public class GetMoneyAmount_375 {
         int max = Integer.MAX_VALUE;
 
         for (int i = start; i <= end; i++) {
-            int tmp = Math.max(helper(dp, start, i - 1), helper(dp, i + 1, end));
+            int tmp = i + Math.max(helper(dp, start, i - 1), helper(dp, i + 1, end));
             max = Math.min(max, tmp);
         }
 
+        dp[start][end] = max;
         return max;
     }
 

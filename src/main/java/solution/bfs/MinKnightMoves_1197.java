@@ -30,13 +30,9 @@ public class MinKnightMoves_1197 {
      */
     public int minKnightMoves(int x, int y) {
 
-        if (x == 0 && y == 0) {
-            return 0;
-        }
-
         x = Math.abs(x);
         y = Math.abs(y);
-        int n = 300;
+        int n = Math.max(x, y) + 5;
         int[][] matrix = new int[n][n];
         for (int[] arr : matrix) {
             Arrays.fill(arr, -1);
@@ -45,14 +41,15 @@ public class MinKnightMoves_1197 {
         int[] dx = {-2, -2, -1, -1, 1, 1, 2, 2}, dy = {-1, 1, -2, 2, -2, 2, -1, 1};
         Queue<int[]> q = new LinkedList<>();
         q.add(new int[]{0, 0});
+        matrix[0][0] = 0;
 
         while (!q.isEmpty()) {
             int[] tmp = q.poll();
             int tx = tmp[0];
             int ty = tmp[1];
 
-            if (matrix[x][y] != -1) {
-                return matrix[x][y] + 1;
+            if (tx == x && ty == y) {
+                return matrix[tx][ty];
             }
 
             for (int i = 0; i < 8; i++) {
@@ -65,7 +62,7 @@ public class MinKnightMoves_1197 {
             }
         }
 
-        return matrix[x][y] + 1;
+        return -1;
     }
 
     /**

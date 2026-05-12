@@ -31,8 +31,9 @@ public class LongestSubsequence_1218 {
              * If so, compare it with current longest length.
              * Then put the value and new count back to hash map.
              * If it is first time find an element, set value to 1. */
-            out = Math.max(out, m.getOrDefault(arr[i] - difference, 1));
-            m.put(arr[i], m.getOrDefault(arr[i] - difference, 0) + 1);
+            int prev = m.getOrDefault(arr[i] - difference, 0);
+            out = Math.max(out, prev + 1);
+            m.put(arr[i], prev + 1);
         }
 
         return out;

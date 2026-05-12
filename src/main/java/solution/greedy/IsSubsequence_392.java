@@ -1,6 +1,7 @@
 package solution.greedy;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Given a string s and a string t, check if s is subsequence of t.

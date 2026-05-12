@@ -1,6 +1,9 @@
 package solution.others;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Given two sentences words1, words2 (each represented as an array of strings), and a list of similar word pairs pairs.

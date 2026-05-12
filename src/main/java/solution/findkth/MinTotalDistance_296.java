@@ -1,6 +1,7 @@
 package solution.findkth;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A 2D grid of values 0 or 1 is given.

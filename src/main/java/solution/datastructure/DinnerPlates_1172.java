@@ -1,6 +1,8 @@
 package solution.datastructure;
-
-import java.util.*;
+import java.util.Map;
+import java.util.Stack;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * There are infinite number of stacks arranged in a row and numbered (left to right) from 0.

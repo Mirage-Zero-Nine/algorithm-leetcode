@@ -31,30 +31,21 @@ public class Rotate_48 {
             return;
         }
 
-        /* Flip each row along with mid row of matrix */
-        for (int i = 0; i < matrix.length / 2; i++) {
-
-            /* matrix[i]: row[i] */
-            int[] temp = matrix[matrix.length - 1 - i];
-            matrix[matrix.length - 1 - i] = matrix[i];
-            matrix[i] = temp;
-        }
-
-        /* Flip each column along with mid column of matrix (matrix[0].length / 2) */
-        for (int i = 0; i < matrix.length; i++) {
-            for (int a = 0, b = matrix[0].length - 1; a < b; a++, b--) {
-                int temp = matrix[i][a];
-                matrix[i][a] = matrix[i][b];
-                matrix[i][b] = temp;
-            }
-        }
-
-        /* Flip each element along with diagonal from up-left to down-right */
+        /* Transpose along the main diagonal. */
         for (int i = 0; i < matrix.length; i++) {
             for (int j = i + 1; j < matrix[0].length; j++) {
                 int temp = matrix[j][i];
                 matrix[j][i] = matrix[i][j];
                 matrix[i][j] = temp;
+            }
+        }
+
+        /* Reverse each row to complete a clockwise rotation. */
+        for (int i = 0; i < matrix.length; i++) {
+            for (int left = 0, right = matrix[0].length - 1; left < right; left++, right--) {
+                int temp = matrix[i][left];
+                matrix[i][left] = matrix[i][right];
+                matrix[i][right] = temp;
             }
         }
     }

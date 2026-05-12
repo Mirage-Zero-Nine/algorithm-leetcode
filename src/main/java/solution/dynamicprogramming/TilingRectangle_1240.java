@@ -24,6 +24,9 @@ public class TilingRectangle_1240 {
      * @return minimum number of integer-sided squares that tile the rectangle
      */
     public int tilingRectangle(int m, int n) {
+        min = Integer.MAX_VALUE;
+        this.m.clear();
+
         if (n == m) {
             return 1;
         }

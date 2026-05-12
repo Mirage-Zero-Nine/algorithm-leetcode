@@ -30,7 +30,7 @@ public class MinimumCost_1135 {
          * @param n # of cities
          */
         public UnionFind(int n) {
-            father = new int[n];
+            father = new int[n + 1];
             for (int i = 0; i < father.length; i++) {
                 father[i] = i;
             }
@@ -91,6 +91,6 @@ public class MinimumCost_1135 {
             }
         }
 
-        return (uf.count == 1) ? -1 : min;
+        return (uf.count == 1) ? min : -1;
     }
 }
