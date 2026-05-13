@@ -18,4 +18,11 @@ public class RemoveKdigits_402Test {
     @Test public void testNoRemove() { assertEquals("123", r.removeKdigits("123", 0)); }
     @Test public void testSameLength() { assertEquals("0", r.removeKdigits("10", 2)); }
     @Test public void testSameDigits() { assertEquals("11", r.removeKdigits("11111", 3)); }
+    @Test public void testLeadingZeros() { assertEquals("0", r.removeKdigits("10", 1)); }
+    @Test public void testDescending() { assertEquals("1", r.removeKdigits("9876541", 6)); }
+    @Test public void testGiant() {
+        // 10000 '1's, remove 5000 -> still 5000 '1's
+        String num = "1".repeat(10000);
+        assertEquals("1".repeat(5000), r.removeKdigits(num, 5000));
+    }
 }

@@ -46,4 +46,47 @@ class Partition_131Test {
         List<List<String>> result = solution.partition("aabb");
         assertTrue(result.size() >= 4);
     }
+
+    @Test
+    void testEmptyString() {
+        List<List<String>> result = solution.partition("");
+        assertEquals(1, result.size());
+        assertEquals(0, result.get(0).size());
+    }
+
+    @Test
+    void testTwoChars() {
+        List<List<String>> result = solution.partition("ab");
+        assertEquals(1, result.size()); // only ["a","b"]
+    }
+
+    @Test
+    void testPalindromeString() {
+        List<List<String>> result = solution.partition("aba");
+        // ["a","b","a"], ["aba"]
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testAllPartitionsContainPalindromes() {
+        List<List<String>> result = solution.partition("aab");
+        for (List<String> partition : result) {
+            for (String s : partition) {
+                assertEquals(s, new StringBuilder(s).reverse().toString());
+            }
+        }
+    }
+
+    @Test
+    void testSixChars() {
+        List<List<String>> result = solution.partition("abcabc");
+        assertTrue(result.size() >= 1);
+    }
+
+    @Test
+    void testGiantInput() {
+        // "aaaaaaaaaa" (10 a's) - many palindrome partitions
+        List<List<String>> result = solution.partition("aaaaaaaaaa");
+        assertTrue(result.size() > 50);
+    }
 }

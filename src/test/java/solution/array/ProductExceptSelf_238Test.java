@@ -35,4 +35,36 @@ class ProductExceptSelf_238Test {
     void testNegatives() {
         assertArrayEquals(new int[]{-6, -1}, solution.productExceptSelf(new int[]{-1, -6}));
     }
+
+    @Test
+    void testWithTwoZeros() {
+        assertArrayEquals(new int[]{0, 0, 0, 0}, solution.productExceptSelf(new int[]{0, 0, 1, 2}));
+    }
+
+    @Test
+    void testSingleZero() {
+        assertArrayEquals(new int[]{0, 0, 0, 30, 0}, solution.productExceptSelf(new int[]{1, 2, 3, 0, 5}));
+    }
+
+    @Test
+    void testAllNegatives() {
+        assertArrayEquals(new int[]{6, 3, 2}, solution.productExceptSelf(new int[]{-1, -2, -3}));
+    }
+
+    @Test
+    void testLargeValues() {
+        assertArrayEquals(new int[]{200, 100}, solution.productExceptSelf(new int[]{100, 200}));
+    }
+
+    @Test
+    void testGiantArray() {
+        int n = 1000;
+        int[] nums = new int[n];
+        java.util.Arrays.fill(nums, 1);
+        nums[0] = 2;
+        int[] expected = new int[n];
+        java.util.Arrays.fill(expected, 2);
+        expected[0] = 1;
+        assertArrayEquals(expected, solution.productExceptSelf(nums));
+    }
 }

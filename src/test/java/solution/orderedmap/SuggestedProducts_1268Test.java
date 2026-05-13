@@ -55,4 +55,57 @@ public class SuggestedProducts_1268Test {
             test.suggestedProducts(products, "care")
         );
     }
+
+    @Test
+    public void testHappySingleMatch() {
+        assertEquals(
+            List.of(List.of("apple"), List.of("apple"), List.of("apple"), List.of("apple"), List.of("apple")),
+            test.suggestedProducts(new String[]{"apple", "banana", "cherry"}, "apple")
+        );
+    }
+
+    @Test
+    public void testHappyAllMatch() {
+        assertEquals(
+            List.of(List.of("aa", "ab", "ac")),
+            test.suggestedProducts(new String[]{"aa", "ab", "ac", "ad"}, "a")
+        );
+    }
+
+    @Test
+    public void testNegativeNoMatchFromStart() {
+        assertEquals(
+            List.of(List.of(), List.of(), List.of()),
+            test.suggestedProducts(new String[]{"apple", "banana"}, "xyz")
+        );
+    }
+
+    @Test
+    public void testEdgeSingleProduct() {
+        assertEquals(
+            List.of(List.of("hello"), List.of("hello"), List.of("hello"), List.of("hello"), List.of("hello")),
+            test.suggestedProducts(new String[]{"hello"}, "hello")
+        );
+    }
+
+    @Test
+    public void testEdgePartialMatchThenNone() {
+        assertEquals(
+            List.of(List.of("abc"), List.of("abc"), List.of()),
+            test.suggestedProducts(new String[]{"abc", "bcd"}, "abz")
+        );
+    }
+
+    @Test
+    public void testGiantCase() {
+        String[] products = new String[100];
+        for (int i = 0; i < 100; i++) {
+            products[i] = "prod" + String.format("%03d", i);
+        }
+        List<List<String>> result = test.suggestedProducts(products, "prod");
+        assertEquals(4, result.size());
+        for (List<String> r : result) {
+            assertEquals(3, r.size());
+        }
+    }
 }

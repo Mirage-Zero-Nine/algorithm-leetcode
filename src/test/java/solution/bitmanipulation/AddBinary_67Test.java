@@ -26,4 +26,33 @@ public class AddBinary_67Test {
     @Test public void testNoCarry() {
         assertEquals("110", solver.addBinary("100", "10"));
     }
+
+    @Test public void testBothOnes() {
+        assertEquals("10", solver.addBinary("1", "1"));
+    }
+
+    @Test public void testOneZero() {
+        assertEquals("1", solver.addBinary("1", "0"));
+    }
+
+    @Test public void testZeroOne() {
+        assertEquals("1", solver.addBinary("0", "1"));
+    }
+
+    @Test public void testLongCarryChain() {
+        assertEquals("100000000", solver.addBinary("11111111", "1"));
+    }
+
+    @Test public void testEqualLengthNoCarry() {
+        assertEquals("1111", solver.addBinary("1010", "0101"));
+    }
+
+    @Test public void testGiantCase() {
+        // 64-bit binary strings
+        String a = "1".repeat(64);
+        String b = "1";
+        String result = solver.addBinary(a, b);
+        // 64 ones + 1 = 1 followed by 64 zeros
+        assertEquals("1" + "0".repeat(64), result);
+    }
 }

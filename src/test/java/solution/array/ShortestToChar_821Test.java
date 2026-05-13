@@ -95,4 +95,38 @@ public class ShortestToChar_821Test {
         int[] expected = {1, 0};
         assertArrayEquals(expected, solver.shortestToChar(s, c));
     }
+
+    @Test
+    public void testCharOnlyAtEnd() {
+        // s = "abcde", c = 'e'
+        // distances: [4,3,2,1,0]
+        String s = "abcde";
+        char c = 'e';
+        int[] expected = {4, 3, 2, 1, 0};
+        assertArrayEquals(expected, solver.shortestToChar(s, c));
+    }
+
+    @Test
+    public void testCharOnlyAtStart() {
+        // s = "abcde", c = 'a'
+        // distances: [0,1,2,3,4]
+        String s = "abcde";
+        char c = 'a';
+        int[] expected = {0, 1, 2, 3, 4};
+        assertArrayEquals(expected, solver.shortestToChar(s, c));
+    }
+
+    @Test
+    public void testGiantString() {
+        // 1000 chars, 'a' at positions 0 and 999
+        StringBuilder sb = new StringBuilder();
+        sb.append('a');
+        for (int i = 1; i < 999; i++) sb.append('b');
+        sb.append('a');
+        int[] expected = new int[1000];
+        for (int i = 0; i < 1000; i++) {
+            expected[i] = Math.min(i, 999 - i);
+        }
+        assertArrayEquals(expected, solver.shortestToChar(sb.toString(), 'a'));
+    }
 }

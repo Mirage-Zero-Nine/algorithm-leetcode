@@ -36,4 +36,40 @@ class MaxChunksToSorted_768Test {
     void testDuplicates() {
         assertEquals(2, solution.maxChunksToSorted(new int[]{1, 1, 0, 0, 1}));
     }
+
+    @Test
+    void testAllSame() {
+        assertEquals(5, solution.maxChunksToSorted(new int[]{3, 3, 3, 3, 3}));
+    }
+
+    @Test
+    void testTwoElements() {
+        assertEquals(1, solution.maxChunksToSorted(new int[]{2, 1}));
+        assertEquals(2, solution.maxChunksToSorted(new int[]{1, 2}));
+    }
+
+    @Test
+    void testEmpty() {
+        assertEquals(0, solution.maxChunksToSorted(new int[]{}));
+    }
+
+    @Test
+    void testNegativeValues() {
+        assertEquals(3, solution.maxChunksToSorted(new int[]{3, -1, 2, 4, 5}));
+    }
+
+    @Test
+    void testSortArrayNegative() {
+        assertEquals(1, solution.sortArray(new int[]{5, 4, 3, 2, 1}));
+    }
+
+    @Test
+    void testGiantCase() {
+        int n = 100000;
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = i;
+        }
+        assertEquals(n, solution.maxChunksToSorted(arr));
+    }
 }

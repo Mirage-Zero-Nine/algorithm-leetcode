@@ -46,4 +46,46 @@ class CombinationSum2_40Test {
         List<List<Integer>> result = solution.combinationSum2(new int[]{1, 1, 1}, 2);
         assertEquals(1, result.size());
     }
+
+    @Test
+    void testEmptyArray() {
+        List<List<Integer>> result = solution.combinationSum2(new int[]{}, 5);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testTargetZero() {
+        // min value > target=0, so returns empty
+        List<List<Integer>> result = solution.combinationSum2(new int[]{1, 2}, 0);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testMinValueLargerThanTarget() {
+        List<List<Integer>> result = solution.combinationSum2(new int[]{5, 6, 7}, 3);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testNoDuplicateCombinations() {
+        List<List<Integer>> result = solution.combinationSum2(new int[]{10, 1, 2, 7, 6, 1, 5}, 8);
+        Set<List<Integer>> unique = new HashSet<>(result);
+        assertEquals(result.size(), unique.size());
+    }
+
+    @Test
+    void testAllElementsSumToTarget() {
+        List<List<Integer>> result = solution.combinationSum2(new int[]{1, 2, 3}, 6);
+        assertTrue(result.stream().anyMatch(l -> l.equals(Arrays.asList(1, 2, 3))));
+    }
+
+    @Test
+    void testGiantInput() {
+        int[] candidates = new int[]{1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,4,4,5};
+        List<List<Integer>> result = solution.combinationSum2(candidates, 10);
+        assertTrue(result.size() > 0);
+        // verify no duplicates
+        Set<List<Integer>> unique = new HashSet<>(result);
+        assertEquals(result.size(), unique.size());
+    }
 }

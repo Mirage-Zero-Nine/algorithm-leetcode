@@ -111,6 +111,47 @@ public class NumIslands200Test {
         assertEquals(0, test.numIslands(grid));
         assertEquals(0, test.numIslandsUnionFind(grid));
         assertEquals(0, test.numIslandsBFS(grid));
+    }
 
+    @Test
+    public void testSingleCellIsland() {
+        char[][] grid1 = {{'1'}};
+        char[][] grid2 = {{'1'}};
+        char[][] grid3 = {{'1'}};
+        assertEquals(1, test.numIslands(grid1));
+        assertEquals(1, test.numIslandsUnionFind(grid2));
+        assertEquals(1, test.numIslandsBFS(grid3));
+    }
+
+    @Test
+    public void testSingleCellWater() {
+        char[][] grid1 = {{'0'}};
+        char[][] grid2 = {{'0'}};
+        char[][] grid3 = {{'0'}};
+        assertEquals(0, test.numIslands(grid1));
+        assertEquals(0, test.numIslandsUnionFind(grid2));
+        assertEquals(0, test.numIslandsBFS(grid3));
+    }
+
+    @Test
+    public void testAllLand() {
+        char[][] grid1 = {{'1', '1', '1'}, {'1', '1', '1'}, {'1', '1', '1'}};
+        char[][] grid2 = {{'1', '1', '1'}, {'1', '1', '1'}, {'1', '1', '1'}};
+        char[][] grid3 = {{'1', '1', '1'}, {'1', '1', '1'}, {'1', '1', '1'}};
+        assertEquals(1, test.numIslands(grid1));
+        assertEquals(1, test.numIslandsUnionFind(grid2));
+        assertEquals(1, test.numIslandsBFS(grid3));
+    }
+
+    @Test
+    public void testGiantGrid() {
+        int rows = 100, cols = 100;
+        char[][] grid = new char[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                grid[i][j] = '1';
+            }
+        }
+        assertEquals(1, test.numIslandsUnionFind(grid));
     }
 }

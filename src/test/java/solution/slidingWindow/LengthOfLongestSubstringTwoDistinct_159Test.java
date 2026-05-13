@@ -56,4 +56,26 @@ public class LengthOfLongestSubstringTwoDistinct_159Test {
         assertEquals(8, test.lengthOfLongestSubstringTwoDistinct("abababab"));
         assertEquals(16, test.lengthOfLongestSubstringTwoDistinct("abababababababab"));
     }
+
+    @Test
+    public void testAllSameCharacter() {
+        assertEquals(5, test.lengthOfLongestSubstringTwoDistinct("aaaaa"));
+    }
+
+    @Test
+    public void testExactlyTwoDistinct() {
+        assertEquals(10, test.lengthOfLongestSubstringTwoDistinct("aabbbbaaaa"));
+    }
+
+    @Test
+    public void testThreeDistinctAtBoundary() {
+        assertEquals(3, test.lengthOfLongestSubstringTwoDistinct("abcba"));
+    }
+
+    @Test
+    public void testGiantCase() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 50000; i++) sb.append(i % 2 == 0 ? 'a' : 'b');
+        assertEquals(50000, test.lengthOfLongestSubstringTwoDistinct(sb.toString()));
+    }
 }

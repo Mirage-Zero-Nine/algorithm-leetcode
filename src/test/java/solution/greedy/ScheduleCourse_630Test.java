@@ -29,8 +29,36 @@ public class ScheduleCourse_630Test {
 
     @Test public void testReplaceLonger() {
         int[][] courses = {{3, 3}, {2, 4}};
-        // can take 3,3 first but then 2,4 can't fit. Or take 2,4 first then 3,3 can't fit.
-        // Max = 1
         assertEquals(1, solver.scheduleCourse(courses));
+    }
+
+    @Test public void testEmpty() {
+        int[][] courses = {};
+        assertEquals(0, solver.scheduleCourse(courses));
+    }
+
+    @Test public void testTwoCoursesExactFit() {
+        int[][] courses = {{2, 5}, {3, 5}};
+        assertEquals(2, solver.scheduleCourse(courses));
+    }
+
+    @Test public void testAllOverBudget() {
+        int[][] courses = {{10, 5}, {20, 3}, {15, 2}};
+        assertEquals(0, solver.scheduleCourse(courses));
+    }
+
+    @Test public void testSameDeadline() {
+        int[][] courses = {{1, 10}, {2, 10}, {3, 10}, {4, 10}};
+        // Take 1+2+3+4=10 exactly fits deadline 10
+        assertEquals(4, solver.scheduleCourse(courses));
+    }
+
+    @Test public void testGiantCase() {
+        int n = 1000;
+        int[][] courses = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            courses[i] = new int[]{1, n};
+        }
+        assertEquals(n, solver.scheduleCourse(courses));
     }
 }

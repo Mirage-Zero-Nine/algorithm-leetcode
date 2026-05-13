@@ -72,4 +72,64 @@ class MinStack_155Test {
         minStack.pop();
         assertEquals(512, minStack.getMin());
     }
+
+    @Test
+    public void testEmptyStack() {
+        assertEquals(-1, minStack.top());
+        assertEquals(-1, minStack.getMin());
+    }
+
+    @Test
+    public void testPopOnEmpty() {
+        minStack.pop(); // should not throw
+        assertEquals(-1, minStack.top());
+        assertEquals(-1, minStack.getMin());
+    }
+
+    @Test
+    public void testSingleElement() {
+        minStack.push(42);
+        assertEquals(42, minStack.top());
+        assertEquals(42, minStack.getMin());
+        minStack.pop();
+        assertEquals(-1, minStack.top());
+    }
+
+    @Test
+    public void testAllSameValues() {
+        minStack.push(5);
+        minStack.push(5);
+        minStack.push(5);
+        assertEquals(5, minStack.getMin());
+        minStack.pop();
+        assertEquals(5, minStack.getMin());
+        minStack.pop();
+        assertEquals(5, minStack.getMin());
+    }
+
+    @Test
+    public void testMinUpdatesCorrectly() {
+        minStack.push(3);
+        minStack.push(1);
+        minStack.push(2);
+        assertEquals(1, minStack.getMin());
+        assertEquals(2, minStack.top());
+        minStack.pop();
+        assertEquals(1, minStack.getMin());
+        minStack.pop();
+        assertEquals(3, minStack.getMin());
+    }
+
+    @Test
+    public void testGiantCase() {
+        for (int i = 1000; i >= 1; i--) {
+            minStack.push(i);
+            assertEquals(i, minStack.getMin());
+        }
+        for (int i = 1; i <= 1000; i++) {
+            assertEquals(i, minStack.getMin());
+            minStack.pop();
+        }
+        assertEquals(-1, minStack.getMin());
+    }
 }

@@ -18,4 +18,11 @@ public class BackspaceCompare_844Test {
     @Test public void testNoBackspace() { assertTrue(b.backspaceCompare("abc", "abc")); }
     @Test public void testNull() { assertFalse(b.backspaceCompare(null, "abc")); }
     @Test public void testBackspaceStart() { assertTrue(b.backspaceCompare("#a", "#a")); }
+    @Test public void testAllBackspaces() { assertTrue(b.backspaceCompare("####", "##")); }
+    @Test public void testDifferentLengthSameResult() { assertTrue(b.backspaceCompare("abc###", "def###")); }
+    @Test public void testGiant() {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < 5000; i++) { s.append("a#"); }
+        assertTrue(b.backspaceCompare(s.toString(), s.toString()));
+    }
 }

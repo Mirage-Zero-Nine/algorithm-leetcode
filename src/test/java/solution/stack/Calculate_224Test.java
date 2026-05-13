@@ -20,4 +20,12 @@ public class Calculate_224Test {
     @Test public void testMaxInt() { assertEquals(2147483647, c.calculate("2147483647")); }
     @Test public void testSpaces() { assertEquals(5, c.calculate(" 1 + 4 ")); }
     @Test public void testEmpty() { assertEquals(0, c.calculate("")); }
+    @Test public void testLeadingNegative() { assertEquals(-1, c.calculate("(0-1)")); }
+    @Test public void testMultipleParens() { assertEquals(3, c.calculate("(1)+(2)")); }
+    @Test public void testGiant() {
+        // 1+1+1+...+1 (1000 times) = 1000
+        StringBuilder sb = new StringBuilder("1");
+        for (int i = 1; i < 1000; i++) sb.append("+1");
+        assertEquals(1000, c.calculate(sb.toString()));
+    }
 }

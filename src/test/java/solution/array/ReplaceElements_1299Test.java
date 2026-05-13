@@ -87,4 +87,31 @@ public class ReplaceElements_1299Test {
         int[] expected = {-1, -1};
         assertArrayEquals(expected, solver.replaceElements(arr));
     }
+
+    @Test
+    public void testMaxAtEnd() {
+        // arr = [1,2,3,100]
+        // right max: [100,100,100,-1]
+        int[] arr = {1, 2, 3, 100};
+        int[] expected = {100, 100, 100, -1};
+        assertArrayEquals(expected, solver.replaceElements(arr));
+    }
+
+    @Test
+    public void testMaxAtBeginning() {
+        // arr = [100,1,2,3]
+        // right max: [3,3,3,-1]
+        int[] arr = {100, 1, 2, 3};
+        int[] expected = {3, 3, 3, -1};
+        assertArrayEquals(expected, solver.replaceElements(arr));
+    }
+
+    @Test
+    public void testGiantCase() {
+        int[] arr = new int[10000];
+        for (int i = 0; i < 10000; i++) arr[i] = i;
+        int[] result = solver.replaceElements(arr);
+        assertEquals(9999, result[0]);
+        assertEquals(-1, result[9999]);
+    }
 }

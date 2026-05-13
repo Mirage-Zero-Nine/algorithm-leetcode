@@ -35,4 +35,32 @@ class LongestSubsequence_1218Test {
     void testZeroDifference() {
         assertEquals(3, solution.longestSubsequence(new int[]{1, 1, 1, 2}, 0));
     }
+
+    @Test
+    void testAllSameElements() {
+        assertEquals(5, solution.longestSubsequence(new int[]{3, 3, 3, 3, 3}, 0));
+    }
+
+    @Test
+    void testLargeDifference() {
+        assertEquals(1, solution.longestSubsequence(new int[]{1, 2, 3, 4}, 100));
+    }
+
+    @Test
+    void testNegativeElements() {
+        assertEquals(4, solution.longestSubsequence(new int[]{-1, -3, -5, -7}, -2));
+    }
+
+    @Test
+    void testMixedPositiveNegative() {
+        assertEquals(4, solution.longestSubsequence(new int[]{-2, 0, 2, 4}, 2));
+    }
+
+    @Test
+    void testGiantArray() {
+        int n = 100000;
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) arr[i] = i;
+        assertEquals(n, solution.longestSubsequence(arr, 1));
+    }
 }

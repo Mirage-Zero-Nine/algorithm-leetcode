@@ -41,6 +41,39 @@ public class GreyCode_89Test {
         assertEquals(16, seen.size());
     }
 
+    @Test public void testN4Size() {
+        List<Integer> res = solver.grayCode(4);
+        assertEquals(16, res.size());
+        assertEquals(0, res.get(0).intValue());
+        assertGrayProperty(res);
+    }
+
+    @Test public void testN5() {
+        List<Integer> res = solver.grayCode(5);
+        assertEquals(32, res.size());
+        assertGrayProperty(res);
+    }
+
+    @Test public void testN5Unique() {
+        List<Integer> res = solver.grayCode(5);
+        Set<Integer> seen = new HashSet<>(res);
+        assertEquals(32, seen.size());
+    }
+
+    @Test public void testStartsWithZero() {
+        for (int n = 0; n <= 5; n++) {
+            assertEquals(0, solver.grayCode(n).get(0).intValue());
+        }
+    }
+
+    @Test public void testGiantN10() {
+        List<Integer> res = solver.grayCode(10);
+        assertEquals(1024, res.size());
+        assertGrayProperty(res);
+        Set<Integer> seen = new HashSet<>(res);
+        assertEquals(1024, seen.size());
+    }
+
     private void assertGrayProperty(List<Integer> codes) {
         for (int i = 1; i < codes.size(); i++) {
             int diff = codes.get(i) ^ codes.get(i - 1);

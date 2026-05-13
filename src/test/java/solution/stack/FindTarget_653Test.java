@@ -47,4 +47,37 @@ public class FindTarget_653Test {
         TreeNode root = new TreeNode(1);
         assertFalse(solver.findTarget_Stack(root, 2));
     }
+
+    @Test public void testNullRoot() {
+        assertFalse(solver.findTarget_Stack(null, 5));
+    }
+
+    @Test public void testTwoNodes() {
+        TreeNode root = new TreeNode(2);
+        root.left = new TreeNode(1);
+        assertTrue(solver.findTarget_Stack(root, 3));
+    }
+
+    @Test public void testNegativeTarget() {
+        assertFalse(solver.findTarget_Stack(buildBST(), 1));
+    }
+
+    @Test public void testTargetZero() {
+        assertFalse(solver.findTarget_Stack(buildBST(), 0));
+    }
+
+    @Test public void testGiantBST() {
+        TreeNode root = buildBalanced(1, 1000);
+        assertTrue(solver.findTarget_Stack(root, 1001)); // 1+1000 or 500+501
+        assertFalse(solver.findTarget_Stack(root, 2001));
+    }
+
+    private TreeNode buildBalanced(int lo, int hi) {
+        if (lo > hi) return null;
+        int mid = (lo + hi) / 2;
+        TreeNode n = new TreeNode(mid);
+        n.left = buildBalanced(lo, mid - 1);
+        n.right = buildBalanced(mid + 1, hi);
+        return n;
+    }
 }

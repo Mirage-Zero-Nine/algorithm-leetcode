@@ -94,4 +94,24 @@ public class WaysToSplit_1712Test {
         // split at 2: left=[1,1,1], mid=[1], right=[1]. 3<=1? No.
         assertEquals(2, solver.waysToSplit(new int[]{1, 1, 1, 1, 1}));
     }
+
+    @Test
+    public void testNullInput() {
+        assertEquals(0, solver.waysToSplit(null));
+    }
+
+    @Test
+    public void testSixZeros() {
+        assertEquals(10, solver.waysToSplit(new int[]{0, 0, 0, 0, 0, 0}));
+    }
+
+    @Test
+    public void testGiantCase() {
+        int[] nums = new int[10000];
+        for (int i = 0; i < 10000; i++) {
+            nums[i] = 1;
+        }
+        int result = solver.waysToSplit(nums);
+        assertTrue(result > 0);
+    }
 }

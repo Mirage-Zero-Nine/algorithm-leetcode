@@ -69,4 +69,23 @@ class BinaryTreePathsTest {
         TreeNode root = TreeParser.deserialize("1");
         assertListsEqualIgnoringOrder(Lists.newArrayList("1"), test.binaryTreePaths(root));
     }
+
+    @Test
+    public void nullRootTest() {
+        assertTrue(test.binaryTreePaths(null).isEmpty());
+    }
+
+    @Test
+    public void negativeValuesTest() {
+        TreeNode root = TreeParser.deserialize("-1,-2,-3");
+        assertListsEqualIgnoringOrder(Lists.newArrayList("-1->-2", "-1->-3"), test.binaryTreePaths(root));
+    }
+
+    @Test
+    public void largeTreeTest() {
+        // Complete binary tree of depth 4 (15 nodes), 8 leaf paths
+        TreeNode root = TreeParser.deserialize("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
+        List<String> result = test.binaryTreePaths(root);
+        assertTrue(result.size() == 8);
+    }
 }

@@ -48,4 +48,51 @@ public class MinTotalDistance_296Test {
         };
         assertEquals(2, solver.minTotalDistance(grid));
     }
+
+    @Test public void testAllOnes() {
+        int[][] grid = {
+                {1, 1},
+                {1, 1}
+        };
+        assertEquals(4, solver.minTotalDistance(grid));
+    }
+
+    @Test public void testCorners() {
+        int[][] grid = {
+                {1, 0, 1},
+                {0, 0, 0},
+                {1, 0, 1}
+        };
+        assertEquals(8, solver.minTotalDistance(grid));
+    }
+
+    @Test public void testSingleRow() {
+        int[][] grid = {
+                {1, 0, 0, 1, 0, 1}
+        };
+        assertEquals(5, solver.minTotalDistance(grid));
+    }
+
+    @Test public void testThreeInRow() {
+        int[][] grid = {
+                {1, 1, 1}
+        };
+        assertEquals(2, solver.minTotalDistance(grid));
+    }
+
+    @Test public void testLargeGrid() {
+        int[][] grid = new int[50][50];
+        grid[0][0] = 1;
+        grid[49][49] = 1;
+        assertEquals(98, solver.minTotalDistance(grid));
+    }
+
+    @Test public void testDiagonal() {
+        int[][] grid = {
+                {1, 0, 0},
+                {0, 1, 0},
+                {0, 0, 1}
+        };
+        assertEquals(4, solver.minTotalDistance(grid));
+    }
 }

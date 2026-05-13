@@ -18,4 +18,21 @@ public class Find132pattern_456Test {
     @Test public void testSmall() { assertFalse(f.find132pattern(new int[]{1, 2})); }
     @Test public void testClassic2() { assertTrue(f.find132pattern(new int[]{3, 5, 0, 3, 4})); }
     @Test public void testDecreasing() { assertFalse(f.find132pattern(new int[]{4, 3, 2, 1})); }
+
+    // Additional happy cases
+    @Test public void testSimplePattern() { assertTrue(f.find132pattern(new int[]{1, 3, 2})); }
+    @Test public void testPatternAtEnd() { assertTrue(f.find132pattern(new int[]{5, 4, 3, 1, 5, 2})); }
+
+    // Negative case: all same values
+    @Test public void testAllSame() { assertFalse(f.find132pattern(new int[]{3, 3, 3, 3})); }
+
+    // Edge case: exactly 3 elements, no pattern
+    @Test public void testThreeNoPattern() { assertFalse(f.find132pattern(new int[]{1, 2, 3})); }
+
+    // Giant test case
+    @Test public void testGiant() {
+        int[] arr = new int[10000];
+        for (int i = 0; i < 10000; i++) arr[i] = i;
+        assertFalse(f.find132pattern(arr)); // strictly increasing, no 132 pattern
+    }
 }

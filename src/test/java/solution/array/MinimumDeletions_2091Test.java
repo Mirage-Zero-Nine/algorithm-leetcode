@@ -34,4 +34,39 @@ class MinimumDeletions_2091Test {
     void testLargeArray() {
         assertEquals(2, solution.minimumDeletions(new int[]{-1, -2, -3, -4, -5}));
     }
+
+    @Test
+    void testSingleElement() {
+        assertEquals(1, solution.minimumDeletions(new int[]{42}));
+    }
+
+    @Test
+    void testMinAtFrontMaxAtBack() {
+        assertEquals(2, solution.minimumDeletions(new int[]{1, 3, 5, 7, 9}));
+    }
+
+    @Test
+    void testMaxAtFrontMinAtBack() {
+        assertEquals(2, solution.minimumDeletions(new int[]{9, 7, 5, 3, 1}));
+    }
+
+    @Test
+    void testMinMaxAdjacent() {
+        assertEquals(3, solution.minimumDeletions(new int[]{3, 1, 10, 5, 7}));
+    }
+
+    @Test
+    void testNegativeValues() {
+        assertEquals(2, solution.minimumDeletions(new int[]{-10, 5, -3, 2}));
+    }
+
+    @Test
+    void testGiantArray() {
+        int n = 100000;
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) nums[i] = i;
+        // min=0 at index 0, max=99999 at index 99999
+        // remove from left: 100000, remove from right: 100000, remove both sides: 1 + 1 = 2
+        assertEquals(2, solution.minimumDeletions(nums));
+    }
 }

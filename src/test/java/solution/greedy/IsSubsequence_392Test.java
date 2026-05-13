@@ -31,4 +31,34 @@ public class IsSubsequence_392Test {
     @Test public void testBucketNotSubseq() {
         assertFalse(solver.bucket("axc", "ahbgdc"));
     }
+
+    @Test public void testEmptyT() {
+        assertFalse(solver.isSubsequence("a", ""));
+    }
+
+    @Test public void testBothEmpty() {
+        assertTrue(solver.isSubsequence("", ""));
+    }
+
+    @Test public void testSameString() {
+        assertTrue(solver.isSubsequence("abc", "abc"));
+    }
+
+    @Test public void testSingleCharMatch() {
+        assertTrue(solver.isSubsequence("a", "a"));
+    }
+
+    @Test public void testSingleCharNoMatch() {
+        assertFalse(solver.isSubsequence("b", "a"));
+    }
+
+    @Test public void testBucketEmptyS() {
+        assertTrue(solver.bucket("", "abc"));
+    }
+
+    @Test public void testGiantCase() {
+        String t = "abcdefghij".repeat(5000);
+        String s = "aj".repeat(50);
+        assertTrue(solver.isSubsequence(s, t));
+    }
 }

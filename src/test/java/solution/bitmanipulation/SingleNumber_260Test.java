@@ -39,4 +39,38 @@ public class SingleNumber_260Test {
         int[] result = solver.singleNumber(new int[]{0, 1, 2, 2});
         assertArrayEquals(new int[]{0, 1}, sorted(result));
     }
+
+    @Test public void testLargeNumbers() {
+        int[] result = solver.singleNumber(new int[]{1000000, 999999, 1000000, 888888});
+        assertArrayEquals(new int[]{888888, 999999}, sorted(result));
+    }
+
+    @Test public void testBothNegative() {
+        int[] result = solver.singleNumber(new int[]{-3, -5, 1, 1});
+        assertArrayEquals(new int[]{-5, -3}, sorted(result));
+    }
+
+    @Test public void testMixedNegativePositive() {
+        int[] result = solver.singleNumber(new int[]{-1, 2, -1, 3, 2, 5});
+        assertArrayEquals(new int[]{3, 5}, sorted(result));
+    }
+
+    @Test public void testPowersOfTwo() {
+        int[] result = solver.singleNumber(new int[]{4, 8, 4, 16, 8, 32});
+        assertArrayEquals(new int[]{16, 32}, sorted(result));
+    }
+
+    @Test public void testGiantCase() {
+        // large array: pairs from 1 to 5000, plus two singles 0 and 10001
+        int[] nums = new int[10002];
+        int idx = 0;
+        for (int i = 1; i <= 5000; i++) {
+            nums[idx++] = i;
+            nums[idx++] = i;
+        }
+        nums[idx++] = 0;
+        nums[idx] = 10001;
+        int[] result = solver.singleNumber(nums);
+        assertArrayEquals(new int[]{0, 10001}, sorted(result));
+    }
 }

@@ -24,4 +24,40 @@ public class MaxConsecutiveAnswers2024Test {
     public void testLargeCase() {
         assertEquals(5, test.maxConsecutiveAnswers("TTFTTFTT", 1));
     }
+
+    @Test
+    public void testAllT() {
+        assertEquals(5, test.maxConsecutiveAnswers("TTTTT", 0));
+    }
+
+    @Test
+    public void testAllF() {
+        assertEquals(4, test.maxConsecutiveAnswers("FFFF", 0));
+    }
+
+    @Test
+    public void testAllTWithK() {
+        assertEquals(5, test.maxConsecutiveAnswers("TTTTT", 2));
+    }
+
+    @Test
+    public void testAlternating() {
+        assertEquals(3, test.maxConsecutiveAnswers("TFTF", 1));
+    }
+
+    @Test
+    public void testKEqualsLength() {
+        assertEquals(6, test.maxConsecutiveAnswers("TFTFTF", 6));
+    }
+
+    @Test
+    public void testKZeroMixed() {
+        assertEquals(2, test.maxConsecutiveAnswers("TTFFTT", 0));
+    }
+
+    @Test
+    public void testGiantCase() {
+        String s = "T".repeat(5000) + "F".repeat(5000);
+        assertEquals(10000, test.maxConsecutiveAnswers(s, 5000));
+    }
 }

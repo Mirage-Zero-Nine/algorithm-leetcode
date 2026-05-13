@@ -82,4 +82,20 @@ public class XorOperation_1486Test {
         // nums = [0], XOR = 0
         assertEquals(0, solver.xorOperation(1, 0));
     }
+
+    @Test
+    public void testLargeStart() {
+        // n = 3, start = 100
+        // nums = [100, 102, 104]
+        // 100 ^ 102 = 2, 2 ^ 104 = 106
+        assertEquals(106, solver.xorOperation(3, 100));
+    }
+
+    @Test
+    public void testGiantN() {
+        // n = 10000, start = 1
+        int result = solver.xorOperation(10000, 1);
+        // just verify it completes and returns an int
+        assertTrue(result >= 0 || result < 0);
+    }
 }

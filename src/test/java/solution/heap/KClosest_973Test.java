@@ -36,6 +36,54 @@ public class KClosest_973Test {
         assertTrue(set.contains("-2,-2"));
     }
 
+    @Test
+    public void testSinglePoint() {
+        assertPointSetEquals(Set.of("5,5"), test.kClosest(new int[][]{{5, 5}}, 1));
+    }
+
+    @Test
+    public void testOriginPoint() {
+        assertPointSetEquals(Set.of("0,0"), test.kClosest(new int[][]{{0, 0}, {1, 1}, {2, 2}}, 1));
+    }
+
+    @Test
+    public void testNegativeCoordinates() {
+        assertPointSetEquals(Set.of("-1,-1"), test.kClosest(new int[][]{{-1, -1}, {-5, -5}, {10, 10}}, 1));
+    }
+
+    @Test
+    public void testAllSameDistance() {
+        int[][] result = test.kClosest(new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}}, 2);
+        assertEquals(2, result.length);
+    }
+
+    @Test
+    public void testKEqualsN() {
+        int[][] input = {{1, 2}, {3, 4}, {5, 6}};
+        int[][] result = test.kClosest(input, 3);
+        assertEquals(3, result.length);
+    }
+
+    @Test
+    public void testGiantCase() {
+        int n = 500;
+        int[][] points = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            points[i] = new int[]{i, i};
+        }
+        int[][] result = test.kClosest(points, 10);
+        assertEquals(10, result.length);
+        Set<String> set = toPointSet(result);
+        assertTrue(set.contains("0,0"));
+        assertTrue(set.contains("1,1"));
+    }
+
+    @Test
+    public void testLargeCoordinates() {
+        int[][] result = test.kClosest(new int[][]{{10000, 10000}, {-10000, -10000}, {1, 1}}, 1);
+        assertPointSetEquals(Set.of("1,1"), result);
+    }
+
     private static void assertPointSetEquals(Set<String> expected, int[][] actual) {
         assertEquals(expected, toPointSet(actual));
     }

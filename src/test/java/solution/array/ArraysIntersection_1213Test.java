@@ -121,4 +121,34 @@ public class ArraysIntersection_1213Test {
         assertTrue(result.contains(4));
         assertTrue(result.contains(5));
     }
+
+    @Test
+    public void testAllEmpty() {
+        List<Integer> result = solver.arraysIntersection(new int[]{}, new int[]{}, new int[]{});
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testLargeValues() {
+        int[] arr1 = {100, 200, 300};
+        int[] arr2 = {100, 200, 300};
+        int[] arr3 = {100, 200, 300};
+        List<Integer> result = solver.arraysIntersection(arr1, arr2, arr3);
+        assertEquals(List.of(100, 200, 300), result);
+    }
+
+    @Test
+    public void testGiantCase() {
+        int n = 10000;
+        int[] arr1 = new int[n];
+        int[] arr2 = new int[n];
+        int[] arr3 = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr1[i] = i;
+            arr2[i] = i;
+            arr3[i] = i;
+        }
+        List<Integer> result = solver.arraysIntersection(arr1, arr2, arr3);
+        assertEquals(n, result.size());
+    }
 }

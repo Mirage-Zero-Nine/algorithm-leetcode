@@ -35,4 +35,25 @@ public class MaxSlidingWindow_239Test {
     @Test public void testAllSame() {
         assertArrayEquals(new int[]{2, 2, 2}, solver.maxSlidingWindow(new int[]{2, 2, 2, 2}, 2));
     }
+
+    @Test public void testIncreasing() {
+        assertArrayEquals(new int[]{3, 4, 5}, solver.maxSlidingWindow(new int[]{1, 2, 3, 4, 5}, 3));
+    }
+
+    @Test public void testNegativeValues() {
+        assertArrayEquals(new int[]{-1, -1, -1}, solver.maxSlidingWindow(new int[]{-3, -1, -2, -4, -1}, 3));
+    }
+
+    @Test public void testSingleElement() {
+        assertArrayEquals(new int[]{5}, solver.maxSlidingWindow(new int[]{5}, 1));
+    }
+
+    @Test public void testGiantCase() {
+        int n = 100000;
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) arr[i] = i;
+        int[] result = solver.maxSlidingWindow(arr, 100);
+        assertEquals(n - 99, result.length);
+        assertEquals(n - 1, result[result.length - 1]);
+    }
 }

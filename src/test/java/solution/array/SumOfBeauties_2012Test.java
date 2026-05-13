@@ -104,4 +104,24 @@ public class SumOfBeauties_2012Test {
         int[] nums = {1, 4, 3, 2, 5};
         assertEquals(0, solver.sumOfBeauties(nums));
     }
+
+    @Test
+    public void testPartialBeauty() {
+        // nums = [1,2,3,4,3]
+        // i=1: maxLeft=1, minRight=min(3,4,3)=3. 1<2<3 → beauty=2
+        // i=2: maxLeft=2, minRight=min(4,3)=3. 2<3<3? No. 2<3<4 → beauty=1
+        // i=3: maxLeft=3, minRight=3. 3<4<3? No. 3<4<3? No. beauty=0
+        // total = 3
+        int[] nums = {1, 2, 3, 4, 3};
+        assertEquals(3, solver.sumOfBeauties(nums));
+    }
+
+    @Test
+    public void testGiantStrictlyIncreasing() {
+        // 1000 elements strictly increasing → all middle elements score 2
+        int[] nums = new int[1000];
+        for (int i = 0; i < 1000; i++) nums[i] = i;
+        // beauty = 2 * (1000 - 2) = 1996
+        assertEquals(1996, solver.sumOfBeauties(nums));
+    }
 }

@@ -34,4 +34,23 @@ public class RobotWithString_2434Test {
     @Test public void testBdda() {
         assertEquals("addb", solver.robotWithString("bdda"));
     }
+
+    @Test public void testAllSame() {
+        assertEquals("aaaa", solver.robotWithString("aaaa"));
+    }
+
+    @Test public void testTwoChars() {
+        assertEquals("ab", solver.robotWithString("ba"));
+    }
+
+    @Test public void testBca() {
+        assertEquals("acb", solver.robotWithString("bca"));
+    }
+
+    @Test public void testGiant() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 1000; i++) sb.append('a');
+        String result = solver.robotWithString(sb.toString());
+        assertEquals(sb.toString(), result);
+    }
 }

@@ -3,6 +3,7 @@ package solution.greedy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MaxPerformance_1383Test {
     private final MaxPerformance_1383 solver = new MaxPerformance_1383();
@@ -37,5 +38,42 @@ public class MaxPerformance_1383Test {
         int[] speed = {5};
         int[] efficiency = {10};
         assertEquals(50, solver.maxPerformance(1, speed, efficiency, 1));
+    }
+
+    @Test public void testKEqualsN() {
+        int[] speed = {2, 10, 3, 1, 5, 8};
+        int[] efficiency = {5, 4, 3, 9, 7, 2};
+        assertEquals(72, solver.maxPerformance(6, speed, efficiency, 6));
+    }
+
+    @Test public void testTwoEngineersPickBoth() {
+        int[] speed = {3, 7};
+        int[] efficiency = {6, 2};
+        assertEquals(20, solver.maxPerformance(2, speed, efficiency, 2));
+    }
+
+    @Test public void testAllSameEfficiency() {
+        int[] speed = {1, 2, 3, 4, 5};
+        int[] efficiency = {5, 5, 5, 5, 5};
+        assertEquals(75, solver.maxPerformance(5, speed, efficiency, 5));
+    }
+
+    @Test public void testAllSameSpeed() {
+        int[] speed = {3, 3, 3};
+        int[] efficiency = {1, 2, 3};
+        assertEquals(9, solver.maxPerformance(3, speed, efficiency, 1));
+    }
+
+    @Test public void testGiantCase() {
+        int n = 100000;
+        int[] speed = new int[n];
+        int[] efficiency = new int[n];
+        for (int i = 0; i < n; i++) {
+            speed[i] = i + 1;
+            efficiency[i] = n - i;
+        }
+        // Just verify it runs without error and returns a non-negative result
+        int result = solver.maxPerformance(n, speed, efficiency, n / 2);
+        assertTrue(result >= 0);
     }
 }

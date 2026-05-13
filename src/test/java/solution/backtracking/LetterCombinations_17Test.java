@@ -46,4 +46,52 @@ class LetterCombinations_17Test {
         List<String> result = solution.letterCombinations("7");
         assertEquals(4, result.size());
     }
+
+    @Test
+    void testWithNine() {
+        List<String> result = solution.letterCombinations("9");
+        assertEquals(4, result.size());
+    }
+
+    @Test
+    void testContainsExpectedCombination() {
+        List<String> result = solution.letterCombinations("23");
+        assertTrue(result.contains("ad"));
+        assertTrue(result.contains("cf"));
+    }
+
+    @Test
+    void testDigitWithZero() {
+        // '0' has no letters, should return empty
+        List<String> result = solution.letterCombinations("20");
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testDigitWithOne() {
+        // '1' has no letters, should return empty
+        List<String> result = solution.letterCombinations("12");
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testFourDigits() {
+        // 2(3) * 3(3) * 4(3) * 5(3) = 81
+        List<String> result = solution.letterCombinations("2345");
+        assertEquals(81, result.size());
+    }
+
+    @Test
+    void testSevenAndNine() {
+        // 7(4) * 9(4) = 16
+        List<String> result = solution.letterCombinations("79");
+        assertEquals(16, result.size());
+    }
+
+    @Test
+    void testGiantInput() {
+        // "2222222" -> 3^7 = 2187
+        List<String> result = solution.letterCombinations("2222222");
+        assertEquals(2187, result.size());
+    }
 }

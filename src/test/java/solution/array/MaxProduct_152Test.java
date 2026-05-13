@@ -35,4 +35,39 @@ class MaxProduct_152Test {
     void testAllNegative() {
         assertEquals(6, solution.maxProduct(new int[]{-1, -2, -3}));
     }
+
+    @Test
+    void testAllPositive() {
+        assertEquals(120, solution.maxProduct(new int[]{1, 2, 3, 4, 5}));
+    }
+
+    @Test
+    void testSingleNegative() {
+        assertEquals(-3, solution.maxProduct(new int[]{-3}));
+    }
+
+    @Test
+    void testZeroInMiddle() {
+        assertEquals(4, solution.maxProduct(new int[]{2, 0, 4}));
+    }
+
+    @Test
+    void testEmptyArray() {
+        assertEquals(0, solution.maxProduct(new int[]{}));
+    }
+
+    @Test
+    void testTwoNegatives() {
+        assertEquals(6, solution.maxProduct(new int[]{-2, -3}));
+    }
+
+    @Test
+    void testGiantCase() {
+        int[] nums = new int[1000];
+        for (int i = 0; i < 1000; i++) {
+            nums[i] = 1;
+        }
+        nums[500] = 2;
+        assertEquals(2, solution.maxProduct(nums));
+    }
 }

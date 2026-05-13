@@ -26,4 +26,30 @@ public class SingleNumber_136Test {
     @Test public void testLargerArray() {
         assertEquals(7, solver.singleNumber(new int[]{3, 5, 3, 5, 7, 9, 9}));
     }
+
+    @Test public void testZeroSingle() {
+        assertEquals(0, solver.singleNumber(new int[]{1, 1, 0}));
+    }
+
+    @Test public void testLargeValue() {
+        assertEquals(Integer.MAX_VALUE, solver.singleNumber(new int[]{Integer.MAX_VALUE, 1, 1}));
+    }
+
+    @Test public void testMinValue() {
+        assertEquals(Integer.MIN_VALUE, solver.singleNumber(new int[]{Integer.MIN_VALUE, 99, 99}));
+    }
+
+    @Test public void testMixedNegPos() {
+        assertEquals(3, solver.singleNumber(new int[]{-1, -1, 2, 2, 3}));
+    }
+
+    @Test public void testGiantCase() {
+        int[] nums = new int[10001];
+        for (int i = 0; i < 5000; i++) {
+            nums[2 * i] = i;
+            nums[2 * i + 1] = i;
+        }
+        nums[10000] = 99999;
+        assertEquals(99999, solver.singleNumber(nums));
+    }
 }

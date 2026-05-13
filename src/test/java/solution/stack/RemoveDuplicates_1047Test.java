@@ -31,4 +31,31 @@ public class RemoveDuplicates_1047Test {
     @Test public void testSingleChar() {
         assertEquals("a", solver.removeDuplicates("a"));
     }
+
+    @Test public void testAllSameEvenLength() {
+        assertEquals("", solver.removeDuplicates("aaaa"));
+    }
+
+    @Test public void testAllSameOddLength() {
+        assertEquals("a", solver.removeDuplicates("aaa"));
+    }
+
+    @Test public void testMultipleChainReactions() {
+        // "abbacddc" -> remove bb -> "aacddc" -> remove aa -> "cddc" -> remove dd -> "cc" -> remove cc -> ""
+        assertEquals("", solver.removeDuplicates("abbacddc"));
+    }
+
+    @Test public void testDuplicatesAtEnd() {
+        assertEquals("ab", solver.removeDuplicates("abcc"));
+    }
+
+    @Test public void testDuplicatesAtStart() {
+        assertEquals("bc", solver.removeDuplicates("aabc"));
+    }
+
+    @Test public void testGiantInput() {
+        // Build a string of 10000 'a' chars - all should cancel out (even count)
+        String s = "a".repeat(10000);
+        assertEquals("", solver.removeDuplicates(s));
+    }
 }

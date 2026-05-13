@@ -34,4 +34,24 @@ public class RemoveDuplicateLetters_316Test {
     @Test public void testEmpty() {
         assertEquals("", solver.removeDuplicateLetters(""));
     }
+
+    @Test public void testReverseSorted() {
+        assertEquals("dcba", solver.removeDuplicateLetters("dcba"));
+    }
+
+    @Test public void testSorted() {
+        assertEquals("abcd", solver.removeDuplicateLetters("abcd"));
+    }
+
+    @Test public void testTwoChars() {
+        assertEquals("ab", solver.removeDuplicateLetters("bab"));
+    }
+
+    @Test public void testGiantCase() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10000; i++) sb.append((char) ('a' + (i % 26)));
+        String result = solver.removeDuplicateLetters(sb.toString());
+        assertEquals(26, result.length());
+        assertEquals("abcdefghijklmnopqrstuvwxyz", result);
+    }
 }

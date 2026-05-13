@@ -46,4 +46,47 @@ class GeneratePalindromes_267Test {
         List<String> result = solution.generatePalindromes("aabbcc");
         assertTrue(result.size() >= 6);
     }
+
+    @Test
+    void testTwoCharsNoPalindrome() {
+        List<String> result = solution.generatePalindromes("ab");
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testTwoCharsSame() {
+        List<String> result = solution.generatePalindromes("aa");
+        assertEquals(1, result.size());
+        assertEquals("aa", result.get(0));
+    }
+
+    @Test
+    void testOddLengthPalindrome() {
+        List<String> result = solution.generatePalindromes("aab");
+        assertEquals(1, result.size());
+        assertEquals("aba", result.get(0));
+    }
+
+    @Test
+    void testAllResultsArePalindromes() {
+        List<String> result = solution.generatePalindromes("aabbcc");
+        for (String s : result) {
+            String rev = new StringBuilder(s).reverse().toString();
+            assertEquals(s, rev);
+        }
+    }
+
+    @Test
+    void testNoDuplicatesInResult() {
+        List<String> result = solution.generatePalindromes("aabbcc");
+        Set<String> unique = new HashSet<>(result);
+        assertEquals(result.size(), unique.size());
+    }
+
+    @Test
+    void testGiantInput() {
+        // "aabbccdd" -> 4! / 1 = 24 palindromes
+        List<String> result = solution.generatePalindromes("aabbccdd");
+        assertEquals(24, result.size());
+    }
 }

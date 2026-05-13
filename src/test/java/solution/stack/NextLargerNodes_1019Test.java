@@ -43,4 +43,34 @@ public class NextLargerNodes_1019Test {
     @Test public void testNull() {
         assertArrayEquals(new int[]{}, solver.nextLargerNodes(null));
     }
+
+    // Additional happy cases
+    @Test public void testTwoNodes() {
+        assertArrayEquals(new int[]{2, 0}, solver.nextLargerNodes(buildList(1, 2)));
+    }
+
+    @Test public void testDuplicateValues() {
+        assertArrayEquals(new int[]{5, 5, 5, 0}, solver.nextLargerNodes(buildList(1, 1, 1, 5)));
+    }
+
+    // Negative case: all same values, no next larger
+    @Test public void testAllSame() {
+        assertArrayEquals(new int[]{0, 0, 0, 0}, solver.nextLargerNodes(buildList(3, 3, 3, 3)));
+    }
+
+    // Edge case: peak in middle
+    @Test public void testPeakMiddle() {
+        assertArrayEquals(new int[]{5, 0, 0}, solver.nextLargerNodes(buildList(1, 5, 2)));
+    }
+
+    // Giant test case
+    @Test public void testGiant() {
+        int[] vals = new int[1000];
+        for (int i = 0; i < 1000; i++) vals[i] = i % 50 + 1;
+        ListNode head = buildList(vals[0]);
+        ListNode cur = head;
+        for (int i = 1; i < vals.length; i++) { cur.next = new ListNode(vals[i]); cur = cur.next; }
+        int[] result = solver.nextLargerNodes(head);
+        assertEquals(1000, result.length);
+    }
 }
