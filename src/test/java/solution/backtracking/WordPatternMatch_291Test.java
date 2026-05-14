@@ -34,4 +34,36 @@ class WordPatternMatch_291Test {
     void testNoMatchDifferent() {
         assertFalse(solution.wordPatternMatch("abba", "dogcatcatfish"));
     }
+
+    @Test
+    void testSamePatternDifferentMapping() {
+        assertFalse(solution.wordPatternMatch("aabb", "xyzabcxzyabc"));
+    }
+
+    @Test
+    void testAllSamePattern() {
+        assertTrue(solution.wordPatternMatch("aaaa", "asdasdasdasd"));
+    }
+
+    @Test
+    void testTwoCharPattern() {
+        // bijection: a and b must map to different substrings, "aa" can't split into 2 different non-empty parts
+        assertFalse(solution.wordPatternMatch("ab", "aa"));
+    }
+
+    @Test
+    void testPatternLongerThanString() {
+        assertFalse(solution.wordPatternMatch("abcd", "ab"));
+    }
+
+    @Test
+    void testSingleCharPatternSingleCharStr() {
+        assertTrue(solution.wordPatternMatch("a", "x"));
+    }
+
+    @Test
+    void testGiantCase() {
+        // pattern "abcabc": a=red, b=blue, c=green -> "redbluegreenredbluegreen"
+        assertTrue(solution.wordPatternMatch("abcabc", "redbluegreenredbluegreen"));
+    }
 }

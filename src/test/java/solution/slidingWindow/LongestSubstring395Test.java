@@ -24,4 +24,40 @@ public class LongestSubstring395Test {
     public void testLargeCase() {
         assertEquals(3, test.longestSubstring("aacbbbdc", 2));
     }
+
+    @Test
+    public void testSingleChar() {
+        assertEquals(1, test.longestSubstring("a", 1));
+    }
+
+    @Test
+    public void testSingleCharKGreater() {
+        assertEquals(0, test.longestSubstring("a", 2));
+    }
+
+    @Test
+    public void testAllSameChars() {
+        assertEquals(5, test.longestSubstring("aaaaa", 1));
+    }
+
+    @Test
+    public void testNullString() {
+        assertEquals(0, test.longestSubstring(null, 1));
+    }
+
+    @Test
+    public void testKEquals1() {
+        assertEquals(6, test.longestSubstring("aaaaaa", 1));
+    }
+
+    @Test
+    public void testNoValidSubstring() {
+        assertEquals(0, test.longestSubstring("abcde", 2));
+    }
+
+    @Test
+    public void testGiantCase() {
+        String s = "a".repeat(5000) + "b".repeat(5000);
+        assertEquals(10000, test.longestSubstring(s, 1));
+    }
 }

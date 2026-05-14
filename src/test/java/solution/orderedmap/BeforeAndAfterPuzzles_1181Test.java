@@ -54,4 +54,51 @@ public class BeforeAndAfterPuzzles_1181Test {
         assertTrue(result.contains("alpha beta gamma"));
         assertTrue(result.contains("delta epsilon zeta"));
     }
+
+    @Test
+    public void testHappyChainOfThree() {
+        assertEquals(
+            List.of("a b c", "b c d"),
+            test.beforeAndAfterPuzzles(new String[]{"a b", "b c", "c d"})
+        );
+    }
+
+    @Test
+    public void testHappySameFirstAndLastWord() {
+        List<String> result = test.beforeAndAfterPuzzles(new String[]{"ab cd", "cd ab"});
+        assertTrue(result.contains("ab cd ab"));
+        assertTrue(result.contains("cd ab cd"));
+    }
+
+    @Test
+    public void testNegativeNoOverlap() {
+        assertTrue(test.beforeAndAfterPuzzles(new String[]{"cat dog", "fish bird"}).isEmpty());
+    }
+
+    @Test
+    public void testEdgeSingleWordPhrases() {
+        assertEquals(
+            List.of("hello"),
+            test.beforeAndAfterPuzzles(new String[]{"hello", "hello"})
+        );
+    }
+
+    @Test
+    public void testEdgeDuplicateResultsDeduped() {
+        // Multiple ways to form same puzzle should only appear once
+        List<String> result = test.beforeAndAfterPuzzles(new String[]{"a b", "b c", "a b", "b c"});
+        long count = result.stream().filter(s -> s.equals("a b c")).count();
+        assertEquals(1, count);
+    }
+
+    @Test
+    public void testGiantCase() {
+        String[] phrases = new String[50];
+        for (int i = 0; i < 50; i++) {
+            phrases[i] = "word" + i + " word" + (i + 1);
+        }
+        List<String> result = test.beforeAndAfterPuzzles(phrases);
+        assertTrue(result.contains("word0 word1 word2"));
+        assertTrue(result.size() > 0);
+    }
 }

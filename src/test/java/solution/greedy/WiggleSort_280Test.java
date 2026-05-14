@@ -46,4 +46,43 @@ public class WiggleSort_280Test {
         solver.wiggleSort(null);
         // Just verify no exception
     }
+
+    @Test public void testTwoElements() {
+        int[] nums = {5, 3};
+        solver.wiggleSort(nums);
+        assertTrue(isWiggle(nums));
+    }
+
+    @Test public void testDescending() {
+        int[] nums = {6, 5, 4, 3, 2, 1};
+        solver.wiggleSort(nums);
+        assertTrue(isWiggle(nums));
+    }
+
+    @Test public void testAllSame() {
+        int[] nums = {3, 3, 3, 3, 3};
+        solver.wiggleSort(nums);
+        assertTrue(isWiggle(nums));
+    }
+
+    @Test public void testNegativeNumbers() {
+        int[] nums = {-3, -1, -5, -2, -4};
+        solver.wiggleSort(nums);
+        assertTrue(isWiggle(nums));
+    }
+
+    @Test public void testDuplicates() {
+        int[] nums = {1, 1, 2, 2, 3, 3};
+        solver.wiggleSort(nums);
+        assertTrue(isWiggle(nums));
+    }
+
+    @Test public void testGiant() {
+        int[] nums = new int[10000];
+        for (int i = 0; i < nums.length; i++) {
+            nums[i] = nums.length - i;
+        }
+        solver.wiggleSort(nums);
+        assertTrue(isWiggle(nums));
+    }
 }

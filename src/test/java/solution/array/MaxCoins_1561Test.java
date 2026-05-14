@@ -35,4 +35,37 @@ class MaxCoins_1561Test {
     void testDescending() {
         assertEquals(16, solution.maxCoins(new int[]{10, 9, 8, 7, 6, 5}));
     }
+
+    @Test
+    void testAscending() {
+        assertEquals(16, solution.maxCoins(new int[]{5, 6, 7, 8, 9, 10}));
+    }
+
+    @Test
+    void testAllZeros() {
+        assertEquals(0, solution.maxCoins(new int[]{0, 0, 0}));
+    }
+
+    @Test
+    void testLargeValues() {
+        assertEquals(3, solution.maxCoins(new int[]{1, 3, 5}));
+    }
+
+    @Test
+    void testTwelveElements() {
+        // sorted: 1,2,3,4,5,6,7,8,9,10,11,12; Bob gets 1,2,3,4; you get 5,7,9,11 = 32
+        assertEquals(32, solution.maxCoins(new int[]{12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1}));
+    }
+
+    @Test
+    void testGiantArray() {
+        int n = 99999; // must be multiple of 3
+        int[] piles = new int[n];
+        for (int i = 0; i < n; i++) piles[i] = i + 1;
+        // sorted: 1..99999, Bob gets bottom 1/3 (33333), you and Alice alternate on top 2/3
+        // you get every other starting from index 33333: indices 33333,33335,...
+        long expected = 0;
+        for (int i = n / 3; i < n; i += 2) expected += (i + 1);
+        assertEquals((int) expected, solution.maxCoins(piles));
+    }
 }

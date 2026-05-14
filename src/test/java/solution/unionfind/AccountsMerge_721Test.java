@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AccountsMerge_721Test {
@@ -145,6 +146,56 @@ class AccountsMerge_721Test {
 
         assertTrue(listsAreEqual(expected, result));
     }
-}
 
+    @Test
+    void testAccountsMerge_nullInput() {
+        AccountsMerge_721 solution = new AccountsMerge_721();
+        List<List<String>> result = solution.accountsMerge(null);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testAccountsMerge_chainMerge() {
+        AccountsMerge_721 solution = new AccountsMerge_721();
+
+        // Three accounts linked in a chain: A shares with B, B shares with C
+        List<List<String>> accounts = Lists.newArrayList(
+                Lists.newArrayList("John", "a@mail.com", "b@mail.com"),
+                Lists.newArrayList("John", "b@mail.com", "c@mail.com"),
+                Lists.newArrayList("John", "c@mail.com", "d@mail.com")
+        );
+
+        List<List<String>> result = solution.accountsMerge(accounts);
+        assertEquals(1, result.size());
+        assertEquals(5, result.get(0).size()); // name + 4 emails
+    }
+
+    @Test
+    void testAccountsMerge_sameNameDifferentPeople() {
+        AccountsMerge_721 solution = new AccountsMerge_721();
+
+        List<List<String>> accounts = Lists.newArrayList(
+                Lists.newArrayList("John", "john1@mail.com"),
+                Lists.newArrayList("John", "john2@mail.com")
+        );
+
+        List<List<String>> result = solution.accountsMerge(accounts);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testAccountsMerge_giantCase() {
+        AccountsMerge_721 solution = new AccountsMerge_721();
+
+        // 100 accounts all sharing one common email
+        List<List<String>> accounts = new java.util.ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            accounts.add(Lists.newArrayList("User", "common@mail.com", "unique" + i + "@mail.com"));
+        }
+
+        List<List<String>> result = solution.accountsMerge(accounts);
+        assertEquals(1, result.size());
+        assertEquals(102, result.get(0).size()); // name + common + 100 unique
+    }
+}
 

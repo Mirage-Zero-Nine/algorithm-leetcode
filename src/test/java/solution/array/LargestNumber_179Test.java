@@ -36,4 +36,38 @@ class LargestNumber_179Test {
     void testWithZero() {
         assertEquals("88300", solution.largestNumber(new int[]{8, 30, 8, 0}));
     }
+
+    @Test
+    void testSameDigits() {
+        assertEquals("55555", solution.largestNumber(new int[]{5, 5, 5, 5, 5}));
+    }
+
+    @Test
+    void testNullInput() {
+        assertEquals("", solution.largestNumber(null));
+    }
+
+    @Test
+    void testEmptyArray() {
+        assertEquals("", solution.largestNumber(new int[]{}));
+    }
+
+    @Test
+    void testLargeNumbers() {
+        assertEquals("999999", solution.largestNumber(new int[]{999, 999}));
+    }
+
+    @Test
+    void testComparatorAllZeros() {
+        assertEquals("0", solution.largestNumberComparator(new int[]{0, 0}));
+    }
+
+    @Test
+    void testGiantCase() {
+        int[] nums = new int[1000];
+        for (int i = 0; i < 1000; i++) nums[i] = 9;
+        StringBuilder expected = new StringBuilder();
+        for (int i = 0; i < 1000; i++) expected.append("9");
+        assertEquals(expected.toString(), solution.largestNumber(nums));
+    }
 }

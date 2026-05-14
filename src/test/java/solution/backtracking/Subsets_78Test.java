@@ -46,4 +46,41 @@ class Subsets_78Test {
         List<List<Integer>> result = solution.subsets(new int[]{-1, 0, 1});
         assertEquals(8, result.size());
     }
+
+    @Test
+    void testEmptyArray() {
+        List<List<Integer>> result = solution.subsets(new int[]{});
+        assertEquals(1, result.size()); // only empty set
+    }
+
+    @Test
+    void testFiveElements() {
+        List<List<Integer>> result = solution.subsets(new int[]{1, 2, 3, 4, 5});
+        assertEquals(32, result.size());
+    }
+
+    @Test
+    void testBacktrackingMethod() {
+        List<List<Integer>> result = solution.backtracking(new int[]{1, 2, 3});
+        assertEquals(8, result.size());
+    }
+
+    @Test
+    void testBacktrackingEmpty() {
+        List<List<Integer>> result = solution.backtracking(new int[]{});
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testContainsEmptySubset() {
+        List<List<Integer>> result = solution.subsets(new int[]{1, 2});
+        assertTrue(result.stream().anyMatch(List::isEmpty));
+    }
+
+    @Test
+    void testGiantInput() {
+        // 10 elements -> 1024 subsets
+        List<List<Integer>> result = solution.subsets(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+        assertEquals(1024, result.size());
+    }
 }

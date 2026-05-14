@@ -34,4 +34,43 @@ class MissingNumber_268Test {
     void testSingleElement() {
         assertEquals(1, solution.missingNumber(new int[]{0}));
     }
+
+    @Test
+    void testMissingMiddle() {
+        assertEquals(2, solution.missingNumber(new int[]{0, 1, 3}));
+    }
+
+    @Test
+    void testBitManipulation() {
+        assertEquals(2, solution.missingNumberBitManipulation(new int[]{3, 0, 1}));
+        assertEquals(8, solution.missingNumberBitManipulation(new int[]{9, 6, 4, 2, 3, 5, 7, 0, 1}));
+    }
+
+    @Test
+    void testNaiveSolution() {
+        assertEquals(2, solution.naiveSolution(new int[]{3, 0, 1}));
+        assertEquals(0, solution.naiveSolution(new int[]{}));
+    }
+
+    @Test
+    void testBinarySearch() {
+        assertEquals(2, solution.binarySearch(new int[]{3, 0, 1}));
+        assertEquals(8, solution.binarySearch(new int[]{9, 6, 4, 2, 3, 5, 7, 0, 1}));
+    }
+
+    @Test
+    void testMissingN() {
+        assertEquals(3, solution.missingNumberBitManipulation(new int[]{0, 1, 2}));
+    }
+
+    @Test
+    void testGiantCase() {
+        int n = 10000;
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = i + 1;
+        }
+        // missing 0
+        assertEquals(0, solution.missingNumberBitManipulation(nums));
+    }
 }

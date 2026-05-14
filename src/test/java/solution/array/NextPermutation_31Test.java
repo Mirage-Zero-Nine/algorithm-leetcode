@@ -45,4 +45,50 @@ class NextPermutation_31Test {
         solution.nextPermutation(nums);
         assertArrayEquals(new int[]{2, 1, 3}, nums);
     }
+
+    @Test
+    void testDuplicates() {
+        int[] nums = {1, 1};
+        solution.nextPermutation(nums);
+        assertArrayEquals(new int[]{1, 1}, nums);
+    }
+
+    @Test
+    void testAllSame() {
+        int[] nums = {2, 2, 2};
+        solution.nextPermutation(nums);
+        assertArrayEquals(new int[]{2, 2, 2}, nums);
+    }
+
+    @Test
+    void testLongerArray() {
+        int[] nums = {1, 2, 3, 4};
+        solution.nextPermutation(nums);
+        assertArrayEquals(new int[]{1, 2, 4, 3}, nums);
+    }
+
+    @Test
+    void testMiddleSwap() {
+        int[] nums = {2, 3, 1};
+        solution.nextPermutation(nums);
+        assertArrayEquals(new int[]{3, 1, 2}, nums);
+    }
+
+    @Test
+    void testNegativeValues() {
+        int[] nums = {-1, 0, 1};
+        solution.nextPermutation(nums);
+        assertArrayEquals(new int[]{-1, 1, 0}, nums);
+    }
+
+    @Test
+    void testGiantCase() {
+        int[] nums = new int[1000];
+        for (int i = 0; i < 1000; i++) nums[i] = 1000 - i; // descending
+        solution.nextPermutation(nums);
+        // descending => wraps to ascending
+        int[] expected = new int[1000];
+        for (int i = 0; i < 1000; i++) expected[i] = i + 1;
+        assertArrayEquals(expected, nums);
+    }
 }

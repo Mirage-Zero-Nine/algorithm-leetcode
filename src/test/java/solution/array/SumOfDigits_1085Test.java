@@ -79,4 +79,35 @@ public class SumOfDigits_1085Test {
         int[] nums = {11, 22, 33};
         assertEquals(1, solver.sumOfDigits(nums));
     }
+
+    @Test
+    public void testLargeMinValue() {
+        // nums = [999, 888, 777], min = 777, sum = 7+7+7 = 21 (odd) → 0
+        int[] nums = {999, 888, 777};
+        assertEquals(0, solver.sumOfDigits(nums));
+    }
+
+    @Test
+    public void testMinIsZeroDigitSum() {
+        // nums = [20, 30, 40], min = 20, sum = 2+0 = 2 (even) → 1
+        int[] nums = {20, 30, 40};
+        assertEquals(1, solver.sumOfDigits(nums));
+    }
+
+    @Test
+    public void testGiantArray() {
+        // giant array of 1000 elements, min = 1, sum = 1 (odd) → 0
+        int[] nums = new int[1000];
+        for (int i = 0; i < 1000; i++) {
+            nums[i] = i + 1;
+        }
+        assertEquals(0, solver.sumOfDigits(nums));
+    }
+
+    @Test
+    public void testMinWithLargeDigitSum() {
+        // nums = [199, 200, 300], min = 199, sum = 1+9+9 = 19 (odd) → 0
+        int[] nums = {199, 200, 300};
+        assertEquals(0, solver.sumOfDigits(nums));
+    }
 }

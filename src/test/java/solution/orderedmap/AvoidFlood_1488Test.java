@@ -40,6 +40,55 @@ public class AvoidFlood_1488Test {
         assertValidPlan(rains, test.avoidFlood(rains));
     }
 
+    @Test
+    public void testHappySimpleDry() {
+        int[] rains = {1, 0, 1};
+        assertValidPlan(rains, test.avoidFlood(rains));
+    }
+
+    @Test
+    public void testHappyMultipleLakes() {
+        int[] rains = {1, 2, 0, 0, 1, 2};
+        assertValidPlan(rains, test.avoidFlood(rains));
+    }
+
+    @Test
+    public void testNegativeImmediateFlood() {
+        assertEquals(0, test.avoidFlood(new int[]{1, 1}).length);
+    }
+
+    @Test
+    public void testNegativeDryTooLate() {
+        // Rain on lake 1, rain on lake 2, rain on lake 1 again - dry day is after second rain on lake 1
+        assertEquals(0, test.avoidFlood(new int[]{1, 2, 1, 0}).length);
+    }
+
+    @Test
+    public void testEdgeSingleRain() {
+        int[] result = test.avoidFlood(new int[]{3});
+        assertArrayEquals(new int[]{-1}, result);
+    }
+
+    @Test
+    public void testEdgeOnlyDryDays() {
+        int[] result = test.avoidFlood(new int[]{0, 0});
+        assertEquals(2, result.length);
+        assertTrue(result[0] > 0);
+        assertTrue(result[1] > 0);
+    }
+
+    @Test
+    public void testGiantCase() {
+        // Pattern: rain lake i, then dry, repeated
+        int[] rains = new int[2000];
+        for (int i = 0; i < 1000; i++) {
+            rains[2 * i] = 1;
+            rains[2 * i + 1] = 0;
+        }
+        int[] result = test.avoidFlood(rains);
+        assertValidPlan(rains, result);
+    }
+
     private static void assertValidPlan(int[] rains, int[] plan) {
         if (plan.length == 0) {
             throw new AssertionError("Expected a valid plan");

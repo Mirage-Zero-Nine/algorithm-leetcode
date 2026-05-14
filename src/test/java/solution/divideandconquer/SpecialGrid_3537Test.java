@@ -2,6 +2,7 @@ package solution.divideandconquer;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -105,5 +106,49 @@ public class SpecialGrid_3537Test {
         for (int i = 0; i < expected.length; i++) {
             assertArrayEquals(expected[i], actual[i], "Mismatch in row " + i);
         }
+    }
+
+    @Test
+    public void testGridSizeN0() {
+        int[][] grid = test.specialGrid(0);
+        assertEquals(1, grid.length);
+        assertEquals(1, grid[0].length);
+    }
+
+    @Test
+    public void testGridSizeN5() {
+        int[][] grid = test.specialGrid(5);
+        assertEquals(32, grid.length);
+        assertEquals(32, grid[0].length);
+    }
+
+    @Test
+    public void testAllValuesPresent() {
+        int[][] grid = test.specialGrid(3);
+        java.util.Set<Integer> values = new java.util.HashSet<>();
+        for (int[] row : grid) for (int v : row) values.add(v);
+        assertEquals(64, values.size());
+        for (int i = 0; i < 64; i++) assertTrue(values.contains(i));
+    }
+
+    @Test
+    public void testQuadrantOrderN2() {
+        int[][] grid = test.specialGrid(2);
+        // top-right values < bottom-right < bottom-left < top-left
+        int trMax = Integer.MIN_VALUE, brMin = Integer.MAX_VALUE;
+        for (int r = 0; r < 2; r++) for (int c = 2; c < 4; c++) trMax = Math.max(trMax, grid[r][c]);
+        for (int r = 2; r < 4; r++) for (int c = 2; c < 4; c++) brMin = Math.min(brMin, grid[r][c]);
+        assertTrue(trMax < brMin);
+    }
+
+    @Test
+    public void testGiantCaseN8() {
+        int[][] grid = test.specialGrid(8);
+        int size = 1 << 8;
+        assertEquals(size, grid.length);
+        assertEquals(size, grid[0].length);
+        java.util.Set<Integer> values = new java.util.HashSet<>();
+        for (int[] row : grid) for (int v : row) values.add(v);
+        assertEquals(size * size, values.size());
     }
 }

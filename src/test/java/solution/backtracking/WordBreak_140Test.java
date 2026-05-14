@@ -46,4 +46,39 @@ class WordBreak_140Test {
         List<String> result = solution.wordBreak("", Arrays.asList("cat", "dog"));
         assertTrue(result.size() <= 1);
     }
+
+    @Test
+    void testRepeatedWord() {
+        List<String> result = solution.wordBreak("catcat", Arrays.asList("cat"));
+        assertEquals(1, result.size());
+        assertEquals("cat cat", result.get(0));
+    }
+
+    @Test
+    void testSingleCharDict() {
+        List<String> result = solution.wordBreak("aaa", Arrays.asList("a"));
+        assertEquals(1, result.size());
+        assertEquals("a a a", result.get(0));
+    }
+
+    @Test
+    void testOverlappingWords() {
+        List<String> result = solution.wordBreak("ab", Arrays.asList("a", "b", "ab"));
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testNoMatchAtAll() {
+        List<String> result = solution.wordBreak("xyz", Arrays.asList("a", "b", "c"));
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testGiantCase() {
+        // "aaa...a" (20 a's) with dict ["a","aa","aaa"]
+        String s = "a".repeat(15);
+        List<String> result = solution.wordBreak(s, Arrays.asList("a", "aa", "aaa"));
+        // should produce many combinations, just verify non-empty and completes quickly
+        assertTrue(result.size() > 100);
+    }
 }

@@ -46,4 +46,51 @@ class CombinationSum3_216Test {
         List<List<Integer>> result = solution.combinationSum3(2, 3);
         assertEquals(1, result.size());
     }
+
+    @Test
+    void testKZero() {
+        List<List<Integer>> result = solution.combinationSum3(0, 5);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testNZero() {
+        List<List<Integer>> result = solution.combinationSum3(2, 0);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testNegativeK() {
+        List<List<Integer>> result = solution.combinationSum3(-1, 5);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testNTooLarge() {
+        // max sum with k=2 is 8+9=17, so n=18 should give 0
+        List<List<Integer>> result = solution.combinationSum3(2, 18);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testK2N17() {
+        // only [8,9] sums to 17
+        List<List<Integer>> result = solution.combinationSum3(2, 17);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testK3N15() {
+        List<List<Integer>> result = solution.combinationSum3(3, 15);
+        // combinations: [1,5,9],[1,6,8],[2,4,9],[2,5,8],[2,6,7],[3,4,8],[3,5,7],[4,5,6]
+        assertEquals(8, result.size());
+    }
+
+    @Test
+    void testGiantK9N45() {
+        // only one combination: [1,2,3,4,5,6,7,8,9]
+        List<List<Integer>> result = solution.combinationSum3(9, 45);
+        assertEquals(1, result.size());
+        assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9), result.get(0));
+    }
 }

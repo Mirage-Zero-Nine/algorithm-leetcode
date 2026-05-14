@@ -37,4 +37,39 @@ public class MinDominoRotations_1007Test {
         int[] B = {2, 2, 2};
         assertEquals(0, solver.minDominoRotations(A, B));
     }
+
+    @Test public void testRotateToB() {
+        int[] A = {1, 2, 1, 1, 1};
+        int[] B = {2, 1, 2, 2, 2};
+        assertEquals(1, solver.minDominoRotations(A, B));
+    }
+
+    @Test public void testTwoElements() {
+        int[] A = {1, 2};
+        int[] B = {2, 1};
+        assertEquals(1, solver.minDominoRotations(A, B));
+    }
+
+    @Test public void testAlreadyUniformA() {
+        int[] A = {5, 5, 5, 5};
+        int[] B = {1, 2, 3, 4};
+        assertEquals(0, solver.minDominoRotations(A, B));
+    }
+
+    @Test public void testNoSolution() {
+        int[] A = {1, 2, 3, 4, 5, 6};
+        int[] B = {6, 5, 4, 3, 2, 1};
+        assertEquals(-1, solver.minDominoRotations(A, B));
+    }
+
+    @Test public void testGiant() {
+        int[] A = new int[1000];
+        int[] B = new int[1000];
+        for (int i = 0; i < 1000; i++) {
+            A[i] = (i % 2 == 0) ? 3 : 1;
+            B[i] = 3;
+        }
+        // B already all 3s, so 0 rotations needed to make B uniform
+        assertEquals(0, solver.minDominoRotations(A, B));
+    }
 }

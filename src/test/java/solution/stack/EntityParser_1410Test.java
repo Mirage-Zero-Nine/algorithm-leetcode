@@ -38,4 +38,25 @@ public class EntityParser_1410Test {
     @Test public void testEmpty() {
         assertEquals("", solver.entityParser(""));
     }
+
+    @Test public void testNull() {
+        assertEquals("", solver.entityParser(null));
+    }
+
+    @Test public void testApos() {
+        assertEquals("it's fine", solver.entityParser("it&apos;s fine"));
+    }
+
+    @Test public void testGiant() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 500; i++) sb.append("&amp;");
+        StringBuilder expected = new StringBuilder();
+        for (int i = 0; i < 500; i++) expected.append("&");
+        assertEquals(expected.toString(), solver.entityParser(sb.toString()));
+    }
+
+    @Test public void testAmpersandAlone() {
+        // '&' without matching ';' before end of string
+        assertEquals("&hello", solver.entityParser("&hello"));
+    }
 }

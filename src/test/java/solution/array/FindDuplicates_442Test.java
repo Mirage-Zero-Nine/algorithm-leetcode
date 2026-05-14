@@ -86,4 +86,23 @@ public class FindDuplicates_442Test {
         assertEquals(1, result.size());
         assertTrue(result.contains(2));
     }
+
+    @Test
+    public void testSingleElement() {
+        int[] nums = {1};
+        List<Integer> result = solver.findDuplicates(nums);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGiantArray() {
+        // array of size 2000: 1..1000 each appearing twice
+        int[] nums = new int[2000];
+        for (int i = 0; i < 1000; i++) {
+            nums[2 * i] = i + 1;
+            nums[2 * i + 1] = i + 1;
+        }
+        List<Integer> result = solver.findDuplicates(nums);
+        assertEquals(1000, result.size());
+    }
 }

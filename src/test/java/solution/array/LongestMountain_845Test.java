@@ -35,4 +35,42 @@ class LongestMountain_845Test {
     void testMultipleMountains() {
         assertEquals(5, solution.longestMountain(new int[]{0, 1, 2, 3, 2, 2, 0, 1, 2, 1}));
     }
+
+    @Test
+    void testMinimalMountain() {
+        assertEquals(3, solution.longestMountain(new int[]{1, 2, 1}));
+    }
+
+    @Test
+    void testTwoElements() {
+        assertEquals(0, solution.longestMountain(new int[]{1, 2}));
+    }
+
+    @Test
+    void testEmptyArray() {
+        assertEquals(0, solution.longestMountain(new int[]{}));
+    }
+
+    @Test
+    void testSingleElement() {
+        assertEquals(0, solution.longestMountain(new int[]{5}));
+    }
+
+    @Test
+    void testPlateau() {
+        assertEquals(0, solution.longestMountain(new int[]{1, 2, 2, 1}));
+    }
+
+    @Test
+    void testEntireArrayMountain() {
+        assertEquals(7, solution.longestMountain(new int[]{1, 2, 3, 4, 3, 2, 1}));
+    }
+
+    @Test
+    void testGiantArray() {
+        int[] arr = new int[10001];
+        for (int i = 0; i <= 5000; i++) arr[i] = i;
+        for (int i = 5001; i <= 10000; i++) arr[i] = 10000 - i;
+        assertEquals(10001, solution.longestMountain(arr));
+    }
 }

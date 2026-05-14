@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashSet;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CrackSafe_753Test {
@@ -49,5 +50,42 @@ class CrackSafe_753Test {
     void testThreeTwo() {
         String result = solution.crackSafe(3, 2);
         assertValidDeBruijnSequence(result, 3, 2);
+    }
+
+    @Test
+    void testOneThree() {
+        String result = solution.crackSafe(1, 3);
+        assertValidDeBruijnSequence(result, 1, 3);
+    }
+
+    @Test
+    void testOneFour() {
+        String result = solution.crackSafe(1, 4);
+        assertValidDeBruijnSequence(result, 1, 4);
+    }
+
+    @Test
+    void testTwoFour() {
+        String result = solution.crackSafe(2, 4);
+        assertValidDeBruijnSequence(result, 2, 4);
+    }
+
+    @Test
+    void testResultNotNull() {
+        String result = solution.crackSafe(1, 1);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testOneOneContainsZero() {
+        String result = solution.crackSafe(1, 1);
+        assertTrue(result.contains("0"));
+    }
+
+    @Test
+    void testGiantCase() {
+        // n=4, k=2 -> length = 2^4 + 3 = 19
+        String result = solution.crackSafe(4, 2);
+        assertValidDeBruijnSequence(result, 4, 2);
     }
 }

@@ -62,4 +62,19 @@ public class FindDuplicate_287Test {
         int[] nums = {2, 1, 3, 4, 5, 2};
         assertEquals(2, solver.findDuplicate(nums));
     }
+
+    @Test
+    public void testDuplicateInMiddle() {
+        int[] nums = {1, 2, 3, 4, 3, 5, 6};
+        assertEquals(3, solver.findDuplicate(nums));
+    }
+
+    @Test
+    public void testGiantArray() {
+        int n = 100000;
+        int[] nums = new int[n + 1];
+        for (int i = 0; i < n; i++) nums[i] = i + 1;
+        nums[n] = 50000; // duplicate
+        assertEquals(50000, solver.findDuplicate(nums));
+    }
 }

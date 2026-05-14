@@ -34,4 +34,33 @@ public class ParseTernary_439Test {
     @Test public void testShortExpression() {
         assertEquals("", solver.parseTernary("T?2:3"));
     }
+
+    @Test public void testSimpleTrue() {
+        // T?T?1:2:3 -> T selects T?1:2 = 1
+        assertEquals("1", solver.parseTernary("T?T?1:2:3"));
+    }
+
+    @Test public void testSimpleFalse() {
+        // F?1:F?3:4 -> F selects F?3:4 = 4
+        assertEquals("4", solver.parseTernary("F?1:F?3:4"));
+    }
+
+    @Test public void testAllTrue() {
+        // T?T?T?1:2:3:4 -> T selects T?T?1:2:3 -> T selects T?1:2 -> 1
+        assertEquals("1", solver.parseTernary("T?T?T?1:2:3:4"));
+    }
+
+    @Test public void testAllFalse() {
+        // F?1:F?2:F?3:4 -> F selects F?2:F?3:4 -> F selects F?3:4 -> 4
+        assertEquals("4", solver.parseTernary("F?1:F?2:F?3:4"));
+    }
+
+    @Test public void testGiant() {
+        // Build T?T?T?...?1:0:0:...:0 (deep nesting)
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 500; i++) sb.append("T?");
+        sb.append("1");
+        for (int i = 0; i < 500; i++) sb.append(":0");
+        assertEquals("1", solver.parseTernary(sb.toString()));
+    }
 }

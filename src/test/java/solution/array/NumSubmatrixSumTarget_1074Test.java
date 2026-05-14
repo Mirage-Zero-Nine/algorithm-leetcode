@@ -34,4 +34,45 @@ class NumSubmatrixSumTarget_1074Test {
     void testLargeTarget() {
         assertEquals(0, solution.numSubmatrixSumTarget(new int[][]{{904}}, 0));
     }
+
+    @Test
+    void testSingleCellZeroTarget() {
+        assertEquals(1, solution.numSubmatrixSumTarget(new int[][]{{0}}, 0));
+    }
+
+    @Test
+    void testAllOnes() {
+        assertEquals(4, solution.numSubmatrixSumTarget(new int[][]{{1, 1}, {1, 1}}, 1));
+    }
+
+    @Test
+    void testTargetEqualsFullMatrix() {
+        assertEquals(1, solution.numSubmatrixSumTarget(new int[][]{{1, 2}, {3, 4}}, 10));
+    }
+
+    @Test
+    void testSingleRow() {
+        assertEquals(2, solution.numSubmatrixSumTarget(new int[][]{{1, 2, 3}}, 3));
+    }
+
+    @Test
+    void testSingleColumn() {
+        assertEquals(2, solution.numSubmatrixSumTarget(new int[][]{{1}, {2}, {3}}, 3));
+    }
+
+    @Test
+    void testNegativeTarget() {
+        assertEquals(2, solution.numSubmatrixSumTarget(new int[][]{{1, -1}, {-1, 1}}, -1));
+    }
+
+    @Test
+    void testGiantCase() {
+        int[][] matrix = new int[50][50];
+        for (int i = 0; i < 50; i++)
+            for (int j = 0; j < 50; j++)
+                matrix[i][j] = 1;
+        // each 1x1 submatrix sums to 1, there are 2500 of them; plus larger submatrices won't sum to 1
+        // Actually only 1x1 cells sum to 1
+        assertEquals(2500, solution.numSubmatrixSumTarget(matrix, 1));
+    }
 }

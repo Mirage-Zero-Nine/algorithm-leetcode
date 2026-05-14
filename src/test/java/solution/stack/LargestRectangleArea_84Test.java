@@ -18,4 +18,11 @@ public class LargestRectangleArea_84Test {
     @Test public void testDecreasing() { assertEquals(12, l.largestRectangleArea(new int[]{6, 5, 4, 3, 2, 1})); }
     @Test public void testAllSame() { assertEquals(15, l.largestRectangleArea(new int[]{3, 3, 3, 3, 3})); }
     @Test public void testTwoBars() { assertEquals(4, l.largestRectangleArea(new int[]{2, 4})); }
+    @Test public void testValley() { assertEquals(5, l.largestRectangleArea(new int[]{5, 1, 5})); }
+    @Test public void testLargeFirst() { assertEquals(10000, l.largestRectangleArea(new int[]{10000, 2, 3, 4, 5})); }
+    @Test public void testGiant() {
+        int[] heights = new int[10000];
+        java.util.Arrays.fill(heights, 1);
+        assertEquals(10000, l.largestRectangleArea(heights));
+    }
 }

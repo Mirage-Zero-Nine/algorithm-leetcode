@@ -42,4 +42,38 @@ public class TopKFrequent_347Test {
         for (int n : res) resultSet.add(n);
         assertEquals(Set.of(1, 2), resultSet);
     }
+
+    @Test public void testAllSameFrequency() {
+        int[] res = solver.topKFrequent(new int[]{1, 2, 3, 4}, 2);
+        assertEquals(2, res.length);
+    }
+
+    @Test public void testKEqualsUnique() {
+        int[] res = solver.topKFrequent(new int[]{1, 1, 2, 2, 3}, 3);
+        Set<Integer> resultSet = new HashSet<>();
+        for (int n : res) resultSet.add(n);
+        assertEquals(Set.of(1, 2, 3), resultSet);
+    }
+
+    @Test public void testNegativeNumbers() {
+        int[] res = solver.topKFrequent(new int[]{-1, -1, -2, -2, -2, 3}, 1);
+        assertEquals(-2, res[0]);
+    }
+
+    @Test public void testHeapSingleElement() {
+        int[] res = solver.heap(new int[]{5}, 1);
+        assertEquals(5, res[0]);
+    }
+
+    @Test public void testTwoHashMapSingle() {
+        int[] res = solver.twoHashMap(new int[]{42}, 1);
+        assertEquals(42, res[0]);
+    }
+
+    @Test public void testGiantCase() {
+        int[] nums = new int[10000];
+        for (int i = 0; i < 10000; i++) nums[i] = i % 100;
+        int[] res = solver.topKFrequent(nums, 5);
+        assertEquals(5, res.length);
+    }
 }

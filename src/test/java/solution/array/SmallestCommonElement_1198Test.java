@@ -90,4 +90,29 @@ public class SmallestCommonElement_1198Test {
         };
         assertEquals(-1, solver.smallestCommonElement(mat));
     }
+
+    @Test
+    public void testCommonElementAtEnd() {
+        int[][] mat = {
+            {1, 2, 5},
+            {3, 4, 5}
+        };
+        assertEquals(5, solver.smallestCommonElement(mat));
+    }
+
+    @Test
+    public void testSingleElementCommon() {
+        int[][] mat = {{5}, {5}, {5}};
+        assertEquals(5, solver.smallestCommonElement(mat));
+    }
+
+    @Test
+    public void testGiantMatrix() {
+        int rows = 100, cols = 100;
+        int[][] mat = new int[rows][cols];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                mat[i][j] = j + 1; // all rows identical: 1..100
+        assertEquals(1, solver.smallestCommonElement(mat));
+    }
 }

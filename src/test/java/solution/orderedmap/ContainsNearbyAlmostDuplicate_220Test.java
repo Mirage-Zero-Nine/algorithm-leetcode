@@ -39,4 +39,50 @@ public class ContainsNearbyAlmostDuplicate_220Test {
         assertTrue(test.containsNearbyAlmostDuplicate(nums, 2, 1));
         assertTrue(test.treeSet(nums, 2, 1));
     }
+
+    @Test
+    public void testHappyDuplicateElements() {
+        assertTrue(test.containsNearbyAlmostDuplicate(new int[]{1, 1}, 1, 0));
+        assertTrue(test.treeSet(new int[]{1, 1}, 1, 0));
+    }
+
+    @Test
+    public void testHappyExactDifferenceT() {
+        assertTrue(test.containsNearbyAlmostDuplicate(new int[]{1, 4}, 1, 3));
+        assertTrue(test.treeSet(new int[]{1, 4}, 1, 3));
+    }
+
+    @Test
+    public void testNegativeKZero() {
+        assertFalse(test.containsNearbyAlmostDuplicate(new int[]{1, 1}, 0, 0));
+        assertFalse(test.treeSet(new int[]{1, 1}, 0, 0));
+    }
+
+    @Test
+    public void testNegativeTooFarApart() {
+        assertFalse(test.containsNearbyAlmostDuplicate(new int[]{1, 100, 200, 1}, 1, 0));
+        assertFalse(test.treeSet(new int[]{1, 100, 200, 1}, 1, 0));
+    }
+
+    @Test
+    public void testEdgeSingleElement() {
+        assertFalse(test.containsNearbyAlmostDuplicate(new int[]{5}, 1, 1));
+        assertFalse(test.treeSet(new int[]{5}, 1, 1));
+    }
+
+    @Test
+    public void testEdgeIntegerOverflow() {
+        assertFalse(test.containsNearbyAlmostDuplicate(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, 1, 1));
+        assertFalse(test.treeSet(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, 1, 1));
+    }
+
+    @Test
+    public void testGiantCase() {
+        int[] nums = new int[10000];
+        for (int i = 0; i < nums.length; i++) {
+            nums[i] = i * 100;
+        }
+        assertFalse(test.containsNearbyAlmostDuplicate(nums, 3, 5));
+        assertFalse(test.treeSet(nums, 3, 5));
+    }
 }

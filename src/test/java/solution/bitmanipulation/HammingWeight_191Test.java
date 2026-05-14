@@ -26,4 +26,28 @@ public class HammingWeight_191Test {
     @Test public void testAllOnes() {
         assertEquals(5, solver.hammingWeight(0b11111));
     }
+
+    @Test public void testMaxInt() {
+        assertEquals(31, solver.hammingWeight(Integer.MAX_VALUE));
+    }
+
+    @Test public void testNegativeOne() {
+        // -1 in two's complement is all 32 bits set
+        assertEquals(32, solver.hammingWeight(-1));
+    }
+
+    @Test public void testMinValue() {
+        // Integer.MIN_VALUE = 0x80000000, only sign bit set
+        assertEquals(1, solver.hammingWeight(Integer.MIN_VALUE));
+    }
+
+    @Test public void testAlternatingBits() {
+        // 0b10101010101010101010101010101010 = 16 ones
+        assertEquals(16, solver.hammingWeight(0xAAAAAAAA));
+    }
+
+    @Test public void testLargePositive() {
+        // 1023 = 0b1111111111, 10 ones
+        assertEquals(10, solver.hammingWeight(1023));
+    }
 }

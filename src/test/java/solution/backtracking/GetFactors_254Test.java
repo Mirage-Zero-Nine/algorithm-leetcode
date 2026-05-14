@@ -46,4 +46,40 @@ class GetFactors_254Test {
         List<List<Integer>> result = solution.getFactors(32);
         assertTrue(result.size() >= 5);
     }
+
+    @Test
+    void testTwo() {
+        List<List<Integer>> result = solution.getFactors(2);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testThree() {
+        List<List<Integer>> result = solution.getFactors(3);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testFour() {
+        List<List<Integer>> result = solution.getFactors(4);
+        assertEquals(1, result.size()); // [2, 2]
+    }
+
+    @Test
+    void testSixteen() {
+        List<List<Integer>> result = solution.getFactors(16);
+        assertTrue(result.size() >= 4);
+    }
+
+    @Test
+    void testSix() {
+        List<List<Integer>> result = solution.getFactors(6);
+        assertEquals(1, result.size()); // [2, 3]
+    }
+
+    @Test
+    void testGiantNumber() {
+        List<List<Integer>> result = solution.getFactors(1000000);
+        assertTrue(result.size() > 10);
+    }
 }

@@ -82,4 +82,30 @@ public class SumZero_1304Test {
         assertEquals(6, result.length);
         assertEquals(0, result[0] + result[1] + result[2] + result[3] + result[4] + result[5]);
     }
+
+    @Test
+    public void testN0() {
+        int[] result = solver.sumZero(0);
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    public void testN7Unique() {
+        int[] result = solver.sumZero(7);
+        assertEquals(7, result.length);
+        long uniqueCount = java.util.Arrays.stream(result).distinct().count();
+        assertEquals(7, uniqueCount);
+        assertEquals(0, java.util.Arrays.stream(result).sum());
+    }
+
+    @Test
+    public void testGiantN10000() {
+        int n = 10000;
+        int[] result = solver.sumZero(n);
+        assertEquals(n, result.length);
+        long sum = java.util.Arrays.stream(result).asLongStream().sum();
+        assertEquals(0, sum);
+        long uniqueCount = java.util.Arrays.stream(result).distinct().count();
+        assertEquals(n, uniqueCount);
+    }
 }

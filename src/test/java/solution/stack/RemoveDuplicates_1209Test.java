@@ -30,4 +30,34 @@ public class RemoveDuplicates_1209Test {
     @Test public void testNoRemoval() {
         assertEquals("ab", solver.removeDuplicates("ab", 3));
     }
+
+    // Additional happy cases
+    @Test public void testChainRemoval() {
+        assertEquals("a", solver.removeDuplicates("aabba", 2));
+    }
+
+    @Test public void testK2Simple() {
+        assertEquals("", solver.removeDuplicates("abba", 2));
+    }
+
+    // Negative case: single char, can't remove
+    @Test public void testSingleChar() {
+        assertEquals("a", solver.removeDuplicates("a", 2));
+    }
+
+    // Edge cases
+    @Test public void testEmptyString() {
+        assertEquals("", solver.removeDuplicates("", 2));
+    }
+
+    @Test public void testKLargerThanString() {
+        assertEquals("aaa", solver.removeDuplicates("aaa", 5));
+    }
+
+    // Giant test case
+    @Test public void testGiant() {
+        String s = "a".repeat(10000);
+        String result = solver.removeDuplicates(s, 3);
+        assertEquals("a", result); // 10000 mod 3 = 1
+    }
 }

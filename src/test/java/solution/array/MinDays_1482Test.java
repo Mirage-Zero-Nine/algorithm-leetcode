@@ -34,4 +34,33 @@ class MinDays_1482Test {
     void testMinDays() {
         assertEquals(1000000000, solution.minDays(new int[]{1000000000, 1000000000}, 1, 1));
     }
+
+    @Test
+    void testAllSameDay() {
+        assertEquals(5, solution.minDays(new int[]{5, 5, 5, 5, 5}, 2, 2));
+    }
+
+    @Test
+    void testSingleFlower() {
+        assertEquals(1, solution.minDays(new int[]{1}, 1, 1));
+    }
+
+    @Test
+    void testImpossibleTooFewFlowers() {
+        assertEquals(-1, solution.minDays(new int[]{1, 2, 3}, 2, 2));
+    }
+
+    @Test
+    void testExactFit() {
+        assertEquals(3, solution.minDays(new int[]{1, 2, 3, 1, 2, 3}, 2, 3));
+    }
+
+    @Test
+    void testGiantCase() {
+        int[] bloomDay = new int[100000];
+        for (int i = 0; i < 100000; i++) {
+            bloomDay[i] = i + 1;
+        }
+        assertEquals(100000, solution.minDays(bloomDay, 1, 100000));
+    }
 }

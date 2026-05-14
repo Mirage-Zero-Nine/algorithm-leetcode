@@ -30,4 +30,34 @@ public class LongestDecomposition_1147Test {
     @Test public void testComplexOdd() {
         assertEquals(11, solver.longestDecomposition("antaprezatepzapreanta"));
     }
+
+    @Test public void testTwoChars() {
+        assertEquals(2, solver.longestDecomposition("aa"));
+    }
+
+    @Test public void testTwoDifferent() {
+        assertEquals(1, solver.longestDecomposition("ab"));
+    }
+
+    @Test public void testPalindrome() {
+        // "abcba" -> (a)(b)(c)(b)(a) => 5
+        assertEquals(5, solver.longestDecomposition("abcba"));
+    }
+
+    @Test public void testNoDecomposition() {
+        // "abcdef" -> no matching prefix/suffix pairs, just 1 chunk
+        assertEquals(1, solver.longestDecomposition("abcdef"));
+    }
+
+    @Test public void testAllSameChars() {
+        // "aaaaa" -> (a)(a)(a)(a)(a) => 5
+        assertEquals(5, solver.longestDecomposition("aaaaa"));
+    }
+
+    @Test public void testGiant() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 500; i++) sb.append("ab");
+        int result = solver.longestDecomposition(sb.toString());
+        assertEquals(500, result);
+    }
 }

@@ -39,4 +39,43 @@ class GetMaximumGold_1219Test {
         int[][] grid = {{1,2},{3,4}};
         assertTrue(solution.getMaximumGold(grid) >= 7);
     }
+
+    @Test
+    void testSingleRow() {
+        int[][] grid = {{1, 2, 3, 4, 5}};
+        assertTrue(solution.getMaximumGold(grid) > 0);
+    }
+
+    @Test
+    void testSingleColumn() {
+        int[][] grid = {{1},{2},{3}};
+        assertTrue(solution.getMaximumGold(grid) > 0);
+    }
+
+    @Test
+    void testDisconnectedCells() {
+        int[][] grid = {{1,0,1},{0,0,0},{1,0,1}};
+        assertEquals(1, solution.getMaximumGold(grid));
+    }
+
+    @Test
+    void testAllZeros() {
+        int[][] grid = {{0,0,0},{0,0,0}};
+        assertEquals(0, solution.getMaximumGold(grid));
+    }
+
+    @Test
+    void testLargeValues() {
+        int[][] grid = {{100, 100},{100, 100}};
+        assertTrue(solution.getMaximumGold(grid) >= 300);
+    }
+
+    @Test
+    void testGiantGrid() {
+        int[][] grid = new int[5][5];
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
+                grid[i][j] = 1;
+        assertTrue(solution.getMaximumGold(grid) >= 10);
+    }
 }

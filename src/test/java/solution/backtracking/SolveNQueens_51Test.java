@@ -46,4 +46,52 @@ class SolveNQueens_51Test {
         List<List<String>> result = solution.solveNQueens(3);
         assertEquals(0, result.size());
     }
+
+    @Test
+    void testFive() {
+        List<List<String>> result = solution.solveNQueens(5);
+        assertEquals(10, result.size());
+    }
+
+    @Test
+    void testSix() {
+        List<List<String>> result = solution.solveNQueens(6);
+        assertEquals(4, result.size());
+    }
+
+    @Test
+    void testSeven() {
+        List<List<String>> result = solution.solveNQueens(7);
+        assertEquals(40, result.size());
+    }
+
+    @Test
+    void testBoardFormat() {
+        List<List<String>> result = solution.solveNQueens(4);
+        // each solution should have 4 rows of length 4
+        for (List<String> board : result) {
+            assertEquals(4, board.size());
+            for (String row : board) {
+                assertEquals(4, row.length());
+            }
+        }
+    }
+
+    @Test
+    void testEachRowHasOneQueen() {
+        List<List<String>> result = solution.solveNQueens(4);
+        for (List<String> board : result) {
+            for (String row : board) {
+                long queens = row.chars().filter(c -> c == 'Q').count();
+                assertEquals(1, queens);
+            }
+        }
+    }
+
+    @Test
+    void testGiantCase() {
+        // n=9 has 352 solutions
+        List<List<String>> result = solution.solveNQueens(9);
+        assertEquals(352, result.size());
+    }
 }

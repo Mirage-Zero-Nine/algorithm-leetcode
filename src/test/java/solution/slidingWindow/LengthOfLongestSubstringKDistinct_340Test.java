@@ -30,4 +30,53 @@ public class LengthOfLongestSubstringKDistinct_340Test {
         assertEquals(3, test.lengthOfLongestSubstringKDistinct("eceba", 2));
         assertEquals(2, test.lengthOfLongestSubstringKDistinct("aa", 2));
     }
+
+    @Test
+    public void testKZero() {
+        assertBoth("abc", 0, 0);
+    }
+
+    @Test
+    public void testKOne() {
+        assertBoth("aaabbbcca", 1, 3);
+    }
+
+    @Test
+    public void testKGreaterThanLength() {
+        assertBoth("abcd", 10, 4);
+    }
+
+    @Test
+    public void testAllSameCharacter() {
+        assertBoth("zzzzzz", 2, 6);
+    }
+
+    @Test
+    public void testAlternatingCharacters() {
+        assertBoth("abababab", 2, 8);
+    }
+
+    @Test
+    public void testThreeDistinctWithWindowShrink() {
+        assertBoth("abcadcacacaca", 3, 11);
+    }
+
+    @Test
+    public void testAsciiSpecialCharacters() {
+        assertBoth("!!@@@##", 2, 5);
+    }
+
+    @Test
+    public void testGiantCase() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 5000; i++) {
+            sb.append((char) ('a' + (i % 4)));
+        }
+        assertBoth(sb.toString(), 2, 2);
+    }
+
+    private void assertBoth(String s, int k, int expected) {
+        assertEquals(expected, test.lengthOfLongestSubstringKDistinct(s, k));
+        assertEquals(expected, test.lengthOfLongestSubstringKDistinctBucket(s, k));
+    }
 }

@@ -34,4 +34,29 @@ class TotalNQueens_52Test {
     void testThree() {
         assertEquals(0, solution.totalNQueens(3));
     }
+
+    @Test
+    void testFive() {
+        assertEquals(10, solution.totalNQueens(5));
+    }
+
+    @Test
+    void testSix() {
+        assertEquals(4, solution.totalNQueens(6));
+    }
+
+    @Test
+    void testSeven() {
+        assertEquals(40, solution.totalNQueens(7));
+    }
+
+    @Test
+    void testNine() {
+        assertEquals(352, solution.totalNQueens(9));
+    }
+
+    @Test
+    void testGiantTen() {
+        assertEquals(724, solution.totalNQueens(10));
+    }
 }

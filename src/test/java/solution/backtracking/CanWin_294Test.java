@@ -34,4 +34,40 @@ class CanWin_294Test {
     void testEmpty() {
         assertFalse(solution.canWin(""));
     }
+
+    @Test
+    void testAllMinus() {
+        assertFalse(solution.canWin("----"));
+    }
+
+    @Test
+    void testThreePlus() {
+        assertTrue(solution.canWin("+++"));
+    }
+
+    @Test
+    void testFivePlus() {
+        assertFalse(solution.canWin("+++++"));
+    }
+
+    @Test
+    void testSixPlus() {
+        assertTrue(solution.canWin("++++++"));
+    }
+
+    @Test
+    void testSingleMinus() {
+        assertFalse(solution.canWin("-"));
+    }
+
+    @Test
+    void testAlternating() {
+        assertFalse(solution.canWin("+-+-+-"));
+    }
+
+    @Test
+    void testGiantString() {
+        // 11 consecutive pluses
+        assertTrue(solution.canWin("+++++++++++"));
+    }
 }

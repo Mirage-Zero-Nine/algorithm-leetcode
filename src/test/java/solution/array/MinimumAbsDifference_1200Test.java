@@ -41,4 +41,42 @@ class MinimumAbsDifference_1200Test {
     void testDuplicateGaps() {
         assertEquals(Arrays.asList(Arrays.asList(1, 3), Arrays.asList(3, 5)), solution.minimumAbsDifference(new int[]{1, 3, 5}));
     }
+
+    @Test
+    void testEmptyArray() {
+        assertEquals(Arrays.asList(), solution.minimumAbsDifference(new int[]{}));
+    }
+
+    @Test
+    void testNullArray() {
+        assertEquals(Arrays.asList(), solution.minimumAbsDifference(null));
+    }
+
+    @Test
+    void testConsecutiveNumbers() {
+        assertEquals(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(2, 3), Arrays.asList(3, 4), Arrays.asList(4, 5)),
+                solution.minimumAbsDifference(new int[]{5, 4, 3, 2, 1}));
+    }
+
+    @Test
+    void testSinglePair() {
+        assertEquals(Arrays.asList(Arrays.asList(1, 100)), solution.minimumAbsDifference(new int[]{1, 100}));
+    }
+
+    @Test
+    void testLargeValues() {
+        assertEquals(Arrays.asList(Arrays.asList(-1000000, 0), Arrays.asList(0, 1000000)),
+                solution.minimumAbsDifference(new int[]{-1000000, 0, 1000000, 5000000}));
+    }
+
+    @Test
+    void testGiantArray() {
+        int[] arr = new int[10000];
+        for (int i = 0; i < 10000; i++) {
+            arr[i] = i * 2;
+        }
+        List<List<Integer>> result = solution.minimumAbsDifference(arr);
+        assertEquals(9999, result.size());
+        assertEquals(Arrays.asList(0, 2), result.get(0));
+    }
 }

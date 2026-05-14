@@ -34,4 +34,23 @@ public class MinRemoveToMakeValid_1249Test {
     @Test public void testBalanced() {
         assertEquals("(a)(b)", solver.minRemoveToMakeValid("(a)(b)"));
     }
+
+    @Test public void testOnlyOpen() {
+        assertEquals("abc", solver.minRemoveToMakeValid("(((abc"));
+    }
+
+    @Test public void testOnlyClose() {
+        assertEquals("abc", solver.minRemoveToMakeValid("abc)))"));
+    }
+
+    @Test public void testNestedParens() {
+        assertEquals("((a))", solver.minRemoveToMakeValid("((a))"));
+    }
+
+    @Test public void testGiantCase() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 5000; i++) sb.append("(a)");
+        String input = sb.toString();
+        assertEquals(input, solver.minRemoveToMakeValid(input));
+    }
 }

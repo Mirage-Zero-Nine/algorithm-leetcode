@@ -46,4 +46,35 @@ class CombinationSum_39Test {
         List<List<Integer>> result = solution.combinationSum(new int[]{2, 3, 5}, 8);
         assertEquals(3, result.size());
     }
+
+    @Test
+    void testEmptyCandidates() {
+        List<List<Integer>> result = solution.combinationSum(new int[]{}, 7);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testTargetEqualsCandidate() {
+        List<List<Integer>> result = solution.combinationSum(new int[]{7}, 7);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testTargetSmallerThanAllCandidates() {
+        List<List<Integer>> result = solution.combinationSum(new int[]{5, 6, 7}, 3);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testSingleCandidateRepeated() {
+        List<List<Integer>> result = solution.combinationSum(new int[]{3}, 9);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGiantCase() {
+        // many candidates, moderate target
+        List<List<Integer>> result = solution.combinationSum(new int[]{2, 3, 5, 7, 11, 13}, 20);
+        assertTrue(result.size() > 5);
+    }
 }

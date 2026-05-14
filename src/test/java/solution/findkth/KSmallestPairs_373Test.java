@@ -41,4 +41,45 @@ public class KSmallestPairs_373Test {
         List<List<Integer>> res = solver.kSmallestPairs(new int[]{1}, new int[]{1}, 0);
         assertTrue(res.isEmpty());
     }
+
+    @Test public void testNullFirst() {
+        List<List<Integer>> res = solver.kSmallestPairs(null, new int[]{1, 2}, 3);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test public void testNullSecond() {
+        List<List<Integer>> res = solver.kSmallestPairs(new int[]{1, 2}, null, 3);
+        assertTrue(res.isEmpty());
+    }
+
+    @Test public void testBothSingleElement() {
+        List<List<Integer>> res = solver.kSmallestPairs(new int[]{5}, new int[]{10}, 1);
+        assertEquals(1, res.size());
+        assertEquals(List.of(5, 10), res.get(0));
+    }
+
+    @Test public void testNegativeNumbers() {
+        List<List<Integer>> res = solver.kSmallestPairs(new int[]{-5, -3, 0}, new int[]{-2, 1, 4}, 3);
+        assertEquals(3, res.size());
+        assertEquals(List.of(-5, -2), res.get(0));
+    }
+
+    @Test public void testKEqualsOne() {
+        List<List<Integer>> res = solver.kSmallestPairs(new int[]{1, 2, 3}, new int[]{4, 5, 6}, 1);
+        assertEquals(1, res.size());
+        assertEquals(List.of(1, 4), res.get(0));
+    }
+
+    @Test public void testGiantCase() {
+        int[] nums1 = new int[500];
+        int[] nums2 = new int[500];
+        for (int i = 0; i < 500; i++) {
+            nums1[i] = i;
+            nums2[i] = i;
+        }
+        List<List<Integer>> res = solver.kSmallestPairs(nums1, nums2, 100);
+        assertEquals(100, res.size());
+        // First pair should be (0,0)
+        assertEquals(List.of(0, 0), res.get(0));
+    }
 }

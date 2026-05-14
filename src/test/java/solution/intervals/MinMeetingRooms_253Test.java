@@ -35,4 +35,26 @@ public class MinMeetingRooms_253Test {
         // 3 overlapping meetings
         assertEquals(3, solver.minMeetingRooms(new int[][]{{26, 29}, {19, 26}, {19, 28}, {4, 19}, {4, 25}}));
     }
+
+    @Test public void testSingleMeeting() {
+        assertEquals(1, solver.minMeetingRooms(new int[][]{{1, 5}}));
+    }
+
+    @Test public void testAdjacentMeetings() {
+        // End at same time as next start: no overlap per comparator (end before start)
+        assertEquals(1, solver.minMeetingRooms(new int[][]{{0, 5}, {5, 10}, {10, 15}}));
+    }
+
+    @Test public void testAllOverlapping() {
+        assertEquals(4, solver.minMeetingRooms(new int[][]{{0, 10}, {1, 11}, {2, 12}, {3, 13}}));
+    }
+
+    @Test public void testGiantCase() {
+        int size = 5000;
+        int[][] intervals = new int[size][2];
+        for (int i = 0; i < size; i++) {
+            intervals[i] = new int[]{0, 100}; // all overlap
+        }
+        assertEquals(size, solver.minMeetingRooms(intervals));
+    }
 }

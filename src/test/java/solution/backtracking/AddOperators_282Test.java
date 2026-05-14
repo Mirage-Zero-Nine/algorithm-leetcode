@@ -40,4 +40,53 @@ class AddOperators_282Test {
         List<String> result = solution.addOperators("00", 0);
         assertEquals(Set.of("0+0", "0-0", "0*0"), new HashSet<>(result));
     }
+
+    @Test
+    void testEmptyString() {
+        List<String> result = solution.addOperators("", 0);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testSingleDigitNoMatch() {
+        List<String> result = solution.addOperators("5", 3);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testLeadingZero() {
+        List<String> result = solution.addOperators("105", 5);
+        assertTrue(result.contains("1*0+5"));
+    }
+
+    @Test
+    void testTwoDigits() {
+        List<String> result = solution.addOperators("12", 3);
+        assertTrue(result.contains("1+2"));
+    }
+
+    @Test
+    void testLargeTarget() {
+        List<String> result = solution.addOperators("123456", 123456);
+        assertTrue(result.contains("123456"));
+    }
+
+    @Test
+    void testGiantInput() {
+        // "3456237490" with target 9191 - known to have no solution
+        List<String> result = solution.addOperators("3456237490", 9191);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testAllSameDigits() {
+        List<String> result = solution.addOperators("111", 3);
+        assertTrue(result.contains("1+1+1"));
+    }
+
+    @Test
+    void testNegativeTarget() {
+        List<String> result = solution.addOperators("12", -1);
+        assertTrue(result.contains("1-2"));
+    }
 }

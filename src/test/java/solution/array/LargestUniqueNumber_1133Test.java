@@ -35,4 +35,33 @@ class LargestUniqueNumber_1133Test {
     void testLargeNumbers() {
         assertEquals(999, solution.largestUniqueNumber(new int[]{999, 1000, 1000}));
     }
+
+    @Test
+    void testAllDuplicates() {
+        assertEquals(-1, solution.largestUniqueNumber(new int[]{1, 1, 2, 2, 3, 3}));
+    }
+
+    @Test
+    void testZero() {
+        assertEquals(0, solution.largestUniqueNumber(new int[]{0}));
+    }
+
+    @Test
+    void testZeroWithDuplicates() {
+        assertEquals(0, solution.largestUniqueNumber(new int[]{0, 1, 1}));
+    }
+
+    @Test
+    void testTwoElements() {
+        assertEquals(2, solution.largestUniqueNumber(new int[]{1, 2}));
+    }
+
+    @Test
+    void testGiantArray() {
+        int[] arr = new int[1000];
+        for (int i = 0; i < 1000; i++) {
+            arr[i] = i;
+        }
+        assertEquals(999, solution.largestUniqueNumber(arr));
+    }
 }
