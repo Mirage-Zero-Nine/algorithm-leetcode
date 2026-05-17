@@ -3,7 +3,9 @@ package solution.slidingwindow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 public class FindAnagrams_438Test {
@@ -79,5 +81,86 @@ public class FindAnagrams_438Test {
         assertEquals(n - 1, result.size());
         assertEquals(0, result.get(0));
         assertEquals(n - 2, result.get(result.size() - 1));
+    }
+
+    @Test
+    public void testEmptyS_returnsEmpty() {
+        assertEquals(List.of(), test.findAnagrams("", "abc"));
+    }
+
+    @Test
+    public void testPLongerThanS_returnsEmpty() {
+        assertEquals(List.of(), test.findAnagrams("ab", "abcd"));
+    }
+
+    @Test
+    public void testPEqualsS_isAnagram() {
+        assertEquals(List.of(0), test.findAnagrams("cba", "abc"));
+        assertEquals(List.of(0), test.findAnagrams("abc", "abc"));
+    }
+
+    @Test
+    public void testAllUniqueCharsExactMatch() {
+        // p="xyz", s contains "zyx" at index 2
+        assertEquals(List.of(2), test.findAnagrams("abzyx", "xyz"));
+    }
+
+    @Test
+    public void testSingleCharP() {
+        assertEquals(List.of(1, 3), test.findAnagrams("ababa", "b"));
+        assertEquals(List.of(), test.findAnagrams("aaaa", "b"));
+    }
+
+    @Test
+    public void testRepeatingCharsInBoth() {
+        // p="aab" (a:2,b:1), s="aabaa": aab(0)✓, aba(1)=a:2,b:1✓, baa(2)=a:2,b:1✓
+        assertEquals(List.of(0, 1, 2), test.findAnagrams("aabaa", "aab"));
+    }
+
+    @Test
+    public void testLargeRandomString_seed42() {
+        Random rng = new Random(42L);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10000; i++) {
+            sb.append((char) ('a' + rng.nextInt(4))); // a-d
+        }
+        String s = sb.toString();
+        String p = "abcd";
+        List<Integer> result = test.findAnagrams(s, p);
+        // Property: every index valid and substring is anagram of p
+        int[] pCount = new int[26];
+        for (char c : p.toCharArray()) pCount[c - 'a']++;
+        for (int idx : result) {
+            assertTrue(idx >= 0 && idx + p.length() <= s.length());
+            int[] wCount = new int[26];
+            for (int k = idx; k < idx + p.length(); k++) wCount[s.charAt(k) - 'a']++;
+            assertTrue(Arrays.equals(pCount, wCount), "Index " + idx + " is not an anagram");
+        }
+    }
+
+    @Test
+    public void testProperty_indicesSortedAscending() {
+        String[] inputs = {"cbaebabacd", "abab", "aabaa", "aaaaa"};
+        String[] patterns = {"abc", "ab", "aab", "aaa"};
+        for (int i = 0; i < inputs.length; i++) {
+            List<Integer> result = test.findAnagrams(inputs[i], patterns[i]);
+            for (int j = 1; j < result.size(); j++) {
+                assertTrue(result.get(j) > result.get(j - 1), "Indices not sorted for input: " + inputs[i]);
+            }
+        }
+    }
+
+    @Test
+    public void testProperty_everyIndexIsAnagram() {
+        String s = "cbaebabacd";
+        String p = "abc";
+        List<Integer> result = test.findAnagrams(s, p);
+        int[] pCount = new int[26];
+        for (char c : p.toCharArray()) pCount[c - 'a']++;
+        for (int idx : result) {
+            int[] wCount = new int[26];
+            for (int k = idx; k < idx + p.length(); k++) wCount[s.charAt(k) - 'a']++;
+            assertTrue(Arrays.equals(pCount, wCount));
+        }
     }
 }

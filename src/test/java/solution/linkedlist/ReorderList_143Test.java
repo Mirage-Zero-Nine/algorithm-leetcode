@@ -1,5 +1,6 @@
 package solution.linkedlist;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.listnode.ListNode;
@@ -45,7 +46,7 @@ public class ReorderList_143Test {
 
     @Test
     public void testNullInput() {
-        test.reorderList(null); // should not throw
+        assertDoesNotThrow(() -> test.reorderList(null));
     }
 
     @Test

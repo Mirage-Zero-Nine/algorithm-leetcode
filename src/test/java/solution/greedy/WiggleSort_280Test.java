@@ -2,6 +2,7 @@ package solution.greedy;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WiggleSort_280Test {
@@ -43,8 +44,7 @@ public class WiggleSort_280Test {
     }
 
     @Test public void testNull() {
-        solver.wiggleSort(null);
-        // Just verify no exception
+        assertDoesNotThrow(() -> solver.wiggleSort(null));
     }
 
     @Test public void testTwoElements() {

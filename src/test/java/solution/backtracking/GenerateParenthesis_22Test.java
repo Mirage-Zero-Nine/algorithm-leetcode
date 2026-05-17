@@ -113,4 +113,71 @@ class GenerateParenthesis_22Test {
         List<String> result = solution.generateParenthesis(10);
         assertEquals(16796, result.size());
     }
+
+    @Test
+    void testOneExactContent() {
+        List<String> result = solution.generateParenthesis(1);
+        assertEquals(Set.of("()"), new HashSet<>(result));
+    }
+
+    @Test
+    void testTwoExactContent() {
+        List<String> result = solution.generateParenthesis(2);
+        assertEquals(Set.of("(())", "()()"), new HashSet<>(result));
+    }
+
+    @Test
+    void testEightCatalanCount() {
+        // Catalan number C(8) = 1430
+        List<String> result = solution.generateParenthesis(8);
+        assertEquals(1430, result.size());
+    }
+
+    @Test
+    void testEightAllValidAndCorrectLength() {
+        List<String> result = solution.generateParenthesis(8);
+        for (String s : result) {
+            assertEquals(16, s.length());
+            int count = 0;
+            for (char c : s.toCharArray()) {
+                count += (c == '(') ? 1 : -1;
+                assertTrue(count >= 0, "Unbalanced: " + s);
+            }
+            assertEquals(0, count, "Not closed: " + s);
+        }
+    }
+
+    @Test
+    void testEightNoDuplicates() {
+        List<String> result = solution.generateParenthesis(8);
+        assertEquals(result.size(), new HashSet<>(result).size());
+    }
+
+    @Test
+    void testAllResultsOnlyContainParenChars() {
+        List<String> result = solution.generateParenthesis(5);
+        for (String s : result) {
+            assertTrue(s.matches("[()]+"), "Unexpected chars in: " + s);
+        }
+    }
+
+    @Test
+    void testCatalanSequenceProperty() {
+        // Verify Catalan number sequence: 1, 1, 2, 5, 14, 42, 132
+        int[] expected = {0, 1, 2, 5, 14, 42, 132};
+        for (int n = 1; n <= 6; n++) {
+            assertEquals(expected[n], solution.generateParenthesis(n).size(),
+                    "Catalan mismatch for n=" + n);
+        }
+    }
+
+    @Test
+    void testEveryResultStartsWithOpenAndEndsWithClose() {
+        for (int n = 1; n <= 5; n++) {
+            for (String s : solution.generateParenthesis(n)) {
+                assertEquals('(', s.charAt(0), "Must start with '(': " + s);
+                assertEquals(')', s.charAt(s.length() - 1), "Must end with ')': " + s);
+            }
+        }
+    }
 }

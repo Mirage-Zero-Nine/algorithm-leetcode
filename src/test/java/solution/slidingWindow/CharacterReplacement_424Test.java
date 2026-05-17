@@ -1,6 +1,9 @@
 package solution.slidingwindow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
@@ -71,13 +74,104 @@ public class CharacterReplacement_424Test {
         for (int i = 0; i < n; i++) {
             sb.append(i % 2 == 0 ? 'A' : 'B');
         }
-        // ABABAB... length n, k=100.
-        // The implementation uses historical max frequency.
-        // For ABAB... max frequency is always (window_size + 1) / 2.
-        // Window grows as long as window_size <= max_freq + k.
-        // For ABAB..., this means window_size <= (window_size + 1) / 2 + 100
-        // 2 * window_size <= window_size + 1 + 200
-        // window_size <= 201.
         assertEquals(201, test.characterReplacement(sb.toString(), 100));
+    }
+
+    @Test
+    public void testSingleChar() {
+        assertEquals(1, test.characterReplacement("A", 0));
+        assertEquals(1, test.characterReplacement("A", 5));
+    }
+
+    @Test
+    public void testKZeroLongestRun() {
+        // k=0 means no replacements, answer is longest run of a single char
+        assertEquals(3, test.characterReplacement("AABBBCA", 0));
+        assertEquals(4, test.characterReplacement("AAAABBC", 0));
+        assertEquals(1, test.characterReplacement("ABCDEF", 0));
+    }
+
+    @Test
+    public void testKEqualsLength() {
+        // k >= length means we can replace everything
+        assertEquals(5, test.characterReplacement("ABCDE", 5));
+        assertEquals(7, test.characterReplacement("ABCDEFG", 100));
+    }
+
+    @Test
+    public void testAllSameCharVaryingK() {
+        assertEquals(6, test.characterReplacement("BBBBBB", 0));
+        assertEquals(6, test.characterReplacement("BBBBBB", 3));
+        assertEquals(6, test.characterReplacement("BBBBBB", 10));
+    }
+
+    @Test
+    public void testAllDifferentCharsKEqualsNMinus1() {
+        assertEquals(26, test.characterReplacement("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 25));
+    }
+
+    @Test
+    public void testLargeRandomCrossCheckBruteForce() {
+        Random rand = new Random(42L);
+        int n = 200; // small enough for brute-force O(n^2)
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append((char) ('A' + rand.nextInt(26)));
+        }
+        String s = sb.toString();
+        int k = 5;
+
+        int expected = bruteForce(s, k);
+        assertEquals(expected, test.characterReplacement(s, k));
+    }
+
+    @Test
+    public void testPropertyResultBounds() {
+        Random rand = new Random(42L);
+        for (int trial = 0; trial < 50; trial++) {
+            int n = rand.nextInt(50) + 1;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < n; i++) {
+                sb.append((char) ('A' + rand.nextInt(26)));
+            }
+            String s = sb.toString();
+            int k = rand.nextInt(n + 1);
+            int result = test.characterReplacement(s, k);
+            assertTrue(result >= 1, "result should be >= 1 for non-empty string");
+            assertTrue(result <= s.length(), "result should be <= s.length()");
+        }
+    }
+
+    @Test
+    public void testLargeString1000Chars() {
+        Random rand = new Random(42L);
+        int n = 1000;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append((char) ('A' + rand.nextInt(4))); // only A-D for denser patterns
+        }
+        String s = sb.toString();
+        int k = 10;
+        int result = test.characterReplacement(s, k);
+        assertTrue(result >= 1 && result <= n);
+        // Cross-check with brute-force on a smaller substring
+        String sub = s.substring(0, 100);
+        assertEquals(bruteForce(sub, k), test.characterReplacement(sub, k));
+    }
+
+    private int bruteForce(String s, int k) {
+        int max = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int[] freq = new int[26];
+            int maxFreq = 0;
+            for (int j = i; j < s.length(); j++) {
+                freq[s.charAt(j) - 'A']++;
+                maxFreq = Math.max(maxFreq, freq[s.charAt(j) - 'A']);
+                if ((j - i + 1) - maxFreq <= k) {
+                    max = Math.max(max, j - i + 1);
+                }
+            }
+        }
+        return max;
     }
 }

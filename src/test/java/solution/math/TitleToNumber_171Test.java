@@ -3,6 +3,13 @@ package solution.math;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class TitleToNumber_171Test {
 
@@ -75,5 +82,22 @@ public class TitleToNumber_171Test {
         for (int v : values) {
             assertEquals(v, test.titleToNumber(converter.convertToTitle(v)));
         }
+    }
+
+    /**
+     * Iterable roundtrip 1..1000: every n converted to a column title
+     * via {@link ConvertToTitle_168} must decode back to n.
+     */
+    @ParameterizedTest(name = "roundtrip {0}")
+    @MethodSource("oneToOneThousand")
+    public void testRoundtripOneToOneThousand(int n) {
+        ConvertToTitle_168 converter = new ConvertToTitle_168();
+        String title = converter.convertToTitle(n);
+        assertEquals(n, test.titleToNumber(title),
+                "roundtrip failed: " + n + " -> " + title + " -> " + test.titleToNumber(title));
+    }
+
+    private static Stream<org.junit.jupiter.params.provider.Arguments> oneToOneThousand() {
+        return IntStream.rangeClosed(1, 1000).mapToObj(i -> arguments(i));
     }
 }

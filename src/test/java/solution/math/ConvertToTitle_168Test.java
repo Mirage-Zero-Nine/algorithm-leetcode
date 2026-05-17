@@ -3,6 +3,13 @@ package solution.math;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class ConvertToTitle_168Test {
 
@@ -73,5 +80,42 @@ public class ConvertToTitle_168Test {
     public void testGiantCase() {
         // 26^4 + 26^3 + 26^2 + 26 = 475254 -> ZZZZ
         assertEquals("ZZZZ", test.convertToTitle(475254));
+    }
+
+    /**
+     * Iterable roundtrip 1..1000: every column title produced for n must
+     * decode back to n via {@link TitleToNumber_171}. Catches encode/
+     * decode asymmetry.
+     */
+    @ParameterizedTest(name = "roundtrip {0}")
+    @MethodSource("oneToOneThousand")
+    public void testRoundtripOneToOneThousand(int n) {
+        TitleToNumber_171 decoder = new TitleToNumber_171();
+        String title = test.convertToTitle(n);
+        assertEquals(n, decoder.titleToNumber(title),
+                "roundtrip failed: " + n + " -> " + title);
+    }
+
+    /**
+     * Cross-check 1..1000 against an independent recursive reference.
+     */
+    @ParameterizedTest(name = "ref {0}")
+    @MethodSource("oneToOneThousand")
+    public void testAgainstRecursiveReference(int n) {
+        assertEquals(referenceConvert(n), test.convertToTitle(n));
+    }
+
+    private static String referenceConvert(int n) {
+        StringBuilder sb = new StringBuilder();
+        while (n > 0) {
+            n--;
+            sb.append((char) ('A' + (n % 26)));
+            n /= 26;
+        }
+        return sb.reverse().toString();
+    }
+
+    private static Stream<org.junit.jupiter.params.provider.Arguments> oneToOneThousand() {
+        return IntStream.rangeClosed(1, 1000).mapToObj(i -> arguments(i));
     }
 }

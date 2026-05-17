@@ -1,8 +1,15 @@
 package solution.others;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * @author BorisMirage
@@ -12,6 +19,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IntToRoman_12Test {
     private final IntToRoman_12 test = new IntToRoman_12();
+
+    /**
+     * Reference table for Roman numerals 1..100, used as ground truth for the
+     * parameterized 1..100 sweep. Hardcoded to avoid testing the algorithm
+     * against itself.
+     */
+    private static final String[] ROMAN_1_TO_100 = new String[]{
+            "",            // index 0 (unused)
+            "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+            "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+            "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX",
+            "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XL",
+            "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX", "L",
+            "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX",
+            "LXI", "LXII", "LXIII", "LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX",
+            "LXXI", "LXXII", "LXXIII", "LXXIV", "LXXV", "LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX",
+            "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC",
+            "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C"
+    };
 
     @Test
     public void test() {
@@ -81,5 +107,48 @@ public class IntToRoman_12Test {
     @Test
     public void testCurrentImplementationForNegativeInput() {
         assertEquals("", test.intToRoman(-1));
+    }
+
+    /**
+     * Iterable sweep: every integer in [1, 100] must produce the canonical
+     * Roman numeral. This exercises every combination of subtractive forms
+     * (IV, IX, XL, XC) that appears below 100 plus all repeated-symbol runs.
+     */
+    @ParameterizedTest(name = "{0} -> {1}")
+    @MethodSource("oneToHundred")
+    public void testEveryValueFromOneToOneHundred(int input, String expected) {
+        assertEquals(expected, test.intToRoman(input));
+    }
+
+    private static Stream<org.junit.jupiter.params.provider.Arguments> oneToHundred() {
+        return IntStream.rangeClosed(1, 100)
+                .mapToObj(i -> arguments(i, ROMAN_1_TO_100[i]));
+    }
+
+    /**
+     * Spot-check selected larger values to cover 100..3999 (which would be too
+     * verbose to enumerate but cannot be ignored).
+     */
+    @ParameterizedTest(name = "{0} -> {1}")
+    @CsvSource({
+            "101, CI",
+            "150, CL",
+            "199, CXCIX",
+            "246, CCXLVI",
+            "444, CDXLIV",
+            "555, DLV",
+            "789, DCCLXXXIX",
+            "888, DCCCLXXXVIII",
+            "999, CMXCIX",
+            "1000, M",
+            "1666, MDCLXVI",
+            "2024, MMXXIV",
+            "2999, MMCMXCIX",
+            "3000, MMM",
+            "3888, MMMDCCCLXXXVIII",
+            "3999, MMMCMXCIX"
+    })
+    public void testLargerValuesSpotCheck(int input, String expected) {
+        assertEquals(expected, test.intToRoman(input));
     }
 }

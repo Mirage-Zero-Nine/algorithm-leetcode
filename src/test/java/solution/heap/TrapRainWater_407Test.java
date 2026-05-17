@@ -1,6 +1,9 @@
 package solution.heap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
@@ -132,5 +135,102 @@ public class TrapRainWater_407Test {
             {1, 0, 1},
             {1, 1, 1}
         }));
+    }
+
+    // --- NEW TESTS ---
+
+    @Test
+    public void testSingleCell() {
+        // 1x1 grid -> 0
+        assertEquals(0, test.trapRainWater(new int[][]{{5}}));
+    }
+
+    @Test
+    public void testSingleRow() {
+        // 1xN -> 0 (water flows out from single row)
+        assertEquals(0, test.trapRainWater(new int[][]{{5, 1, 1, 1, 5}}));
+    }
+
+    @Test
+    public void testSingleColumn() {
+        // Mx1 -> 0
+        assertEquals(0, test.trapRainWater(new int[][]{{5}, {1}, {1}, {1}, {5}}));
+    }
+
+    @Test
+    public void testTwoRowsNoEnclosure() {
+        // 2xN -> 0 (all cells are border, no enclosure possible)
+        assertEquals(0, test.trapRainWater(new int[][]{
+            {5, 5, 5, 5, 5},
+            {5, 1, 1, 1, 5}
+        }));
+    }
+
+    @Test
+    public void testTwoColumnsNoEnclosure() {
+        // Mx2 -> 0
+        assertEquals(0, test.trapRainWater(new int[][]{
+            {5, 5},
+            {5, 1},
+            {5, 1},
+            {5, 5}
+        }));
+    }
+
+    @Test
+    public void testSmallestEnclosure3x3() {
+        // 3x3 with center lower than all borders
+        assertEquals(2, test.trapRainWater(new int[][]{
+            {3, 3, 3},
+            {3, 1, 3},
+            {3, 3, 3}
+        }));
+    }
+
+    @Test
+    public void testMultipleBasins() {
+        // Two separate basins in a 5x5 grid
+        assertEquals(10, test.trapRainWater(new int[][]{
+            {3, 3, 3, 3, 3},
+            {3, 1, 1, 3, 3},
+            {3, 1, 1, 3, 3},
+            {3, 1, 3, 3, 3},
+            {3, 3, 3, 3, 3}
+        }));
+    }
+
+    @Test
+    public void testPlateauAllSameHeight() {
+        // All same height -> 0
+        assertEquals(0, test.trapRainWater(new int[][]{
+            {7, 7, 7, 7},
+            {7, 7, 7, 7},
+            {7, 7, 7, 7},
+            {7, 7, 7, 7}
+        }));
+    }
+
+    @Test
+    public void testLeetCodeExample() {
+        // Official LeetCode example -> 4
+        assertEquals(4, test.trapRainWater(new int[][]{
+            {1, 4, 3, 1, 3, 2},
+            {3, 2, 1, 3, 2, 4},
+            {2, 3, 3, 2, 3, 1}
+        }));
+    }
+
+    @Test
+    public void testLargeRandom50x50_seed42() {
+        // Smoke test: 50x50 random grid, result must be >= 0
+        Random rand = new Random(42L);
+        int[][] grid = new int[50][50];
+        for (int i = 0; i < 50; i++) {
+            for (int j = 0; j < 50; j++) {
+                grid[i][j] = rand.nextInt(100) + 1;
+            }
+        }
+        int result = test.trapRainWater(grid);
+        assertTrue(result >= 0, "Trapped water should be non-negative, got: " + result);
     }
 }

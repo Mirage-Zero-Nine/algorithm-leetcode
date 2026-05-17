@@ -85,4 +85,70 @@ public class MyAtoi_8Test {
         assertEquals(0, test.myAtoi("\t123"));
         assertEquals(123, test.myAtoi("  123abc456"));
     }
+
+    @Test
+    public void testPositiveSign() {
+        assertEquals(1, test.myAtoi("+1"));
+        assertEquals(100, test.myAtoi("+100"));
+        assertEquals(0, test.myAtoi("+0"));
+    }
+
+    @Test
+    public void testNegativeSign() {
+        assertEquals(-1, test.myAtoi("-1"));
+        assertEquals(-100, test.myAtoi("-100"));
+        assertEquals(0, test.myAtoi("-0"));
+    }
+
+    @Test
+    public void testMultipleSignsInvalid() {
+        assertEquals(0, test.myAtoi("+-1"));
+        assertEquals(0, test.myAtoi("-+1"));
+        assertEquals(0, test.myAtoi("++1"));
+        assertEquals(0, test.myAtoi("--1"));
+    }
+
+    @Test
+    public void testNonDigitPrefix() {
+        assertEquals(0, test.myAtoi("abc123"));
+        assertEquals(0, test.myAtoi("x1"));
+        assertEquals(0, test.myAtoi("e10"));
+    }
+
+    @Test
+    public void testDigitsFollowedByChars() {
+        assertEquals(123, test.myAtoi("123abc"));
+        assertEquals(4193, test.myAtoi("4193 with words"));
+        assertEquals(12, test.myAtoi("12 34"));
+    }
+
+    @Test
+    public void testLargeOverflow() {
+        assertEquals(2147483647, test.myAtoi("9999999999999"));
+        assertEquals(-2147483648, test.myAtoi("-9999999999999"));
+        assertEquals(2147483647, test.myAtoi("99999999999999999999999"));
+        assertEquals(-2147483648, test.myAtoi("-99999999999999999999999"));
+    }
+
+    @Test
+    public void testWhitespaceWithNumber() {
+        assertEquals(42, test.myAtoi("   42"));
+        assertEquals(-42, test.myAtoi("   -42"));
+        assertEquals(0, test.myAtoi("      "));
+    }
+
+    @Test
+    public void testLeadingZerosExtended() {
+        assertEquals(42, test.myAtoi("00042"));
+        assertEquals(-42, test.myAtoi("-00042"));
+        assertEquals(1, test.myAtoi("0001"));
+    }
+
+    @Test
+    public void testExactIntBoundaries() {
+        assertEquals(Integer.MAX_VALUE, test.myAtoi("2147483647"));
+        assertEquals(Integer.MIN_VALUE, test.myAtoi("-2147483648"));
+        assertEquals(Integer.MAX_VALUE, test.myAtoi("2147483650"));
+        assertEquals(Integer.MIN_VALUE, test.myAtoi("-2147483649"));
+    }
 }

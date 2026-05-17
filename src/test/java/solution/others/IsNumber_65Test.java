@@ -166,4 +166,68 @@ public class IsNumber_65Test {
         assertFalse(test.isNumber(".e1"));
         assertTrue(test.isNumber("1.e1"));
     }
+
+    @Test
+    public void testExponentWithUpperCaseE() {
+        assertTrue(test.isNumber("-90E3"));
+        assertTrue(test.isNumber("2E10"));
+        assertTrue(test.isNumber("53.5e93"));
+        assertTrue(test.isNumber("46.e3"));
+    }
+
+    @Test
+    public void testNoExponentValue() {
+        assertFalse(test.isNumber("1e"));
+        assertFalse(test.isNumber("1E"));
+        assertFalse(test.isNumber("3.e"));
+    }
+
+    @Test
+    public void testNoMantissa() {
+        assertFalse(test.isNumber("e3"));
+        assertFalse(test.isNumber("E3"));
+        assertFalse(test.isNumber("+e3"));
+        assertFalse(test.isNumber("-e3"));
+    }
+
+    @Test
+    public void testNonIntegerExponent() {
+        assertFalse(test.isNumber("99e2.5"));
+        assertFalse(test.isNumber("1e1.5"));
+        assertFalse(test.isNumber("2e.5"));
+    }
+
+    @Test
+    public void testAlphabeticInput() {
+        assertFalse(test.isNumber("abc"));
+        assertFalse(test.isNumber("1 a"));
+        assertFalse(test.isNumber("95a54e53"));
+    }
+
+    @Test
+    public void testDoubleSignsInvalid() {
+        assertFalse(test.isNumber("--6"));
+        assertFalse(test.isNumber("-+3"));
+        assertFalse(test.isNumber("++1"));
+        assertFalse(test.isNumber("+-2"));
+    }
+
+    @Test
+    public void testSignOnlyAndSignDot() {
+        assertFalse(test.isNumber("+"));
+        assertFalse(test.isNumber("-"));
+        assertFalse(test.isNumber("+."));
+        assertFalse(test.isNumber("-."));
+        assertTrue(test.isNumber("+.8"));
+        assertTrue(test.isNumber("-.8"));
+    }
+
+    @Test
+    public void testWhitespaceHandling() {
+        // Implementation trims whitespace, so leading/trailing spaces are valid
+        assertTrue(test.isNumber(" 0.1 "));
+        assertTrue(test.isNumber(" 1 "));
+        assertTrue(test.isNumber("0"));
+        assertTrue(test.isNumber("2e10"));
+    }
 }

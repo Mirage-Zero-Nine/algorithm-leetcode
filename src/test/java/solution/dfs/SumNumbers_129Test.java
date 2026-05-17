@@ -102,4 +102,83 @@ public class SumNumbers_129Test {
         // Path: 123456789
         assertEquals(123456789, test.sumNumbers(root));
     }
+
+    @Test
+    public void testNullReturnsZero() {
+        assertEquals(0, test.sumNumbers(null));
+    }
+
+    @Test
+    public void testSingleNodeFive() {
+        assertEquals(5, test.sumNumbers(new TreeNode(5)));
+    }
+
+    @Test
+    public void testDeepLeftChainFormsOneNumber() {
+        // 3->1->4->1->5 = 31415
+        TreeNode root = new TreeNode(3);
+        root.left = new TreeNode(1);
+        root.left.left = new TreeNode(4);
+        root.left.left.left = new TreeNode(1);
+        root.left.left.left.left = new TreeNode(5);
+        assertEquals(31415, test.sumNumbers(root));
+    }
+
+    @Test
+    public void testLeadingZerosInPath() {
+        // 1->0->0->5: path = 1005
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(0);
+        root.left.left = new TreeNode(0);
+        root.left.left.left = new TreeNode(5);
+        assertEquals(1005, test.sumNumbers(root));
+    }
+
+    @Test
+    public void testRootZeroWithChildren() {
+        // 0->1->2 left chain = 12, 0->3 right = 3, sum = 15
+        TreeNode root = new TreeNode(0);
+        root.left = new TreeNode(1);
+        root.left.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        assertEquals(15, test.sumNumbers(root));
+    }
+
+    @Test
+    public void testMultiplePathsUnbalanced() {
+        //       2
+        //      / \
+        //     3   4
+        //    /   / \
+        //   5   6   7
+        // Paths: 235 + 246 + 247 = 728
+        TreeNode root = new TreeNode(2);
+        root.left = new TreeNode(3);
+        root.left.left = new TreeNode(5);
+        root.right = new TreeNode(4);
+        root.right.left = new TreeNode(6);
+        root.right.right = new TreeNode(7);
+        assertEquals(728, test.sumNumbers(root));
+    }
+
+    @Test
+    public void testDeepRightChain() {
+        // 9->8->7->6 = 9876
+        TreeNode root = new TreeNode(9);
+        root.right = new TreeNode(8);
+        root.right.right = new TreeNode(7);
+        root.right.right.right = new TreeNode(6);
+        assertEquals(9876, test.sumNumbers(root));
+    }
+
+    @Test
+    public void testPropertySumEqualsPathDigits() {
+        // Verify property: for tree [5,2,8], result = 52 + 58 = 110
+        // Each path forms a number by concatenating digits root-to-leaf
+        TreeNode root = new TreeNode(5);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(8);
+        int expected = 52 + 58; // manually computed from digit concatenation
+        assertEquals(expected, test.sumNumbers(root));
+    }
 }

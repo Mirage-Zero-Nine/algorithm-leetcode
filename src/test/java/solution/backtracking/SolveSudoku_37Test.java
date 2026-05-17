@@ -1,14 +1,17 @@
 package solution.backtracking;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SolveSudoku_37Test {
     private final SolveSudoku_37 solution = new SolveSudoku_37();
@@ -202,6 +205,233 @@ class SolveSudoku_37Test {
                     }
                 }
                 assertEquals(9, box.size());
+            }
+        }
+    }
+
+    // ===== NEW TESTS =====
+
+    @Test
+    void testAlreadySolvedBoardUnchanged() {
+        char[][] board = {
+            {'5','3','4','6','7','8','9','1','2'},
+            {'6','7','2','1','9','5','3','4','8'},
+            {'1','9','8','3','4','2','5','6','7'},
+            {'8','5','9','7','6','1','4','2','3'},
+            {'4','2','6','8','5','3','7','9','1'},
+            {'7','1','3','9','2','4','8','5','6'},
+            {'9','6','1','5','3','7','2','8','4'},
+            {'2','8','7','4','1','9','6','3','5'},
+            {'3','4','5','2','8','6','1','7','9'}
+        };
+        char[][] expected = new char[9][9];
+        for (int i = 0; i < 9; i++) {
+            expected[i] = board[i].clone();
+        }
+        solution.solveSudoku(board);
+        for (int i = 0; i < 9; i++) {
+            assertArrayEquals(expected[i], board[i], "Row " + i + " should be unchanged");
+        }
+    }
+
+    @Test
+    void testSingleEmptyCellOnlyOneValidDigit() {
+        // Only cell (0,2) is empty; the only valid digit is '4'
+        char[][] board = {
+            {'5','3','.','6','7','8','9','1','2'},
+            {'6','7','2','1','9','5','3','4','8'},
+            {'1','9','8','3','4','2','5','6','7'},
+            {'8','5','9','7','6','1','4','2','3'},
+            {'4','2','6','8','5','3','7','9','1'},
+            {'7','1','3','9','2','4','8','5','6'},
+            {'9','6','1','5','3','7','2','8','4'},
+            {'2','8','7','4','1','9','6','3','5'},
+            {'3','4','5','2','8','6','1','7','9'}
+        };
+        solution.solveSudoku(board);
+        assertEquals('4', board[0][2]);
+    }
+
+    @Test
+    void testEasyPuzzleKnownSolution() {
+        char[][] board = {
+            {'5','3','.','.','7','.','.','.','.'},
+            {'6','.','.','1','9','5','.','.','.'},
+            {'.','9','8','.','.','.','.','6','.'},
+            {'8','.','.','.','6','.','.','.','3'},
+            {'4','.','.','8','.','3','.','.','1'},
+            {'7','.','.','.','2','.','.','.','6'},
+            {'.','6','.','.','.','.','2','8','.'},
+            {'.','.','.','4','1','9','.','.','5'},
+            {'.','.','.','.','8','.','.','7','9'}
+        };
+        char[][] expected = {
+            {'5','3','4','6','7','8','9','1','2'},
+            {'6','7','2','1','9','5','3','4','8'},
+            {'1','9','8','3','4','2','5','6','7'},
+            {'8','5','9','7','6','1','4','2','3'},
+            {'4','2','6','8','5','3','7','9','1'},
+            {'7','1','3','9','2','4','8','5','6'},
+            {'9','6','1','5','3','7','2','8','4'},
+            {'2','8','7','4','1','9','6','3','5'},
+            {'3','4','5','2','8','6','1','7','9'}
+        };
+        solution.solveSudoku(board);
+        for (int i = 0; i < 9; i++) {
+            assertArrayEquals(expected[i], board[i], "Row " + i + " mismatch");
+        }
+    }
+
+    @Test
+    void testHardPuzzleSparseClues() {
+        // Hard puzzle with sparse clues
+        char[][] board = {
+            {'8','.','.','.','.','.','.','.','.'},
+            {'.','.','3','6','.','.','.','.','.'},
+            {'.','7','.','.','9','.','2','.','.'},
+            {'.','5','.','.','.','7','.','.','.'},
+            {'.','.','.','.','4','5','7','.','.'},
+            {'.','.','.','1','.','.','.','3','.'},
+            {'.','.','1','.','.','.','.','6','8'},
+            {'.','.','8','5','.','.','.','1','.'},
+            {'.','9','.','.','.','.','4','.','.'}
+        };
+        solution.solveSudoku(board);
+        assertValidSudoku(board);
+        // Verify original clues preserved
+        assertEquals('8', board[0][0]);
+        assertEquals('3', board[1][2]);
+        assertEquals('7', board[2][1]);
+    }
+
+    @Test
+    void testPropertyAllDigitsOneToNine() {
+        char[][] board = {
+            {'.','.','9','7','4','8','.','.','.'},
+            {'7','.','.','.','.','.','.','.','.'},
+            {'.','2','.','1','.','9','.','.','.'},
+            {'.','.','7','.','.','.','2','4','.'},
+            {'.','6','4','.','1','.','5','9','.'},
+            {'.','9','8','.','.','.','3','.','.'},
+            {'.','.','.','8','.','3','.','2','.'},
+            {'.','.','.','.','.','.','.','.','6'},
+            {'.','.','.','2','7','5','9','.','.'}
+        };
+        solution.solveSudoku(board);
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                assertTrue(board[i][j] >= '1' && board[i][j] <= '9',
+                    "Cell [" + i + "][" + j + "] should be digit 1-9 but was '" + board[i][j] + "'");
+            }
+        }
+    }
+
+    @Test
+    void testPropertyFullValidationEmptyBoard() {
+        // Solve a completely empty board and verify all Sudoku constraints
+        char[][] board = new char[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                board[i][j] = '.';
+            }
+        }
+        solution.solveSudoku(board);
+        assertValidSudoku(board);
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiplePuzzles")
+    void testMultipleSolvablePuzzles(char[][] board) {
+        solution.solveSudoku(board);
+        assertValidSudoku(board);
+    }
+
+    static Stream<char[][]> multiplePuzzles() {
+        return Stream.of(
+            new char[][]{
+                {'5','3','.','.','7','.','.','.','.'},
+                {'6','.','.','1','9','5','.','.','.'},
+                {'.','9','8','.','.','.','.','6','.'},
+                {'8','.','.','.','6','.','.','.','3'},
+                {'4','.','.','8','.','3','.','.','1'},
+                {'7','.','.','.','2','.','.','.','6'},
+                {'.','6','.','.','.','.','2','8','.'},
+                {'.','.','.','4','1','9','.','.','5'},
+                {'.','.','.','.','8','.','.','7','9'}
+            },
+            new char[][]{
+                {'.','.','9','7','4','8','.','.','.'},
+                {'7','.','.','.','.','.','.','.','.'},
+                {'.','2','.','1','.','9','.','.','.'},
+                {'.','.','7','.','.','.','2','4','.'},
+                {'.','6','4','.','1','.','5','9','.'},
+                {'.','9','8','.','.','.','3','.','.'},
+                {'.','.','.','8','.','3','.','2','.'},
+                {'.','.','.','.','.','.','.','.','6'},
+                {'.','.','.','2','7','5','9','.','.'}
+            },
+            new char[][]{
+                {'8','.','.','.','.','.','.','.','.'},
+                {'.','.','3','6','.','.','.','.','.'},
+                {'.','7','.','.','9','.','2','.','.'},
+                {'.','5','.','.','.','7','.','.','.'},
+                {'.','.','.','.','4','5','7','.','.'},
+                {'.','.','.','1','.','.','.','3','.'},
+                {'.','.','1','.','.','.','.','6','8'},
+                {'.','.','8','5','.','.','.','1','.'},
+                {'.','9','.','.','.','.','4','.','.'}
+            }
+        );
+    }
+
+    @Test
+    void testSparseCluesPreservesGivenDigits() {
+        // 22-clue puzzle — verify given clues are preserved after solving
+        char[][] board = {
+            {'.','.','.','.','.','.','.','.','.'},
+            {'.','.','.','.','.','3','.','8','5'},
+            {'.','.','.','.','.','.','.','.','.'},
+            {'.','.','.','.','.','.','.','.','.'},
+            {'.','.','.','.','.','.','.','.','.'},
+            {'.','.','.','.','.','.','.','.','.'},
+            {'.','.','.','.','.','.','.','.','.'},
+            {'.','.','.','.','.','.','.','.','.'},
+            {'.','.','.','.','.','.','.','.','.'}
+        };
+        solution.solveSudoku(board);
+        assertValidSudoku(board);
+        // Verify original clues preserved
+        assertEquals('3', board[1][5]);
+        assertEquals('8', board[1][7]);
+        assertEquals('5', board[1][8]);
+    }
+
+    private void assertValidSudoku(char[][] board) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                assertTrue(board[i][j] >= '1' && board[i][j] <= '9',
+                    "Cell [" + i + "][" + j + "] invalid: '" + board[i][j] + "'");
+            }
+        }
+        for (int i = 0; i < 9; i++) {
+            Set<Character> row = new HashSet<>();
+            for (int j = 0; j < 9; j++) row.add(board[i][j]);
+            assertEquals(9, row.size(), "Row " + i + " has duplicates");
+        }
+        for (int j = 0; j < 9; j++) {
+            Set<Character> col = new HashSet<>();
+            for (int i = 0; i < 9; i++) col.add(board[i][j]);
+            assertEquals(9, col.size(), "Column " + j + " has duplicates");
+        }
+        for (int br = 0; br < 3; br++) {
+            for (int bc = 0; bc < 3; bc++) {
+                Set<Character> box = new HashSet<>();
+                for (int i = br * 3; i < br * 3 + 3; i++) {
+                    for (int j = bc * 3; j < bc * 3 + 3; j++) {
+                        box.add(board[i][j]);
+                    }
+                }
+                assertEquals(9, box.size(), "Box [" + br + "][" + bc + "] has duplicates");
             }
         }
     }

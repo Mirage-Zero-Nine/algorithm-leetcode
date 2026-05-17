@@ -81,4 +81,75 @@ class WordBreak_140Test {
         // should produce many combinations, just verify non-empty and completes quickly
         assertTrue(result.size() > 100);
     }
+
+    // --- NEW TESTS ---
+
+    @Test
+    void testEmptyStringReturnsEmpty() {
+        List<String> result = solution.wordBreak("", Arrays.asList("a", "b", "c"));
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCatsanddogExactResults() {
+        Set<String> result = new HashSet<>(solution.wordBreak("catsanddog", Arrays.asList("cat", "cats", "and", "sand", "dog")));
+        assertEquals(Set.of("cats and dog", "cat sand dog"), result);
+    }
+
+    @Test
+    void testPineapplepenapppleExactResults() {
+        Set<String> result = new HashSet<>(solution.wordBreak("pineapplepenapple",
+                Arrays.asList("apple", "pen", "applepen", "pine", "pineapple")));
+        assertEquals(Set.of(
+                "pine apple pen apple",
+                "pineapple pen apple",
+                "pine applepen apple"), result);
+    }
+
+    @Test
+    void testCatsandog_NoBreak() {
+        List<String> result = solution.wordBreak("catsandog", Arrays.asList("cats", "dog", "sand", "and", "cat"));
+        assertEquals(Set.of(), new HashSet<>(result));
+    }
+
+    @Test
+    void testSingleDictWordMatchesExactly() {
+        List<String> result = solution.wordBreak("hello", Arrays.asList("hello"));
+        assertEquals(Set.of("hello"), new HashSet<>(result));
+    }
+
+    @Test
+    void testRepeatedWordAllDecompositions() {
+        Set<String> result = new HashSet<>(solution.wordBreak("aaaa", Arrays.asList("a", "aa")));
+        Set<String> expected = Set.of("a a a a", "aa a a", "a aa a", "a a aa", "aa aa");
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testLargeExplosiveCountOnly() {
+        String s = "a".repeat(20);
+        List<String> result = solution.wordBreak(s, Arrays.asList("a", "aa", "aaa"));
+        // Fibonacci-like growth; just verify count is large and completes
+        assertTrue(result.size() > 1000);
+    }
+
+    @Test
+    void testPropertyEveryResultConcatenatesBackToS() {
+        String s = "catsanddog";
+        List<String> result = solution.wordBreak(s, Arrays.asList("cat", "cats", "and", "sand", "dog"));
+        for (String sentence : result) {
+            assertEquals(s, sentence.replace(" ", ""));
+        }
+    }
+
+    @Test
+    void testPropertyEveryWordInResultIsInDict() {
+        Set<String> dict = Set.of("apple", "pen", "applepen", "pine", "pineapple");
+        List<String> result = solution.wordBreak("pineapplepenapple", new ArrayList<>(dict));
+        for (String sentence : result) {
+            for (String word : sentence.split(" ")) {
+                assertTrue(dict.contains(word), "Word not in dict: " + word);
+            }
+        }
+    }
 }

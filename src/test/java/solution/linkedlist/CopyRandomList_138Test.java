@@ -3,7 +3,11 @@ package solution.linkedlist;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 import library.randomnode.Node;
 import org.junit.jupiter.api.Test;
 
@@ -130,5 +134,108 @@ public class CopyRandomList_138Test {
             cur = cur.next;
         }
         assertNull(cur);
+    }
+
+    @Test
+    public void testRandomPointsToNextNode() {
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        n1.next = n2; n2.next = n3;
+        n1.random = n2; n2.random = n3; n3.random = null;
+        Node copy = test.copyRandomList(n1);
+        assertSame(copy.next, copy.random);
+        assertSame(copy.next.next, copy.next.random);
+        assertNull(copy.next.next.random);
+    }
+
+    @Test
+    public void testRandomPointsToPreviousNode() {
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        n1.next = n2; n2.next = n3;
+        n1.random = null; n2.random = n1; n3.random = n2;
+        Node copy = test.copyRandomList(n1);
+        assertNull(copy.random);
+        assertSame(copy, copy.next.random);
+        assertSame(copy.next, copy.next.next.random);
+    }
+
+    @Test
+    public void testAllRandomPointToSameMiddleNode() {
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        Node n4 = new Node(4);
+        n1.next = n2; n2.next = n3; n3.next = n4;
+        n1.random = n3; n2.random = n3; n3.random = n3; n4.random = n3;
+        Node copy = test.copyRandomList(n1);
+        Node copyN3 = copy.next.next;
+        assertSame(copyN3, copy.random);
+        assertSame(copyN3, copy.next.random);
+        assertSame(copyN3, copyN3.random);
+        assertSame(copyN3, copy.next.next.next.random);
+    }
+
+    @Test
+    public void testLongChainSeededRandom() {
+        int size = 150;
+        Node[] nodes = new Node[size];
+        for (int i = 0; i < size; i++) nodes[i] = new Node(i);
+        for (int i = 0; i < size - 1; i++) nodes[i].next = nodes[i + 1];
+        Random rng = new Random(42L);
+        int[] randomTargets = new int[size];
+        for (int i = 0; i < size; i++) {
+            randomTargets[i] = rng.nextInt(size);
+            nodes[i].random = nodes[randomTargets[i]];
+        }
+
+        Node copy = test.copyRandomList(nodes[0]);
+        Node cur = copy;
+        for (int i = 0; i < size; i++) {
+            assertEquals(i, cur.val);
+            assertEquals(randomTargets[i], cur.random.val);
+            cur = cur.next;
+        }
+        assertNull(cur);
+    }
+
+    @Test
+    public void testCopyNodesAreAllDistinctFromOriginals() {
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        n1.next = n2; n2.next = n3;
+        n1.random = n3; n2.random = n1; n3.random = n2;
+
+        Set<Node> originals = new HashSet<>();
+        for (Node o = n1; o != null; o = o.next) originals.add(o);
+
+        Node copy = test.copyRandomList(n1);
+        for (Node c = copy; c != null; c = c.next) {
+            assert !originals.contains(c) : "copy node is same reference as original";
+            assert c.random == null || !originals.contains(c.random)
+                    : "copy.random points to an original node";
+        }
+    }
+
+    @Test
+    public void testOriginalListUnchangedAfterCopy() {
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        n1.next = n2; n2.next = n3;
+        n1.random = n3; n2.random = n1; n3.random = null;
+
+        test.copyRandomList(n1);
+
+        // verify original node values and random pointers unchanged
+        assertEquals(1, n1.val);
+        assertEquals(2, n2.val);
+        assertEquals(3, n3.val);
+        assertSame(n3, n1.random);
+        assertSame(n1, n2.random);
+        assertNull(n3.random);
     }
 }

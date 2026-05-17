@@ -113,4 +113,85 @@ public class Rob_337Test {
         node.right = buildTree(depth - 1);
         return node;
     }
+
+    @Test
+    public void testAllSameValue() {
+        // Complete tree depth 3, all values = 5
+        // Levels: root(5), children(5,5), grandchildren(5,5,5,5)
+        // Rob root + grandchildren = 5 + 4*5 = 25 vs children = 2*5 = 10 -> 25
+        TreeNode root = new TreeNode(5);
+        root.left = new TreeNode(5); root.right = new TreeNode(5);
+        root.left.left = new TreeNode(5); root.left.right = new TreeNode(5);
+        root.right.left = new TreeNode(5); root.right.right = new TreeNode(5);
+        assertEquals(25, test.rob(root));
+    }
+
+    @Test
+    public void testDeepChainAlternatingValues() {
+        // Chain: 10 -> 1 -> 10 -> 1 -> 10 -> 1 -> 10 (left-only, depth 7)
+        // Optimal: rob levels 1,3,5,7 = 10+10+10+10 = 40
+        TreeNode root = new TreeNode(10);
+        root.left = new TreeNode(1);
+        root.left.left = new TreeNode(10);
+        root.left.left.left = new TreeNode(1);
+        root.left.left.left.left = new TreeNode(10);
+        root.left.left.left.left.left = new TreeNode(1);
+        root.left.left.left.left.left.left = new TreeNode(10);
+        assertEquals(40, test.rob(root));
+    }
+
+    @Test
+    public void testPropertyResultNonNegative() {
+        // Any tree with non-negative values should yield result >= 0
+        TreeNode root = new TreeNode(0);
+        root.left = new TreeNode(0); root.right = new TreeNode(0);
+        root.left.left = new TreeNode(0); root.right.right = new TreeNode(0);
+        int result = test.rob(root);
+        assertEquals(true, result >= 0);
+    }
+
+    @Test
+    public void testPropertyResultLessThanOrEqualToSum() {
+        // Result should never exceed sum of all node values
+        TreeNode root = new TreeNode(3);
+        root.left = new TreeNode(4); root.right = new TreeNode(5);
+        root.left.left = new TreeNode(1); root.left.right = new TreeNode(3);
+        root.right.right = new TreeNode(1);
+        int sum = 3 + 4 + 5 + 1 + 3 + 1; // = 17
+        int result = test.rob(root);
+        assertEquals(true, result <= sum);
+    }
+
+    @Test
+    public void testTwoNodesRobChild() {
+        // root=1, child=99 -> rob child = 99
+        TreeNode root = new TreeNode(1);
+        root.right = new TreeNode(99);
+        assertEquals(99, test.rob(root));
+    }
+
+    @Test
+    public void testTwoNodesRobRoot() {
+        // root=99, child=1 -> rob root = 99
+        TreeNode root = new TreeNode(99);
+        root.left = new TreeNode(1);
+        assertEquals(99, test.rob(root));
+    }
+
+    @Test
+    public void testBalancedAlternatingLevels() {
+        // Level 0: 1, Level 1: 100,100, Level 2: 1,1,1,1
+        // Rob children (100+100=200) vs rob root+grandchildren (1+4=5) -> 200
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(100); root.right = new TreeNode(100);
+        root.left.left = new TreeNode(1); root.left.right = new TreeNode(1);
+        root.right.left = new TreeNode(1); root.right.right = new TreeNode(1);
+        assertEquals(200, test.rob(root));
+    }
+
+    @Test
+    public void testSingleLargeValue() {
+        TreeNode root = new TreeNode(10000);
+        assertEquals(10000, test.rob(root));
+    }
 }

@@ -2,6 +2,7 @@ package solution.others;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -98,5 +99,97 @@ public class ReorderLogFiles_937Test {
             new String[]{"id1 a", "id2 b", "id3 1"},
             test.reorderLogFiles(new String[]{"id3 1", "id1 a", "id2 b"})
         );
+    }
+
+    // ===== NEW TESTS =====
+
+    @Test
+    public void testEmptyArray() {
+        assertArrayEquals(new String[]{}, test.reorderLogFiles(new String[]{}));
+    }
+
+    @Test
+    public void testSingleLetterLog() {
+        assertArrayEquals(new String[]{"a1 abc def"}, test.reorderLogFiles(new String[]{"a1 abc def"}));
+    }
+
+    @Test
+    public void testSingleDigitLog() {
+        assertArrayEquals(new String[]{"a1 1 2 3"}, test.reorderLogFiles(new String[]{"a1 1 2 3"}));
+    }
+
+    @Test
+    public void testAllLetterLogsSortedByContentThenId() {
+        assertArrayEquals(
+            new String[]{"b1 alpha", "a1 beta", "c1 gamma"},
+            test.reorderLogFiles(new String[]{"c1 gamma", "a1 beta", "b1 alpha"})
+        );
+    }
+
+    @Test
+    public void testAllDigitLogsStableOrder() {
+        assertArrayEquals(
+            new String[]{"z1 9 9 9", "a1 1 1 1", "m1 5 5 5"},
+            test.reorderLogFiles(new String[]{"z1 9 9 9", "a1 1 1 1", "m1 5 5 5"})
+        );
+    }
+
+    @Test
+    public void testDigitLogsPreserveRelativeOrderAtEnd() {
+        assertArrayEquals(
+            new String[]{"let1 abc", "let2 def", "dig3 1 2", "dig1 9 8", "dig2 3 4"},
+            test.reorderLogFiles(new String[]{"dig3 1 2", "let2 def", "dig1 9 8", "let1 abc", "dig2 3 4"})
+        );
+    }
+
+    @Test
+    public void testLetterLogsSameContentSortById() {
+        assertArrayEquals(
+            new String[]{"a1 same content here", "b2 same content here", "z9 same content here"},
+            test.reorderLogFiles(new String[]{"z9 same content here", "b2 same content here", "a1 same content here"})
+        );
+    }
+
+    @Test
+    public void testLeetCodeExample() {
+        assertArrayEquals(
+            new String[]{"let1 art can", "let3 art zero", "let2 own kit dig", "dig1 8 1 5 1", "dig2 3 6"},
+            test.reorderLogFiles(new String[]{"dig1 8 1 5 1", "let1 art can", "dig2 3 6", "let2 own kit dig", "let3 art zero"})
+        );
+    }
+
+    @Test
+    public void testLongContentMultipleWords() {
+        assertArrayEquals(
+            new String[]{"x1 alpha beta gamma delta epsilon", "y1 zeta eta theta iota kappa", "z1 1 2 3 4 5 6 7 8 9"},
+            test.reorderLogFiles(new String[]{"z1 1 2 3 4 5 6 7 8 9", "y1 zeta eta theta iota kappa", "x1 alpha beta gamma delta epsilon"})
+        );
+    }
+
+    @Test
+    public void testPropertyLetterLogsBeforeDigitLogs() {
+        String[] logs = {"d1 3 4", "l1 abc", "d2 5 6", "l2 xyz", "d3 7 8", "l3 mno"};
+        String[] result = test.reorderLogFiles(logs);
+        boolean seenDigit = false;
+        for (String log : result) {
+            String content = log.split(" ", 2)[1];
+            boolean isDigit = Character.isDigit(content.charAt(0));
+            if (isDigit) seenDigit = true;
+            if (seenDigit) assertTrue(isDigit, "Letter-log found after digit-log: " + log);
+        }
+    }
+
+    @Test
+    public void testPropertyDigitLogsMaintainRelativeOrder() {
+        String[] logs = {"d3 7 8", "l1 abc", "d1 3 4", "l2 xyz", "d2 5 6"};
+        String[] result = test.reorderLogFiles(logs);
+        // Extract digit logs from result and verify they match original relative order
+        java.util.List<String> digitLogsResult = new java.util.ArrayList<>();
+        for (String log : result) {
+            if (Character.isDigit(log.split(" ", 2)[1].charAt(0))) {
+                digitLogsResult.add(log);
+            }
+        }
+        assertEquals(java.util.List.of("d3 7 8", "d1 3 4", "d2 5 6"), digitLogsResult);
     }
 }

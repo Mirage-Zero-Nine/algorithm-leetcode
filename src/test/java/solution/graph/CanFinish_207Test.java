@@ -97,4 +97,72 @@ public class CanFinish_207Test {
         prerequisites[n - 1] = new int[]{0, n - 1}; // creates cycle
         assertFalse(test.canFinish(n, prerequisites));
     }
+
+    @Test
+    public void testZeroCoursesNoPrereqs() {
+        assertTrue(test.canFinish(0, new int[][]{}));
+        assertTrue(test.intArray(0, new int[][]{}));
+    }
+
+    @Test
+    public void testSelfLoop() {
+        assertFalse(test.canFinish(1, new int[][]{{0, 0}}));
+        assertFalse(test.intArray(1, new int[][]{{0, 0}}));
+    }
+
+    @Test
+    public void testLinearChain() {
+        // a->b->c->d: 0<-1<-2<-3
+        assertTrue(test.canFinish(4, new int[][]{{1, 0}, {2, 1}, {3, 2}}));
+        assertTrue(test.intArray(4, new int[][]{{1, 0}, {2, 1}, {3, 2}}));
+    }
+
+    @Test
+    public void testLongChain100NoCycle() {
+        int n = 100;
+        int[][] prereqs = new int[n - 1][2];
+        for (int i = 0; i < n - 1; i++) {
+            prereqs[i] = new int[]{i + 1, i};
+        }
+        assertTrue(test.canFinish(n, prereqs));
+        assertTrue(test.intArray(n, prereqs));
+    }
+
+    @Test
+    public void testLongChainWithCycleAtEnd() {
+        int n = 100;
+        int[][] prereqs = new int[n][2];
+        for (int i = 0; i < n - 1; i++) {
+            prereqs[i] = new int[]{i + 1, i};
+        }
+        prereqs[n - 1] = new int[]{n - 2, n - 1}; // cycle at end: n-1 -> n-2 and n-2 -> n-1
+        assertFalse(test.canFinish(n, prereqs));
+        assertFalse(test.intArray(n, prereqs));
+    }
+
+    @Test
+    public void testMultipleDisjointComponentsOneCyclic() {
+        // Component 1: 0->1->2 (acyclic), Component 2: 3->4->5->3 (cyclic)
+        assertFalse(test.canFinish(6, new int[][]{{1, 0}, {2, 1}, {4, 3}, {5, 4}, {3, 5}}));
+        assertFalse(test.intArray(6, new int[][]{{1, 0}, {2, 1}, {4, 3}, {5, 4}, {3, 5}}));
+    }
+
+    @Test
+    public void testEmptyPrereqsWithManyCourses() {
+        assertTrue(test.canFinish(50, new int[][]{}));
+        assertTrue(test.intArray(50, new int[][]{}));
+    }
+
+    @Test
+    public void testDuplicatePrereqEdges() {
+        // Duplicate edge [1,0] should not create a false cycle for canFinish (HashMap version)
+        assertTrue(test.canFinish(2, new int[][]{{1, 0}, {1, 0}}));
+    }
+
+    @Test
+    public void testDiamondDAG() {
+        // 0->1, 0->2, 1->3, 2->3 (diamond, no cycle)
+        assertTrue(test.canFinish(4, new int[][]{{1, 0}, {2, 0}, {3, 1}, {3, 2}}));
+        assertTrue(test.intArray(4, new int[][]{{1, 0}, {2, 0}, {3, 1}, {3, 2}}));
+    }
 }

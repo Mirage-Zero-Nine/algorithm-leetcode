@@ -2,7 +2,10 @@ package solution.linkedlist;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.Random;
 import library.listnode.ListNode;
 import org.junit.jupiter.api.Test;
 
@@ -84,5 +87,64 @@ public class MergeTwoSortedLists_21Test {
         ListNode cur = result;
         while (cur.next != null) cur = cur.next;
         assertEquals(999, cur.val);
+    }
+
+    @Test
+    public void testBothNull() {
+        assertNull(test.mergeTwoLists(null, null));
+    }
+
+    @Test
+    public void testOneNullOtherMultiple() {
+        assertEquals("1,2,3,", toStr(test.mergeTwoLists(null, build(1, 2, 3))));
+        assertEquals("4,5,6,", toStr(test.mergeTwoLists(build(4, 5, 6), null)));
+    }
+
+    @Test
+    public void testFirstEntirelySmaller() {
+        assertEquals("1,2,3,10,11,12,", toStr(test.mergeTwoLists(build(1, 2, 3), build(10, 11, 12))));
+    }
+
+    @Test
+    public void testBothIdentical() {
+        assertEquals("1,1,2,2,3,3,", toStr(test.mergeTwoLists(build(1, 2, 3), build(1, 2, 3))));
+    }
+
+    @Test
+    public void testIntegerMinMaxValues() {
+        ListNode result = test.mergeTwoLists(build(Integer.MIN_VALUE, 0), build(0, Integer.MAX_VALUE));
+        assertEquals(Integer.MIN_VALUE + ",0,0," + Integer.MAX_VALUE + ",", toStr(result));
+    }
+
+    @Test
+    public void testSingleElementVsLong() {
+        assertEquals("0,1,2,3,4,5,", toStr(test.mergeTwoLists(build(0), build(1, 2, 3, 4, 5))));
+        assertEquals("1,2,3,4,5,100,", toStr(test.mergeTwoLists(build(1, 2, 3, 4, 5), build(100))));
+    }
+
+    @Test
+    public void testLargeListsSortedAndCorrectLength() {
+        int[] a = new int[1000];
+        int[] b = new int[1000];
+        Random rng = new Random(42L);
+        for (int i = 0; i < 1000; i++) { a[i] = rng.nextInt(100000); b[i] = rng.nextInt(100000); }
+        Arrays.sort(a);
+        Arrays.sort(b);
+        ListNode result = test.mergeTwoLists(build(a), build(b));
+        int count = 0;
+        int prev = Integer.MIN_VALUE;
+        ListNode cur = result;
+        while (cur != null) {
+            assertTrue(cur.val >= prev, "Result not sorted at position " + count);
+            prev = cur.val;
+            count++;
+            cur = cur.next;
+        }
+        assertEquals(2000, count);
+    }
+
+    @Test
+    public void testDuplicatesAcrossBoundaries() {
+        assertEquals("1,2,2,3,3,4,", toStr(test.mergeTwoLists(build(1, 2, 3), build(2, 3, 4))));
     }
 }

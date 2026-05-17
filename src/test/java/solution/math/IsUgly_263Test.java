@@ -1,9 +1,17 @@
 package solution.math;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class IsUgly_263Test {
 
@@ -85,5 +93,29 @@ public class IsUgly_263Test {
         assertTrue(test.isUgly(1073741824));
         // 5^13 = 1220703125
         assertTrue(test.isUgly(1220703125));
+    }
+
+    /**
+     * Iterable sweep -50..200 against an independent reference. Every
+     * input must agree with the textbook definition: positive numbers
+     * whose only prime factors are in {2, 3, 5}.
+     */
+    @ParameterizedTest(name = "isUgly({0})")
+    @MethodSource("negFiftyToTwoHundred")
+    public void testEveryValueFromMinusFiftyToTwoHundred(int input, boolean expected) {
+        assertEquals(expected, test.isUgly(input));
+    }
+
+    private static Stream<org.junit.jupiter.params.provider.Arguments> negFiftyToTwoHundred() {
+        return IntStream.rangeClosed(-50, 200)
+                .mapToObj(i -> arguments(i, isUglyReference(i)));
+    }
+
+    private static boolean isUglyReference(int n) {
+        if (n < 1) return false;
+        for (int p : new int[]{2, 3, 5}) {
+            while (n % p == 0) n /= p;
+        }
+        return n == 1;
     }
 }
