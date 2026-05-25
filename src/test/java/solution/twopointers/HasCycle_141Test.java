@@ -100,4 +100,82 @@ public class HasCycle_141Test {
         n1.next = n2; n2.next = n3; n3.next = n4; n4.next = n5; n5.next = n3;
         assertTrue(test.hasCycle(n1));
     }
+
+    @Test
+    public void testNullHead() {
+        assertFalse(test.hasCycle(null));
+    }
+
+    @Test
+    public void testSingleNodeNoLoop() {
+        assertFalse(test.hasCycle(new ListNode(42)));
+    }
+
+    @Test
+    public void testSingleNodeSelfLoop() {
+        ListNode n = new ListNode(1);
+        n.next = n;
+        assertTrue(test.hasCycle(n));
+    }
+
+    @Test
+    public void testNoCycleLength5() {
+        ListNode head = new ListNode(0);
+        ListNode cur = head;
+        for (int i = 1; i < 5; i++) { cur.next = new ListNode(i); cur = cur.next; }
+        assertFalse(test.hasCycle(head));
+    }
+
+    @Test
+    public void testNoCycleLength100() {
+        ListNode head = new ListNode(0);
+        ListNode cur = head;
+        for (int i = 1; i < 100; i++) { cur.next = new ListNode(i); cur = cur.next; }
+        assertFalse(test.hasCycle(head));
+    }
+
+    @Test
+    public void testCycleTailToHead() {
+        ListNode[] nodes = new ListNode[10];
+        for (int i = 0; i < 10; i++) nodes[i] = new ListNode(i);
+        for (int i = 0; i < 9; i++) nodes[i].next = nodes[i + 1];
+        nodes[9].next = nodes[0];
+        assertTrue(test.hasCycle(nodes[0]));
+    }
+
+    @Test
+    public void testCycleTailToMid() {
+        ListNode[] nodes = new ListNode[10];
+        for (int i = 0; i < 10; i++) nodes[i] = new ListNode(i);
+        for (int i = 0; i < 9; i++) nodes[i].next = nodes[i + 1];
+        nodes[9].next = nodes[5];
+        assertTrue(test.hasCycle(nodes[0]));
+    }
+
+    @Test
+    public void testCycleTailSelfLoop() {
+        ListNode[] nodes = new ListNode[10];
+        for (int i = 0; i < 10; i++) nodes[i] = new ListNode(i);
+        for (int i = 0; i < 9; i++) nodes[i].next = nodes[i + 1];
+        nodes[9].next = nodes[9];
+        assertTrue(test.hasCycle(nodes[0]));
+    }
+
+    @Test
+    public void testLong1000WithCycleNearEnd() {
+        int size = 1000;
+        ListNode[] nodes = new ListNode[size];
+        for (int i = 0; i < size; i++) nodes[i] = new ListNode(i);
+        for (int i = 0; i < size - 1; i++) nodes[i].next = nodes[i + 1];
+        nodes[size - 1].next = nodes[990];
+        assertTrue(test.hasCycle(nodes[0]));
+    }
+
+    @Test
+    public void testLong1000NoCycle() {
+        ListNode head = new ListNode(0);
+        ListNode cur = head;
+        for (int i = 1; i < 1000; i++) { cur.next = new ListNode(i); cur = cur.next; }
+        assertFalse(test.hasCycle(head));
+    }
 }

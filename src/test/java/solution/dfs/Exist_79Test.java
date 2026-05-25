@@ -1,6 +1,7 @@
 package solution.dfs;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -141,5 +142,127 @@ public class Exist_79Test {
         }
         String word = "A".repeat(200);
         assertTrue(test.exist(board, word));
+    }
+
+    @Test
+    public void testWordLongerThanBoardArea() {
+        // 2x2 board = 4 cells, word of length 5 is impossible
+        assertFalse(test.exist(new char[][]{
+                {'A', 'B'},
+                {'C', 'D'}
+        }, "ABCDA"));
+    }
+
+    @Test
+    public void testSingleCellMatch() {
+        assertTrue(test.exist(new char[][]{{'Z'}}, "Z"));
+    }
+
+    @Test
+    public void testSingleCellNoMatch() {
+        assertFalse(test.exist(new char[][]{{'Z'}}, "X"));
+    }
+
+    @Test
+    public void testDiagonalNotAllowed() {
+        // 'A' at (0,0), 'B' at (1,1) — diagonal, not adjacent
+        assertFalse(test.exist(new char[][]{
+                {'A', 'X'},
+                {'X', 'B'}
+        }, "AB"));
+    }
+
+    @Test
+    public void testWordUsingAllCells() {
+        // Snake path through entire 3x3 board
+        // A B C
+        // F E D
+        // G H I
+        assertTrue(test.exist(new char[][]{
+                {'A', 'B', 'C'},
+                {'F', 'E', 'D'},
+                {'G', 'H', 'I'}
+        }, "ABCDEFGHI"));
+    }
+
+    @Test
+    public void testBacktrackNearlySucceeds() {
+        // Path "ABCDE" nearly works via top row but 'E' not adjacent to 'D' that way
+        // A B C
+        // X X D
+        // X X E
+        // "ABCDE" should succeed: A(0,0)->B(0,1)->C(0,2)->D(1,2)->E(2,2)
+        assertTrue(test.exist(new char[][]{
+                {'A', 'B', 'C'},
+                {'X', 'X', 'D'},
+                {'X', 'X', 'E'}
+        }, "ABCDE"));
+
+        // But "ABCED" should fail — E(2,2) is not adjacent to B or A to form that path
+        assertFalse(test.exist(new char[][]{
+                {'A', 'B', 'C'},
+                {'X', 'X', 'D'},
+                {'X', 'X', 'E'}
+        }, "ABCED"));
+    }
+
+    @Test
+    public void testRepeatedLettersRequiringBacktrack() {
+        // Board full of 'A' except one 'B' — must find exact path
+        // A A A
+        // A A A
+        // A A B
+        assertTrue(test.exist(new char[][]{
+                {'A', 'A', 'A'},
+                {'A', 'A', 'A'},
+                {'A', 'A', 'B'}
+        }, "AAAAAAAAB"));
+
+        // 9 cells, word "AAAAAAAAAB" (length 10) impossible
+        assertFalse(test.exist(new char[][]{
+                {'A', 'A', 'A'},
+                {'A', 'A', 'A'},
+                {'A', 'A', 'B'}
+        }, "AAAAAAAAAB"));
+    }
+
+    @Test
+    public void testLargeBoard10x10() {
+        // 10x10 board filled with sequential letters, search for a 20-char path
+        char[][] board = new char[10][10];
+        StringBuilder path = new StringBuilder();
+        // Fill with snake pattern: row 0 left-to-right, row 1 right-to-left, etc.
+        char c = 'A';
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                int col = (i % 2 == 0) ? j : 9 - j;
+                board[i][col] = c;
+                if (path.length() < 20) {
+                    path.append(c);
+                }
+                c = (char) ('A' + (c - 'A' + 1) % 26);
+            }
+        }
+        // The first 20 chars follow a valid snake path
+        assertTrue(test.exist(board, path.toString()));
+    }
+
+    @Test
+    public void testBoardNotMutatedAfterCall() {
+        char[][] board = {
+                {'A', 'B', 'C'},
+                {'D', 'E', 'F'},
+                {'G', 'H', 'I'}
+        };
+        char[][] original = {
+                {'A', 'B', 'C'},
+                {'D', 'E', 'F'},
+                {'G', 'H', 'I'}
+        };
+        test.exist(board, "ABCFEDGHI");
+        // Board must be restored to original state
+        for (int i = 0; i < board.length; i++) {
+            assertArrayEquals(original[i], board[i], "Row " + i + " was mutated");
+        }
     }
 }

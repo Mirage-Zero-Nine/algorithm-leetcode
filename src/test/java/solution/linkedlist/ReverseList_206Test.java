@@ -1,5 +1,6 @@
 package solution.linkedlist;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -107,5 +108,92 @@ public class ReverseList_206Test {
         ListNode result = test.reverseList(build(vals));
         assertEquals(999, result.val);
         assertEquals(998, result.next.val);
+    }
+
+    // --- NEW TESTS ---
+
+    @Test
+    public void testNullHeadReturnsNull() {
+        assertNull(test.reverseList(null));
+        assertNull(test.recursion(null));
+    }
+
+    @Test
+    public void testSingleNodeNextIsNull() {
+        ListNode single = build(42);
+        ListNode r1 = test.reverseList(single);
+        assertEquals(42, r1.val);
+        assertNull(r1.next);
+
+        ListNode single2 = build(42);
+        ListNode r2 = test.recursion(single2);
+        assertEquals(42, r2.val);
+        assertNull(r2.next);
+    }
+
+    @Test
+    public void testTwoNodesBothMethods() {
+        int[] expected = {2, 1};
+        assertArrayEquals(expected, toArray(test.reverseList(build(1, 2))));
+        assertArrayEquals(expected, toArray(test.recursion(build(1, 2))));
+    }
+
+    @Test
+    public void testAllSameValues() {
+        int[] expected = {7, 7, 7, 7, 7};
+        assertArrayEquals(expected, toArray(test.reverseList(build(7, 7, 7, 7, 7))));
+        assertArrayEquals(expected, toArray(test.recursion(build(7, 7, 7, 7, 7))));
+    }
+
+    @Test
+    public void testLongListLengthAndHeadTail() {
+        int n = 2000;
+        int[] vals = new int[n];
+        for (int i = 0; i < n; i++) vals[i] = i + 1;
+        ListNode result = test.reverseList(build(vals));
+        int[] reversed = toArray(result);
+        assertEquals(n, reversed.length);
+        assertEquals(n, reversed[0]);       // head value == old tail
+        assertEquals(1, reversed[n - 1]);   // tail value == old head
+    }
+
+    @Test
+    public void testReverseOfReverseIsOriginal() {
+        int[] original = {3, 1, 4, 1, 5, 9, 2, 6};
+        ListNode reversed = test.reverseList(build(original));
+        ListNode doubleReversed = test.reverseList(reversed);
+        assertArrayEquals(original, toArray(doubleReversed));
+    }
+
+    @Test
+    public void testNegativeValuesList() {
+        int[] input = {-10, -20, -30, -40};
+        int[] expected = {-40, -30, -20, -10};
+        assertArrayEquals(expected, toArray(test.reverseList(build(input))));
+        assertArrayEquals(expected, toArray(test.recursion(build(input))));
+    }
+
+    @Test
+    public void testIntMinAndIntMax() {
+        int[] input = {Integer.MIN_VALUE, 0, Integer.MAX_VALUE};
+        int[] expected = {Integer.MAX_VALUE, 0, Integer.MIN_VALUE};
+        assertArrayEquals(expected, toArray(test.reverseList(build(input))));
+        assertArrayEquals(expected, toArray(test.recursion(build(input))));
+    }
+
+    @Test
+    public void testIterativeAndRecursiveCrossCheck() {
+        int[] input = {5, 3, 8, 1, 9, 2, 7, 4, 6};
+        int[] iterResult = toArray(test.reverseList(build(input)));
+        int[] recurResult = toArray(test.recursion(build(input)));
+        assertArrayEquals(iterResult, recurResult);
+    }
+
+    @Test
+    public void testRecursionReverseOfReverseIsOriginal() {
+        int[] original = {100, -50, 0, 42, Integer.MAX_VALUE};
+        ListNode reversed = test.recursion(build(original));
+        ListNode doubleReversed = test.recursion(reversed);
+        assertArrayEquals(original, toArray(doubleReversed));
     }
 }

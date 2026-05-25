@@ -1,5 +1,6 @@
 package solution.dfs;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -107,7 +108,7 @@ public class Flatten_114Test {
 
     @Test
     public void testWithStackNull() {
-        test.flattenWithStack(null); // should not throw
+        assertDoesNotThrow(() -> test.flattenWithStack(null));
     }
 
     @Test

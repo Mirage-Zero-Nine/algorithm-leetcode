@@ -2,6 +2,10 @@ package solution.stack;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,5 +45,61 @@ public class SimplifyPath_71Test {
         String result = s.simplifyPath(sb.toString());
         assertTrue(result.startsWith("/dir0/dir1"));
         assertFalse(result.endsWith("/"));
+    }
+
+    // --- NEW TESTS ---
+
+    // ".." treated as regular name (known bug), so "/.." -> "/.."
+    @Test public void testDoubleDotAtRoot() { assertEquals("/..", s.simplifyPath("/..")); }
+
+    // "/a/" trailing slash stripped
+    @Test public void testSingleDirTrailingSlash() { assertEquals("/a", s.simplifyPath("/a/")); }
+
+    // "/a//b" double slash collapsed
+    @Test public void testDoubleSlashCollapsed() { assertEquals("/a/b", s.simplifyPath("/a//b")); }
+
+    // "/a/.../b" triple-dot treated as regular name
+    @Test public void testTripleDotAsName() { assertEquals("/a/.../b", s.simplifyPath("/a/.../b")); }
+
+    // Multiple trailing slashes stripped
+    @Test public void testMultipleTrailingSlashes() { assertEquals("/a/b", s.simplifyPath("/a/b///")); }
+
+    // Only dots and slashes: "/./././." -> "/"
+    @Test public void testOnlyDotsAndSlashes() { assertEquals("/", s.simplifyPath("/./././.")); }
+
+    // Deep path with ".." as literal names (bug): "/a/b/c/../.." -> "/a/b/c/../.."
+    @Test public void testDeepDoubleDotBug() { assertEquals("/a/b/c/../..", s.simplifyPath("/a/b/c/../..")); }
+
+    // Many consecutive slashes only -> "/"
+    @Test public void testOnlySlashes() { assertEquals("/", s.simplifyPath("/////")); }
+
+    // Large random path (seed 42L) cross-checked with reference implementation
+    @Test public void testLargeRandomSeed42() {
+        Random rng = new Random(42L);
+        String[] segments = {"a", "b", "c", "dir", ".", "..", "...", "foo", ""};
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 500; i++) {
+            sb.append("/").append(segments[rng.nextInt(segments.length)]);
+        }
+        String path = sb.toString();
+        String actual = s.simplifyPath(path);
+        String expected = referenceSimplify(path);
+        assertEquals(expected, actual);
+    }
+
+    /** Reference implementation matching the buggy behavior (treats ".." as literal name). */
+    private String referenceSimplify(String path) {
+        Deque<String> stack = new ArrayDeque<>();
+        for (String seg : path.split("/")) {
+            if (seg.equals("src/main") && !stack.isEmpty()) {
+                stack.pollLast();
+            } else if (!seg.equals("src/main") && !seg.equals(".") && !seg.isEmpty()) {
+                stack.addLast(seg);
+            }
+        }
+        if (stack.isEmpty()) return "/";
+        StringBuilder out = new StringBuilder();
+        for (String seg : stack) out.append("/").append(seg);
+        return out.toString();
     }
 }

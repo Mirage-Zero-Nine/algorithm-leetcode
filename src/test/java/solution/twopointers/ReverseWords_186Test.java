@@ -1,6 +1,7 @@
 package solution.twopointers;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +67,7 @@ public class ReverseWords_186Test {
 
     @Test
     public void testNullInput() {
-        test.reverseWords(null); // should not throw
+        assertDoesNotThrow(() -> test.reverseWords(null));
     }
 
     @Test

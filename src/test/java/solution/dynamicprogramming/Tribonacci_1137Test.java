@@ -3,6 +3,13 @@ package solution.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class Tribonacci_1137Test {
 
@@ -59,5 +66,33 @@ public class Tribonacci_1137Test {
     @Test
     public void testGiantN37() {
         assertEquals(2082876103, test.tribonacci(37));
+    }
+
+    /**
+     * Iterable sweep 0..37 (n=37 is the largest input that fits in a
+     * signed 32-bit int) cross-checked against an independent O(1)-memory
+     * iterative reference.
+     */
+    @ParameterizedTest(name = "tribonacci({0})")
+    @MethodSource("zeroToThirtySeven")
+    public void testEveryValueFromZeroToThirtySeven(int n) {
+        assertEquals(reference(n), test.tribonacci(n));
+    }
+
+    private static int reference(int n) {
+        if (n == 0) return 0;
+        if (n <= 2) return 1;
+        int a = 0, b = 1, c = 1;
+        for (int i = 3; i <= n; i++) {
+            int d = a + b + c;
+            a = b;
+            b = c;
+            c = d;
+        }
+        return c;
+    }
+
+    private static Stream<org.junit.jupiter.params.provider.Arguments> zeroToThirtySeven() {
+        return IntStream.rangeClosed(0, 37).mapToObj(i -> arguments(i));
     }
 }

@@ -74,4 +74,60 @@ public class IsMatch_10Test {
         String p = "a*a*a*a*a*a*a*a*a*a*";
         assertTrue(test.isMatch(s, p));
     }
+
+    @Test
+    public void testEmptyStringWithDotStar() {
+        assertTrue(test.isMatch("", ".*"));
+    }
+
+    @Test
+    public void testEmptyStringNonMatchingPattern() {
+        assertFalse(test.isMatch("", "a"));
+    }
+
+    @Test
+    public void testNonEmptyStringEmptyPattern() {
+        assertFalse(test.isMatch("a", ""));
+    }
+
+    @Test
+    public void testClassicAabCStarAStarB() {
+        // c* matches zero 'c', a* matches two 'a's, b matches 'b'
+        assertTrue(test.isMatch("aab", "c*a*b"));
+    }
+
+    @Test
+    public void testMississippiFullMatch() {
+        assertTrue(test.isMatch("mississippi", "mis*is*ip*."));
+    }
+
+    @Test
+    public void testDotStarFollowedByChar() {
+        // .* matches 'aabb', then 'c' matches 'c'
+        assertTrue(test.isMatch("aabbc", ".*c"));
+    }
+
+    @Test
+    public void testMultipleStarsOnSameChar() {
+        // a*a*a* can match 'aaa' — each a* can consume some a's
+        assertTrue(test.isMatch("aaa", "a*a*a*"));
+        // also matches empty
+        assertTrue(test.isMatch("", "a*a*a*"));
+    }
+
+    @Test
+    public void testStarMatchesZeroOfPreceding() {
+        // 'b*' matches zero 'b', then 'a' matches 'a'
+        assertTrue(test.isMatch("a", "b*a"));
+        // trailing star matches zero
+        assertTrue(test.isMatch("a", "ab*"));
+    }
+
+    @Test
+    public void testLargeBacktrackingCase() {
+        // Worst-case for naive backtracking: s = "aaa...a", p = "a*a*a*...a*b"
+        String s = "a".repeat(25);
+        String p = "a*".repeat(25) + "b";
+        assertFalse(test.isMatch(s, p));
+    }
 }

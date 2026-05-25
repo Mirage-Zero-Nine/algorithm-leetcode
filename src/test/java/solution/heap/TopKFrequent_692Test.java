@@ -1,11 +1,15 @@
 package solution.heap;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * @author BorisMirage
@@ -102,5 +106,81 @@ public class TopKFrequent_692Test {
     public void testMixedFrequencies() {
         assertIterableEquals(List.of("a", "b"),
             test.topKFrequent(new String[]{"a", "a", "a", "b", "b", "c"}, 2));
+    }
+
+    @Test
+    public void testEmptyArrayKZero() {
+        // Empty input with k=0 should return empty list
+        assertTrue(test.topKFrequent(new String[]{}, 0).isEmpty());
+    }
+
+    @Test
+    public void testSingleWordKOne() {
+        assertIterableEquals(List.of("hello"), test.topKFrequent(new String[]{"hello"}, 1));
+    }
+
+    @Test
+    public void testAllSameFrequencyLexOrder() {
+        // All words appear exactly once - result should be lexicographic ascending
+        assertIterableEquals(List.of("apple", "banana", "cherry"),
+            test.topKFrequent(new String[]{"cherry", "banana", "apple"}, 3));
+    }
+
+    @Test
+    public void testMultipleTiesClassicExample() {
+        // i:2, love:2, coding:1, leetcode:1 -> k=3: [i, love, coding] (lex tiebreak within freq groups)
+        String[] words = {"i", "love", "leetcode", "i", "love", "coding"};
+        assertIterableEquals(List.of("i", "love", "coding"), test.topKFrequent(words, 3));
+    }
+
+    @Test
+    public void testKOneReturnsHighestFreqLexSmallest() {
+        // "a" and "b" both appear 3 times, k=1 -> "a" (lex smallest among highest freq)
+        assertIterableEquals(List.of("a"),
+            test.topKFrequent(new String[]{"b", "a", "b", "a", "b", "a", "c"}, 1));
+    }
+
+    @Test
+    public void testAllUniqueFrequencies() {
+        // a:4, b:3, c:2, d:1 -> sorted purely by frequency
+        String[] words = {"a", "a", "a", "a", "b", "b", "b", "c", "c", "d"};
+        assertIterableEquals(List.of("a", "b", "c"), test.topKFrequent(words, 3));
+    }
+
+    @Test
+    public void testMixedFreqGroupsWithLexTiebreak() {
+        // freq 3: a, b; freq 2: x, y; freq 1: m -> k=4 should be [a, b, x, y]
+        String[] words = {"b", "a", "b", "a", "b", "a", "y", "x", "y", "x", "m"};
+        assertIterableEquals(List.of("a", "b", "x", "y"), test.topKFrequent(words, 4));
+    }
+
+    @Test
+    public void testLargeInputPropertyBased() {
+        // Generate 1000 words with seed 42, verify properties of result
+        Random rng = new Random(42L);
+        String[] pool = {"alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa"};
+        String[] words = new String[1000];
+        for (int i = 0; i < 1000; i++) {
+            words[i] = pool[rng.nextInt(pool.length)];
+        }
+        int k = 5;
+        List<String> result = test.topKFrequent(words, k);
+
+        assertEquals(k, result.size());
+
+        // Build frequency map to verify ordering
+        Map<String, Integer> freq = new HashMap<>();
+        for (String w : words) freq.merge(w, 1, Integer::sum);
+
+        // Verify: frequencies are non-increasing, and lex tiebreak within same freq
+        for (int i = 0; i < result.size() - 1; i++) {
+            int f1 = freq.get(result.get(i));
+            int f2 = freq.get(result.get(i + 1));
+            assertTrue(f1 >= f2, "Frequencies should be non-increasing");
+            if (f1 == f2) {
+                assertTrue(result.get(i).compareTo(result.get(i + 1)) < 0,
+                    "Same-frequency words should be in lexicographic ascending order");
+            }
+        }
     }
 }

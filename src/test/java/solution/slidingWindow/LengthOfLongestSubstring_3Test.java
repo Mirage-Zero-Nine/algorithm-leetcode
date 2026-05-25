@@ -4,7 +4,12 @@ package solution.slidingwindow;
 import org.junit.jupiter.api.Test;
 import solution.slidingwindow.LengthOfLongestSubstring_3;
 
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author BorisMirage
@@ -74,5 +79,83 @@ public class LengthOfLongestSubstring_3Test {
             sb.append((char) ('a' + (i % 26)));
         }
         assertEquals(26, test.lengthOfLongestSubstring(sb.toString()));
+    }
+
+    @Test
+    public void testTwoSameChars() {
+        assertEquals(1, test.lengthOfLongestSubstring("aa"));
+    }
+
+    @Test
+    public void testTwoDifferentChars() {
+        assertEquals(2, test.lengthOfLongestSubstring("ab"));
+    }
+
+    @Test
+    public void testPwwkew() {
+        assertEquals(3, test.lengthOfLongestSubstring("pwwkew"));
+    }
+
+    @Test
+    public void testUnicodeChars() {
+        assertEquals(4, test.lengthOfLongestSubstring("你好世界"));
+        assertEquals(2, test.lengthOfLongestSubstring("你好你"));
+        assertEquals(3, test.lengthOfLongestSubstring("a你b你"));
+    }
+
+    @Test
+    public void testEachCharAppearsTwice() {
+        // "aabbccdd" — each char appears exactly twice in sequence
+        assertEquals(2, test.lengthOfLongestSubstring("aabbccdd"));
+        // interleaved: "abcabc" — each appears twice, longest unique is 3
+        assertEquals(3, test.lengthOfLongestSubstring("abcabc"));
+    }
+
+    @Test
+    public void testStress10000CharsRandomSeed42() {
+        Random rng = new Random(42L);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10000; i++) {
+            sb.append((char) ('a' + rng.nextInt(26)));
+        }
+        String s = sb.toString();
+
+        // brute-force reference on first 500 chars for cross-check
+        String sub = s.substring(0, 500);
+        int expected = bruteForce(sub);
+        assertEquals(expected, test.lengthOfLongestSubstring(sub));
+
+        // full string: just verify properties
+        int result = test.lengthOfLongestSubstring(s);
+        assertTrue(result >= 1);
+        assertTrue(result <= s.length());
+    }
+
+    @Test
+    public void testPropertyResultBounds() {
+        String[] inputs = {"a", "ab", "abc", "abcabcbb", "bbbbb", "pwwkew", "dvdf"};
+        for (String s : inputs) {
+            int result = test.lengthOfLongestSubstring(s);
+            assertTrue(result >= 1, "result >= 1 for non-empty string: " + s);
+            assertTrue(result <= s.length(), "result <= s.length() for: " + s);
+        }
+    }
+
+    @Test
+    public void testWhitespaceAndTabs() {
+        assertEquals(3, test.lengthOfLongestSubstring(" \t\n"));
+        assertEquals(1, test.lengthOfLongestSubstring("  "));
+    }
+
+    private int bruteForce(String s) {
+        int max = 0;
+        for (int i = 0; i < s.length(); i++) {
+            Set<Character> seen = new HashSet<>();
+            for (int j = i; j < s.length(); j++) {
+                if (!seen.add(s.charAt(j))) break;
+                max = Math.max(max, j - i + 1);
+            }
+        }
+        return max;
     }
 }

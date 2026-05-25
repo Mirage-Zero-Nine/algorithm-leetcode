@@ -3,6 +3,13 @@ package solution.math;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class TrailingZeroes_172Test {
 
@@ -64,5 +71,33 @@ public class TrailingZeroes_172Test {
         assertEquals(1, TrailingZeroes_172.iterative(5));
         assertEquals(24, TrailingZeroes_172.iterative(100));
         assertEquals(249, TrailingZeroes_172.iterative(1000));
+    }
+
+    /**
+     * Iterable sweep 0..200: the recursive impl and the static iterative
+     * impl in the same source class must agree on every input. The two
+     * algorithms are independent enough that simultaneous failure is
+     * unlikely.
+     */
+    @ParameterizedTest(name = "trailingZeroes({0})")
+    @MethodSource("zeroToTwoHundred")
+    public void testEveryValueFromZeroToTwoHundred(int n) {
+        assertEquals(TrailingZeroes_172.iterative(n), test.trailingZeroes(n));
+    }
+
+    private static Stream<org.junit.jupiter.params.provider.Arguments> zeroToTwoHundred() {
+        return IntStream.rangeClosed(0, 200).mapToObj(i -> arguments(i));
+    }
+
+    /**
+     * Cross-check at powers of 5 - the inputs that exercise the recursion
+     * boundary cases.
+     */
+    @ParameterizedTest(name = "power-of-5: trailingZeroes({0})")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {
+            5, 25, 125, 625, 3125, 15625, 78125, 390625, 1953125
+    })
+    public void testPowersOfFive(int n) {
+        assertEquals(TrailingZeroes_172.iterative(n), test.trailingZeroes(n));
     }
 }

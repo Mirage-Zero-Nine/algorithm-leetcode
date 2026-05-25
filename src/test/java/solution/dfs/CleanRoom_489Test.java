@@ -147,4 +147,123 @@ public class CleanRoom_489Test {
         test.cleanRoom(robot);
         assertEquals(n * n, robot.getCleanedCount());
     }
+
+    // --- NEW TESTS ---
+
+    @Test
+    public void testSingleCellNoObstacles() {
+        // 1x1 room, trivial case - robot just cleans the one cell
+        int[][] room = {{1}};
+        MockRobot robot = new MockRobot(room, 0, 0);
+        test.cleanRoom(robot);
+        assertEquals(1, robot.getCleanedCount());
+        assert robot.cleaned.contains("0,0");
+    }
+
+    @Test
+    public void testAllReachableCleaned() {
+        // 4x4 fully open room - property: every reachable empty cell is cleaned
+        int[][] room = {
+            {1, 1, 1, 1},
+            {1, 1, 1, 1},
+            {1, 1, 1, 1},
+            {1, 1, 1, 1}
+        };
+        MockRobot robot = new MockRobot(room, 0, 0);
+        test.cleanRoom(robot);
+        // Every cell should be cleaned
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                assert robot.cleaned.contains(i + "," + j) : "Cell " + i + "," + j + " not cleaned";
+        assertEquals(16, robot.getCleanedCount());
+    }
+
+    @Test
+    public void testBlockedCellsNotCleaned() {
+        // Property: blocked cells are NOT cleaned, reachable cells ARE cleaned
+        int[][] room = {
+            {1, 1, 0, 1},
+            {1, 0, 0, 1},
+            {1, 1, 1, 1}
+        };
+        MockRobot robot = new MockRobot(room, 0, 0);
+        test.cleanRoom(robot);
+        // Blocked cells must not be cleaned
+        assert !robot.cleaned.contains("0,2") : "Blocked cell 0,2 was cleaned";
+        assert !robot.cleaned.contains("1,1") : "Blocked cell 1,1 was cleaned";
+        assert !robot.cleaned.contains("1,2") : "Blocked cell 1,2 was cleaned";
+        // Reachable cells from (0,0): (0,0),(0,1),(1,0),(2,0),(2,1),(2,2),(2,3),(1,3),(0,3)
+        assertEquals(9, robot.getCleanedCount());
+    }
+
+    @Test
+    public void testLShapeRoomStartAtCorner() {
+        // L-shape room, robot starts at top-left corner
+        int[][] room = {
+            {1, 1, 1},
+            {1, 0, 0},
+            {1, 0, 0},
+            {1, 1, 1}
+        };
+        MockRobot robot = new MockRobot(room, 0, 0);
+        test.cleanRoom(robot);
+        assertEquals(8, robot.getCleanedCount());
+        assert !robot.cleaned.contains("1,1");
+        assert !robot.cleaned.contains("1,2");
+        assert !robot.cleaned.contains("2,1");
+        assert !robot.cleaned.contains("2,2");
+    }
+
+    @Test
+    public void testLongThinCorridor() {
+        // 1x10 corridor, robot starts at one end
+        int[][] room = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+        MockRobot robot = new MockRobot(room, 0, 0);
+        test.cleanRoom(robot);
+        assertEquals(10, robot.getCleanedCount());
+    }
+
+    @Test
+    public void testRobotStartCenter() {
+        // 5x5 open room, robot starts at center
+        int[][] room = new int[5][5];
+        for (int[] r : room) java.util.Arrays.fill(r, 1);
+        MockRobot robot = new MockRobot(room, 2, 2);
+        test.cleanRoom(robot);
+        assertEquals(25, robot.getCleanedCount());
+    }
+
+    @Test
+    public void testRobotStartAgainstWall() {
+        // 3x5 room, robot starts at (0,2) - top wall, middle column
+        int[][] room = {
+            {1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1}
+        };
+        MockRobot robot = new MockRobot(room, 0, 2);
+        test.cleanRoom(robot);
+        assertEquals(15, robot.getCleanedCount());
+    }
+
+    @Test
+    public void testBlockedCellsUnchanged() {
+        // Property: blocked cells remain blocked (not in cleaned set) regardless of adjacency
+        int[][] room = {
+            {1, 0, 1},
+            {0, 1, 0},
+            {1, 0, 1}
+        };
+        // Only center and corners reachable? Center connects to nothing except itself
+        // Actually from (1,1): up=(0,1)=0 blocked, right=(1,2)=0 blocked, down=(2,1)=0 blocked, left=(1,0)=0 blocked
+        // So only (1,1) is reachable from start (1,1)
+        MockRobot robot = new MockRobot(room, 1, 1);
+        test.cleanRoom(robot);
+        assertEquals(1, robot.getCleanedCount());
+        // All blocked cells must NOT be cleaned
+        assert !robot.cleaned.contains("0,1");
+        assert !robot.cleaned.contains("1,0");
+        assert !robot.cleaned.contains("1,2");
+        assert !robot.cleaned.contains("2,1");
+    }
 }

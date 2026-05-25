@@ -3,7 +3,9 @@ package solution.dfs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 public class RemoveInvalidParentheses_301Test {
@@ -99,5 +101,94 @@ public class RemoveInvalidParentheses_301Test {
             }
             assertEquals(0, count);
         }
+    }
+
+    @Test
+    public void testLettersMixedWithParens() {
+        // 'a)b(c)d' -> ['ab(c)d']
+        List<String> result = test.removeInvalidParentheses("a)b(c)d");
+        assertEquals(Set.of("ab(c)d"), new HashSet<>(result));
+    }
+
+    @Test
+    public void testUnbalancedOpen() {
+        // '(()' -> ['()']
+        List<String> result = test.removeInvalidParentheses("(()");
+        assertEquals(Set.of("()"), new HashSet<>(result));
+    }
+
+    @Test
+    public void testLeetCodeExampleOpenTrailing() {
+        // '()(' -> ['()']
+        List<String> result = test.removeInvalidParentheses("()(");
+        assertEquals(Set.of("()"), new HashSet<>(result));
+    }
+
+    @Test
+    public void testDoubleCloseDoubleOpen() {
+        // '))((' -> ['']
+        List<String> result = test.removeInvalidParentheses("))((");
+        assertEquals(Set.of(""), new HashSet<>(result));
+    }
+
+    @Test
+    public void testResultsAllValidBalancedAndSameLength() {
+        // Property test: every result is valid balanced parens and all have same length
+        String input = "(a)())()";
+        List<String> result = test.removeInvalidParentheses(input);
+        assertTrue(result.size() > 0);
+        int expectedLen = result.get(0).length();
+        for (String s : result) {
+            assertEquals(expectedLen, s.length(), "All results must have same length (minimum removals)");
+            int count = 0;
+            for (char c : s.toCharArray()) {
+                if (c == '(') count++;
+                else if (c == ')') count--;
+                assertTrue(count >= 0, "Invalid intermediate state in: " + s);
+            }
+            assertEquals(0, count, "Unbalanced result: " + s);
+        }
+    }
+
+    @Test
+    public void testResultsAreUnique() {
+        // Property test: no duplicates in results
+        String input = "()())()";
+        List<String> result = test.removeInvalidParentheses(input);
+        assertEquals(result.size(), new HashSet<>(result).size(), "Results must be unique");
+    }
+
+    @Test
+    public void testMultipleValidOutputsUnordered() {
+        // '()())()' -> {'(())()', '()()()'}  using Set for unordered comparison
+        List<String> result = test.removeInvalidParentheses("()())()");
+        assertEquals(Set.of("(())()", "()()()"), new HashSet<>(result));
+    }
+
+    @Test
+    public void testLargeInputWithInterleavedLetters() {
+        // Large input: 'a(b(c)d)e)f(g)h(' — letters interleaved with parens
+        String input = "a(b(c)d)e)f(g)h(";
+        List<String> result = test.removeInvalidParentheses(input);
+        assertTrue(result.size() > 0);
+        int expectedLen = result.get(0).length();
+        for (String s : result) {
+            assertEquals(expectedLen, s.length());
+            int count = 0;
+            for (char c : s.toCharArray()) {
+                if (c == '(') count++;
+                else if (c == ')') count--;
+                assertTrue(count >= 0);
+            }
+            assertEquals(0, count);
+        }
+    }
+
+    @Test
+    public void testComplexMultipleSolutions() {
+        // '((()' has multiple ways to remove one '(' -> {'()', '()'}  actually just {'()'}
+        // Better: '()((' -> remove 2 opens -> {'()'}
+        List<String> result = test.removeInvalidParentheses("()((");
+        assertEquals(Set.of("()"), new HashSet<>(result));
     }
 }

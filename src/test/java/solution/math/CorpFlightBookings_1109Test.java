@@ -1,6 +1,7 @@
 package solution.math;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -77,7 +78,7 @@ public class CorpFlightBookings_1109Test {
         }
         int[] result = test.corpFlightBookings(bookings, n);
         for (int i = 0; i < n; i++) {
-            assert result[i] == 1000;
+            assertEquals(1000, result[i]);
         }
     }
 }

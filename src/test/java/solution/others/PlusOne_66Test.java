@@ -1,7 +1,9 @@
 package solution.others;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigInteger;
 import org.junit.jupiter.api.Test;
 
 public class PlusOne_66Test {
@@ -63,5 +65,65 @@ public class PlusOne_66Test {
         int[] expected = new int[1001];
         expected[0] = 1;
         assertArrayEquals(expected, test.plusOne(input));
+    }
+
+    @Test
+    public void testAllNinesThreeDigits() {
+        assertArrayEquals(new int[]{1, 0, 0, 0}, test.plusOne(new int[]{9, 9, 9}));
+    }
+
+    @Test
+    public void testLargeNumberNoCarry() {
+        assertArrayEquals(new int[]{9, 8, 7, 6, 5, 4, 3, 2, 1, 1},
+            test.plusOne(new int[]{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}));
+    }
+
+    @Test
+    public void testNineNinesExpandsToTenDigits() {
+        assertArrayEquals(new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            test.plusOne(new int[]{9, 9, 9, 9, 9, 9, 9, 9, 9}));
+    }
+
+    @Test
+    public void testLargeNumberWithTrailingZeros() {
+        assertArrayEquals(new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+            test.plusOne(new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0}));
+    }
+
+    @Test
+    public void testSingleDigitSweep() {
+        for (int d = 0; d <= 8; d++) {
+            assertArrayEquals(new int[]{d + 1}, test.plusOne(new int[]{d}));
+        }
+    }
+
+    @Test
+    public void testHundredDigitsAllNines() {
+        int[] input = new int[100];
+        for (int i = 0; i < 100; i++) input[i] = 9;
+        int[] result = test.plusOne(input);
+        assertEquals(101, result.length);
+        assertEquals(1, result[0]);
+        for (int i = 1; i < 101; i++) {
+            assertEquals(0, result[i]);
+        }
+    }
+
+    @Test
+    public void testPropertyBigIntegerReference() {
+        int[][] cases = {
+            {1, 2, 3}, {9, 9, 9}, {0}, {9}, {4, 9, 9}, {1, 0, 0, 0}
+        };
+        for (int[] digits : cases) {
+            StringBuilder sb = new StringBuilder();
+            for (int d : digits) sb.append(d);
+            BigInteger original = new BigInteger(sb.toString());
+            BigInteger expected = original.add(BigInteger.ONE);
+
+            int[] result = test.plusOne(digits.clone());
+            StringBuilder resultStr = new StringBuilder();
+            for (int d : result) resultStr.append(d);
+            assertEquals(expected, new BigInteger(resultStr.toString()));
+        }
     }
 }

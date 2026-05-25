@@ -102,6 +102,67 @@ public class CountNodes_222Test {
         assertEquals(1000, test.countNodes(root));
     }
 
+    @Test
+    public void testPerfectTreeDepth4() {
+        // 15 nodes
+        TreeNode root = buildPerfectTree(4);
+        assertEquals(15, test.countNodes(root));
+    }
+
+    @Test
+    public void testPerfectTreeDepth5() {
+        // 31 nodes
+        TreeNode root = buildPerfectTree(5);
+        assertEquals(31, test.countNodes(root));
+    }
+
+    @Test
+    public void testLastLevelOnlyOneNodeDeep() {
+        // Depth 4 perfect (15 nodes) + 1 node on last level = 16
+        TreeNode root = buildCompleteTree(16);
+        assertEquals(16, test.countNodes(root));
+    }
+
+    @Test
+    public void testLastLevelFullMinusOne() {
+        // Depth 4 perfect = 15, full last level = 31, minus one = 30
+        TreeNode root = buildCompleteTree(30);
+        assertEquals(30, test.countNodes(root));
+    }
+
+    @Test
+    public void testCompleteNotPerfectVariousSizes() {
+        // Test several complete-but-not-perfect trees
+        for (int n : new int[]{5, 6, 9, 10, 12, 20, 25}) {
+            TreeNode root = buildCompleteTree(n);
+            assertEquals(n, test.countNodes(root));
+        }
+    }
+
+    @Test
+    public void testPropertyCrossCheckWithRecursiveCount() {
+        // Cross-check countNodes against a naive recursive count for various sizes
+        for (int n = 0; n <= 100; n++) {
+            TreeNode root = buildCompleteTree(n);
+            assertEquals(naiveCount(root), test.countNodes(root), "Failed for n=" + n);
+        }
+    }
+
+    @Test
+    public void testPerfectTreeAllDepths() {
+        // depth 1->1, 2->3, 3->7, 4->15, 5->31
+        int[] expected = {1, 3, 7, 15, 31};
+        for (int d = 1; d <= 5; d++) {
+            TreeNode root = buildPerfectTree(d);
+            assertEquals(expected[d - 1], test.countNodes(root), "Failed for depth=" + d);
+        }
+    }
+
+    private int naiveCount(TreeNode node) {
+        if (node == null) return 0;
+        return 1 + naiveCount(node.left) + naiveCount(node.right);
+    }
+
     private TreeNode buildPerfectTree(int depth) {
         if (depth == 0) return null;
         TreeNode node = new TreeNode(1);

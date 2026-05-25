@@ -2,6 +2,8 @@ package solution.dfs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
@@ -97,5 +99,91 @@ public class SearchBST_700Test {
         assertEquals(1, test.searchBST(root, 1).val);
         assertEquals(50, test.searchBST(root, 50).val);
         assertNull(test.searchBST(root, 101));
+    }
+
+    @Test
+    public void testNotFoundSmallerThanAll() {
+        TreeNode root = new TreeNode(10);
+        root.left = new TreeNode(5);
+        root.right = new TreeNode(15);
+        root.left.left = new TreeNode(3);
+        assertNull(test.searchBST(root, 1));
+    }
+
+    @Test
+    public void testNotFoundLargerThanAll() {
+        TreeNode root = new TreeNode(10);
+        root.left = new TreeNode(5);
+        root.right = new TreeNode(15);
+        root.right.right = new TreeNode(20);
+        assertNull(test.searchBST(root, 25));
+    }
+
+    @Test
+    public void testNotFoundMiddleRange() {
+        // Value 6 is between 5 and 7 but doesn't exist
+        TreeNode root = new TreeNode(10);
+        root.left = new TreeNode(5);
+        root.right = new TreeNode(15);
+        root.left.right = new TreeNode(7);
+        assertNull(test.searchBST(root, 6));
+    }
+
+    @Test
+    public void testDeeplyNestedRightPath() {
+        // Right-skewed BST with 50 nodes, search deepest
+        TreeNode root = new TreeNode(1);
+        TreeNode cur = root;
+        for (int i = 2; i <= 50; i++) {
+            cur.right = new TreeNode(i);
+            cur = cur.right;
+        }
+        assertEquals(50, test.searchBST(root, 50).val);
+        assertEquals(25, test.searchBST(root, 25).val);
+    }
+
+    @Test
+    public void testLargeBalancedBST() {
+        // Build balanced BST from sorted array of 127 nodes
+        TreeNode root = buildBalancedBST(1, 127);
+        assertEquals(64, root.val);
+        assertEquals(1, test.searchBST(root, 1).val);
+        assertEquals(127, test.searchBST(root, 127).val);
+        assertEquals(64, test.searchBST(root, 64).val);
+        assertNull(test.searchBST(root, 0));
+        assertNull(test.searchBST(root, 128));
+    }
+
+    @Test
+    public void testPropertyReturnedRootEqualsTarget() {
+        TreeNode root = buildBalancedBST(1, 31);
+        for (int val = 1; val <= 31; val++) {
+            TreeNode result = test.searchBST(root, val);
+            assertNotNull(result);
+            assertEquals(val, result.val);
+        }
+    }
+
+    @Test
+    public void testPropertyReturnedSubtreeIsValidBST() {
+        TreeNode root = buildBalancedBST(1, 63);
+        TreeNode subtree = test.searchBST(root, 16);
+        assertNotNull(subtree);
+        assertTrue(isValidBST(subtree, Integer.MIN_VALUE, Integer.MAX_VALUE));
+    }
+
+    private TreeNode buildBalancedBST(int lo, int hi) {
+        if (lo > hi) return null;
+        int mid = lo + (hi - lo) / 2;
+        TreeNode node = new TreeNode(mid);
+        node.left = buildBalancedBST(lo, mid - 1);
+        node.right = buildBalancedBST(mid + 1, hi);
+        return node;
+    }
+
+    private boolean isValidBST(TreeNode node, long min, long max) {
+        if (node == null) return true;
+        if (node.val <= min || node.val >= max) return false;
+        return isValidBST(node.left, min, node.val) && isValidBST(node.right, node.val, max);
     }
 }

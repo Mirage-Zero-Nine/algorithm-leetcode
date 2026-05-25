@@ -79,4 +79,68 @@ public class IsMatch_44Test {
             "aaaabaaaabbbbaabbbaabbaababbabbaaaababaaabbbbbbaabbbabababbaaabaabaaaaaabbaabbbbaababbababaabbbaababbbba",
             "*****b*aba***babaa*bbaba***a*aaba*b*aa**a*b**ba***a*a*"));
     }
+
+    @Test
+    public void testEmptyStringWithDoubleStar() {
+        assertTrue(test.isMatch("", "**"));
+        assertTrue(test.isMatch("", "***"));
+    }
+
+    @Test
+    public void testSingleCharWithQuestionMark() {
+        assertTrue(test.isMatch("a", "?"));
+        assertTrue(test.isMatch("z", "?"));
+    }
+
+    @Test
+    public void testStarMatchesMultipleChars() {
+        assertTrue(test.isMatch("aa", "*"));
+        assertTrue(test.isMatch("abcdef", "*"));
+    }
+
+    @Test
+    public void testPartialPatternWithStar() {
+        assertTrue(test.isMatch("aa", "a*"));
+        assertTrue(test.isMatch("abc", "a*c"));
+        assertFalse(test.isMatch("abc", "a*d"));
+    }
+
+    @Test
+    public void testAllQuestionMarksMatchEqualLength() {
+        assertTrue(test.isMatch("abcde", "?????"));
+        assertFalse(test.isMatch("abcde", "????"));
+        assertFalse(test.isMatch("abcde", "??????"));
+    }
+
+    @Test
+    public void testCollapsingMultipleStars() {
+        assertTrue(test.isMatch("abc", "a***b***c"));
+        assertTrue(test.isMatch("abc", "**a**b**c**"));
+        assertTrue(test.isMatch("x", "****"));
+    }
+
+    @Test
+    public void testMixedWildcards() {
+        assertTrue(test.isMatch("abcdef", "a?c*f"));
+        assertFalse(test.isMatch("abcdef", "a?d*f"));
+        assertTrue(test.isMatch("abcdef", "?*?"));
+    }
+
+    @Test
+    public void testLargeStressCase() {
+        String s = "a".repeat(1000) + "b";
+        String p = "a*a*a*a*a*a*a*a*a*a*b";
+        assertTrue(test.isMatch(s, p));
+
+        String s2 = "a".repeat(1000);
+        String p2 = "*".repeat(500) + "a" + "*".repeat(500);
+        assertTrue(test.isMatch(s2, p2));
+    }
+
+    @Test
+    public void testLargeNegativeStressCase() {
+        String s = "a".repeat(1000);
+        String p = "a*a*a*a*a*a*a*a*a*a*b";
+        assertFalse(test.isMatch(s, p));
+    }
 }
