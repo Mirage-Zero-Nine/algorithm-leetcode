@@ -33,7 +33,6 @@ public class CombinationSum2_40 {
         }
 
         Arrays.sort(candidates);        // avoid duplication
-//        System.out.println(Arrays.toString(candidates));
 
         if (candidates[0] > target) {       // if min value in array is larger than target, return empty list
             return res;

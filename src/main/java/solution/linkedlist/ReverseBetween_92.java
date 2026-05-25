@@ -76,7 +76,6 @@ public class ReverseBetween_92 {
 
     private static void printAll(ListNode head) {
         while (head != null) {
-            System.out.println(head.val);
             head = head.next;
         }
     }

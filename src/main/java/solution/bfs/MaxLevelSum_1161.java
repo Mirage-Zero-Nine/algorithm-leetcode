@@ -42,7 +42,6 @@ public class MaxLevelSum_1161 {
                 }
             }
 
-            System.out.println(sum);
             if (max < sum) {
                 max = sum;
                 maxLevel = level;
