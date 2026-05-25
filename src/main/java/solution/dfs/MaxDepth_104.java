@@ -25,7 +25,6 @@ public class MaxDepth_104 {
             return 0;
         }
 
-//        System.out.println(root.val);
 
         /* Keep find left sub tree and right sub tree until reaches the end */
         return Integer.max(maxDepth(root.left), maxDepth(root.right)) + 1;

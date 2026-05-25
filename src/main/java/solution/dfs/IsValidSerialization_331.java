@@ -87,7 +87,6 @@ public class IsValidSerialization_331 {
             }
             s.push(value);
         }
-        System.out.println(s);
         return s.size() == 1 && s.peek().equals("#");
     }
 

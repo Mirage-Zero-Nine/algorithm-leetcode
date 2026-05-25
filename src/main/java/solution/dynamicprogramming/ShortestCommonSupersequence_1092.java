@@ -21,7 +21,6 @@ public class ShortestCommonSupersequence_1092 {
      */
     public String shortestCommonSupersequence(String str1, String str2) {
         String l = lcs(str1, str2);
-        System.out.println(l);
         int p1 = 0, p2 = 0;
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < l.length(); i++) {

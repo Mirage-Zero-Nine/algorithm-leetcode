@@ -47,7 +47,6 @@ public class CalcEquation_399 {
                 out[i] = ratio.get(s1) / ratio.get(s2);
             }
         }
-//        System.out.println(parent);
         return out;
     }
 
