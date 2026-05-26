@@ -1,4 +1,4 @@
-# LeetCode solution
+# LeetCode solutions
 
 A project includes Leetcode algorithm problem solutions. 
 
