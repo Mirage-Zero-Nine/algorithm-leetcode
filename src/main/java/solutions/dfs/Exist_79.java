@@ -14,49 +14,51 @@ import java.util.Arrays;
  */
 
 public class Exist_79 {
-
-    private static final int[][] DIRECTIONS = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    private final int[][] DIRECTIONS = new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
     /**
-     * Backtracking.
-     * Start from first char in word, then find adjacent cell until current cell is unavailable or all char was found.
-     * Time complexity: O(m * n * 4^s).
+     * Tries every matching start cell and uses DFS with backtracking to find
+     * {@code word}. Visited cells are marked with {@code '*'} and then restored.
      *
-     * @param board input 2D char board
-     * @param word  input word string
-     * @return true if found word in board, false otherwise.
+     * <p>Time: {@code O(m * n * 4^L)}. Space: {@code O(L)}, where {@code m * n}
+     * is the board size and {@code L} is the word length.
+     *
+     * @param board a rectangular character grid
+     * @param word  the word to search for
+     * @return {@code true} if the word exists; otherwise {@code false}
      */
     public boolean exist(char[][] board, String word) {
 
-        if (board == null || board.length == 0 || board[0].length == 0 || word == null || word.isEmpty()) {
+        // corner case
+        if (word == null || word.isEmpty() || board == null || board.length == 0) {
             return false;
         }
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                if (board[i][j] == word.charAt(0) && dfs(board, i, j, word, 0)) {
+                if (word.charAt(0) == board[i][j] && dfs(i, j, board, 0, word)) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 
     /**
-     * Similar to path searching in maze, entry is the word's first char in board, exit is the last char (if exist).
-     * Hence, recursively traverse each possible cell in the board, if found available cell then continue searching.
-     * In the end, if traverse to the end of string, return true, otherwise return false.
+     * Matches {@code word[index]} at the current cell, searches its four neighbors, restores the cell before returning.
      *
-     * @param board input 2D char board
-     * @param word  input word string
-     * @param i     current cell row
-     * @param j     current cell column
-     * @param index current index at the given word
-     * @return true if word is found, false otherwise
+     * @param i     current row
+     * @param j     current column
+     * @param board board being searched
+     * @param index current index in {@code word}
+     * @param word  the target word
+     * @return {@code true} if the remaining word is found
      */
-    private boolean dfs(char[][] board, int i, int j, String word, int index) {
+    private boolean dfs(int i, int j, char[][] board, int index, String word) {
 
-        if (i >= board.length || j >= board[0].length || i < 0 || j < 0 || board[i][j] != word.charAt(index)) {
+        // check if current index is valid, and if current char matches the board
+        if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || word.charAt(index) != board[i][j]) {
             return false;
         }
 
@@ -64,11 +66,11 @@ public class Exist_79 {
             return true;
         }
 
-        char tmp = board[i][j];
-        board[i][j] = '#'; // mark as "visited"
-        boolean found = Arrays.stream(DIRECTIONS)
-                .anyMatch(dir -> dfs(board, i + dir[0], j + dir[1], word, index + 1));
-        board[i][j] = tmp;
+        char current = board[i][j];
+        board[i][j] = '*';
+        boolean found = Arrays.stream(DIRECTIONS).anyMatch(direction -> dfs(i + direction[0], j + direction[1], board, index + 1, word));
+        board[i][j] = current;
+
         return found;
     }
 }
