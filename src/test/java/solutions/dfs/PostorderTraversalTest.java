@@ -20,6 +20,7 @@ public class PostorderTraversalTest {
     @Test
     public void testNull() {
         assertEquals(Lists.newArrayList(), test.postorderTraversal(null));
+        assertEquals(Lists.newArrayList(), test.postorderTraversalStack(null));
     }
 
     @Test
