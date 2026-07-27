@@ -8,7 +8,6 @@ import library.tree.TreeParser;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,57 +20,62 @@ public class PreorderTraversal_144Test {
 
     private final PreorderTraversal_144 test = new PreorderTraversal_144();
 
+    private void assertBothApproaches(List<Integer> expected, TreeNode root) {
+        assertIterableEquals(expected, test.preorderTraversal(root));
+        assertIterableEquals(expected, test.preorderTraversalStack(root));
+    }
+
     @Test
     public void test() {
         TreeNode root = TreeParser.deserialize("1,null,2,3");
         List<Integer> expected = Lists.newArrayList(1, 2, 3);
-        assertIterableEquals(expected, test.preorderTraversal(root));
+        assertBothApproaches(expected, root);
     }
 
     @Test
     public void testNull() {
-        assertIterableEquals(new ArrayList<>(), test.preorderTraversal(null));
+        assertBothApproaches(List.of(), null);
     }
 
     @Test
     public void testRootOnly() {
-        assertIterableEquals(Lists.newArrayList(1), test.preorderTraversal(TreeParser.deserialize("1")));
+        assertBothApproaches(Lists.newArrayList(1), TreeParser.deserialize("1"));
     }
 
     @Test
     public void testLeftSkewed() {
         TreeNode root = TreeParser.deserialize("1,2,null,3,null,4");
-        assertIterableEquals(Lists.newArrayList(1, 2, 3, 4), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(1, 2, 3, 4), root);
     }
 
     @Test
     public void testRightSkewed() {
         TreeNode root = TreeParser.deserialize("1,null,2,null,3,null,4");
-        assertIterableEquals(Lists.newArrayList(1, 2, 3, 4), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(1, 2, 3, 4), root);
     }
 
     @Test
     public void testCompleteBinaryTree() {
         TreeNode root = TreeParser.deserialize("1,2,3,4,5,6,7");
-        assertIterableEquals(Lists.newArrayList(1, 2, 4, 5, 3, 6, 7), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(1, 2, 4, 5, 3, 6, 7), root);
     }
 
     @Test
     public void testNegativeValues() {
         TreeNode root = TreeParser.deserialize("-1,-2,-3");
-        assertIterableEquals(Lists.newArrayList(-1, -2, -3), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(-1, -2, -3), root);
     }
 
     @Test
     public void testMixedValues() {
         TreeNode root = TreeParser.deserialize("0,-1,1");
-        assertIterableEquals(Lists.newArrayList(0, -1, 1), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(0, -1, 1), root);
     }
 
     @Test
     public void testTwoNodes() {
         TreeNode root = TreeParser.deserialize("1,2");
-        assertIterableEquals(Lists.newArrayList(1, 2), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(1, 2), root);
     }
 
     @Test
@@ -83,51 +87,53 @@ public class PreorderTraversal_144Test {
             sb.append(i);
         }
         TreeNode root = TreeParser.deserialize(sb.toString());
-        List<Integer> result = test.preorderTraversal(root);
+        List<Integer> recursiveResult = test.preorderTraversal(root);
+        List<Integer> stackResult = test.preorderTraversalStack(root);
         // preorder of complete tree: root should be first
-        assertEquals(1023, result.size());
-        assertEquals(1, result.get(0));
+        assertEquals(1023, recursiveResult.size());
+        assertEquals(1023, stackResult.size());
+        assertEquals(1, recursiveResult.get(0));
+        assertEquals(1, stackResult.get(0));
+        assertIterableEquals(recursiveResult, stackResult);
     }
 
     @Test
     public void testDuplicateValues() {
         TreeNode root = TreeParser.deserialize("1,1,1,1,null,null,1");
-        assertIterableEquals(Lists.newArrayList(1, 1, 1, 1, 1), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(1, 1, 1, 1, 1), root);
     }
 
     @Test
     public void testImbalancedTree() {
         // Left subtree deeper than right
         TreeNode root = TreeParser.deserialize("1,2,3,4,null,null,null,5");
-        assertIterableEquals(Lists.newArrayList(1, 2, 4, 5, 3), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(1, 2, 4, 5, 3), root);
     }
 
     @Test
     public void testPerfectDepth3() {
         // Perfect binary tree: depth 3, 7 nodes
         TreeNode root = TreeParser.deserialize("10,20,30,40,50,60,70");
-        List<Integer> result = test.preorderTraversal(root);
-        assertIterableEquals(Lists.newArrayList(10, 20, 40, 50, 30, 60, 70), result);
-        assertEquals(7, result.size());
+        assertBothApproaches(Lists.newArrayList(10, 20, 40, 50, 30, 60, 70), root);
     }
 
     @Test
     public void testPropertySizeEqualsNodeCount() {
         TreeNode root = TreeParser.deserialize("5,3,8,1,4,7,9");
-        List<Integer> result = test.preorderTraversal(root);
-        assertEquals(7, result.size());
+        assertEquals(7, test.preorderTraversal(root).size());
+        assertEquals(7, test.preorderTraversalStack(root).size());
     }
 
     @Test
     public void testPropertyFirstElementIsRoot() {
         TreeNode root = TreeParser.deserialize("42,10,99,1,15");
-        List<Integer> result = test.preorderTraversal(root);
-        assertEquals(42, result.get(0));
+        assertEquals(42, test.preorderTraversal(root).get(0));
+        assertEquals(42, test.preorderTraversalStack(root).get(0));
     }
 
     @Test
     public void testLargeNegativeValues() {
         TreeNode root = TreeParser.deserialize("-100,-200,300,-400,null,null,500");
-        assertIterableEquals(Lists.newArrayList(-100, -200, -400, 300, 500), test.preorderTraversal(root));
+        assertBothApproaches(Lists.newArrayList(-100, -200, -400, 300, 500), root);
     }
 }

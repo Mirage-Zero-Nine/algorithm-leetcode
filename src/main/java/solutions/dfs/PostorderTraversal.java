@@ -2,12 +2,15 @@ package solutions.dfs;
 
 import library.tree.binarytree.TreeNode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * LeetCode 145: Given a binary tree, return the postorder traversal of its nodes' values.
+ * Left -> current -> right.
  *
  * @author BorisMirage
  * Time: 2019/06/27 11:14
@@ -16,39 +19,48 @@ import java.util.Stack;
 
 public class PostorderTraversal {
     /**
-     * Iterative approach. Using a stack to store the nodes during the traverse.
-     * Each time, pop up the top of the stack, if it's not null, add its value to the first element of output list.
-     * The reason is that the post order traversal is left -> right -> root.
-     * The order of using stack is actually root -> right -> left. Hence, we need to reverse it.
+     * Returns the postorder traversal of a binary tree using an explicit stack.
+     * The stack visits nodes in root-right-left order, and reversing the collected
+     * values produces the required left-right-root order.
+     * This method takes {@code O(n)} time and uses {@code O(n)} auxiliary space.
      *
      * @param root root node
-     * @return postorder traversal of tree's values
+     * @return node values in postorder traversal order
      */
     public List<Integer> postorderTraversalStack(TreeNode root) {
-        List<Integer> output = new ArrayList<>();
 
         if (root == null) {
-            return output;
+            return new ArrayList<>();
         }
 
-        Stack<TreeNode> stack = new Stack<>();
+        List<Integer> output = new ArrayList<>();
+        Deque<TreeNode> stack = new ArrayDeque<>();
         stack.push(root);
+
         while (!stack.isEmpty()) {
             TreeNode current = stack.pop();
-            if (current != null) {
-                output.addFirst(current.val);
+
+            output.add(current.val);
+            if (current.left != null) {
                 stack.push(current.left);
+            }
+            if (current.right != null) {
                 stack.push(current.right);
             }
         }
+
+        Collections.reverse(output);
         return output;
     }
 
     /**
-     * Normal post order traversal. Following the order of left -> right -> root for each node.
+     * Returns the postorder traversal of a binary tree using recursion.
+     * Each recursive call visits the left subtree, the right subtree, and then the
+     * current node. This method takes {@code O(n)} time and uses {@code O(h)} call
+     * stack space, where {@code h} is the tree height.
      *
      * @param root root node
-     * @return postorder traversal of tree's values
+     * @return node values in postorder traversal order
      */
     public List<Integer> postorderTraversal(TreeNode root) {
         var output = new ArrayList<Integer>();
