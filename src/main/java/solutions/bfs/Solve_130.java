@@ -1,6 +1,6 @@
 package solutions.bfs;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Queue;
 
 /**
@@ -17,12 +17,25 @@ import java.util.Queue;
 
 public class Solve_130 {
     /**
-     * Find all 'O' on boundary of given board and relating 'O', set them to a third value.
-     * Use BFS to searching relating 'O'.
-     * These 'O's will not be flipped.
-     * After such 'O's are all found, flip the rest 'O's.
+     * Captures every {@code 'O'} region that is not connected to the board boundary.
+     * An {@code 'O'} is safe from capture if it is on the boundary or is connected
+     * horizontally or vertically to another safe {@code 'O'}. Instead of searching each
+     * interior region to determine whether it is surrounded, the algorithm starts from the
+     * boundary, where every safe region is guaranteed to have at least one cell.
+     * The board is modified in place as follows:
+     * <ol>
+     *     <li>Find every {@code 'O'} on the boundary.</li>
+     *     <li>Run BFS from each unvisited boundary {@code 'O'}, marking it and every connected
+     *     {@code 'O'} as {@code '-'} so those cells cannot be captured.</li>
+     *     <li>Scan the entire board. Any remaining {@code 'O'} is not connected to the boundary,
+     *     so change it to {@code 'X'}. Change each temporary {@code '-'} mark back to
+     *     {@code 'O'}.</li>
+     * </ol>
+     * Each cell is processed a constant number of times, so the time complexity is
+     * {@code O(rows * columns)}. The BFS queue uses {@code O(rows * columns)} auxiliary space
+     * in the worst case.
      *
-     * @param board given board
+     * @param board rectangular board to modify
      */
     public void solve(char[][] board) {
 
@@ -32,39 +45,69 @@ public class Solve_130 {
         }
 
         int[] d = new int[]{1, -1, 0, 0, 0, 0, 1, -1};
-        int row = board.length - 1;
-        int col = board[0].length - 1;
+        int row = board.length - 1, column = board[0].length - 1;
 
         for (int i = 0; i <= row; i++) {
-            for (int j = 0; j <= col; j++) {
-                if ((i == 0 || j == 0 || i == row || j == col) && board[i][j] == 'O') {
+            for (int j = 0; j <= column; j++) {
+                if ((i == 0 || j == 0 || i == row || j == column) && board[i][j] == 'O') {
                     bfs(board, i, j, d);        // do BFS to find all 'O' on board
                 }
             }
         }
 
-        for (int i = 0; i <= row; i++) {
-            for (int j = 0; j <= col; j++) {
-                if (board[i][j] == 'O') {
-                    board[i][j] = 'X';
-                }
-                if (board[i][j] == '-') {
-                    board[i][j] = 'O';
-                }
-            }
-        }
+        captureUnmarkedRegions(board);
     }
 
     /**
-     * BFS to find all cells connected to 'O' on board.
+     * Captures every surrounded region using recursive depth-first search.
+     * <p>
+     * The key observation is the same as in the BFS solution: only {@code 'O'} cells connected
+     * to the boundary are safe. DFS starts from every boundary {@code 'O'} and changes all
+     * reachable {@code 'O'} cells to {@code '-'}. After these safe regions are marked, every
+     * remaining {@code 'O'} must be surrounded and is changed to {@code 'X'}. Finally, the
+     * temporary marks are restored to {@code 'O'}.
+     * <p>
+     * Each cell is processed a constant number of times, so the time complexity is
+     * {@code O(rows * columns)}. The recursive call stack uses
+     * {@code O(rows * columns)} space in the worst case and may overflow for a very large
+     * connected region; the iterative BFS solution avoids that recursion risk.
      *
-     * @param board given board
-     * @param i     'O' index
-     * @param j     'O' index
-     * @param d     directions array
+     * @param board rectangular board to modify
+     */
+    public void solveDfs(char[][] board) {
+        if (board.length == 0 || board[0].length == 0) {
+            return;
+        }
+
+        int lastRow = board.length - 1;
+        int lastColumn = board[0].length - 1;
+
+        for (int row = 0; row <= lastRow; row++) {
+            dfs(board, row, 0);
+            dfs(board, row, lastColumn);
+        }
+
+        for (int column = 0; column <= lastColumn; column++) {
+            dfs(board, 0, column);
+            dfs(board, lastRow, column);
+        }
+
+        captureUnmarkedRegions(board);
+    }
+
+    /**
+     * Marks the connected component containing {@code (i, j)} as boundary-safe.
+     *
+     * <p>Every reachable {@code 'O'} is changed to {@code '-'} before it enters the queue, which
+     * prevents the same cell from being enqueued more than once.
+     *
+     * @param board board being searched
+     * @param i     starting row
+     * @param j     starting column
+     * @param d     encoded offsets for the four orthogonal directions
      */
     private void bfs(char[][] board, int i, int j, int[] d) {
-        Queue<int[]> q = new LinkedList<>();
+        Queue<int[]> q = new ArrayDeque<>();
         q.add(new int[]{i, j});
         board[i][j] = '-';      // mark first
         while (!q.isEmpty()) {
@@ -77,6 +120,46 @@ public class Solve_130 {
                 if (xx >= 0 && xx < board.length && yy >= 0 && yy < board[0].length && board[xx][yy] == 'O') {
                     board[xx][yy] = '-';
                     q.add(new int[]{xx, yy});
+                }
+            }
+        }
+    }
+
+    /**
+     * Marks every {@code 'O'} connected to {@code (row, column)} as boundary-safe.
+     *
+     * @param board  board being searched
+     * @param row    current row
+     * @param column current column
+     */
+    private void dfs(char[][] board, int row, int column) {
+        if (row < 0
+                || row >= board.length
+                || column < 0
+                || column >= board[0].length
+                || board[row][column] != 'O') {
+            return;
+        }
+
+        board[row][column] = '-';
+        dfs(board, row + 1, column);
+        dfs(board, row - 1, column);
+        dfs(board, row, column + 1);
+        dfs(board, row, column - 1);
+    }
+
+    /**
+     * Captures unmarked regions and restores cells marked as boundary-safe.
+     *
+     * @param board board to update
+     */
+    private void captureUnmarkedRegions(char[][] board) {
+        for (char[] row : board) {
+            for (int column = 0; column < row.length; column++) {
+                if (row[column] == 'O') {
+                    row[column] = 'X';
+                } else if (row[column] == '-') {
+                    row[column] = 'O';
                 }
             }
         }
