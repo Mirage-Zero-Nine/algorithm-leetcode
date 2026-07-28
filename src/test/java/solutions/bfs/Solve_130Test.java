@@ -2,30 +2,43 @@ package solutions.bfs;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-import org.junit.jupiter.api.Test;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class Solve_130Test {
 
-    private final Solve_130 test = new Solve_130();
+    private static Stream<Arguments> solvers() {
+        Solve_130 solution = new Solve_130();
+        return Stream.of(
+                Arguments.of("BFS", (Consumer<char[][]>) solution::solve),
+                Arguments.of("DFS", (Consumer<char[][]>) solution::solveDfs)
+        );
+    }
 
-    @Test
-    public void testHappyCases() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testHappyCases(String approach, Consumer<char[][]> solver) {
         char[][] board = {{'X', 'X', 'X', 'X'}, {'X', 'O', 'O', 'X'}, {'X', 'X', 'O', 'X'}, {'X', 'O', 'X', 'X'}};
-        test.solve(board);
+        solver.accept(board);
         assertArrayEquals(new char[]{'X', 'X', 'X', 'X'}, board[0]);
         assertArrayEquals(new char[]{'X', 'X', 'X', 'X'}, board[1]);
         assertArrayEquals(new char[]{'X', 'O', 'X', 'X'}, board[3]);
     }
 
-    @Test
-    public void testNegativeAndEdgeCases() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testNegativeAndEdgeCases(String approach, Consumer<char[][]> solver) {
         char[][] board = {{'O'}};
-        test.solve(board);
+        solver.accept(board);
         assertArrayEquals(new char[]{'O'}, board[0]);
     }
 
-    @Test
-    public void testLargeCase() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testLargeCase(String approach, Consumer<char[][]> solver) {
         char[][] board = {
             {'X', 'O', 'X', 'O', 'X'},
             {'O', 'X', 'O', 'X', 'O'},
@@ -33,39 +46,42 @@ public class Solve_130Test {
             {'O', 'X', 'O', 'X', 'O'},
             {'X', 'O', 'X', 'O', 'X'}
         };
-        test.solve(board);
+        solver.accept(board);
         // Border O's remain, interior O's become X
         assertArrayEquals(new char[]{'X', 'O', 'X', 'O', 'X'}, board[0]);
     }
 
-    @Test
-    public void testEmptyBoardNoCrash() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testEmptyBoardNoCrash(String approach, Consumer<char[][]> solver) {
         char[][] board = {};
-        test.solve(board);
+        solver.accept(board);
         assertArrayEquals(new char[][]{}, board);
     }
 
-    @Test
-    public void testAllXUnchanged() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testAllXUnchanged(String approach, Consumer<char[][]> solver) {
         char[][] board = {
                 {'X', 'X'},
                 {'X', 'X'}
         };
-        test.solve(board);
+        solver.accept(board);
         assertArrayEquals(new char[][]{
                 {'X', 'X'},
                 {'X', 'X'}
         }, board);
     }
 
-    @Test
-    public void testAllOBorderConnectedRemain() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testAllOBorderConnectedRemain(String approach, Consumer<char[][]> solver) {
         char[][] board = {
                 {'O', 'O', 'O'},
                 {'O', 'O', 'O'},
                 {'O', 'O', 'O'}
         };
-        test.solve(board);
+        solver.accept(board);
         assertArrayEquals(new char[][]{
                 {'O', 'O', 'O'},
                 {'O', 'O', 'O'},
@@ -73,26 +89,28 @@ public class Solve_130Test {
         }, board);
     }
 
-    @Test
-    public void testSingleRowUnchanged() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testSingleRowUnchanged(String approach, Consumer<char[][]> solver) {
         char[][] board = {
                 {'X', 'O', 'O', 'X', 'O'}
         };
-        test.solve(board);
+        solver.accept(board);
         assertArrayEquals(new char[][]{
                 {'X', 'O', 'O', 'X', 'O'}
         }, board);
     }
 
-    @Test
-    public void testSingleColumnUnchanged() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testSingleColumnUnchanged(String approach, Consumer<char[][]> solver) {
         char[][] board = {
                 {'X'},
                 {'O'},
                 {'O'},
                 {'X'}
         };
-        test.solve(board);
+        solver.accept(board);
         assertArrayEquals(new char[][]{
                 {'X'},
                 {'O'},
@@ -101,8 +119,9 @@ public class Solve_130Test {
         }, board);
     }
 
-    @Test
-    public void testInteriorRegionCaptured() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testInteriorRegionCaptured(String approach, Consumer<char[][]> solver) {
         char[][] board = {
                 {'X', 'X', 'X', 'X', 'X'},
                 {'X', 'O', 'O', 'O', 'X'},
@@ -110,7 +129,7 @@ public class Solve_130Test {
                 {'X', 'O', 'O', 'O', 'X'},
                 {'X', 'X', 'X', 'X', 'X'}
         };
-        test.solve(board);
+        solver.accept(board);
         assertArrayEquals(new char[][]{
                 {'X', 'X', 'X', 'X', 'X'},
                 {'X', 'X', 'X', 'X', 'X'},
@@ -120,8 +139,9 @@ public class Solve_130Test {
         }, board);
     }
 
-    @Test
-    public void testGiantCheckerboard() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testGiantCheckerboard(String approach, Consumer<char[][]> solver) {
         int n = 20;
         char[][] board = new char[n][n];
         for (int i = 0; i < n; i++) {
@@ -129,7 +149,7 @@ public class Solve_130Test {
                 board[i][j] = ((i + j) % 2 == 0) ? 'O' : 'X';
             }
         }
-        test.solve(board);
+        solver.accept(board);
         for (int i = 1; i < n - 1; i++) {
             for (int j = 1; j < n - 1; j++) {
                 if ((i + j) % 2 == 0) {
@@ -137,5 +157,27 @@ public class Solve_130Test {
                 }
             }
         }
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("solvers")
+    public void testMixedBoundaryAndInteriorRegions(String approach, Consumer<char[][]> solver) {
+        char[][] board = {
+                {'X', 'X', 'X', 'X', 'X', 'X'},
+                {'X', 'O', 'O', 'X', 'O', 'X'},
+                {'X', 'X', 'O', 'X', 'O', 'X'},
+                {'X', 'O', 'O', 'O', 'X', 'X'},
+                {'X', 'O', 'X', 'X', 'X', 'X'}
+        };
+
+        solver.accept(board);
+
+        assertArrayEquals(new char[][]{
+                {'X', 'X', 'X', 'X', 'X', 'X'},
+                {'X', 'O', 'O', 'X', 'X', 'X'},
+                {'X', 'X', 'O', 'X', 'X', 'X'},
+                {'X', 'O', 'O', 'O', 'X', 'X'},
+                {'X', 'O', 'X', 'X', 'X', 'X'}
+        }, board);
     }
 }
