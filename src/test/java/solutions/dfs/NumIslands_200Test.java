@@ -1,6 +1,8 @@
 package solutions.dfs;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Random;
 
@@ -12,50 +14,46 @@ public class NumIslands_200Test {
 
     @Test
     public void testHappyCases() {
-        assertEquals(1, test.numIslands(new char[][]{{'1', '1', '1', '1', '0'}, {'1', '1', '0', '1', '0'}, {'1', '1', '0', '0', '0'}, {'0', '0', '0', '0', '0'}}));
-        assertEquals(3, test.numIslands(new char[][]{{'1', '1', '0', '0', '0'}, {'1', '1', '0', '0', '0'}, {'0', '0', '1', '0', '0'}, {'0', '0', '0', '1', '1'}}));
+        assertAllImplementations(1, new char[][]{{'1', '1', '1', '1', '0'}, {'1', '1', '0', '1', '0'}, {'1', '1', '0', '0', '0'}, {'0', '0', '0', '0', '0'}});
+        assertAllImplementations(3, new char[][]{{'1', '1', '0', '0', '0'}, {'1', '1', '0', '0', '0'}, {'0', '0', '1', '0', '0'}, {'0', '0', '0', '1', '1'}});
     }
 
     @Test
     public void testNegativeAndEdgeCases() {
-        assertEquals(0, test.numIslands(null));
-        assertEquals(0, test.numIslands(new char[][]{}));
-    }
-
-    @Test
-    public void testLargeCase() {
-        assertEquals(1, test.numIslands(new char[][]{{'1', '1', '1'}, {'1', '1', '1'}, {'1', '1', '1'}}));
+        assertAllImplementations(0, null);
+        assertAllImplementations(0, new char[][]{});
     }
 
     @Test
     public void testAllWater() {
-        assertEquals(0, test.numIslands(new char[][]{{'0', '0', '0'}, {'0', '0', '0'}}));
+        assertAllImplementations(0, new char[][]{{'0', '0', '0'}, {'0', '0', '0'}});
     }
 
     @Test
     public void testSingleLand() {
-        assertEquals(1, test.numIslands(new char[][]{{'1'}}));
+        assertAllImplementations(1, new char[][]{{'1'}});
+        assertAllImplementations(1, new char[][]{{'1', '1', '1'}, {'1', '1', '1'}, {'1', '1', '1'}});
     }
 
     @Test
     public void testSingleWater() {
-        assertEquals(0, test.numIslands(new char[][]{{'0'}}));
+        assertAllImplementations(0, new char[][]{{'0'}});
     }
 
     @Test
     public void testDiagonalNotConnected() {
         // Diagonal cells are NOT connected
-        assertEquals(4, test.numIslands(new char[][]{{'1', '0', '1'}, {'0', '0', '0'}, {'1', '0', '1'}}));
+        assertAllImplementations(4, new char[][]{{'1', '0', '1'}, {'0', '0', '0'}, {'1', '0', '1'}});
     }
 
     @Test
     public void testSingleRow() {
-        assertEquals(3, test.numIslands(new char[][]{{'1', '0', '1', '1', '0', '1'}}));
+        assertAllImplementations(3, new char[][]{{'1', '0', '1', '1', '0', '1'}});
     }
 
     @Test
     public void testSingleColumn() {
-        assertEquals(2, test.numIslands(new char[][]{{'1'}, {'0'}, {'1'}, {'1'}}));
+        assertAllImplementations(2, new char[][]{{'1'}, {'0'}, {'1'}, {'1'}});
     }
 
     @Test
@@ -74,19 +72,70 @@ public class NumIslands_200Test {
             }
         }
         // In a checkerboard, no two '1's are adjacent, so each '1' is its own island
-        assertEquals(expected, test.numIslands(grid));
+        assertAllImplementations(expected, grid);
     }
 
     @Test
-    public void testUnionFind() {
-        assertEquals(1, test.numIslandsUnionFind(new char[][]{{'1', '1', '1', '1', '0'}, {'1', '1', '0', '1', '0'}, {'1', '1', '0', '0', '0'}, {'0', '0', '0', '0', '0'}}));
-        assertEquals(3, test.numIslandsUnionFind(new char[][]{{'1', '1', '0', '0', '0'}, {'1', '1', '0', '0', '0'}, {'0', '0', '1', '0', '0'}, {'0', '0', '0', '1', '1'}}));
+    public void testDenseConnectedGrid() {
+        char[][] grid = {
+                {'1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '0', '1', '1'},
+                {'0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '1', '0'},
+                {'1', '0', '1', '1', '1', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '0', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '0', '1', '1', '1', '1', '1', '1', '0', '1', '1', '1', '0', '1', '1', '1', '0', '1', '1', '1'},
+                {'0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '1', '1'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '0', '1', '1'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'0', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '1', '1'},
+                {'1', '0', '1', '1', '1', '1', '1', '0', '1', '1', '1', '0', '1', '1', '1', '1', '0', '1', '1', '1'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '0'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '1', '1', '0', '0'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+                {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'}
+        };
+
+        assertAllImplementations(1, grid);
+    }
+
+    @Test
+    public void testLargeConnectedGrid() {
+        // A dense island exercises the worst-case DFS recursion depth.
+        char[][] grid = new char[300][300];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                grid[i][j] = '1';
+            }
+        }
+
+        assertAllImplementations(1, grid);
+    }
+
+    @Test
+    public void testConnectedIrregularIsland() {
+        assertAllImplementations(1, new char[][]{{'1', '1', '1', '1', '0'}, {'1', '1', '0', '1', '0'}, {'1', '1', '0', '1', '0'}, {'0', '0', '0', '0', '0'}});
     }
 
     @Test
     public void testEmptyFirstRow() {
         // grid with empty inner array
-        assertEquals(0, test.numIslands(new char[][]{{}}));
+        assertAllImplementations(0, new char[][]{{}});
+    }
+
+    @Test
+    public void testRaggedGridIsRejected() {
+        char[][] grid = {{'1', '0'}, {'0'}};
+
+        assertAll(
+                () -> assertThrows(ArrayIndexOutOfBoundsException.class, () -> test.numIslands(copyGrid(grid))),
+                () -> assertThrows(ArrayIndexOutOfBoundsException.class, () -> test.numIslandsBFS(copyGrid(grid))),
+                () -> assertThrows(ArrayIndexOutOfBoundsException.class, () -> test.numIslandsUnionFind(copyGrid(grid)))
+        );
     }
 
     @Test
@@ -97,7 +146,7 @@ public class NumIslands_200Test {
                 {'1', '1', '1'},
                 {'0', '1', '0'}
         };
-        assertEquals(1, test.numIslands(grid));
+        assertAllImplementations(1, grid);
     }
 
     @Test
@@ -108,7 +157,7 @@ public class NumIslands_200Test {
                 {'1', '0', '1'},
                 {'1', '1', '1'}
         };
-        assertEquals(1, test.numIslands(grid));
+        assertAllImplementations(1, grid);
     }
 
     @Test
@@ -121,7 +170,7 @@ public class NumIslands_200Test {
                 {'0', '0', '0', '0', '0'},
                 {'1', '0', '1', '0', '1'}
         };
-        assertEquals(9, test.numIslands(grid));
+        assertAllImplementations(9, grid);
     }
 
     @Test
@@ -134,7 +183,7 @@ public class NumIslands_200Test {
                 {'1', '0', '0', '0', '1'},
                 {'1', '1', '1', '1', '1'}
         };
-        assertEquals(1, test.numIslands(grid));
+        assertAllImplementations(1, grid);
     }
 
     @Test
@@ -144,25 +193,21 @@ public class NumIslands_200Test {
         for (int j = 0; j < 100; j++) {
             grid[0][j] = '1';
         }
-        assertEquals(1, test.numIslands(grid));
+        assertAllImplementations(1, grid);
     }
 
     @Test
-    public void testLargeRandomGridCrossCheckUnionFind() {
-        // Generate a 100x100 random grid and cross-check DFS vs union-find
+    public void testLargeRandomGrid() {
+        // Generate a deterministic 100x100 random grid.
         Random rand = new Random(42L);
-        char[][] gridDfs = new char[100][100];
-        char[][] gridUf = new char[100][100];
+        char[][] grid = new char[100][100];
         for (int i = 0; i < 100; i++) {
             for (int j = 0; j < 100; j++) {
-                char c = rand.nextBoolean() ? '1' : '0';
-                gridDfs[i][j] = c;
-                gridUf[i][j] = c;
+                grid[i][j] = rand.nextBoolean() ? '1' : '0';
             }
         }
-        int dfsResult = test.numIslands(gridDfs);
-        int ufResult = test.numIslandsUnionFind(gridUf);
-        assertEquals(ufResult, dfsResult);
+
+        assertAllImplementations(641, grid);
     }
 
     @Test
@@ -175,7 +220,7 @@ public class NumIslands_200Test {
                 {'0', '1', '1', '1', '0'},
                 {'0', '0', '0', '0', '0'}
         };
-        assertEquals(1, test.numIslands(grid));
+        assertAllImplementations(1, grid);
     }
 
     @Test
@@ -186,7 +231,7 @@ public class NumIslands_200Test {
                 {'1', '1', '0', '1', '1'},
                 {'1', '1', '0', '1', '1'}
         };
-        assertEquals(2, test.numIslands(grid));
+        assertAllImplementations(2, grid);
     }
 
     @Test
@@ -199,6 +244,26 @@ public class NumIslands_200Test {
                 {'0', '0', '0', '0', '1'},
                 {'0', '0', '1', '1', '1'}
         };
-        assertEquals(1, test.numIslands(grid));
+        assertAllImplementations(1, grid);
+    }
+
+    private void assertAllImplementations(int expected, char[][] grid) {
+        assertAll(
+                () -> assertEquals(expected, test.numIslands(copyGrid(grid))),
+                () -> assertEquals(expected, test.numIslandsBFS(copyGrid(grid))),
+                () -> assertEquals(expected, test.numIslandsUnionFind(copyGrid(grid)))
+        );
+    }
+
+    private char[][] copyGrid(char[][] grid) {
+        if (grid == null) {
+            return null;
+        }
+
+        char[][] copy = new char[grid.length][];
+        for (int i = 0; i < grid.length; i++) {
+            copy[i] = grid[i] == null ? null : grid[i].clone();
+        }
+        return copy;
     }
 }
