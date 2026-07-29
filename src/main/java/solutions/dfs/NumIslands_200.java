@@ -1,6 +1,7 @@
 package solutions.dfs;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Queue;
 
 /**
@@ -18,89 +19,97 @@ import java.util.Queue;
 public class NumIslands_200 {
 
     /**
-     * DFS.
-     * When reaches a '1' then do DFS start at this point and mark all accessible point as visited.
-     * Iterate all cells in grid.
+     * Counts islands with iterative depth-first search.
+     * When an unvisited land cell is found, a LIFO stack is used to visit and
+     * mark every horizontally or vertically connected land cell. Each completed
+     * traversal represents one island.
+     * Complexity: {@code O(rows * columns)} time and
+     * {@code O(rows * columns)} auxiliary space in the worst case. This method
+     * mutates {@code grid} by replacing visited land cells with
+     * {@code 'x'}.
      *
-     * @param grid given grid
-     * @return number of connected '1'
+     * @param grid rectangular grid containing {@code '1'} for land and
+     *             {@code '0'} for water
+     * @return number of islands, or {@code 0} for a null or empty grid
      */
     public int numIslands(char[][] grid) {
 
+        // corner case
         if (grid == null || grid.length == 0 || grid[0].length == 0) {
             return 0;
         }
 
-        int width = grid.length, height = grid[0].length, count = 0;
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        int row = grid.length, column = grid[0].length, count = 0;
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
                 if (grid[i][j] == '1') {
-                    dfs(grid, i, j);
+                    dfs(i, j, grid);
                     count++;
                 }
             }
         }
-
         return count;
     }
 
+    private final static int[] DIRECTIONS = new int[]{0, 1, 0, -1, 0};
+
     /**
-     * DFS to access all accessible points based on current point.
+     * Marks every land cell in one island using an explicit LIFO stack.
+     * Cells are marked before they are pushed so each cell is processed at most
+     * once.
      *
-     * @param grid given grid
-     * @param x    coord x
-     * @param y    coord y
+     * @param i    starting row
+     * @param j    starting column
+     * @param grid grid whose starting cell is unvisited land
      */
-    private void dfs(char[][] grid, int x, int y) {
+    private void dfs(int i, int j, char[][] grid) {
 
-        if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length || grid[x][y] != '1') {
-            return;
+        // use stack as normal DFS may risk stack overflow under deep DFS recursion
+        Deque<int[]> stack = new ArrayDeque<>();
+
+        stack.push(new int[]{i, j});
+        grid[i][j] = 'x';
+        while (!stack.isEmpty()) {
+            int[] current = stack.pop();
+
+            for (int k = 0; k < 4; k++) {
+                int nextI = current[0] + DIRECTIONS[k], nextJ = current[1] + DIRECTIONS[k + 1];
+                if (nextI >= 0 && nextI < grid.length && nextJ >= 0 && nextJ < grid[0].length && grid[nextI][nextJ] == '1') {
+                    stack.push(new int[]{nextI, nextJ});
+                    grid[nextI][nextJ] = 'x';
+                }
+            }
         }
-
-        grid[x][y] = '2';
-
-        dfs(grid, x + 1, y);
-        dfs(grid, x, y + 1);
-        dfs(grid, x - 1, y);
-        dfs(grid, x, y - 1);
     }
 
+
     /**
-     * BFS implementation.
+     * Counts islands with BFS.
+     * When an unvisited land cell is found, a FIFO queue is used to visit and
+     * mark every horizontally or vertically connected land cell level by level.
+     * Each completed traversal represents one island.
+     * Complexity: {@code O(rows * columns)} time and
+     * {@code O(rows * columns)} auxiliary space in the worst case. This method
+     * mutates {@code grid} by replacing visited land cells with
+     * {@code 'x'}.
      *
-     * @param grid given grid
-     * @return number of connected '1'
+     * @param grid rectangular grid containing {@code '1'} for land and
+     *             {@code '0'} for water
+     * @return number of islands, or {@code 0} for a null or empty grid
      */
     public int numIslandsBFS(char[][] grid) {
-
+        // corner case
         if (grid == null || grid.length == 0 || grid[0].length == 0) {
             return 0;
         }
 
-        int count = 0;
-        int[] direction = new int[]{0, 1, 0, -1, 0};
-        Queue<int[]> queue = new LinkedList<>();
+        int row = grid.length, column = grid[0].length, count = 0;
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
                 if (grid[i][j] == '1') {
-
-                    queue.add(new int[]{i, j});
-
-                    while (!queue.isEmpty()) {
-                        int[] poll = queue.poll();
-                        int x = poll[0], y = poll[1];
-
-                        if (grid[x][y] == '1') {
-                            grid[x][y] = '2';
-                            for (int k = 0; k < 4; k++) {
-                                int nx = x + direction[k], ny = y + direction[k + 1];
-                                if (nx >= 0 && nx < grid.length && ny >= 0 && ny < grid[0].length && grid[nx][ny] == '1') {
-                                    queue.add(new int[]{nx, ny});
-                                }
-                            }
-                        }
-                    }
+                    bfs(i, j, grid);
                     count++;
                 }
             }
@@ -110,10 +119,44 @@ public class NumIslands_200 {
     }
 
     /**
-     * Implement union find to connect all nodes that are connected and count all islands.
+     * Marks every land cell in one island using a FIFO queue. Newly discovered
+     * neighbors are marked when they are enqueued to avoid duplicate entries.
      *
-     * @param grid given grid
-     * @return number of islands
+     * @param i    starting row
+     * @param j    starting column
+     * @param grid grid whose starting cell is unvisited land
+     */
+    private void bfs(int i, int j, char[][] grid) {
+        int[] direction = new int[]{0, 1, 0, -1, 0};
+
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.add(new int[]{i, j});
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            grid[current[0]][current[1]] = 'x';
+            for (int k = 0; k < 4; k++) {
+                int newI = current[0] + direction[k], newJ = current[1] + direction[k + 1];
+                if (newI >= 0 && newI < grid.length && newJ >= 0 && newJ < grid[0].length && grid[newI][newJ] == '1') {
+                    queue.add(new int[]{newI, newJ});
+                    grid[newI][newJ] = 'x';
+                }
+            }
+        }
+    }
+
+    /**
+     * Counts islands with a disjoint-set (union-find) data structure.
+     * Each land cell initially forms its own set. Adjacent land cells are
+     * unioned, and the number of remaining disjoint land sets is the number of
+     * islands.
+     * Complexity: {@code O(rows * columns)} neighbor checks plus
+     * amortized disjoint-set operations with path compression, and uses
+     * {@code O(rows * columns)} auxiliary space. Unlike the traversal methods,
+     * this method does not mutate {@code grid}.
+     *
+     * @param grid rectangular grid containing {@code '1'} for land and
+     *             {@code '0'} for water
+     * @return number of islands, or {@code 0} for a null or empty grid
      */
     public int numIslandsUnionFind(char[][] grid) {
 
@@ -146,16 +189,17 @@ public class NumIslands_200 {
     }
 
     /**
-     * Union find class specially implemented for this problem.
+     * Disjoint-set structure containing one set for each land cell.
+     * The component count is reduced whenever two distinct land sets are joined.
      */
     static class UnionFind {
         int[] father;
         int count = 0;
 
         /**
-         * Count father of each node. Initially, father of each node is itself.
+         * Initializes each land cell as its own parent and component.
          *
-         * @param grid given grid
+         * @param grid rectangular land-and-water grid
          */
         UnionFind(char[][] grid) {
             father = new int[grid.length * grid[0].length];     // contains all nodes in 2D array
@@ -171,11 +215,11 @@ public class NumIslands_200 {
         }
 
         /**
-         * Union two nodes that are both '1'.
-         * If two nodes are connected, then the # of islands reduced by 1.
+         * Joins the components containing two land cells. If the cells were in
+         * different components, the component count is reduced by one.
          *
-         * @param node1 first node
-         * @param node2 second node
+         * @param node1 flattened index of the first land cell
+         * @param node2 flattened index of the second land cell
          */
         void union(int node1, int node2) {
             int find1 = find(node1), find2 = find(node2);
@@ -186,10 +230,11 @@ public class NumIslands_200 {
         }
 
         /**
-         * Find root of given node.
+         * Finds the representative of a land cell and compresses the traversed
+         * parent path.
          *
-         * @param node given node
-         * @return root of given node
+         * @param node flattened land-cell index
+         * @return representative index of the cell's component
          */
         int find(int node) {
             if (father[node] == node) {
