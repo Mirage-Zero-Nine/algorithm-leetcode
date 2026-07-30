@@ -14,33 +14,36 @@ import library.tree.binarytree.TreeNode;
 
 public class SumNumbers_129 {
     /**
-     * DFS.
+     * Calculates the sum of the numbers represented by every root-to-leaf path.
+     * Appending a digit to {@code prefix} produces {@code prefix * 10 + node.val}.
      *
-     * @param root root node
-     * @return total sum of all root-to-leaf numbers
+     * @param root root of the binary tree
+     * @return sum of all root-to-leaf numbers, or {@code 0} for an empty tree
      */
     public int sumNumbers(TreeNode root) {
         return dfs(root, 0);
     }
 
     /**
-     * Add each node's value with 10^n
+     * Returns the sum of all completed root-to-leaf numbers below {@code node}.
+     * {@code prefix} contains the digits from the ancestors and excludes {@code node.val}.
      *
-     * @param r root node
-     * @param n power
-     * @return total sum of all root-to-leaf numbers
+     * @param node current node being visited
+     * @param prefix number formed by the path before {@code node}
+     * @return sum of all root-to-leaf numbers that continue through {@code node}
      */
-    public int dfs(TreeNode r, int n) {
-
-        /* End point */
-        if (r == null) {
+    private int dfs(TreeNode node, int prefix) {
+        // exit current path at null node
+        if (node == null) {
             return 0;
         }
 
-        if (r.right == null && r.left == null) {
-            return n * 10 + r.val;
+        // multiplying by 10 shifts the existing digits left before appending node.val.
+        int currentNumber = prefix * 10 + node.val;
+        if (node.left == null && node.right == null) {
+            return currentNumber;
         }
 
-        return dfs(r.left, n * 10 + r.val) + dfs(r.right, n * 10 + r.val);
+        return dfs(node.left, currentNumber) + dfs(node.right, currentNumber);
     }
 }
