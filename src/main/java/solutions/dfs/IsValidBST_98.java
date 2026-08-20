@@ -18,92 +18,127 @@ import java.util.Stack;
 
 public class IsValidBST_98 {
     /**
-     * In-order traversal with each root's value. Compare left subtree and right subtree.
+     * Validates the tree by carrying the open interval allowed for each node.
      *
-     * @param root root of tree
-     * @return if given tree is a valid BST
+     * <p>The root may contain any {@code int}. A node in the left subtree must
+     * be smaller than its ancestor, so the ancestor becomes the node's upper
+     * bound. Likewise, a node in the right subtree must be greater than its
+     * ancestor, so the ancestor becomes its lower bound. Passing both bounds
+     * down the tree catches violations caused by any ancestor, not only by a
+     * node's immediate parent. The strict comparisons also reject duplicates.</p>
+     *
+     * <p>{@code long} bounds are used because {@link Integer#MIN_VALUE} and
+     * {@link Integer#MAX_VALUE} are valid node values and therefore cannot be
+     * used safely as exclusive {@code int} sentinels.</p>
+     *
+     * @param root root of the tree
+     * @return {@code true} if the tree satisfies the strict BST ordering
+     * @see #isValidBSTInOrder(TreeNode)
+     * @see #isValidBSTStack(TreeNode)
      */
     public boolean isValidBST(TreeNode root) {
-        return dfs(root, Long.MIN_VALUE, Long.MAX_VALUE);     // avoid int overflow
+        return dfs(root, Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
     /**
-     * In-order traversal that compare root's value to left and right.
+     * Recursively validates the subtree rooted at {@code root} within an open
+     * interval. The interval is narrowed for each child: the left child keeps
+     * the lower bound and uses the current value as its upper bound, while the
+     * right child uses the current value as its lower bound.
      *
-     * @param root current root
-     * @param min  min value
-     * @param max  max value
-     * @return if given tree is a valid BST
+     * @param root current subtree root
+     * @param min exclusive lower bound inherited from an ancestor
+     * @param max exclusive upper bound inherited from an ancestor
+     * @return {@code true} if every node in this subtree is within its bounds
      */
     private boolean dfs(TreeNode root, long min, long max) {
         if (root == null) {
             return true;
         }
-        if (root.val >= max || root.val <= min) {       // no duplicate node as well
+        if (root.val >= max || root.val <= min) {
             return false;
         }
         return dfs(root.left, min, root.val) && dfs(root.right, root.val, max);
     }
 
     /**
-     * Inorder traversal.
+     * Validates the tree using recursive in-order traversal.
      *
-     * @param root root of tree
-     * @return if given tree is a valid BST
+     * <p>An in-order traversal of a valid BST visits values in strictly
+     * increasing order. The one-element array lets recursive calls share the
+     * previously visited value; it is initialized below {@code int}'s range
+     * so {@link Integer#MIN_VALUE} remains valid. Any value that is not
+     * greater than the previous value proves that the tree is invalid.</p>
+     *
+     * @param root root of the tree
+     * @return {@code true} if the in-order sequence is strictly increasing
+     * @see #isValidBST(TreeNode)
+     * @see #isValidBSTStack(TreeNode)
      */
-    public boolean inOrder(TreeNode root) {
-
-        /* Corner case */
+    public boolean isValidBSTInOrder(TreeNode root) {
+        // corner case
         if (root == null || (root.left == null && root.right == null)) {
             return true;
         }
 
-        long[] arr = new long[]{Long.MIN_VALUE};
+        // a mutable reference shared by all recursive calls.
+        long[] array = new long[]{Long.MIN_VALUE};
 
-        return dfs(root, arr);
+        return dfs(root, array);
     }
 
     /**
-     * In order traversal to traverse all nodes.
-     * Inorder traversal can traverse all nodes by increasing order if the tree is a valid BST.
+     * Performs the recursive in-order traversal used by
+     * {@link #isValidBSTInOrder(TreeNode)}.
      *
-     * @param r        current node
-     * @param previous previous node value
-     * @return if given tree is a valid BST
+     * @param r current node
+     * @param previous one-element array containing the last visited value
+     * @return {@code true} if this subtree continues a strictly increasing
+     *         in-order sequence
      */
     private boolean dfs(TreeNode r, long[] previous) {
         if (r == null) {
             return true;
         }
 
-        boolean out;
-        out = dfs(r.left, previous);
+        boolean out = dfs(r.left, previous);
 
+        // a valid BST must produce a strictly increasing in-order sequence.
         if ((long) r.val <= previous[0]) {
             return false;
         }
 
+        // make this node the predecessor for the next visited node.
         previous[0] = r.val;
 
-        return out & dfs(r.right, previous);
+        return out && dfs(r.right, previous);
     }
 
     /**
-     * Iterative solution based on in-order traversal and stack.
+     * Validates the tree by simulating recursive in-order traversal with an
+     * explicit stack.
      *
-     * @param root root of tree
-     * @return if given tree is a valid BST
+     * <p>The stack stores the path to the next node whose left subtree has
+     * been processed. When a node is popped, it is the next in-order value and
+     * must be strictly greater than the previously popped node. This is the
+     * iterative counterpart of {@link #isValidBSTInOrder(TreeNode)} and exits
+     * as soon as the ordering is violated.</p>
+     *
+     * @param root root of the tree
+     * @return {@code true} if the in-order sequence is strictly increasing
      */
-    public boolean stack(TreeNode root) {
+    public boolean isValidBSTStack(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
         TreeNode current = root;
         TreeNode previous = null;
 
+        // push the entire left path; the top is the next in-order node.
         while (!stack.isEmpty() || current != null) {
             if (current != null) {
                 stack.push(current);
                 current = current.left;
             } else {
+                // pop the next in-order node and compare it with its predecessor.
                 TreeNode p = stack.pop();
                 if (previous != null && p.val <= previous.val) {
                     return false;
