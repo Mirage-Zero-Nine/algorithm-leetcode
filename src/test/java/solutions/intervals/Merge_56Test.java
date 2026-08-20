@@ -1,10 +1,11 @@
 package solutions.intervals;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class Merge_56Test {
     private final Merge_56 solver = new Merge_56();
