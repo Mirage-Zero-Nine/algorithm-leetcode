@@ -1,200 +1,108 @@
 package solutions.dfs;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static library.tree.TreeParser.deserialize;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 public class IsValidBST_98Test {
 
     private final IsValidBST_98 test = new IsValidBST_98();
 
-    @Test
-    public void testHappyCases() {
-        TreeNode root = new TreeNode(2);
-        root.left = new TreeNode(1); root.right = new TreeNode(3);
-        assertTrue(test.isValidBST(root));
+    /**
+     * Every input is checked by every implementation. The cases cover empty
+     * and singleton trees, valid shapes, boundary values, duplicates, local
+     * ordering errors, and violations of an ancestor's bounds.
+     */
+    @ParameterizedTest(name = "{0} (expected {2})")
+    @MethodSource("bstCases")
+    public void testAllApproaches(String description, TreeNode root, boolean expected) {
+        assertAllApproaches(root, expected);
+    }
+
+    private static Stream<Arguments> bstCases() {
+        return Stream.of(
+                testCase("empty tree", "null", true),
+                testCase("single zero", "0", true),
+                testCase("single Integer.MIN_VALUE", String.valueOf(Integer.MIN_VALUE), true),
+                testCase("single Integer.MAX_VALUE", String.valueOf(Integer.MAX_VALUE), true),
+
+                testCase("valid left child", "2,1", true),
+                testCase("valid right child", "2,null,3", true),
+                testCase("invalid left child is greater", "1,2", false),
+                testCase("invalid right child is smaller", "2,null,1", false),
+                testCase("LeetCode valid example", "2,1,3", true),
+                testCase("LeetCode invalid subtree example", "5,1,4,null,null,3,6", false),
+                testCase("LeetCode duplicate example", "1,1", false),
+                testCase("LeetCode invalid ancestor-bound example", "5,4,6,null,null,3,7", false),
+
+                testCase("valid balanced tree", "5,3,7,2,4,6,8", true),
+                testCase("valid incomplete tree", "8,3,10,1,6,null,14,null,null,4,7,13", true),
+                testCase("valid all-negative tree", "-5,-10,-1", true),
+                testCase("valid mixed-sign tree", "0,-1,1", true),
+                testCase("valid tree using both integer bounds", "0,-2147483648,2147483647", true),
+                testCase("valid Integer.MIN_VALUE root", "-2147483648,null,0", true),
+                testCase("valid Integer.MAX_VALUE root", "2147483647,-2147483648", true),
+                testCase("valid left-skewed tree", "5,4,null,3,null,2,null,1", true),
+                testCase("valid right-skewed tree", "1,null,2,null,3,null,4,null,5", true),
+                testCase("valid zigzag tree", "10,5,null,null,7,6,8", true),
+                testCase("valid deeper mixed tree", "20,10,30,5,15,25,35,null,null,12,17,23,27,33,40", true),
+                testCase("valid negative skewed tree", "0,-1,null,-2,null,-3", true),
+
+                testCase("invalid root with both children reversed", "5,6,4", false),
+                testCase("invalid node too large in left subtree", "10,5,null,null,12", false),
+                testCase("invalid node too small in right subtree", "10,null,15,6", false),
+                testCase("invalid right subtree from LeetCode", "5,1,4,null,null,3,6", false),
+                testCase("invalid right subtree violates root bound", "5,4,6,null,null,3,7", false),
+                testCase("invalid deep left-subtree ancestor bound", "20,10,30,5,15,25,35,null,null,9", false),
+                testCase("invalid deep right-subtree ancestor bound", "20,10,30,null,null,25,35,19", false),
+                testCase("invalid minimum root with oversized left child", "-2147483648,2147483647", false),
+                testCase("invalid maximum root with undersized right child", "2147483647,null,-2147483648", false),
+
+                testCase("duplicate left child", "5,5", false),
+                testCase("duplicate right child", "5,null,5", false),
+                testCase("duplicate value in left subtree", "5,3,null,null,5", false),
+                testCase("duplicate value in right subtree", "5,null,7,5", false),
+                testCase("all nodes have the same value", "2,2,2", false),
+                testCase("duplicate values below the root", "5,3,7,2,4,6,6", false),
+                testCase("left subtree contains the root value", "10,5,null,null,10", false),
+                testCase("right subtree contains the root value", "10,null,15,10", false)
+        );
+    }
+
+    private static Arguments testCase(String description, String serializedTree, boolean expected) {
+        return Arguments.of(description, deserialize(serializedTree), expected);
     }
 
     @Test
-    public void testNegativeAndEdgeCases() {
-        TreeNode root = new TreeNode(5);
-        root.left = new TreeNode(1); root.right = new TreeNode(4);
-        root.right.left = new TreeNode(3); root.right.right = new TreeNode(6);
-        assertFalse(test.isValidBST(root));
-        assertTrue(test.isValidBST(null));
+    public void testLargeBalancedTree() {
+        assertAllApproaches(buildBalancedBST(1, 1023), true);
     }
 
-    @Test
-    public void testLargeCase() {
-        TreeNode root = new TreeNode(5);
-        root.left = new TreeNode(3); root.right = new TreeNode(7);
-        root.left.left = new TreeNode(1); root.left.right = new TreeNode(4);
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testSingleNode() {
-        assertTrue(test.isValidBST(new TreeNode(0)));
-    }
-
-    @Test
-    public void testDuplicateValues() {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(1);
-        assertFalse(test.isValidBST(root));
-    }
-
-    @Test
-    public void testLeftSkewed() {
-        TreeNode root = new TreeNode(3);
-        root.left = new TreeNode(2);
-        root.left.left = new TreeNode(1);
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testRightSkewed() {
-        TreeNode root = new TreeNode(1);
-        root.right = new TreeNode(2);
-        root.right.right = new TreeNode(3);
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testInvalidDeepLeft() {
-        // right subtree has a node smaller than root
-        TreeNode root = new TreeNode(10);
-        root.left = new TreeNode(5); root.right = new TreeNode(15);
-        root.right.left = new TreeNode(6); root.right.right = new TreeNode(20);
-        assertFalse(test.isValidBST(root)); // 6 < 10 but in right subtree
-    }
-
-    @Test
-    public void testIntegerMinMax() {
-        TreeNode root = new TreeNode(Integer.MIN_VALUE);
-        root.right = new TreeNode(Integer.MAX_VALUE);
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testIntegerOverflowEdge() {
-        TreeNode root = new TreeNode(Integer.MAX_VALUE);
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testGiantValidBST() {
-        // Build a balanced BST with 63 nodes
-        TreeNode root = buildBalancedBST(1, 63);
-        assertTrue(test.isValidBST(root));
+    private void assertAllApproaches(TreeNode root, boolean expected) {
+        assertAll(
+                () -> assertEquals(expected, test.isValidBST(root), "recursive bounds approach"),
+                () -> assertEquals(expected, test.isValidBSTInOrder(root), "recursive in-order approach"),
+                () -> assertEquals(expected, test.isValidBSTStack(root), "iterative stack approach")
+        );
     }
 
     private TreeNode buildBalancedBST(int lo, int hi) {
-        if (lo > hi) return null;
+        if (lo > hi) {
+            return null;
+        }
+
         int mid = lo + (hi - lo) / 2;
         TreeNode node = new TreeNode(mid);
         node.left = buildBalancedBST(lo, mid - 1);
         node.right = buildBalancedBST(mid + 1, hi);
         return node;
-    }
-
-    // --- New tricky/edge/negative/large tests ---
-
-    @Test
-    public void testAllDuplicateValues() {
-        // [2,2,2] -> false, strict inequality required
-        TreeNode root = new TreeNode(2);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(2);
-        assertFalse(test.isValidBST(root));
-    }
-
-    @Test
-    public void testRightChildEqualToRoot() {
-        // right child equal to root -> false (strictly greater needed)
-        TreeNode root = new TreeNode(2);
-        root.right = new TreeNode(2);
-        assertFalse(test.isValidBST(root));
-    }
-
-    @Test
-    public void testLeftSubtreeRightChildViolatesRootBound() {
-        // Subtle: left subtree's RIGHT child equals root -> false
-        // Tree: root=5, left=3, left.right=5 (5 is not < 5)
-        TreeNode root = new TreeNode(5);
-        root.left = new TreeNode(3);
-        root.left.right = new TreeNode(5);
-        assertFalse(test.isValidBST(root));
-    }
-
-    @Test
-    public void testDeepLeftSkewedValid() {
-        // 10 -> 9 -> 8 -> ... -> 1 (all left children, valid BST)
-        TreeNode root = new TreeNode(10);
-        TreeNode cur = root;
-        for (int i = 9; i >= 1; i--) {
-            cur.left = new TreeNode(i);
-            cur = cur.left;
-        }
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testDeepRightSkewedValid() {
-        // 1 -> 2 -> 3 -> ... -> 10 (all right children, valid BST)
-        TreeNode root = new TreeNode(1);
-        TreeNode cur = root;
-        for (int i = 2; i <= 10; i++) {
-            cur.right = new TreeNode(i);
-            cur = cur.right;
-        }
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testIntMinRootWithRightSubtree() {
-        // INT_MIN root, left null, right subtree valid
-        TreeNode root = new TreeNode(Integer.MIN_VALUE);
-        root.right = new TreeNode(0);
-        root.right.left = new TreeNode(-1);
-        root.right.right = new TreeNode(Integer.MAX_VALUE);
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testRightSubtreeDeepNodeViolatesRoot() {
-        // root=10, right=15, right.left=6 (6 < 10, violates root's lower bound)
-        // Already tested in testInvalidDeepLeft but this confirms with different structure
-        TreeNode root = new TreeNode(10);
-        root.right = new TreeNode(15);
-        root.right.left = new TreeNode(6);
-        assertFalse(test.isValidBST(root));
-    }
-
-    @Test
-    public void testLeftSubtreeDeepRightNodeExceedsRoot() {
-        // root=10, left=5, left.right=12 (12 > 10, violates root's upper bound)
-        TreeNode root = new TreeNode(10);
-        root.left = new TreeNode(5);
-        root.left.right = new TreeNode(12);
-        assertFalse(test.isValidBST(root));
-    }
-
-    @Test
-    public void testLargeBalancedValidBST() {
-        // 1023 nodes (depth 10 balanced BST)
-        TreeNode root = buildBalancedBST(1, 1023);
-        assertTrue(test.isValidBST(root));
-    }
-
-    @Test
-    public void testNegativeValues() {
-        // Valid BST with all negative values: [-5, -10, -1]
-        TreeNode root = new TreeNode(-5);
-        root.left = new TreeNode(-10);
-        root.right = new TreeNode(-1);
-        assertTrue(test.isValidBST(root));
     }
 }
