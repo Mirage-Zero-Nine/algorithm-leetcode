@@ -13,23 +13,33 @@ import library.tree.binarytree.TreeNode;
  */
 
 public class HasPathSum_112 {
+
     /**
-     * DFS Tree traversal.
+     * Determines whether the tree contains a root-to-leaf path whose values
+     * add up to {@code sum}.
      *
-     * @param root root node
-     * @param sum  given sum
-     * @return if it has a root-to-leaf path such that sum of all values along the path equals the given sum
+     * <p>The recursive call carries the remaining sum needed after visiting
+     * the current node. A path is accepted only when the current node is a
+     * leaf and its value exactly uses the remaining sum.</p>
+     *
+     * @param root the root of the binary tree
+     * @param sum  the required root-to-leaf path sum
+     * @return {@code true} if a matching root-to-leaf path exists; otherwise
+     * {@code false}
      */
     public boolean hasPathSum(TreeNode root, int sum) {
-
         if (root == null) {
             return false;
         }
 
-        if (root.left == null && root.right == null && sum == root.val) {
+        int current = sum - root.val;
+
+        // Only a leaf can complete a valid root-to-leaf path. Matching at an
+        // internal node is not sufficient, even when its remaining sum is 0.
+        if (root.left == null && root.right == null && current == 0) {
             return true;
         }
 
-        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+        return hasPathSum(root.left, current) || hasPathSum(root.right, current);
     }
 }

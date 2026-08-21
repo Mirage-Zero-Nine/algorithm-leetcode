@@ -220,6 +220,126 @@ public class HasPathSum_112Test {
         assertFalse(test.hasPathSum(root, 11));
     }
 
+    @Test
+    public void testOnlyLeftChild() {
+        TreeNode root = new TreeNode(8);
+        root.left = new TreeNode(3);
+
+        // The root is not a leaf, so its value alone is not a valid path sum.
+        assertFalse(test.hasPathSum(root, 8));
+        assertTrue(test.hasPathSum(root, 11));
+        assertFalse(test.hasPathSum(root, 10));
+    }
+
+    @Test
+    public void testOnlyRightChild() {
+        TreeNode root = new TreeNode(-4);
+        root.right = new TreeNode(9);
+
+        assertFalse(test.hasPathSum(root, -4));
+        assertTrue(test.hasPathSum(root, 5));
+        assertFalse(test.hasPathSum(root, 9));
+    }
+
+    @Test
+    public void testMatchingSumAtInternalNodeIsNotEnough() {
+        TreeNode root = new TreeNode(5);
+        root.left = new TreeNode(4);
+        root.left.left = new TreeNode(1);
+
+        // 5 + 4 matches, but node 4 is not a leaf.
+        assertFalse(test.hasPathSum(root, 9));
+        assertTrue(test.hasPathSum(root, 10));
+    }
+
+    @Test
+    public void testZeroValuesAndZeroTarget() {
+        TreeNode root = new TreeNode(0);
+        root.left = new TreeNode(0);
+        root.right = new TreeNode(0);
+        root.left.left = new TreeNode(0);
+        root.right.right = new TreeNode(1);
+
+        assertTrue(test.hasPathSum(root, 0));
+        assertTrue(test.hasPathSum(root, 1));
+        assertFalse(test.hasPathSum(root, 2));
+    }
+
+    @Test
+    public void testMixedSignsAndSeveralLeafPaths() {
+        TreeNode root = new TreeNode(3);
+        root.left = new TreeNode(-2);
+        root.left.left = new TreeNode(4);
+        root.left.right = new TreeNode(-1);
+        root.right = new TreeNode(5);
+        root.right.left = new TreeNode(-3);
+        root.right.right = new TreeNode(2);
+        root.right.right.right = new TreeNode(6);
+
+        // Leaf path sums are: 3 + (-2) + 4 = 5,
+        // 3 + (-2) + (-1) = 0, 3 + 5 + (-3) = 5,
+        // and 3 + 5 + 2 + 6 = 16.
+        assertTrue(test.hasPathSum(root, 0));
+        assertTrue(test.hasPathSum(root, 5));
+        assertTrue(test.hasPathSum(root, 16));
+        assertFalse(test.hasPathSum(root, 3));
+        assertFalse(test.hasPathSum(root, 10));
+    }
+
+    @Test
+    public void testIntegerBoundaryNodeValues() {
+        assertTrue(test.hasPathSum(new TreeNode(Integer.MIN_VALUE), Integer.MIN_VALUE));
+        assertTrue(test.hasPathSum(new TreeNode(Integer.MAX_VALUE), Integer.MAX_VALUE));
+
+        TreeNode minRoot = new TreeNode(Integer.MIN_VALUE);
+        minRoot.left = new TreeNode(1);
+        assertTrue(test.hasPathSum(minRoot, Integer.MIN_VALUE + 1));
+        assertFalse(test.hasPathSum(minRoot, Integer.MIN_VALUE));
+
+        TreeNode maxRoot = new TreeNode(Integer.MAX_VALUE);
+        maxRoot.right = new TreeNode(-1);
+        assertTrue(test.hasPathSum(maxRoot, Integer.MAX_VALUE - 1));
+        assertFalse(test.hasPathSum(maxRoot, Integer.MAX_VALUE));
+    }
+
+    @Test
+    public void testDeepRightSkewedTree() {
+        int depth = 1_000;
+        TreeNode root = new TreeNode(1);
+        TreeNode current = root;
+        for (int i = 1; i < depth; i++) {
+            current.right = new TreeNode(1);
+            current = current.right;
+        }
+
+        assertTrue(test.hasPathSum(root, depth));
+        assertFalse(test.hasPathSum(root, depth - 1));
+        assertFalse(test.hasPathSum(root, depth + 1));
+    }
+
+    @Test
+    public void testEveryLeafSumInAnUnevenTree() {
+        TreeNode root = new TreeNode(3);
+        root.left = new TreeNode(-2);
+        root.left.left = new TreeNode(4);
+        root.left.left.right = new TreeNode(1); // path sum 6
+        root.left.right = new TreeNode(-1);     // path sum 0
+        root.right = new TreeNode(5);
+        root.right.left = new TreeNode(-3);     // path sum 5
+        root.right.right = new TreeNode(2);
+        root.right.right.right = new TreeNode(6); // path sum 16
+
+        // Check every target in a broad range, not just the known matches.
+        for (int target = -20; target <= 20; target++) {
+            boolean expected = target == 0 || target == 5 || target == 6 || target == 16;
+            if (expected) {
+                assertTrue(test.hasPathSum(root, target), "Expected a path for target=" + target);
+            } else {
+                assertFalse(test.hasPathSum(root, target), "Did not expect a path for target=" + target);
+            }
+        }
+    }
+
     private TreeNode buildCompleteTree(int depth, int val) {
         if (depth == 0) return null;
         TreeNode node = new TreeNode(val);
