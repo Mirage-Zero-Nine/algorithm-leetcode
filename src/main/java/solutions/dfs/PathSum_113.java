@@ -15,47 +15,50 @@ import java.util.List;
 
 public class PathSum_113 {
     /**
-     * DFS.
+     * Finds every root-to-leaf path whose node values add up to {@code targetSum}.
      *
-     * @param root root tree node
-     * @param sum  given sum
-     * @return all root-to-leaf paths where each path's sum equals the given sum
+     * <p>The search keeps one mutable path while traversing the tree. At each node,
+     * the node value is appended to that path and subtracted from the remaining
+     * sum. A copy of the path is added to the result only when a leaf reaches a
+     * remaining sum of zero. The node is removed after both subtrees have been
+     * searched so that sibling paths can reuse the same path object safely.</p>
+     *
+     * @param root      root of the binary tree; may be {@code null}
+     * @param targetSum required sum of each returned root-to-leaf path
+     * @return all matching root-to-leaf paths, or an empty list when none exist
      */
-    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
         List<List<Integer>> output = new ArrayList<>();
-        if (root == null) {
-            return output;
-        }
-        dfs(root, sum, output, new ArrayList<>());
+        dfs(root, targetSum, new ArrayList<>(), output);
 
         return output;
     }
 
-
     /**
-     * Running DFS to find all possible path.
+     * Performs a depth-first traversal while maintaining the current path.
      *
-     * @param r      current root node
-     * @param sum    required sum
-     * @param output path list
-     * @param cache  temporary path list
+     * @param root      node currently being visited
+     * @param remaining sum still needed after the nodes above {@code root}
+     * @param path      mutable root-to-current-node path
+     * @param output    collection receiving copies of matching paths
      */
-    private void dfs(TreeNode r, int sum, List<List<Integer>> output, List<Integer> cache) {
-
-        cache.add(r.val);
-
-        if (r.left == null && r.right == null && r.val == sum) {
-            output.add(new ArrayList<>(cache));
-
-        } else {
-            if (r.left != null) {
-                dfs(r.left, sum - r.val, output, cache);
-            }
-            if (r.right != null) {
-                dfs(r.right, sum - r.val, output, cache);
-            }
+    private void dfs(TreeNode root, long remaining, List<Integer> path, List<List<Integer>> output) {
+        if (root == null) {
+            return;
         }
 
-        cache.remove(cache.size() - 1);
+        // Include this node before checking whether the path ends here.
+        path.add(root.val);
+        long current = remaining - root.val;
+        if (root.left == null && root.right == null && current == 0) {
+            // Copy the path because the same mutable list is reused during DFS.
+            output.add(new ArrayList<>(path));
+        }
+
+        dfs(root.left, current, path, output);
+        dfs(root.right, current, path, output);
+
+        // Backtrack so the parent can explore its other branch cleanly.
+        path.removeLast();
     }
 }
