@@ -1,6 +1,7 @@
 package solutions.dfs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
@@ -23,12 +24,21 @@ public class PathSum_113Test {
         root.right.right.right = new TreeNode(1);
         List<List<Integer>> result = test.pathSum(root, 22);
         assertEquals(1, result.size());
+        assertEquals(List.of(5, 4, 11, 2), result.get(0));
     }
 
     @Test
     public void testNegativeAndEdgeCases() {
         assertEquals(0, test.pathSum(null, 1).size());
         assertEquals(0, test.pathSum(new TreeNode(1), 2).size());
+    }
+
+    @Test
+    public void testRootMatchingTargetButNotLeafIsNotReturned() {
+        TreeNode root = new TreeNode(5);
+        root.left = new TreeNode(-5);
+
+        assertEquals(List.of(), test.pathSum(root, 5));
     }
 
     @Test
@@ -54,7 +64,7 @@ public class PathSum_113Test {
         TreeNode root = new TreeNode(1);
         root.left = new TreeNode(2); root.right = new TreeNode(2);
         root.left.left = new TreeNode(3); root.right.right = new TreeNode(3);
-        assertEquals(2, test.pathSum(root, 6).size());
+        assertEquals(List.of(List.of(1, 2, 3), List.of(1, 2, 3)), test.pathSum(root, 6));
     }
 
     @Test
@@ -82,6 +92,18 @@ public class PathSum_113Test {
     }
 
     @Test
+    public void testZeroValuedTreeReturnsEveryLeafPath() {
+        TreeNode root = new TreeNode(0);
+        root.left = new TreeNode(0);
+        root.right = new TreeNode(0);
+        root.left.left = new TreeNode(0);
+        root.left.right = new TreeNode(0);
+
+        assertEquals(List.of(List.of(0, 0, 0), List.of(0, 0, 0), List.of(0, 0)),
+                test.pathSum(root, 0));
+    }
+
+    @Test
     public void testPathContentCorrect() {
         TreeNode root = new TreeNode(1);
         root.left = new TreeNode(2);
@@ -89,6 +111,15 @@ public class PathSum_113Test {
         List<List<Integer>> result = test.pathSum(root, 6);
         assertEquals(1, result.size());
         assertEquals(List.of(1, 2, 3), result.get(0));
+    }
+
+    @Test
+    public void testSingleChildPathsAreHandled() {
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.left.right = new TreeNode(3);
+
+        assertEquals(List.of(List.of(1, 2, 3)), test.pathSum(root, 6));
     }
 
     @Test
@@ -148,6 +179,20 @@ public class PathSum_113Test {
         Set<List<Integer>> actual = new HashSet<>(result);
         Set<List<Integer>> expected = Set.of(List.of(1, 2, -3), List.of(1, -3, 2));
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testPathsAreCopiedBeforeBacktracking() {
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(2);
+
+        List<List<Integer>> result = test.pathSum(root, 3);
+
+        assertEquals(2, result.size());
+        assertNotSame(result.get(0), result.get(1));
+        result.get(0).set(0, 99);
+        assertEquals(List.of(1, 2), result.get(1));
     }
 
     @Test
@@ -218,6 +263,17 @@ public class PathSum_113Test {
         Set<List<Integer>> actual = new HashSet<>(result);
         Set<List<Integer>> expected = Set.of(List.of(10, -5, 8), List.of(10, -3, 6));
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testIntegerBoundaryValuesDoNotOverflow() {
+        TreeNode maxRoot = new TreeNode(Integer.MAX_VALUE);
+        maxRoot.left = new TreeNode(Integer.MAX_VALUE);
+        assertEquals(List.of(), test.pathSum(maxRoot, -2));
+
+        TreeNode minRoot = new TreeNode(Integer.MIN_VALUE);
+        minRoot.right = new TreeNode(Integer.MIN_VALUE);
+        assertEquals(List.of(), test.pathSum(minRoot, 0));
     }
 
     @Test

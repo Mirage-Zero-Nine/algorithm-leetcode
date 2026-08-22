@@ -37,16 +37,22 @@ public class SortArray_912 {
      * @param right right bound index
      */
     private void sort(int[] nums, int left, int right) {
-        if (left >= right) {
-            return;
+        while (left < right) {
+            // Divide the current array into small and large partitions.
+            int index = partition(nums, left, right);
+
+            // Recurse into the smaller partition and process the larger
+            // partition in this method's loop. This keeps the call stack O(log
+            // n), even when the pivot repeatedly produces a partition of size
+            // n - 1.
+            if (index - left < right - index) {
+                sort(nums, left, index - 1);
+                left = index + 1;
+            } else {
+                sort(nums, index + 1, right);
+                right = index - 1;
+            }
         }
-
-        // divide the current array to 2 parts, small and large
-        int index = partition(nums, left, right);
-
-        // keep dividing
-        sort(nums, left, index - 1);
-        sort(nums, index + 1, right);
     }
 
     private int partition(int[] nums, int left, int right) {
@@ -156,5 +162,3 @@ public class SortArray_912 {
         }
     }
 }
-
-
