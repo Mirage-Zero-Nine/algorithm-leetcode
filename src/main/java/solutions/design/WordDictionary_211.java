@@ -1,15 +1,17 @@
 package solutions.design;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
 /**
- * Design a data structure that supports the following two operations:
- * void addWord(word)
- * bool search(word)
- * search(word) can search a literal word or a regular expression string containing only letters a-z or '.'.
- * A . means it can represent any one letter.
+ * A trie-backed dictionary that supports adding words and searching for literal or wildcard patterns.
+ *
+ * <p>Each trie node represents one character in a word. The {@code isEnd} flag distinguishes a
+ * complete word from a prefix shared by a longer word. During a wildcard search, the queue stores
+ * all trie nodes that match the pattern prefix processed so far.
  *
  * @author BorisMirage
  * Time: 2019/07/03 17:17
@@ -17,168 +19,122 @@ import java.util.List;
  */
 
 public class WordDictionary_211 {
-
     private final TrieNode root;
+    private int depth = 0;
 
     /**
-     * Constructor.
+     * Creates an empty word dictionary.
      */
     public WordDictionary_211() {
-        this.root = new TrieNode();
+        root = new TrieNode('-', false);
     }
 
     /**
-     * Adds a word into the data structure.
+     * Adds a word to the dictionary.
      *
-     * @param word given word to be added
+     * <p>The final node is marked after the complete path is traversed so that a word can also be
+     * a prefix of another word, regardless of which word is added first.
+     *
+     * @param word lowercase word to add; null and empty values are ignored defensively
      */
     public void addWord(String word) {
-        TrieNode temp = root;
-
-        for (int i = 0; i < word.length(); i++) {
-            if (!temp.containsChild(word.charAt(i))) {
-                temp.addChild(word.charAt(i));
-            }
-            temp = temp.getChild(word.charAt(i));
+        // LeetCode supplies non-empty words, but ignoring invalid values keeps insertion safe.
+        if (word == null || word.isEmpty()) {
+            return;
         }
 
-        temp.setEnd(true);
+        TrieNode current = root;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            TrieNode next = current.map.get(ch);
+
+            if (next == null) {
+                // Reuse existing shared prefixes and create only the missing suffix.
+                next = new TrieNode(ch, false);
+                current.map.put(ch, next);
+            }
+            current = next;
+        }
+
+        // This is intentionally outside the loop: an existing prefix may itself be a word.
+        current.isEnd = true;
+        depth = Math.max(depth, word.length());
     }
 
     /**
-     * Returns if the word is in the data structure.
-     * A word could contain the dot character '.' to represent any one letter.
+     * Searches for a word or wildcard pattern.
      *
-     * @param word given word
-     * @return if the word is in dictionary
+     * <p>A dot ({@code .}) matches exactly one lowercase letter. The search is breadth-first over
+     * the trie: each queue entry is one possible node after matching the current pattern prefix.
+     * The root represents the empty prefix, not a character at index {@code -1}. Therefore, when
+     * {@code index == 0}, the queue contains the root and {@code word.charAt(0)} is the first
+     * character to match. After processing a character, {@code index} advances and the queue holds
+     * nodes reached after matching {@code word[0, index)}.
+     * If the queue becomes empty before all pattern characters are processed, no trie path matches
+     * the pattern prefix and the method returns {@code false}. Once the loop finishes, the queue is
+     * the final set of nodes matching the entire pattern; the result is {@code true} only if at
+     * least one of those nodes is marked as the end of a stored word.
+     *
+     * @param word lowercase search pattern containing zero or more dots
+     * @return true if at least one stored word matches the pattern; false otherwise
      */
     public boolean search(String word) {
-        return find(word.toCharArray(), 0, root);
-    }
+        // corner case
+        if (word.length() > depth) {
+            return false;
+        }
 
-    /**
-     * @param word  given word in char array
-     * @param index current index in word
-     * @param n     root node
-     * @return if given word can be found in trie
-     */
-    private boolean find(char[] word, int index, TrieNode n) {
+        TrieNode current = root;
+        Queue<TrieNode> q = new ArrayDeque<>();
+        q.add(current);
+        int index = 0, size = q.size();
 
-        if (index == word.length) {
-            return n.isEnd();
-
-        } else if (word[index] == '.') {
-
-            List<TrieNode> temp = n.getAllChildren();
-            for (TrieNode node : temp) {
-                if (find(word, index + 1, node)) {
-                    return true;
-                }
+        // the index is from 0 to word.length() - 1, while the root node is actually started from -1.
+        // hence, after each loop under the index, q is storing all matching result of word[0, index]
+        while (index < word.length()) {
+            if (q.isEmpty()) {
+                return false;
             }
 
-        } else if (n.containsChild(word[index])) {
-            return find(word, index + 1, n.getChild(word[index]));
-        }
-        return false;
-    }
+            for (int i = 0; i < size; i++) {
+                current = q.poll();
+                char c = word.charAt(index);
+                TrieNode next = current.map.get(c);
 
+                q.addAll(c == '.' ?
+                        current.map.values() :
+                        next == null ?
+                                List.of() :
+                                List.of(next));
+            }
+
+            size = q.size();
+            index++;
+        }
+
+        // after the loop, the queue contains all possible nodes that match the last char.
+        // only return true if any of the node is the end of the word.
+        return q.stream().anyMatch(node -> node.isEnd);
+    }
 
     /**
-     * Nodes in trie.
+     * A trie node representing one character and all following characters.
      */
-    static class TrieNode {
-        private char val;       // value of current node
-        private final HashMap<Character, TrieNode> m = new HashMap<>();       // save children of current trie
-        private boolean end = false;
+    private static class TrieNode {
+        Map<Character, TrieNode> map = new HashMap<>();
+        boolean isEnd;
 
         /**
-         * Constructor.
+         * Character represented by this node; useful when inspecting the trie.
          */
-        TrieNode() {
-        }
+        char current;
 
         /**
-         * Set current node's value.
-         *
-         * @param val value to be set
+         * Creates a trie node.
          */
-        void setVal(char val) {
-            this.val = val;
+        TrieNode(char current, boolean isEnd) {
+            this.current = current;
+            this.isEnd = isEnd;
         }
-
-        /**
-         * Add child to current node.
-         *
-         * @param val children value
-         */
-        void addChild(char val) {
-            this.m.put(val, new TrieNode());
-            this.m.get(val).setVal(val);
-        }
-
-        /**
-         * Mark current node as end of word.
-         *
-         * @param b boolean to be set
-         */
-        void setEnd(boolean b) {
-            this.end = b;
-        }
-
-        /**
-         * Check if current node is an end of a word.
-         *
-         * @return true if current node is an end of a word, false otherwise
-         */
-        boolean isEnd() {
-            return this.end;
-        }
-
-        /**
-         * Return the child based on given value.
-         *
-         * @param val value of child
-         * @return child node
-         */
-        TrieNode getChild(char val) {
-            return m.get(val);
-        }
-
-        /**
-         * Get value of current node.
-         *
-         * @return value in current node
-         */
-        char getVal() {
-            return this.val;
-        }
-
-        /**
-         * Check if given char is contained in current node's child.
-         *
-         * @param val given value
-         * @return true if given char is in child
-         */
-        boolean containsChild(char val) {
-            return m.containsKey(val);
-        }
-
-        List<TrieNode> getAllChildren() {
-            return new ArrayList<>(m.values());
-        }
-    }
-
-    public static void main(String[] args) {
-        WordDictionary_211 test = new WordDictionary_211();
-        test.addWord("bad");
-        test.addWord("dad");
-        test.addWord("mad");
-        System.out.println(test.search("bad."));
-        System.out.println(test.search("b.."));
-        System.out.println(test.search("..."));
-        System.out.println(test.search("bad"));
-        System.out.println(test.search(".ad"));
-        System.out.println(test.search("dap"));
     }
 }
-
