@@ -86,10 +86,4 @@ public class NthUglyNumber_1201 {
         return (a * b) / gcd(a, b);
     }
 
-    public static void main(String[] args) {
-        System.out.println(new NthUglyNumber_1201().nthUglyNumber(8, 2, 3, 5));
-        System.out.println(new NthUglyNumber_1201().nthUglyNumber(4, 2, 3, 4));
-        System.out.println(new NthUglyNumber_1201().nthUglyNumber(5, 2, 11, 13));
-        System.out.println(new NthUglyNumber_1201().nthUglyNumber(1000000000, 2, 217983653, 336916467));
-    }
 }

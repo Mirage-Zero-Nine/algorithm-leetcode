@@ -46,10 +46,4 @@ public class IsValid_20 {
         return stack.isEmpty();     // including corner case
     }
 
-    public static void main(String[] args) {
-
-        /* Parentheses Test */
-        IsValid_20 isValidTest = new IsValid_20();
-        System.out.println(isValidTest.isValid("()[]{}"));
-    }
 }

@@ -94,13 +94,4 @@ public class RandomizedCollection_381 {
         return list.get((int) (Math.random() * list.size()));
     }
 
-    public static void main(String[] args) {
-        RandomizedCollection_381 test = new RandomizedCollection_381();
-        System.out.println(test.insert(0));
-        System.out.println(test.insert(1));
-        System.out.println(test.remove(0));
-        System.out.println(test.insert(2));
-        System.out.println(test.remove(1));
-        System.out.println(test.getRandom());
-    }
 }

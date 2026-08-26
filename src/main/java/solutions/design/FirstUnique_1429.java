@@ -60,14 +60,4 @@ public class FirstUnique_1429 {
         q.offer(value);
     }
 
-    public static void main(String[] args) {
-        FirstUnique_1429 test = new FirstUnique_1429(new int[]{2, 3, 5});
-        System.out.println(test.showFirstUnique());     // 2
-        test.add(5);
-        System.out.println(test.showFirstUnique());     // 2
-        test.add(2);
-        System.out.println(test.showFirstUnique());     // 3
-        test.add(3);
-        System.out.println(test.showFirstUnique());     // -1
-    }
 }

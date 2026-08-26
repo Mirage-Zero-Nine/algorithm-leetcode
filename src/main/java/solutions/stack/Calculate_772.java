@@ -33,7 +33,7 @@ public class Calculate_772 {
     public int calculate(String s) {
 
         /* Corner case */
-        if (s == null || s.length() == 0) {
+        if (s == null || s.isEmpty()) {
             return 0;
         }
 
@@ -113,18 +113,14 @@ public class Calculate_772 {
      * @return calculation result
      */
     private static int operation(char operator, int second, int first) {
-        switch (operator) {
-            case '+':
-                return first + second;
-            case '-':
-                return first - second;
-            case '*':
-                return first * second;
-            case '/':
-                return first / second;       // assume b is not 0
-        }
+        return switch (operator) {
+            case '+' -> first + second;
+            case '-' -> first - second;
+            case '*' -> first * second;
+            case '/' -> first / second;       // assume b is not 0
+            default -> 0;
+        };
 
-        return 0;
     }
 
     /**
@@ -190,16 +186,16 @@ public class Calculate_772 {
                  * First preserve the result of current calculation.
                  * Then restore previous calculation status. */
                 int num = l1 + o1 * l2;
-                if (stack.size() > 0) {
+                if (!stack.isEmpty()) {
                     o2 = stack.poll();
                 }
-                if (stack.size() > 0) {
+                if (!stack.isEmpty()) {
                     l2 = stack.poll();
                 }
-                if (stack.size() > 0) {
+                if (!stack.isEmpty()) {
                     o1 = stack.poll();
                 }
-                if (stack.size() > 0) {
+                if (!stack.isEmpty()) {
                     l1 = stack.poll();
                 }
 
@@ -222,12 +218,5 @@ public class Calculate_772 {
         }
 
         return (l1 + o1 * l2);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new Calculate_772().calculate("-1+4*3/3/3"));                            // 0
-        System.out.println(new Calculate_772().calculate("1 - (-7)"));                              // 8
-        System.out.println(new Calculate_772().calculate("(2+6* 3+5- (3*14/7+2)*5)+3"));            // -12
-        System.out.println(new Calculate_772().calculate("2-(5-6)"));                               // 3
     }
 }

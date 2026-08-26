@@ -52,9 +52,4 @@ public class RestoreIpAddresses_93 {
         return s.length() < 4 && (s.charAt(0) != '0' || s.length() < 2) && Integer.parseInt(s) < 256;
     }
 
-    public static void main(String[] args) {
-        RestoreIpAddresses_93 test = new RestoreIpAddresses_93();
-        System.out.println(test.restoreIpAddresses("25525511135"));
-        System.out.println(test.restoreIpAddresses("0000"));
-    }
 }

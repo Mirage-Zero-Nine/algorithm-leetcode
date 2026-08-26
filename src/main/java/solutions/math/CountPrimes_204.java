@@ -41,11 +41,4 @@ public class CountPrimes_204 {
         return count;
     }
 
-    public static void main(String[] args) {
-        CountPrimes_204 test = new CountPrimes_204();
-        System.out.println(test.countPrimes(1000));     // 168
-        System.out.println(test.countPrimes(5000));     // 699
-        System.out.println(test.countPrimes(10000));    // 1229
-        System.out.println(test.countPrimes(100000));   // 9592
-    }
 }

@@ -48,7 +48,4 @@ public class DayOfTheWeek_1185 {
         return weeks[week];
     }
 
-    public static void main(String[] args) {
-        System.out.println(new DayOfTheWeek_1185().dayOfTheWeek(31, 8, 2019));
-    }
 }

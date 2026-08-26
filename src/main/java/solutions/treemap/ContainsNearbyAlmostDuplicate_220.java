@@ -106,10 +106,4 @@ public class ContainsNearbyAlmostDuplicate_220 {
         return false;
     }
 
-    public static void main(String[] args) {
-        ContainsNearbyAlmostDuplicate_220 test = new ContainsNearbyAlmostDuplicate_220();
-
-        System.out.println(test.containsNearbyAlmostDuplicate(new int[]{1, 2, 3, 1}, 3, 0));
-        System.out.println(test.containsNearbyAlmostDuplicate(new int[]{1, 5, 9, 1, 5, 9}, 2, 3));
-    }
 }

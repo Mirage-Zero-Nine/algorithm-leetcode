@@ -107,12 +107,4 @@ public class AlienOrder_269 {
         return order.length() == count ? order.toString() : "";
     }
 
-    public static void main(String[] args) {
-        AlienOrder_269 test = new AlienOrder_269();
-//        System.out.println(test.alienOrder(new String[]{"wrt", "wrf", "er", "ett", "rftt"}));
-//        System.out.println(test.alienOrder(new String[]{"z", "x"}));
-//        System.out.println(test.alienOrder(new String[]{"z", "x", "z"}));
-//        System.out.println(test.alienOrder(new String[]{"z", "z"}));
-        System.out.println(test.alienOrder(new String[]{"za", "zb", "ca", "cb"}));
-    }
 }

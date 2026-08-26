@@ -42,10 +42,4 @@ public class FindMin_153 {
         return nums[left]; // return left or right does not make a difference
     }
 
-    public static void main(String[] args) {
-        FindMin_153 test = new FindMin_153();
-        int[] t = {2, 3, 4, 5, 1};
-        System.out.println(test.findMin(t));
-        System.out.println(test.findMin(new int[]{4, 5, 6, 7, 0, 1, 2}));
-    }
 }

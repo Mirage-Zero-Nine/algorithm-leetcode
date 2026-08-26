@@ -54,8 +54,4 @@ public class LongestStrChain_1048 {
         return max;
     }
 
-    public static void main(String[] args) {
-        LongestStrChain_1048 test = new LongestStrChain_1048();
-        System.out.println(test.longestStrChain(new String[]{"bdca", "bda", "ba", "a", "b"}));
-    }
 }

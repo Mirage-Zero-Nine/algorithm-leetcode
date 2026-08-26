@@ -57,7 +57,4 @@ public class CamelMatch_1023 {
         return j == p.length();     // avoid string has a matched part, but is longer than pattern could match
     }
 
-    public static void main(String[] args) {
-        System.out.println(new CamelMatch_1023().camelMatch(new String[]{"FooBar", "FooBarTest"}, "FB"));
-    }
 }

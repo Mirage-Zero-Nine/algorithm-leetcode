@@ -30,7 +30,7 @@ public class FindAnagrams_438 {
         List<Integer> out = new ArrayList<>();
 
         /* Corner case */
-        if (s == null || s.length() == 0 || p == null || p.length() == 0) {
+        if (s == null || s.isEmpty() || p == null || p.isEmpty()) {
             return out;
         }
 
@@ -67,8 +67,4 @@ public class FindAnagrams_438 {
         return out;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new FindAnagrams_438().findAnagrams("cbaebabacd", "abc"));
-        System.out.println(new FindAnagrams_438().findAnagrams("abab", "ab"));
-    }
 }

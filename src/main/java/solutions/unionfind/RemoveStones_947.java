@@ -69,7 +69,4 @@ public class RemoveStones_947 {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new RemoveStones_947().removeStones(new int[][]{{0, 0}, {0, 1}, {1, 0}, {1, 2}, {2, 1}, {2, 2}}));
-    }
 }

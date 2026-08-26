@@ -56,8 +56,4 @@ public class MinWindow_76 {
         return (window == Integer.MAX_VALUE) ? "" : s.substring(minStart - 1, minStart + window);
     }
 
-    public static void main(String[] args) {
-        MinWindow_76 test = new MinWindow_76();
-        System.out.println();
-    }
 }

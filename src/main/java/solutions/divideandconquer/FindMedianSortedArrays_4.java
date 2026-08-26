@@ -77,8 +77,4 @@ public class FindMedianSortedArrays_4 {
         return -1;
     }
 
-    public static void main(String[] args) {
-        FindMedianSortedArrays_4 test = new FindMedianSortedArrays_4();
-        System.out.println(test.findMedianSortedArrays(new int[]{1, 2, 3}, new int[]{4, 5, 6}));
-    }
 }

@@ -55,10 +55,4 @@ public class GenerateParenthesis_22 {
         }
     }
 
-    public static void main(String[] args) {
-
-        /* Generate Parentheses Test */
-        GenerateParenthesis_22 generateParenthesisTest = new GenerateParenthesis_22();
-        System.out.println(generateParenthesisTest.generateParenthesis(3));
-    }
 }

@@ -88,10 +88,4 @@ public class LargestRectangleArea_84 {
     }
 
 
-    public static void main(String[] args) {
-        LargestRectangleArea_84 largestRectangleAreaTest = new LargestRectangleArea_84();
-        int[] arr = {10000, 2, 3, 4, 5};
-        System.out.println(largestRectangleAreaTest.largestRectangleArea(arr));
-    }
-
 }

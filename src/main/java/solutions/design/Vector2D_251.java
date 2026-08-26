@@ -55,14 +55,4 @@ public class Vector2D_251 {
         return false;
     }
 
-    public static void main(String[] args) {
-        Vector2D_251 test = new Vector2D_251(new int[][]{{1, 2, 3}, {4}, {5}});
-        System.out.println(test.next());
-        System.out.println(test.next());
-        System.out.println(test.next());
-        System.out.println(test.hasNext());
-        System.out.println(test.next());
-        System.out.println(test.next());
-        System.out.println(test.hasNext());
-    }
 }

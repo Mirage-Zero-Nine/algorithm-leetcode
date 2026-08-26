@@ -42,7 +42,4 @@ public class SubarraySum_560 {
         return out;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new SubarraySum_560().subarraySum(new int[]{4, 1, 3, 7}, 4));
-    }
 }

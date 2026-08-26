@@ -153,7 +153,4 @@ public class PredictTheWinner_486 {
         return !first(nums, sum1, sum2 + nums[left], left + 1, right) || !first(nums, sum1, sum2 + nums[right], left, right - 1);
     }
 
-    public static void main(String[] args) {
-        System.out.println(new PredictTheWinner_486().predictTheWinnerDFS(new int[]{1}));
-    }
 }

@@ -50,7 +50,4 @@ public class DayOfYear_1154 {
         return LocalDate.parse(date).getDayOfYear();
     }
 
-    public static void main(String[] args) {
-        System.out.println(new DayOfYear_1154().dayOfYear("2004-03-01"));
-    }
 }

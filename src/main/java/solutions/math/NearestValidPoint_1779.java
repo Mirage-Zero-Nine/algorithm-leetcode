@@ -39,7 +39,4 @@ public class NearestValidPoint_1779 {
         return minIndex;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new NearestValidPoint_1779().nearestValidPoint(3, 4, new int[][]{{1, 2}, {3, 1}, {2, 4}, {2, 3}, {4, 4}}));
-    }
 }

@@ -32,7 +32,7 @@ public class EntityParser_1410 {
     public String entityParser(String text) {
 
         /* Corner case */
-        if (text == null || text.length() == 0) {
+        if (text == null || text.isEmpty()) {
             return "";
         }
 
@@ -70,12 +70,4 @@ public class EntityParser_1410 {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
-        System.out.println(new EntityParser_1410().entityParser("\"x &gt; y &amp;&amp; x &lt; y is always false\""));       // x > y && x < y is always false
-        System.out.println(new EntityParser_1410().entityParser("&amp; is an HTML entity but &ambassador; is not."));       // & is an HTML entity but &ambassador; is not.
-        System.out.println(new EntityParser_1410().entityParser("and I quote: &quot;...&quot;"));       // and I quote: "..."
-        System.out.println(new EntityParser_1410().entityParser("Stay home! Practice on Leetcode :)"));     // Stay home! Practice on Leetcode :)
-        System.out.println(new EntityParser_1410().entityParser("leetcode.com&frasl;problemset&frasl;all"));        // leetcode.com/problemset/all
-        System.out.println(new EntityParser_1410().entityParser("&amp;gt;"));       // "&gt;"
-    }
 }

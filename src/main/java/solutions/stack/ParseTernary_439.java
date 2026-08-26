@@ -58,8 +58,4 @@ public class ParseTernary_439 {
         return temp.pop().toString();
     }
 
-    public static void main(String[] args) {
-        ParseTernary_439 test = new ParseTernary_439();
-        System.out.println(test.parseTernary("F?T?1:2:F?4:5"));
-    }
 }

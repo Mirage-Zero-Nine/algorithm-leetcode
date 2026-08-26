@@ -72,9 +72,4 @@ public class ShortestCommonSupersequence_1092 {
         return dp[n1][n2];
     }
 
-    public static void main(String[] args) {
-        String a = "abac";
-        String b = "cab";
-        System.out.println(new ShortestCommonSupersequence_1092().shortestCommonSupersequence(a, b));
-    }
 }

@@ -47,8 +47,4 @@ public class UniquePaths_62 {
         return dp[0][0];
     }
 
-    public static void main(String[] args) {
-        UniquePaths_62 test = new UniquePaths_62();
-        System.out.println(test.uniquePaths(3, 7));
-    }
 }

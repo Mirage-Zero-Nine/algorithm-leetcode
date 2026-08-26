@@ -91,9 +91,4 @@ public class WordPatternMatch_291 {
         return false;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new WordPatternMatch_291().wordPatternMatch("abab", "redblueredblue"));
-        System.out.println(new WordPatternMatch_291().wordPatternMatch("aaaa", "asdasdasdasd"));
-        System.out.println(new WordPatternMatch_291().wordPatternMatch("aabb", "xyzabcxzyabc"));
-    }
 }

@@ -24,7 +24,7 @@ public class DecodeString_394 {
     public String decodeString(String s) {
 
         /* Corner case */
-        if (s == null || s.length() == 0) {
+        if (s == null || s.isEmpty()) {
             return s;
         }
 
@@ -57,12 +57,6 @@ public class DecodeString_394 {
                 out += s.charAt(i++);       // adding character to the end of current string clip
             }
         }
-
         return out;
-    }
-
-    public static void main(String[] args) {
-        DecodeString_394 test = new DecodeString_394();
-        System.out.println(test.decodeString("3[a2[c]]"));      // accaccacc
     }
 }

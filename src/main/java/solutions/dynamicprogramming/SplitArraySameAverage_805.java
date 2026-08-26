@@ -78,11 +78,4 @@ public class SplitArraySameAverage_805 {
         return false;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new SplitArraySameAverage_805().splitArraySameAverage(new int[]{4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 5}));      // true
-        System.out.println(new SplitArraySameAverage_805().splitArraySameAverage(new int[]{1, 7, 8, 10}));      // false
-        System.out.println(new SplitArraySameAverage_805().splitArraySameAverage(new int[]{1, 2, 3, 4, 5, 6, 7, 8}));       // true
-        System.out.println(new SplitArraySameAverage_805().splitArraySameAverage(new int[]{18, 10, 5, 3}));     // false
-        System.out.println(new SplitArraySameAverage_805().splitArraySameAverage(new int[]{60, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30}));       // false
-    }
 }

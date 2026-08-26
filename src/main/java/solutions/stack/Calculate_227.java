@@ -24,7 +24,7 @@ public class Calculate_227 {
     public int calculate(String s) {
 
         /* Corner case */
-        if (s == null || s.length() == 0) {
+        if (s == null || s.isEmpty()) {
             return 0;
         }
 
@@ -66,14 +66,9 @@ public class Calculate_227 {
                 }
             }
         }
-
         sum += previousNumber;      // final result
 
         return sum;
     }
 
-    public static void main(String[] args) {
-        Calculate_227 test = new Calculate_227();
-        System.out.println(test.calculate("1*3+2+3+3*2"));
-    }
 }

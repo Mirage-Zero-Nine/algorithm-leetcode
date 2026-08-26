@@ -55,9 +55,4 @@ public class WaysToSplit_1712 {
         return out;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new WaysToSplit_1712().waysToSplit(new int[]{1, 1, 1}));  // 1
-        System.out.println(new WaysToSplit_1712().waysToSplit(new int[]{1, 2, 2, 2, 5, 0})); // 3
-        System.out.println(new WaysToSplit_1712().waysToSplit(new int[]{3, 2, 1})); // 0
-    }
 }

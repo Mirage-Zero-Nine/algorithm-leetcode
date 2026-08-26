@@ -170,13 +170,4 @@ public class MinMeetingRooms_253 {
         return rooms;
     }
 
-    public static void main(String[] args) {
-        MinMeetingRooms_253 test = new MinMeetingRooms_253();
-        System.out.println(test.minMeetingRooms(new int[][]{{0, 30}, {5, 10}, {15, 20}}));
-        System.out.println(test.minMeetingRooms(new int[][]{{0, 5}, {5, 10}, {15, 20}}));
-        System.out.println(test.minMeetingRooms(new int[][]{{7, 10}, {2, 4}, {15, 20}}));
-        System.out.println(test.minMeetingRooms(new int[][]{{0, 30}, {0, 10}, {9, 20}}));
-        System.out.println(test.minMeetingRooms(new int[][]{{6, 10}, {13, 14}, {12, 14}}));
-        System.out.println(test.minMeetingRooms(new int[][]{{26, 29}, {19, 26}, {19, 28}, {4, 19}, {4, 25}}));      // 3
-    }
 }

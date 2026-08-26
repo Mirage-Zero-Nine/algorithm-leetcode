@@ -98,9 +98,4 @@ public class MinKnightMoves_1197 {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new MinKnightMoves_1197().minKnightMoves(1, 1));
-        System.out.println(new MinKnightMoves_1197().minKnightMoves(2, 1));
-        System.out.println(new MinKnightMoves_1197().minKnightMoves(5, 5));
-    }
 }

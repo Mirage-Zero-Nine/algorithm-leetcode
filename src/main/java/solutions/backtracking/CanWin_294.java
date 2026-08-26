@@ -66,8 +66,4 @@ public class CanWin_294 {
         return false;
     }
 
-    public static void main(String[] args) {
-        CanWin_294 test = new CanWin_294();
-        System.out.println(test.canWin("+++++++++++"));
-    }
 }

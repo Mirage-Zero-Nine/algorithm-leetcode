@@ -58,10 +58,4 @@ public class WallsAndGates_286 {
         }
     }
 
-    public static void main(String[] args) {
-        int[][] r = {{2147483647, -1, 0, 2147483647}, {2147483647, 2147483647, 2147483647, -1}, {2147483647, -1, 2147483647, -1}, {0, -1, 2147483647, 2147483647}};
-        WallsAndGates_286 test = new WallsAndGates_286();
-        test.wallsAndGates(r);
-    }
 }
-

@@ -175,23 +175,4 @@ public class IsMatch_10 {
         return -1;
     }
 
-    public static void main(String[] args) {
-
-        IsMatch_10 test = new IsMatch_10();
-        String s = "ab";
-        String p = ".*";
-        System.out.println(test.dfsImplementation(s, p)); // T
-
-        s = "mississippi";
-        p = "mis*is*p*.";
-        System.out.println(test.dfsImplementation(s, p)); // F
-
-        s = "aasdfasdfasdfasdfas";
-        p = "aasdf.*asdf.*asdf.*asdf.*s";
-        System.out.println(test.dfsImplementation(s, p)); // T
-
-        s = "aasdfasdfasdfasdfas";
-        p = "aasdf.*asdf.*asdf.*asdf.*s";
-        System.out.println(test.dfsImplementation(s, p)); // T
-    }
 }

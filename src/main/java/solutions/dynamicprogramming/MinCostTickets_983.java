@@ -72,7 +72,4 @@ public class MinCostTickets_983 {
         return total;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new MinCostTickets_983().minCostTickets(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 31}, new int[]{2, 7, 15}));
-    }
 }

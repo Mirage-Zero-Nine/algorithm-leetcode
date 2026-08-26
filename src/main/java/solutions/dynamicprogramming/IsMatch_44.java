@@ -185,16 +185,4 @@ public class IsMatch_44 {
         return p2 == p.length();
     }
 
-    public static void main(String[] args) {
-        IsMatch_44 test = new IsMatch_44();
-        System.out.println(test.dfsImplementation("aaaabaaaabbbbaabbbaabbaababbabbaaaababaaabbbbbbaabbbabababbaaabaabaaaaaabbaabbbbaababbababaabbbaababbbba", "*****b*aba***babaa*bbaba***a*aaba*b*aa**a*b**ba***a*a*"));           // true
-        System.out.println(test.dfsImplementation("ab", "?*"));           // true
-        System.out.println(test.dfsImplementation("aa", "*"));           // true
-        System.out.println(test.dfsImplementation("cb", "?a"));           // false
-        System.out.println(test.dfsImplementation("aab", "c*a*b"));       // false
-        System.out.println(test.dfsImplementation("adceb", "*a*b"));      // true
-        System.out.println(test.dfsImplementation("acdcb", "a*c?b"));     // false
-        System.out.println(test.dfsImplementation("aa", "*a"));           // true
-        System.out.println(test.dfsImplementation("", ""));           // true
-    }
 }

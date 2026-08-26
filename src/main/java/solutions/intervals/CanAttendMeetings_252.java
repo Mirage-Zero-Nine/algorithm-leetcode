@@ -36,10 +36,4 @@ public class CanAttendMeetings_252 {
         return true;
     }
 
-    public static void main(String[] args) {
-        CanAttendMeetings_252 test = new CanAttendMeetings_252();
-        System.out.println(test.canAttendMeetings(new int[][]{{0, 5}, {5, 10}, {15, 20}}));
-        System.out.println(test.canAttendMeetings(new int[][]{{0, 30}, {5, 10}, {15, 20}}));
-
-    }
 }

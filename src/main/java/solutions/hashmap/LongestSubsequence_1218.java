@@ -39,7 +39,4 @@ public class LongestSubsequence_1218 {
         return out;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new LongestSubsequence_1218().longestSubsequence(new int[]{1, 5, 7, 8, 5, 3, 4, 2, 1}, -2));
-    }
 }

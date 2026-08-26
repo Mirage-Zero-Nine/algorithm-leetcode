@@ -113,8 +113,4 @@ public class CanMakePaliQueries_1177 {
         return check <= replace * 2;
     }
 
-    public static void main(String[] args) {
-        CanMakePaliQueries_1177 test = new CanMakePaliQueries_1177();
-        System.out.println(test.canMakePaliQueries("abcda", new int[][]{{3, 3, 0}, {1, 2, 0}, {0, 3, 1}, {0, 3, 2}, {0, 4, 1}}));
-    }
 }

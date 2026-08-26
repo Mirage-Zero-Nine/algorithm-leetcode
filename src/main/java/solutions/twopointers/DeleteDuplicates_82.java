@@ -1,6 +1,5 @@
 package solutions.twopointers;
 
-import library.listnode.LinkedListGenerator;
 import library.listnode.ListNode;
 
 /**
@@ -43,7 +42,4 @@ public class DeleteDuplicates_82 {
         return dummy.next;      // return head of list
     }
 
-    public static void main(String[] args) {
-        LinkedListGenerator.printAll(new DeleteDuplicates_82().deleteDuplicates(LinkedListGenerator.generate(new int[]{1, 2, 3, 3, 4, 5, 5, 5})));
-    }
 }

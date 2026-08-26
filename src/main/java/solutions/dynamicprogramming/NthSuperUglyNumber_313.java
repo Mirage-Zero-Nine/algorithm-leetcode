@@ -54,8 +54,4 @@ public class NthSuperUglyNumber_313 {
         return out[n - 1];
     }
 
-    public static void main(String[] args) {
-        System.out.println(new NthSuperUglyNumber_313().nthSuperUglyNumber(6, new int[]{2, 11, 13}));
-    }
 }
-

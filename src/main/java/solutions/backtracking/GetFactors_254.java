@@ -50,13 +50,10 @@ public class GetFactors_254 {
                 backtracking(out, tmp, target / i, i);
                 tmp.add(target / i);        // second factor
                 out.add(new LinkedList<>(tmp));
-                tmp.remove(tmp.size() - 1);
-                tmp.remove(tmp.size() - 1);
+                tmp.removeLast();
+                tmp.removeLast();
             }
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new GetFactors_254().getFactors(12));
-    }
 }

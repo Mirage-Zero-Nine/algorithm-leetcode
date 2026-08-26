@@ -26,7 +26,7 @@ public class NumDecodings_91 {
     public int numDecodings(String s) {
 
         /* Corner case */
-        if (s.length() == 0) {
+        if (s.isEmpty()) {
             return 0;
         }
 
@@ -45,7 +45,4 @@ public class NumDecodings_91 {
         return dp[0];
     }
 
-    public static void main(String[] args) {
-        System.out.println(new NumDecodings_91().numDecodings("1021"));
-    }
 }

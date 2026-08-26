@@ -52,22 +52,4 @@ public class SwapPairs_24 {
         return dummy.next;
     }
 
-    public static void main(String[] args) {
-        printAll(new SwapPairs_24().swapPairs(getList3()));
-    }
-
-    private static ListNode getList3() {
-        ListNode n1 = new ListNode(5), n2 = new ListNode(4), n3 = new ListNode(3), n4 = new ListNode(2), n5 = new ListNode(1);
-        n1.next = n2;
-        n2.next = n3;
-        n3.next = n4;
-        n4.next = n5;
-        return n1;
-    }
-
-    private static void printAll(ListNode head) {
-        while (head != null) {
-            head = head.next;
-        }
-    }
 }

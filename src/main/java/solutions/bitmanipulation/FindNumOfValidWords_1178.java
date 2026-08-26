@@ -66,9 +66,4 @@ public class FindNumOfValidWords_1178 {
         return out;
     }
 
-    public static void main(String[] args) {
-        FindNumOfValidWords_1178 test = new FindNumOfValidWords_1178();
-        System.out.println(test.findNumOfValidWords(new String[]{"aaaa", "asas", "able", "ability", "actt", "actor", "access"}, new String[]{"aboveyz", "abrodyz", "abslute", "absoryz", "actresz", "gaswxyz"}));
-        // 1,1,3,2,4,0
-    }
 }

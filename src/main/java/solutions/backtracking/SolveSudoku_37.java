@@ -1,7 +1,6 @@
 package solutions.backtracking;
 
 
-import java.util.Arrays;
 
 /**
  * Solve a Sudoku puzzle by filling the empty cells.
@@ -87,20 +86,4 @@ public class SolveSudoku_37 {
         return true;
     }
 
-    public static void main(String[] args) {
-
-        /* Solve Sudoku */
-        SolveSudoku_37 solveSudokuTest = new SolveSudoku_37();
-        char[][] board = {{'5', '3', '.', '.', '7', '.', '.', '.', '.'},
-                {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
-                {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
-                {'8', '.', '.', '.', '.', '.', '.', '.', '.'},
-                {'4', '.', '.', '.', '.', '.', '.', '.', '.'},
-                {'7', '.', '.', '.', '.', '.', '.', '.', '.'},
-                {'.', '.', '.', '.', '.', '.', '.', '.', '.'},
-                {'.', '.', '.', '.', '.', '.', '.', '.', '.'},
-                {'.', '.', '.', '.', '.', '.', '.', '.', '.'}};
-        solveSudokuTest.solveSudoku(board);
-        System.out.println(Arrays.deepToString(board));
-    }
 }

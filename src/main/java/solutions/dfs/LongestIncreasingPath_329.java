@@ -67,8 +67,4 @@ public class LongestIncreasingPath_329 {
         return max;
     }
 
-    public static void main(String[] args) {
-        LongestIncreasingPath_329 test = new LongestIncreasingPath_329();
-        System.out.println(test.longestIncreasingPath(new int[][]{{9, 9, 4}, {6, 6, 8}, {2, 1, 1}}));
-    }
 }

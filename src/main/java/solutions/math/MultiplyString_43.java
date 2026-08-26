@@ -58,10 +58,4 @@ public class MultiplyString_43 {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
-        MultiplyString_43 multiplyTest = new MultiplyString_43();
-        String a1 = "123";
-        String a2 = "456";
-        System.out.println(multiplyTest.multiply(a1, a2));
-    }
 }

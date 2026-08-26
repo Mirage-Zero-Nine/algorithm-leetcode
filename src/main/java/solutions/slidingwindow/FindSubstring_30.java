@@ -33,7 +33,7 @@ public class FindSubstring_30 {
      */
     public List<Integer> findSubstring(String s, String[] words) {
         List<Integer> output = new ArrayList<>();
-        if (s == null || words == null || s.length() == 0 || words.length == 0) {
+        if (s == null || words == null || s.isEmpty() || words.length == 0) {
             return output;
         }
 
@@ -116,22 +116,4 @@ public class FindSubstring_30 {
         }
     }
 
-    public static void main(String[] args) {
-
-        /* Substring with Concatenation of All Words */
-        String s = "barfoothefoobarman";
-        String[] words = {"bar", "foo"};
-
-        final long startTime = System.currentTimeMillis();  // Timer
-
-        FindSubstring_30 findSubstringTest = new FindSubstring_30();
-        System.out.println(findSubstringTest.findSubstring(s, words));
-
-        final long endTime = System.currentTimeMillis();    // Timer
-        System.out.println("Time: " + (endTime - startTime) + "ms");
-
-        s = "wordgoodgoodgoodbestword";
-        words = new String[]{"word", "good", "best", "word"};
-        System.out.println(findSubstringTest.findSubstring(s, words));
-    }
 }

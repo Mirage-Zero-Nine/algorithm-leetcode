@@ -25,14 +25,11 @@ public class StrStr_28 {
      * @return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack
      */
     public int strStr(String haystack, String needle) {
-
-        if (needle.length() == 0) {
-            return 0;
+        // corner case
+        if (needle.isEmpty() || haystack.isEmpty()) {
+            return needle.isEmpty() ? 0 : -1;
         }
 
-        if (haystack.length() == 0) {
-            return -1;
-        }
         int length = haystack.length() - needle.length();
         for (int i = 0; i <= length; i++) {
             for (int j = 0; j < needle.length(); j++) {
@@ -46,12 +43,5 @@ public class StrStr_28 {
         }
 
         return -1;
-    }
-
-    public static void main(String[] args) {
-
-        /* StrStr_28 Test */
-        StrStr_28 strStrTest = new StrStr_28();
-        System.out.println(strStrTest.strStr("mississippi", "issip"));
     }
 }

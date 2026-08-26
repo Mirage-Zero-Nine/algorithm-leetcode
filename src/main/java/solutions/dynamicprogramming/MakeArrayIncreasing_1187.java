@@ -67,31 +67,4 @@ public class MakeArrayIncreasing_1187 {
     }
 
 
-    public static void main(String[] args) {
-        int[] a = new int[]{1, 5, 3, 6, 7};
-        int[] b = new int[]{1, 3, 2, 4};
-        System.out.println(new MakeArrayIncreasing_1187().makeArrayIncreasing(a, b));        // 1
-
-        a = new int[]{1, 5, 3, 6, 7};
-        b = new int[]{4, 3, 1};
-        System.out.println(new MakeArrayIncreasing_1187().makeArrayIncreasing(a, b));        // 2
-
-        a = new int[]{1, 5, 3, 6, 7};
-        b = new int[]{1, 6, 3, 3};
-        System.out.println(new MakeArrayIncreasing_1187().makeArrayIncreasing(a, b));        // -1
-
-        a = new int[]{0, 11, 6, 1, 4, 3};
-        b = new int[]{5, 4, 11, 10, 1, 0};
-        System.out.println(new MakeArrayIncreasing_1187().makeArrayIncreasing(a, b));        // 5
-
-        a = new int[]{5, 16, 19, 2, 1, 12, 7, 14, 5, 16};
-        b = new int[]{6, 17, 4, 3, 6, 13, 4, 3, 18, 17, 16, 7, 14, 1, 16};
-        System.out.println(new MakeArrayIncreasing_1187().makeArrayIncreasing(a, b));        // 8
-
-        a = new int[]{23, 10, 9, 12, 3, 14, 21, 16, 7, 10, 17, 12};
-        b = new int[]{6, 5, 0, 15, 2, 17, 4, 11, 6, 5, 8, 15, 10, 1, 20, 11, 14, 13, 8};
-//        Arrays.sort(b);
-//        System.out.println(Arrays.toString(b));
-        System.out.println(new MakeArrayIncreasing_1187().makeArrayIncreasing(a, b));        // 11
-    }
 }

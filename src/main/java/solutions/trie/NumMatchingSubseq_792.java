@@ -135,8 +135,4 @@ public class NumMatchingSubseq_792 {
         return count;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new NumMatchingSubseq_792().numMatchingSubseq("dsahjpjauf", new String[]{"ahjpjau", "ja", "ahbwzgqnuk", "tnmlanowax"}));     // 2
-        System.out.println(new NumMatchingSubseq_792().numMatchingSubseq("abcde", new String[]{"a", "bb", "acd", "ace"}));      // 3
-    }
 }

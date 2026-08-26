@@ -52,9 +52,4 @@ public class MinCut_132 {
         return minCut[s.length() - 1];
     }
 
-    public static void main(String[] args) {
-        MinCut_132 t = new MinCut_132();
-        System.out.println(t.minCut("abcba"));
-        System.out.println(t.minCut("cabababcbc"));
-    }
 }

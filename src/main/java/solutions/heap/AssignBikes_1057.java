@@ -69,7 +69,4 @@ public class AssignBikes_1057 {
         return out;
     }
 
-    public static void main(String[] args) {
-        System.out.println(Arrays.toString(new AssignBikes_1057().assignBikes(new int[][]{{0, 0}, {2, 1}}, new int[][]{{1, 2}, {3, 3}})));
-    }
 }

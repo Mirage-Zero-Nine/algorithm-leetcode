@@ -66,8 +66,4 @@ public class FirstUniqChar_387 {
         return (!m.isEmpty()) ? m.entrySet().iterator().next().getValue() : -1;
     }
 
-    public static void main(String[] args) {
-        FirstUniqChar_387 test = new FirstUniqChar_387();
-        System.out.println(test.firstUniqChar("statistics"));
-    }
 }

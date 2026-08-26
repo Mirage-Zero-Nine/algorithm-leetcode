@@ -22,12 +22,12 @@ public class AddOperators_282 {
      * @return all equations that result equals to target
      */
     public List<String> addOperators(String num, int target) {
-        List<String> output = new ArrayList<>();
 
-        /* Corner case */
-        if (num.length() < 1) {
-            return output;
+        // corner case
+        if (num.isEmpty()) {
+            return new ArrayList<>();
         }
+        List<String> output = new ArrayList<>();
 
         backtracking(output, target, "", num, 0, 0, 0);
         return output;
@@ -69,13 +69,4 @@ public class AddOperators_282 {
         }
     }
 
-    public static void main(String[] args) {
-        AddOperators_282 test = new AddOperators_282();
-        System.out.println(test.addOperators("234", 24));
-        System.out.println(test.addOperators("6", 6));
-        System.out.println(test.addOperators("123", 6));
-        System.out.println(test.addOperators("232", 8));
-        System.out.println(test.addOperators("1050", 6));
-        System.out.println(test.addOperators("00", 0));
-    }
 }

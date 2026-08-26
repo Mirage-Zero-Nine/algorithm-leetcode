@@ -77,12 +77,9 @@ public class SubsetsWithDup_90 {
             if (i == start || nums[i] != nums[i - 1]) {     // avoid duplicate subsets
                 temp.add(nums[i]);
                 backtracking(out, temp, nums, i + 1);
-                temp.remove(temp.size() - 1);
+                temp.removeLast();
             }
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new SubsetsWithDup_90().backtracking(new int[]{1, 2, 2, 2, 2}));
-    }
 }

@@ -1,6 +1,5 @@
 package solutions.twopointers;
 
-import java.util.Arrays;
 
 /**
  * Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of numbers.
@@ -78,11 +77,4 @@ public class NextPermutation_31 {
         }
     }
 
-    public static void main(String[] args) {
-        NextPermutation_31 nextPermutationTest = new NextPermutation_31();
-        int[] a = {1, 4, 6, 4, 7, 4, 4, 5, 6, 7, 8, 2};
-//        int[] a = {1,1};
-        nextPermutationTest.nextPermutation(a);
-        System.out.println(Arrays.toString(a));
-    }
 }

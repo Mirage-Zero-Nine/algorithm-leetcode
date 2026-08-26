@@ -10,53 +10,126 @@ public class LongestValidParentheses_32Test {
 
     @Test
     public void testHappyCases() {
-        assertEquals(2, test.longestValidParentheses("(()"));
-        assertEquals(4, test.longestValidParentheses(")()())"));
+        assertAllApproaches("(()", 2);
+        assertAllApproaches(")()())", 4);
     }
 
     @Test
     public void testNegativeAndEdgeCases() {
-        assertEquals(0, test.longestValidParentheses(""));
-        assertEquals(0, test.longestValidParentheses(")"));
+        assertAllApproaches("", 0);
+        assertAllApproaches(")", 0);
     }
 
     @Test
     public void testLargeCase() {
-        assertEquals(4, test.longestValidParentheses("()(()()"));
+        assertAllApproaches("()(()()", 4);
     }
 
     @Test
     public void testAllOpen() {
-        assertEquals(0, test.longestValidParentheses("(((("));
+        assertAllApproaches("((((", 0);
     }
 
     @Test
     public void testAllClose() {
-        assertEquals(0, test.longestValidParentheses("))))"));
+        assertAllApproaches(")", 0);
+        assertAllApproaches("))))", 0);
     }
 
     @Test
     public void testPerfectMatch() {
-        assertEquals(6, test.longestValidParentheses("((()))"));
+        assertAllApproaches("((()))", 6);
     }
 
     @Test
     public void testSingleChar() {
-        assertEquals(0, test.longestValidParentheses("("));
+        assertAllApproaches("(", 0);
     }
 
     @Test
     public void testConsecutivePairs() {
-        assertEquals(6, test.longestValidParentheses("()()()"));
+        assertAllApproaches("()()()", 6);
     }
 
     @Test
     public void testNestedAndConsecutive() {
-        assertEquals(6, test.longestValidParentheses("()(())"));
+        assertAllApproaches("()(())", 6);
     }
 
     @Test
     public void testGiantCase() {
-        assertEquals(10, test.longestValidParentheses(")))))(((()()()()()((((("));
+        assertAllApproaches(")))))(((()()()()()(((((", 10);
+    }
+
+    @Test
+    public void testValidSubstringAtDifferentPositions() {
+        assertAllApproaches("()", 2);
+        assertAllApproaches(")()()(", 4);
+        assertAllApproaches("(()))(())", 4);
+        assertAllApproaches("())((())", 4);
+    }
+
+    @Test
+    public void testNestedParenthesesOfDifferentDepths() {
+        assertAllApproaches("(())", 4);
+        assertAllApproaches("((()))()", 8);
+        assertAllApproaches("(((())))", 8);
+        assertAllApproaches("()(((())))()", 12);
+    }
+
+    @Test
+    public void testUnmatchedParenthesesDoNotCount() {
+        assertAllApproaches("(()))(", 4);
+        assertAllApproaches(")((())", 4);
+        assertAllApproaches("())((()", 2);
+        assertAllApproaches("((())(()", 4);
+    }
+
+    @Test
+    public void testAdjacentValidComponentsAreCombined() {
+        assertAllApproaches("()()", 4);
+        assertAllApproaches("()(())()", 8);
+        assertAllApproaches("(()())()", 8);
+        assertAllApproaches("()(()())", 8);
+    }
+
+    @Test
+    public void testLongBalancedInput() {
+        String input = "()".repeat(5_000);
+        assertAllApproaches(input, 10_000);
+    }
+
+    @Test
+    public void testLongNestedInput() {
+        String input = "(".repeat(2_000) + ")".repeat(2_000);
+        assertAllApproaches(input, 4_000);
+    }
+
+    @Test
+    public void testLongInputWithUnmatchedPrefixAndSuffix() {
+        String input = ")".repeat(1_000) + "(".repeat(1_000) + ")".repeat(1_000)
+                + "(".repeat(1_000);
+        assertAllApproaches(input, 2_000);
+    }
+
+    @Test
+    public void testStackAndDpApproachesOnSmallBoundaryPatterns() {
+        assertEquals(2, test.longestValidParenthesesStack("()"));
+        assertEquals(2, test.longestValidParenthesesDP("()"));
+        assertEquals(4, test.longestValidParenthesesStack("(())"));
+        assertEquals(4, test.longestValidParenthesesDP("(())"));
+        assertEquals(2, test.longestValidParenthesesStack("())"));
+        assertEquals(2, test.longestValidParenthesesDP("())"));
+        assertEquals(2, test.longestValidParenthesesStack("(()"));
+        assertEquals(2, test.longestValidParenthesesDP("(()"));
+    }
+
+    private void assertAllApproaches(String input, int expected) {
+        assertEquals(expected, test.longestValidParentheses(input),
+                "two-pass approach: " + input);
+        assertEquals(expected, test.longestValidParenthesesStack(input),
+                "stack approach: " + input);
+        assertEquals(expected, test.longestValidParenthesesDP(input),
+                "dynamic-programming approach: " + input);
     }
 }

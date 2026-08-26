@@ -36,7 +36,7 @@ public class Partition_131 {
      * @param temp temp list
      */
     private void backtracking(String s, List<List<String>> out, List<String> temp) {
-        if (s.length() == 0) {
+        if (s.isEmpty()) {
             out.add(new ArrayList<>(temp));     // also hold the corner case
             return;
         }
@@ -44,7 +44,7 @@ public class Partition_131 {
             if (isPalindrome(s.substring(0, i))) {
                 temp.add(s.substring(0, i));
                 backtracking(s.substring(i), out, temp);        // repeat this process to rest of string
-                temp.remove(temp.size() - 1);
+                temp.removeLast();
             }
         }
     }
@@ -64,9 +64,4 @@ public class Partition_131 {
         return true;
     }
 
-    public static void main(String[] args) {
-        String s = "abcabc";
-        Partition_131 test = new Partition_131();
-        System.out.println(test.partition(s));
-    }
 }

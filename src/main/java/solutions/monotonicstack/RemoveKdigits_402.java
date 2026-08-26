@@ -57,11 +57,4 @@ public class RemoveKdigits_402 {
         return out.toString();
     }
 
-    public static void main(String[] args) {
-        RemoveKdigits_402 test = new RemoveKdigits_402();
-        System.out.println(test.removeKdigits("1432219", 3));       // 1219
-        System.out.println(test.removeKdigits("10200", 1));     // 200
-        System.out.println(test.removeKdigits("112", 1));       // 11
-        System.out.println(test.removeKdigits("1234567890", 9));        // 0
-    }
 }

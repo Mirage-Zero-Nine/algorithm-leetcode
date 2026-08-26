@@ -44,8 +44,4 @@ public class SmallestCommonElement_1198 {
         return -1;
     }
 
-    public static void main(String[] args) {
-        int[][] m = new int[][]{{1, 2, 3, 4, 5}, {2, 4, 5, 8, 10}, {3, 3, 7, 9, 11}, {1, 3, 5, 7, 9}};
-        System.out.println(new SmallestCommonElement_1198().smallestCommonElement(m));
-    }
 }

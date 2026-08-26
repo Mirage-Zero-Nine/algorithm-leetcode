@@ -106,23 +106,4 @@ public class DinnerPlates_1172 {
         return val;
     }
 
-    public static void main(String[] args) {
-        DinnerPlates_1172 test = new DinnerPlates_1172(2);
-        test.push(1);
-        test.push(2);
-        test.push(3);
-        test.push(4);
-        test.push(5);
-        System.out.println(test.popAtStack(0));     // 2
-        test.push(20);
-        test.push(21);
-        System.out.println(test.popAtStack(0));     // 20
-        System.out.println(test.popAtStack(2));     // 21
-        System.out.println("=====");
-        System.out.println(test.pop());     // 5
-        System.out.println(test.pop());     // 4
-        System.out.println(test.pop());     // 3
-        System.out.println(test.pop());     // 1
-        System.out.println(test.pop());     // -1
-    }
 }

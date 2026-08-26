@@ -76,13 +76,9 @@ public class Subsets_78 {
         for (int i = k; i < nums.length; i++) {
             temp.add(nums[i]);
             backtracking(output, temp, nums, i + 1);
-            temp.remove(temp.size() - 1);       // avoid duplication
+            temp.removeLast();       // avoid duplication
 
         }
     }
 
-    public static void main(String[] args) {
-        Subsets_78 test = new Subsets_78();
-        System.out.println(test.subsets(new int[]{1, 2, 3, 4, 5}));
-    }
 }

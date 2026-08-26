@@ -129,11 +129,4 @@ public class ThreeSum_15 {
         }
     }
 
-    public static void main(String[] args) {
-
-        /* Three sum test*/
-        int[] test = {0, -4, -1, -4, -2, -3, 2};
-        ThreeSum_15 threeSumTest = new ThreeSum_15();
-        System.out.println(threeSumTest.threeSum(test));
-    }
 }

@@ -50,7 +50,4 @@ public class SuperEggDrop_887 {
         return m;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new SuperEggDrop_887().superEggDrop(2, 10));
-    }
 }

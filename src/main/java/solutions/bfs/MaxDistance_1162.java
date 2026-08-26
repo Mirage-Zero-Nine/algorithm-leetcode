@@ -67,8 +67,4 @@ public class MaxDistance_1162 {
         return (max == 0) ? -1 : max;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new MaxDistance_1162().maxDistance(new int[][]{{1, 0, 1}, {0, 0, 0}, {1, 0, 1}}));
-//        System.out.println(new MaxDistance().maxDistance(new int[][]{{1, 0, 0}, {0, 0, 0}, {0, 0, 0}}));
-    }
 }

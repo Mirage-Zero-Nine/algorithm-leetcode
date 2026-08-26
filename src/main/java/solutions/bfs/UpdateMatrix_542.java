@@ -1,6 +1,5 @@
 package solutions.bfs;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -61,9 +60,4 @@ public class UpdateMatrix_542 {
         return matrix;
     }
 
-    public static void main(String[] args) {
-        int[][] r = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
-        UpdateMatrix_542 test = new UpdateMatrix_542();
-        System.out.println(Arrays.deepToString(test.updateMatrix(r)));
-    }
 }
