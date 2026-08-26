@@ -2,8 +2,8 @@ package solutions.bfs;
 
 import library.tree.binarytree.TreeNode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
@@ -18,39 +18,43 @@ import java.util.Queue;
 public class LevelOrder_102 {
 
     /**
-     * Use linked list to temporary store nodes.
-     * Store root first, then add next level's node into last of list.
-     * When traversing, pop first element in list and add its child node until this level completed.
+     * Traverses a binary tree one level at a time, from left to right.
      *
-     * @param root root node of tree
-     * @return level order traversal of its nodes' values
+     * <p>The queue contains the nodes that still need to be visited. The queue size is captured
+     * before each level is processed, so children added while processing the current level are
+     * reserved for the next level.</p>
+     *
+     * <p>Implementation note: {@link java.util.ArrayDeque} provides constant-time queue
+     * operations without the per-node linked-list allocation of {@code LinkedList}.</p>
+     *
+     * @param root root node of the tree; may be {@code null}
+     * @return the node values grouped by level, or an empty list when {@code root} is {@code null}
+     * @see <a href="https://leetcode.com/problems/binary-tree-level-order-traversal/">LeetCode 102</a>
      */
     public List<List<Integer>> levelOrder(TreeNode root) {
-        List<List<Integer>> output = new ArrayList<>();
-
-        /* Corner case */
+        // corner case
         if (root == null) {
-            return output;
+            return new ArrayList<>();
         }
 
-        Queue<TreeNode> q = new LinkedList<>();
-        q.add(root);
+        List<List<Integer>> output = new ArrayList<>();
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
 
-        while (!q.isEmpty()) {
-            int size = q.size(); // size of current layer
-            List<Integer> currentLayer = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                TreeNode currentNode = q.poll();
-                currentLayer.add(currentNode.val);
-                if (currentNode.left != null) {
-                    q.add(currentNode.left);
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            List<Integer> level = new ArrayList<>(levelSize);
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode current = queue.poll();
+                level.add(current.val);
+                if (current.left != null) {
+                    queue.offer(current.left);
                 }
-                if (currentNode.right != null) {
-                    q.add(currentNode.right);
+                if (current.right != null) {
+                    queue.offer(current.right);
                 }
             }
-
-            output.add(currentLayer);
+            output.add(level);
         }
 
         return output;
