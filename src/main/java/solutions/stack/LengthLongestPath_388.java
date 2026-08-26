@@ -47,8 +47,4 @@ public class LengthLongestPath_388 {
         return max;
     }
 
-    public static void main(String[] args) {
-        LengthLongestPath_388 test = new LengthLongestPath_388();
-        System.out.println(test.lengthLongestPath("dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext"));
-    }
 }

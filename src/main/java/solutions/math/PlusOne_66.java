@@ -1,6 +1,5 @@
 package solutions.math;
 
-import java.util.Arrays;
 
 /**
  * Given a non-empty array of digits representing a non-negative integer, plus one to the integer.
@@ -41,9 +40,4 @@ public class PlusOne_66 {
         return out;
     }
 
-    public static void main(String[] args) {
-        PlusOne_66 plusOneTest = new PlusOne_66();
-        int[] tt = {4, 3, 2, 1};
-        System.out.println(Arrays.toString(plusOneTest.plusOne(tt)));
-    }
 }

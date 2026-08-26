@@ -105,8 +105,4 @@ public class IsBipartite_785 {
         return true;
     }
 
-    public static void main(String[] args) {
-        int[][] graph = new int[][]{{1, 3}, {0, 2}, {1, 3}, {0, 2}};
-        System.out.println(new IsBipartite_785().isBipartite(graph));
-    }
 }

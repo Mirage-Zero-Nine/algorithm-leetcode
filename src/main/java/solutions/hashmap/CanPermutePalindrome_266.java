@@ -32,12 +32,4 @@ public class CanPermutePalindrome_266 {
         return odd < 2;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new CanPermutePalindrome_266().canPermutePalindrome("aa"));
-        System.out.println(new CanPermutePalindrome_266().canPermutePalindrome("abcd"));
-        System.out.println(new CanPermutePalindrome_266().canPermutePalindrome("code"));
-        System.out.println(new CanPermutePalindrome_266().canPermutePalindrome("aab"));
-        System.out.println(new CanPermutePalindrome_266().canPermutePalindrome("carerac"));
-        System.out.println(new CanPermutePalindrome_266().canPermutePalindrome("\"AaBb//a\""));
-    }
 }

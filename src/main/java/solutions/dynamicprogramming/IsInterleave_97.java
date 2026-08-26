@@ -54,10 +54,4 @@ public class IsInterleave_97 {
         return dp[l1][l2];
     }
 
-    public static void main(String[] args) {
-        IsInterleave_97 test = new IsInterleave_97();
-        System.out.println(test.isInterleave("aabcc", "dbbca", "aadbbcbcac"));
-        System.out.println(test.isInterleave("", "", ""));
-
-    }
 }

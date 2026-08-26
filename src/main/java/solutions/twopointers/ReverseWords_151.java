@@ -22,7 +22,7 @@ public class ReverseWords_151 {
      * @return reversed words
      */
     public String reverseWords(String s) {
-        if (s.length() < 1) {
+        if (s.isEmpty()) {
             return s;
         }
 
@@ -33,7 +33,7 @@ public class ReverseWords_151 {
 
         StringBuilder out = new StringBuilder();
         for (int i = temp.length - 1; i > -1; i--) {
-            if (temp[i].length() != 0) {
+            if (!temp[i].isEmpty()) {
                 out.append(temp[i]).append(" ");
             }
         }
@@ -88,11 +88,4 @@ public class ReverseWords_151 {
         }
     }
 
-    public static void main(String[] args) {
-        ReverseWords_151 test = new ReverseWords_151();
-        System.out.println("Output is: " + test.reverseWords(" "));
-        System.out.println("Output is: " + test.reverseWords("a"));
-        System.out.println("Output is: " + test.reverseWords(""));
-        System.out.println("Output is: " + test.reverseWords("  hello world!  "));
-    }
 }

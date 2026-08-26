@@ -47,9 +47,4 @@ public class MissingElement_1060 {
         return nums[left] + k;      // if gap is large between final elements
     }
 
-    public static void main(String[] args) {
-        System.out.println(new MissingElement_1060().missingElement(new int[]{1, 3, 5, 7, 9}, 2));
-        System.out.println(new MissingElement_1060().missingElement(new int[]{1, 100, 1000, 100000}, 50));        // answer: 51
-        System.out.println(new MissingElement_1060().missingElement(new int[]{746421, 1033196, 1647541, 4775111, 7769817, 8030384}, 10));        // answer: 746431
-    }
 }

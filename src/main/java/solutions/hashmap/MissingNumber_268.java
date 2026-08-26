@@ -115,11 +115,4 @@ public class MissingNumber_268 {
         return left;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new MissingNumber_268().missingNumber(new int[]{3, 0, 1})); // 2
-        System.out.println(new MissingNumber_268().missingNumber(new int[]{1, 2, 0})); // 3
-        System.out.println(new MissingNumber_268().missingNumber(new int[]{1, 2})); // 0
-        System.out.println(new MissingNumber_268().missingNumber(new int[]{2, 0})); // 1
-        System.out.println(new MissingNumber_268().missingNumber(new int[]{9, 6, 4, 2, 3, 5, 7, 0, 1})); // 8
-    }
 }

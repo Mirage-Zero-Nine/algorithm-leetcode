@@ -54,11 +54,4 @@ public class ReverseWords_186 {
         }
     }
 
-    public static void main(String[] args) {
-        char[] tmp = new char[]{'t', 'h', 'e', ' ', 's', 'k', 'y', ' ', 'i', 's', ' ', 'b', 'l', 'u', 'e'};
-        ReverseWords_186 test = new ReverseWords_186();
-        test.reverseWords(tmp);
-
-        System.out.println(tmp);
-    }
 }

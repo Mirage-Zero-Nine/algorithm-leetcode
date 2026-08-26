@@ -51,32 +51,4 @@ public class ReverseBetween_92 {
         return dummy.next;
     }
 
-    public static void main(String[] args) {
-        ReverseBetween_92 test = new ReverseBetween_92();
-        printAll(test.reverseBetween(genList(1, 6), 3, 4));
-    }
-
-    /**
-     * Generate linked list from start to end - 1 (end is not included).
-     *
-     * @param start start value
-     * @param end   end value (end in list is end - 1, end is not included)
-     * @return linked list
-     */
-    private static ListNode genList(int start, int end) {
-        ListNode dummy = new ListNode(0);
-        ListNode head = dummy;
-        for (int i = start; i < end; i++) {
-            head.next = new ListNode(i);
-            head = head.next;
-        }
-
-        return dummy.next;
-    }
-
-    private static void printAll(ListNode head) {
-        while (head != null) {
-            head = head.next;
-        }
-    }
 }

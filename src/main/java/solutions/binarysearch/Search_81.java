@@ -57,15 +57,4 @@ public class Search_81 {
         return false;
     }
 
-    public static void main(String[] args) {
-        Search_81 test = new Search_81();
-        System.out.println(test.search(new int[]{1, 1}, 0));
-        System.out.println(test.search(new int[]{2, 5, 6, 0, 0, 1, 2}, 0));
-        System.out.println(test.search(new int[]{2, 5, 6, 0, 0, 1, 2}, 3));
-        System.out.println(test.search(new int[]{0}, 0));
-        System.out.println(test.search(new int[]{0, 0, 0}, 0));
-        System.out.println(test.search(new int[]{0, 1, 2, 3, 4, 5, 90}, 0));
-        System.out.println(test.search(new int[]{1, 2, 3, 4, 5, 90}, 0));
-        System.out.println(test.search(new int[]{1, 3, 1, 1, 1}, 3));
-    }
 }

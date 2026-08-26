@@ -52,7 +52,4 @@ public class MinSumOfLengths_1477 {
         return out == Integer.MAX_VALUE ? -1 : out;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new MinSumOfLengths_1477().minSumOfLengths(new int[]{4, 3, 2, 6, 2, 3, 4}, 6));
-    }
 }

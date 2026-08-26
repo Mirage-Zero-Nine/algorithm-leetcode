@@ -22,7 +22,7 @@ public class MaxRepOpt1_1156 {
     public int maxRepOpt1_1156(String s) {
 
         /* Corner case */
-        if (s.length() < 1) {
+        if (s.isEmpty()) {
             return 0;
         }
 
@@ -54,7 +54,4 @@ public class MaxRepOpt1_1156 {
         return max;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new MaxRepOpt1_1156().maxRepOpt1_1156("aaabaaa"));
-    }
 }

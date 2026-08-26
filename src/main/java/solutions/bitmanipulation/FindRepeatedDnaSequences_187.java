@@ -65,7 +65,4 @@ public class FindRepeatedDnaSequences_187 {
         return new ArrayList<>(out);
     }
 
-    public static void main(String[] args) {
-        System.out.println(new FindRepeatedDnaSequences_187().findRepeatedDnaSequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"));
-    }
 }

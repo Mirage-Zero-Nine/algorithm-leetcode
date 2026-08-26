@@ -40,7 +40,4 @@ public class CheckRecord_551 {
         return true;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new CheckRecord_551().checkRecord("PPALLL"));        // false
-    }
 }

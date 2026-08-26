@@ -63,21 +63,10 @@ public class CombinationSum2_40 {
                 if (i == start || candidates[i] != candidates[i - 1]) {
                     temp.add(candidates[i]);
                     backtracking(result, temp, candidates, remain - candidates[i], i + 1);
-                    temp.remove(temp.size() - 1);
+                    temp.removeLast();
                 }
             }
         }
     }
 
-    public static void main(String[] args) {
-
-        /* Combination Sum 2 */
-        CombinationSum2_40 combinationSum2Test = new CombinationSum2_40();
-        int[] candidate = {10, 1, 2, 7, 6, 1, 5};
-        System.out.println(combinationSum2Test.combinationSum2(candidate, 8));
-        candidate = new int[]{2, 5, 2, 1, 2};
-        System.out.println(combinationSum2Test.combinationSum2(candidate, 10));
-        candidate = new int[]{2, 5, 2, 1, 2};
-        System.out.println(combinationSum2Test.combinationSum2(candidate, 5));
-    }
 }

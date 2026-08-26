@@ -55,8 +55,4 @@ public class MaxConsecutiveAnswers_2024 {
         return max;
     }
 
-    public static void main(String[] args) {
-        MaxConsecutiveAnswers_2024 maxConsecutiveAnswers_2024 = new MaxConsecutiveAnswers_2024();
-        System.out.println(maxConsecutiveAnswers_2024.maxConsecutiveAnswers("TTFTTFTT", 1));
-    }
 }

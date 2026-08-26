@@ -59,10 +59,4 @@ public class FindRadius_475 {
         return radius;
     }
 
-    public static void main(String[] args) {
-        FindRadius_475 test = new FindRadius_475();
-        System.out.println(test.findRadius(new int[]{1, 2, 3}, new int[]{2}));
-        System.out.println(test.findRadius(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9}, new int[]{1, 9}));
-
-    }
 }

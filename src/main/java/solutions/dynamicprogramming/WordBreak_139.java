@@ -1,6 +1,4 @@
 package solutions.dynamicprogramming;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -29,7 +27,7 @@ public class WordBreak_139 {
     public boolean wordBreak(String s, List<String> wordDict) {
 
         /* Corner case */
-        if (s.length() == 0 || wordDict.size() == 0) {
+        if (s.isEmpty() || wordDict.isEmpty()) {
             return false;
         }
 
@@ -61,7 +59,7 @@ public class WordBreak_139 {
     public boolean dfsWithMem(String s, List<String> wordDict) {
 
         /* Corner case */
-        if (s.length() == 0 || wordDict.size() == 0) {
+        if (s.isEmpty() || wordDict.isEmpty()) {
             return false;
         }
 
@@ -100,14 +98,4 @@ public class WordBreak_139 {
         return false;
     }
 
-    public static void main(String[] args) {
-        String[] wordDict = {"call", "of", "duty"};
-        List<String> l = new ArrayList<>(Arrays.asList(wordDict));
-        WordBreak_139 test = new WordBreak_139();
-        System.out.println(test.wordBreak("callofduty", l));
-
-        wordDict = new String[]{"car", "ca", "rs"};
-        l = Arrays.asList(wordDict);
-        System.out.println(test.wordBreak("cars", l));
-    }
 }

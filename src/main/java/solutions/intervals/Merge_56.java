@@ -52,9 +52,4 @@ public class Merge_56 {
         return out.toArray(new int[out.size()][]);
     }
 
-    public static void main(String[] args) {
-        Merge_56 test = new Merge_56();
-        System.out.println(Arrays.deepToString(test.merge(new int[][]{{15, 18}, {2, 6}, {1, 3}, {8, 10}})));
-    }
 }
-

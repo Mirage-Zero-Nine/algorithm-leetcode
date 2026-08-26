@@ -30,7 +30,7 @@ public class SimplifyPath_71 {
 
             if (s.equals("src/main") && !stack.isEmpty()) {       // one folder back in path
                 stack.pop();
-            } else if (!s.equals("src/main") && !s.equals(".") && !s.equals("")) {        // find valid folder path
+            } else if (!s.equals("src/main") && !s.equals(".") && !s.isEmpty()) {        // find valid folder path
                 stack.push(s);
             }
         }
@@ -45,13 +45,4 @@ public class SimplifyPath_71 {
         return out.toString();
     }
 
-    public static void main(String[] args) {
-        SimplifyPath_71 test = new SimplifyPath_71();
-        System.out.println(test.simplifyPath("/a/./b/../../c/"));       // /c
-        System.out.println(test.simplifyPath("/a/../../b/../c//.//"));      // /c
-        System.out.println(test.simplifyPath("/a//b////c/d//././/.."));     // /a/b/c
-        System.out.println(test.simplifyPath("/home/"));        // /home
-        System.out.println(test.simplifyPath("/home//foo/"));       // /home/foo
-        System.out.println(test.simplifyPath("/../"));      // /
-    }
 }

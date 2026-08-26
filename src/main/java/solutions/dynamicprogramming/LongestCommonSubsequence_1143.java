@@ -24,7 +24,7 @@ public class LongestCommonSubsequence_1143 {
     public int longestCommonSubsequence(String text1, String text2) {
 
         /* Corner case */
-        if (text1.length() == 0 || text2.length() == 0) {
+        if (text1.isEmpty() || text2.isEmpty()) {
             return 0;
         }
 
@@ -38,11 +38,5 @@ public class LongestCommonSubsequence_1143 {
         }
 
         return dp[l1][l2];
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new LongestCommonSubsequence_1143().longestCommonSubsequence("dhiuhh", "huih"));
-        System.out.println(new LongestCommonSubsequence_1143().longestCommonSubsequence("abcde", "ace"));
-        System.out.println(new LongestCommonSubsequence_1143().longestCommonSubsequence("ace", "ace"));
     }
 }

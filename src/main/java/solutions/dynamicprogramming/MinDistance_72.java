@@ -126,18 +126,4 @@ public class MinDistance_72 {
         return min;
     }
 
-    public static void main(String[] args) {
-        MinDistance_72 test = new MinDistance_72();
-        long startTime = System.nanoTime();
-        System.out.println(test.dfsImpl("zoologicoarchaeologist", "zoogeologist"));     // 10
-        long endTime = System.nanoTime();
-        long totalTime = endTime - startTime;
-        System.out.println(totalTime);
-
-        startTime = System.nanoTime();
-        System.out.println(test.dfsImpl("dinitrophenylhydrazine", "acetylphenylhydrazine"));     // 6
-        endTime = System.nanoTime();
-        totalTime = endTime - startTime;
-        System.out.println(totalTime);
-    }
 }

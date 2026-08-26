@@ -1,6 +1,5 @@
 package solutions.heap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -121,10 +120,4 @@ public class TopKFrequent_347 {
         return out;
     }
 
-    public static void main(String[] args) {
-        TopKFrequent_347 test = new TopKFrequent_347();
-
-        // output should be [3,4,6,2,5]
-        System.out.println(Arrays.toString(test.twoHashMap(new int[]{1, 3, 5, 5, 6, 3, 4, 4, 6, 4, 2, 2, 3, 4, 5, 6, 7, 8, 9, 0, 6, 4, 3, 3, 1, 2}, 5)));
-    }
 }

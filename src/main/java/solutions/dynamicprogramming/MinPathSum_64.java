@@ -42,8 +42,4 @@ public class MinPathSum_64 {
         return dp[0][0];
     }
 
-    public static void main(String[] args) {
-        MinPathSum_64 test = new MinPathSum_64();
-        System.out.println(test.minPathSum(new int[][]{{1, 3, 1}, {1, 5, 1}, {4, 2, 1}}));
-    }
 }

@@ -31,7 +31,7 @@ public class RemoveDuplicateLetters_316 {
     public String removeDuplicateLetters(String s) {
 
         /* Corner case */
-        if (s.length() == 0) {
+        if (s.isEmpty()) {
             return "";
         }
 
@@ -71,7 +71,4 @@ public class RemoveDuplicateLetters_316 {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
-        System.out.println(new RemoveDuplicateLetters_316().removeDuplicateLetters("cbaacdcbc"));        // acdb
-    }
 }

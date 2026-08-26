@@ -57,14 +57,4 @@ public class Codec_271 {
         return out;
     }
 
-    public static void main(String[] args) {
-        List<String> list = new ArrayList<>();
-        list.add("1");
-        list.add("0");
-        list.add("electricity");
-        list.add("hello");
-        list.add("word");
-        Codec_271 test = new Codec_271();
-        System.out.println(test.decode(test.encode(list)));
-    }
 }

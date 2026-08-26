@@ -38,9 +38,4 @@ public class Rob_198 {
     }
 
     // test
-    public static void main(String[] args) {
-        int[] t = {1, 2, 3, 4, 5};
-        Rob_198 test = new Rob_198();
-        System.out.println(test.rob(t));
-    }
 }

@@ -53,7 +53,7 @@ public class LFUCache_460 {
         this.frequency.put(key, frequency + 1);      // update frequency
 
         this.keyUnderSameFrequency.get(frequency).remove(key);        // current key's frequency has updated, recreate key-frequency pair
-        if (frequency == this.min && this.keyUnderSameFrequency.get(frequency).size() == 0) {
+        if (frequency == this.min && this.keyUnderSameFrequency.get(frequency).isEmpty()) {
             this.min++;      // Update min if min frequency in map has changed
         }
         if (!this.keyUnderSameFrequency.containsKey(frequency + 1)) {
@@ -83,7 +83,7 @@ public class LFUCache_460 {
             return;
         }
         if (this.pair.size() >= this.capacity) {
-            int removeLeast = this.keyUnderSameFrequency.get(this.min).iterator().next();
+            int removeLeast = this.keyUnderSameFrequency.get(this.min).getFirst();
             this.keyUnderSameFrequency.get(this.min).remove(removeLeast);
             this.frequency.remove(removeLeast);
             this.pair.remove(removeLeast);
@@ -95,19 +95,4 @@ public class LFUCache_460 {
         this.keyUnderSameFrequency.get(1).add(key);
     }
 
-    public static void main(String[] args) {
-        LFUCache_460 testCache = new LFUCache_460(2);
-
-        testCache.put(1, 1);
-        testCache.put(2, 2);
-        System.out.println(testCache.get(1));
-        testCache.put(3, 3);
-        System.out.println(testCache.get(2));
-        System.out.println(testCache.get(3));
-        testCache.put(4, 4);
-        System.out.println(testCache.get(1));
-        System.out.println(testCache.get(3));
-        System.out.println(testCache.get(4));
-        System.out.println(testCache);
-    }
 }

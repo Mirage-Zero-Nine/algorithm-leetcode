@@ -81,7 +81,4 @@ public class MaxVacationDays_568 {
         return max;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new MaxVacationDays_568().maxVacationDays(new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, new int[][]{{1, 1, 1}, {7, 7, 7}, {7, 7, 7}}));
-    }
 }

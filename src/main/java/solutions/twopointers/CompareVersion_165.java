@@ -50,11 +50,4 @@ public class CompareVersion_165 {
         return 0;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new CompareVersion_165().compareVersion("0.1", "1.1"));      // -1
-        System.out.println(new CompareVersion_165().compareVersion("1.0.1", "1"));      // 1
-        System.out.println(new CompareVersion_165().compareVersion("7.5.2.4", "7.5.3"));      // -1
-        System.out.println(new CompareVersion_165().compareVersion("1.01", "1.001"));      // 0
-        System.out.println(new CompareVersion_165().compareVersion("1.0", "1.0.0"));      // 0
-    }
 }

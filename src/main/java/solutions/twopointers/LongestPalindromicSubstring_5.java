@@ -175,8 +175,4 @@ public class LongestPalindromicSubstring_5 {
         return s.substring(start, start + maxLength);
     }
 
-    public static void main(String[] args) {
-        LongestPalindromicSubstring_5 test = new LongestPalindromicSubstring_5();
-        System.out.println(test.longestPalindrome("cbcbc"));
-    }
 }

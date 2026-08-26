@@ -62,7 +62,4 @@ public class ShiftGrid_1260 {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new ShiftGrid_1260().shiftGrid(new int[][]{{1}, {2}, {3}, {4}, {7}, {6}, {5}}, 2));
-    }
 }

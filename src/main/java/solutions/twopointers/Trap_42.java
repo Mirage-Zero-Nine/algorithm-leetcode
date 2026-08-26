@@ -92,9 +92,4 @@ public class Trap_42 {
         return max;
     }
 
-    public static void main(String[] args) {
-        Trap_42 trapTest = new Trap_42();
-        int[] height = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
-        System.out.println(trapTest.trap(height));
-    }
 }

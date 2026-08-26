@@ -74,8 +74,4 @@ public class NumSubarraysWithSum_930 {
         return out;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new NumSubarraysWithSum_930().numSubarraysWithSum(new int[]{0, 0, 0, 0, 0, 0, 1, 0, 0, 0}, 0));     // 27
-        System.out.println(new NumSubarraysWithSum_930().numSubarraysWithSum(new int[]{1, 0, 1, 0, 1}, 2));     // 4
-    }
 }

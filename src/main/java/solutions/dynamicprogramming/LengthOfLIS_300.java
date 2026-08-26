@@ -74,8 +74,4 @@ public class LengthOfLIS_300 {
         return left;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new LengthOfLIS_300().lengthOfLIS(new int[]{10, 9, 2, 5, 3, 7, 101, 18}));
-        System.out.println(new LengthOfLIS_300().lengthOfLIS(new int[]{10, 9, 2, 5, 3, 4}));
-    }
 }

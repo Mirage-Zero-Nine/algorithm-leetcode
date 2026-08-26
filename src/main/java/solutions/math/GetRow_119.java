@@ -25,13 +25,9 @@ public class GetRow_119 {
             for (int j = 0; j < output.size() - 1; j++) {
                 output.set(j, output.get(j) + output.get(j + 1));
             }
-            output.add(0, 1);
+            output.addFirst(1);
         }
         return output;
     }
 
-    public static void main(String[] args) {
-        GetRow_119 gen = new GetRow_119();
-        System.out.println(gen.getRow(3));
-    }
 }

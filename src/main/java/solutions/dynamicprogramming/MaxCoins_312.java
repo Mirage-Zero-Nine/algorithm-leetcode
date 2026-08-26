@@ -110,9 +110,4 @@ public class MaxCoins_312 {
         return dp[0][n - 1];
     }
 
-    public static void main(String[] args) {
-        int[] arr = {3, 1, 5, 8};
-        MaxCoins_312 test = new MaxCoins_312();
-        System.out.println(test.maxCoins(arr));
-    }
 }

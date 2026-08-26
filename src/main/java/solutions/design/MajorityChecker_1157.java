@@ -57,10 +57,4 @@ public class MajorityChecker_1157 {
         return (count >= threshold) ? majority : -1;
     }
 
-    public static void main(String[] args) {
-        MajorityChecker_1157 test = new MajorityChecker_1157(new int[]{1, 1, 2, 2, 1, 1});
-        System.out.println(test.query(0, 5, 4));
-        System.out.println(test.query(0, 3, 3));
-        System.out.println(test.query(2, 3, 2));
-    }
 }

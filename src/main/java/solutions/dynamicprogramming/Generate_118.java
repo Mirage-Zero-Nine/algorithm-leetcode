@@ -40,9 +40,4 @@ public class Generate_118 {
         return out;
     }
 
-    public static void main(String[] args) {
-        Generate_118 gen = new Generate_118();
-        System.out.println(gen.generate(4));
-    }
 }
-

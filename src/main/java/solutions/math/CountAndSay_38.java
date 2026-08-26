@@ -49,9 +49,4 @@ public class CountAndSay_38 {
         return out;
     }
 
-    public static void main(String[] args) {
-
-        CountAndSay_38 countAndSayTest = new CountAndSay_38();
-        System.out.println(countAndSayTest.countAndSay(6));
-    }
 }

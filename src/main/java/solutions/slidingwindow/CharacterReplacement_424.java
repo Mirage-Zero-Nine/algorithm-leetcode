@@ -24,7 +24,7 @@ public class CharacterReplacement_424 {
     public int characterReplacement(String s, int k) {
 
         /* Corner case */
-        if (s.length() < 1) {
+        if (s.isEmpty()) {
             return 0;
         }
         if (k > s.length()) {       // directly replace all char in string
@@ -55,9 +55,4 @@ public class CharacterReplacement_424 {
         return window;
     }
 
-    public static void main(String[] args) {
-        CharacterReplacement_424 test = new CharacterReplacement_424();
-        System.out.println(test.characterReplacement("AABABBA", 2));        // 4
-        System.out.println(test.characterReplacement("AABABBA", 1));        // 4
-    }
 }

@@ -34,11 +34,4 @@ public class IsPerfectSquare_367 {
         return (left * left) == num;
     }
 
-    public static void main(String[] args) {
-        IsPerfectSquare_367 test = new IsPerfectSquare_367();
-
-        for (int i = 0; i < 10001; i++) {
-            System.out.println("Number " + i + " is perfect square: " + test.isPerfectSquare(i));
-        }
-    }
 }

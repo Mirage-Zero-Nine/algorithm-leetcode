@@ -56,9 +56,4 @@ public class ValidTree_261 {
         return (root[vertex] == -1) ? vertex : find(root[vertex], root);
     }
 
-    public static void main(String[] args) {
-        ValidTree_261 test = new ValidTree_261();
-        System.out.println(test.validTree(5, new int[][]{{0, 1}, {0, 4}, {1, 4}, {2, 3}}));
-        System.out.println(test.validTree(5, new int[][]{{0, 1}, {1, 2}, {2, 3}, {1, 3}, {1, 4}}));
-    }
 }

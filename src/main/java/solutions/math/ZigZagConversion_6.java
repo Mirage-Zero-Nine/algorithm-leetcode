@@ -45,12 +45,4 @@ public class ZigZagConversion_6 {
         return zigzag.toString();
     }
 
-    public static void main(String[] args) {
-
-        /* Zig Zag test */
-        ZigZagConversion_6 zigZagConversionTest = new ZigZagConversion_6();
-        String testS = "abcdefghijk";
-        int numRow = 4;
-        System.out.println(zigZagConversionTest.convert(testS, numRow));
-    }
 }

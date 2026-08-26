@@ -42,8 +42,4 @@ public class SumOfBeauties_2012 {
         return sum;
     }
 
-    public static void main(String[] args) {
-        SumOfBeauties_2012 sumOfBeauties_2012 = new SumOfBeauties_2012();
-        System.out.println(sumOfBeauties_2012.sumOfBeauties(new int[]{2, 4, 6, 4}));
-    }
 }

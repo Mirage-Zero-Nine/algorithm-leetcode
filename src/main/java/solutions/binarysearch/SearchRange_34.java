@@ -1,6 +1,5 @@
 package solutions.binarysearch;
 
-import java.util.Arrays;
 
 /**
  * Given an array of int sorted in ascending order, find the starting and ending position of a given target value.
@@ -78,9 +77,4 @@ public class SearchRange_34 {
         return nums[left] == target ? left : -1;
     }
 
-    public static void main(String[] args) {
-        SearchRange_34 searchRangeTest = new SearchRange_34();
-        int[] nums = {0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 8, 9, 12, 30};
-        System.out.println(Arrays.toString(searchRangeTest.searchRange(nums, 4)));
-    }
 }

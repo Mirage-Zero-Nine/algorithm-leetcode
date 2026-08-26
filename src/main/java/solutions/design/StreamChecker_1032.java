@@ -80,11 +80,4 @@ public class StreamChecker_1032 {
         }
     }
 
-    public static void main(String[] args) {
-        StreamChecker_1032 test = new StreamChecker_1032(new String[]{"cd", "f", "kl"});
-        System.out.println(test.query('c'));
-        System.out.println(test.query('d'));
-        System.out.println(test.query('d'));
-        System.out.println(test.query('f'));
-    }
 }

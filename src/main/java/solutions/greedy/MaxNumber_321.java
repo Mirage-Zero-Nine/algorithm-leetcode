@@ -1,6 +1,5 @@
 package solutions.greedy;
 
-import java.util.Arrays;
 
 /**
  * You are given two integer arrays nums1 and nums2 of lengths m and n respectively.
@@ -123,12 +122,4 @@ public class MaxNumber_321 {
         return (p2 == n || (p1 < m && nums1[p1] > nums2[p2])) ? nums1 : nums2;
     }
 
-    public static void main(String[] args) {
-        int[] nums1 = new int[]{3, 4, 6, 5};
-        int[] nums2 = new int[]{9, 1, 2, 5, 8, 3};
-        System.out.println(Arrays.toString(new MaxNumber_321().maxNumber(nums1, nums2, 5))); // [9,8,6,5,3]
-        nums1 = new int[]{6, 7};
-        nums2 = new int[]{6, 0, 4};
-        System.out.println(Arrays.toString(new MaxNumber_321().maxNumber(nums1, nums2, 5))); // [6, 7, 6, 0, 4]
-    }
 }

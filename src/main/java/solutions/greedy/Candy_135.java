@@ -128,10 +128,4 @@ public class Candy_135 {
         return out;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new Candy_135().twoPass(new int[]{1, 1, 2, 3, 7, 4, 6}));        // 14
-        System.out.println(new Candy_135().twoPass(new int[]{1, 1, 2}));        // 4
-        System.out.println(new Candy_135().twoPass(new int[]{1, 0, 2}));        // 5
-        System.out.println(new Candy_135().twoPass(new int[]{1, 1, 2, 3, 7, 6, 5, 4, 3, 2, 1}));        // 35
-    }
 }

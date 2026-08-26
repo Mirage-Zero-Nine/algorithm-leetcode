@@ -60,16 +60,4 @@ public class Search_33 {
         return nums[left] == target ? left : -1;
     }
 
-    public static void main(String[] args) {
-        Search_33 test = new Search_33();
-        System.out.println(test.search(new int[]{1, 2, 3, 4, 5, 6}, 4));
-        System.out.println(test.search(new int[]{1, 2, 3, 4, 5, 6}, 1));
-        System.out.println(test.search(new int[]{1, 2, 3, 4, 5, 6}, 6));
-        System.out.println(test.search(new int[]{1, 2}, 1));
-        System.out.println(test.search(new int[]{1, 2}, 2));
-        System.out.println(test.search(new int[]{2, 1}, 2));
-        System.out.println(test.search(new int[]{2, 1}, 1));
-        System.out.println(test.search(new int[]{1}, 4));
-        System.out.println(test.search(new int[]{1}, 1));
-    }
 }

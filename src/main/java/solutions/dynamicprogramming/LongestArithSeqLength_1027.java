@@ -23,6 +23,8 @@ public class LongestArithSeqLength_1027 {
      * @return length of the longest arithmetic subsequence in A
      */
     public int longestArithSeqLength(int[] A) {
+        // The solver instance can be reused; do not carry a previous call's maximum forward.
+        max = 0;
         int n = A.length;
 
         /* Corner case */
@@ -111,9 +113,4 @@ public class LongestArithSeqLength_1027 {
         return max;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new LongestArithSeqLength_1027().longestArithSeqLength(new int[]{0, 8, 45, 88, 48, 68, 28, 55, 17, 24}));
-        System.out.println(new LongestArithSeqLength_1027().longestArithSeqLength(new int[]{9, 4, 7, 2, 10}));
-        System.out.println(new LongestArithSeqLength_1027().longestArithSeqLength(new int[]{3, 6, 9, 12}));
-    }
 }

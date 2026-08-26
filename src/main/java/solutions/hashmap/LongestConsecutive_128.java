@@ -41,8 +41,4 @@ public class LongestConsecutive_128 {
         return max;
     }
 
-    public static void main(String[] args) {
-        LongestConsecutive_128 test = new LongestConsecutive_128();
-        System.out.println(test.longestConsecutive(new int[]{1, 2, 0, 1}));
-    }
 }

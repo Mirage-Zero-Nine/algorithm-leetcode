@@ -22,7 +22,7 @@ public class GenerateAbbreviations_320 {
         List<String> out = new ArrayList<>();
 
         /* Corner case */
-        if (word.length() < 1) {
+        if (word.isEmpty()) {
             out.add(word);
             return out;
         }
@@ -55,8 +55,4 @@ public class GenerateAbbreviations_320 {
         }
     }
 
-    public static void main(String[] args) {
-        GenerateAbbreviations_320 test = new GenerateAbbreviations_320();
-        System.out.println(test.generateAbbreviations("abc"));
-    }
 }

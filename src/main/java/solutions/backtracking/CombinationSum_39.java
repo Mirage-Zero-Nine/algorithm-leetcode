@@ -59,14 +59,9 @@ public class CombinationSum_39 {
             for (int i = start; i < candidates.length; i++) {
                 temp.add(candidates[i]);
                 backtracking(output, temp, candidates, remain - candidates[i], i);
-                temp.remove(temp.size() - 1);      // if it is not a possible combination, remove and continue
+                temp.removeLast();      // if it is not a possible combination, remove and continue
             }
         }
     }
 
-    public static void main(String[] args) {
-        CombinationSum_39 combinationSumTest = new CombinationSum_39();
-        System.out.println(combinationSumTest.combinationSum(new int[]{2, 3, 6, 7}, 7));
-        System.out.println(combinationSumTest.combinationSum(new int[]{2, 3, 5}, 8));
-    }
 }

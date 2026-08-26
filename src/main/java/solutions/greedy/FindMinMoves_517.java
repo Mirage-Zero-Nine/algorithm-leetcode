@@ -50,7 +50,4 @@ public class FindMinMoves_517 {
         return steps;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new FindMinMoves_517().findMinMoves(new int[]{0, 0, 11, 5}));
-    }
 }

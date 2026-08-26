@@ -116,12 +116,4 @@ public class FindKthLargest_215 {
         return pq.isEmpty() ? -1 : pq.poll();
     }
 
-    public static void main(String[] args) {
-        FindKthLargest_215 test = new FindKthLargest_215();
-        System.out.println(test.findKthLargest(new int[]{3, 2, 1, 5, 6, 4}, 2));
-        System.out.println(test.findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));
-        System.out.println(test.findKthLargest(new int[]{3, 2, 1, 5, 6, 4}, 2));
-        System.out.println(test.findKthLargest(new int[]{5, 2, 4, 1, 3, 6, 0}, 4));
-        System.out.println(test.findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 9));
-    }
 }

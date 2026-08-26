@@ -71,8 +71,4 @@ public class VerifyPreorder_255 {
         return true;
     }
 
-    public static void main(String[] args) {
-        VerifyPreorder_255 test = new VerifyPreorder_255();
-        System.out.println(test.verifyPreorder(new int[]{5, 2, 1, 3, 6}));
-    }
 }

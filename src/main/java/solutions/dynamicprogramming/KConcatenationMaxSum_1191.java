@@ -67,10 +67,4 @@ public class KConcatenationMaxSum_1191 {
         return (sum > 0) ? (int) (Math.max(s1, oneMax) % mod) : (int) (Math.max(s2, oneMax) % mod);
     }
 
-    public static void main(String[] args) {
-        System.out.println(new KConcatenationMaxSum_1191().kConcatenationMaxSum(new int[]{1, 2}, 3));
-        System.out.println(new KConcatenationMaxSum_1191().kConcatenationMaxSum(new int[]{1, -2, 1}, 5));
-        System.out.println(new KConcatenationMaxSum_1191().kConcatenationMaxSum(new int[]{-1, -2, -3}, 7));
-        System.out.println(new KConcatenationMaxSum_1191().kConcatenationMaxSum(new int[]{-5, -2, 0, 0, 3, 9, -2, -5, 4}, 5));       // 20
-    }
 }

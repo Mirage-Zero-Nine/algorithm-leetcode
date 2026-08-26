@@ -71,8 +71,4 @@ public class NumPrimeArrangements_1175 {
         return count;
     }
 
-    public static void main(String[] args) {
-        NumPrimeArrangements_1175 test = new NumPrimeArrangements_1175();
-        System.out.println(test.numPrimeArrangements(100));
-    }
 }

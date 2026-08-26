@@ -35,10 +35,10 @@ public class Reverse_7 {
             numArray.add(x % 10);
             x = x / 10;
         }
-        while (numArray.size() > 0) {
-            result = (long) (result + numArray.get(numArray.size() - 1) * Math.pow(10, count));
+        while (!numArray.isEmpty()) {
+            result = (long) (result + numArray.getLast() * Math.pow(10, count));
             count += 1;
-            numArray.remove(numArray.size() - 1);
+            numArray.removeLast();
         }
 
         if (result < Integer.MIN_VALUE || result > Integer.MAX_VALUE) {
@@ -48,9 +48,4 @@ public class Reverse_7 {
         return (int) result;
     }
 
-    public static void main(String[] args) {
-
-        Reverse_7 reverseIntegerTest = new Reverse_7();
-        System.out.println(reverseIntegerTest.reverse(1534236469));
-    }
 }
