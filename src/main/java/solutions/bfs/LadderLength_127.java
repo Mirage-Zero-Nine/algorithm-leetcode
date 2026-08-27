@@ -1,7 +1,7 @@
 package solutions.bfs;
 
+import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -21,19 +21,36 @@ import java.util.Set;
  * Time: 2019/05/28 16:24
  * Created with IntelliJ IDEA
  */
-
 public class LadderLength_127 {
     /**
-     * Use BFS to construct word. One char each time.
+     * Returns the number of words in the shortest transformation sequence.
      *
-     * @param beginWord begin word
-     * @param endWord   target word
-     * @param wordList  middle words
-     * @return length of the shortest transformation sequence
+     * <p>The sequence includes both {@code beginWord} and {@code endWord}.
+     * Every intermediate word, including {@code endWord}, must be present in
+     * {@code wordList}; {@code beginWord} does not need to be present.</p>
+     *
+     * <p>The dictionary is also used as the visited set. Removing a word when
+     * it is enqueued prevents cycles and avoids maintaining a second set of
+     * visited words.</p>
+     *
+     * @param beginWord the starting word
+     * @param endWord   the target word
+     * @param wordList  the dictionary of allowed transformed words
+     * @return the shortest sequence length, or {@code 0} when no sequence exists
+     * @implNote For {@code N} dictionary words of length {@code L}, the
+     * worst-case time complexity is {@code O(N * L^2)}. The alphabet has a
+     * fixed size of 26, and creating and hashing each candidate word costs
+     * {@code O(L)}. Auxiliary space is {@code O(N * L)} for the dictionary and
+     * BFS queue.
      */
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-
-        if (beginWord == null || beginWord.isEmpty() || endWord == null || endWord.isEmpty() || wordList == null || wordList.isEmpty()) {
+        if (beginWord == null ||
+                endWord == null ||
+                wordList == null ||
+                beginWord.isEmpty() ||
+                endWord.isEmpty() ||
+                wordList.isEmpty() ||
+                beginWord.length() != endWord.length()) {
             return 0;
         }
 
@@ -42,50 +59,60 @@ public class LadderLength_127 {
             return 0;
         }
 
-        return bfs(beginWord, endWord, words);
+        words.remove(beginWord);
+
+        Queue<String> queue = new ArrayDeque<>(List.of(beginWord));
+        int length = 1;
+
+        while (!queue.isEmpty()) {
+            length++;
+
+            // The queue may grow while this loop runs, so capture its size at
+            // the start. Those captured entries form exactly one BFS level.
+            for (int i = 0, levelSize = queue.size(); i < levelSize; i++) {
+                if (enqueueNeighbors(queue.poll(), endWord, words, queue)) {
+                    return length;
+                }
+            }
+        }
+
+        return 0;
     }
 
     /**
-     * Implementation of BFS.
+     * Generates and enqueues all unvisited one-letter mutations of a word.
      *
-     * @param beginWord begin word
-     * @param endWord   target word
-     * @param words     middle words
-     * @return length of the shortest transformation sequence
+     * @param current the word being expanded
+     * @param endWord the target word
+     * @param words   the unvisited dictionary words
+     * @param queue   the BFS queue
+     * @return {@code true} when {@code endWord} is found
      */
-    private int bfs(String beginWord, String endWord, Set<String> words) {
+    private boolean enqueueNeighbors(String current, String endWord, Set<String> words, Queue<String> queue) {
+        char[] characters = current.toCharArray();
 
-        Queue<String> queue = new LinkedList<>();
-        queue.add(beginWord);
-        int length = 1;
-        while (!queue.isEmpty()) {
-            int size = queue.size();
+        for (int position = 0; position < characters.length; position++) {
+            char original = characters[position];
 
-            for (int i = 0; i < size; i++) {
-                String word = queue.poll();
-                if (word != null) {
-                    if (word.equals(endWord)) {
-                        return length;
-                    }
-                    char[] wordArr = word.toCharArray();
-                    for (int j = 0; j < word.length(); j++) {
-                        for (char c = 'a'; c <= 'z'; c++) {
-                            if (wordArr[j] != c) {
-                                char currentChar = wordArr[j];
-                                wordArr[j] = c;
-                                String tmp = new String(wordArr);
-                                if (words.contains(tmp)) {
-                                    queue.add(tmp);
-                                    words.remove(tmp);
-                                }
-                                wordArr[j] = currentChar;
-                            }
+            for (char replacement = 'a'; replacement <= 'z'; replacement++) {
+                if (replacement != original) {
+                    characters[position] = replacement;
+                    String nextWord = new String(characters);
+
+                    // remove() both checks dictionary membership and marks the word
+                    // visited, so no separate visited set is needed.
+                    if (words.remove(nextWord)) {
+                        if (nextWord.equals(endWord)) {
+                            return true;
                         }
+                        queue.offer(nextWord);
                     }
                 }
             }
-            length++;
+            // Restore the buffer before changing the next position.
+            characters[position] = original;
         }
-        return 0;
+
+        return false;
     }
 }
