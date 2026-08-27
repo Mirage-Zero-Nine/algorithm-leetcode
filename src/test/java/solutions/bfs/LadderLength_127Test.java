@@ -1,14 +1,11 @@
 package solutions.bfs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author BorisMirage
@@ -21,143 +18,191 @@ public class LadderLength_127Test {
     private final LadderLength_127 test = new LadderLength_127();
 
     @Test
-    public void test() {
-        List<String> wordList = Lists.newArrayList("hot", "dot", "dog", "lot", "cog");
+    public void testLeetCodeExample() {
+        List<String> wordList = List.of("hot", "dot", "dog", "lot", "log", "cog");
         assertEquals(5, test.ladderLength("hit", "cog", wordList));
-        wordList = Lists.newArrayList("a", "b", "c");
-        assertEquals(2, test.ladderLength("a", "c", wordList));
     }
 
     @Test
-    public void testImpossible() {
-        List<String> wordList = Lists.newArrayList("hot", "dot", "dog", "lot", "log");
+    public void testEndWordNotInWordList() {
+        List<String> wordList = List.of("hot", "dot", "dog", "lot", "log");
         assertEquals(0, test.ladderLength("hit", "cog", wordList));
-    }
-
-    @Test
-    public void testInvalidInput() {
-        List<String> wordList = Lists.newArrayList();
-        assertEquals(0, test.ladderLength("a", "c", wordList));
-        wordList = Lists.newArrayList();
-        assertEquals(0, test.ladderLength("hit", "cog", wordList));
-        wordList = Lists.newArrayList("hot", "dot", "dog", "lot", "log", "cog", "hit");
-        assertEquals(0, test.ladderLength("", "cog", wordList));
-        wordList = Lists.newArrayList("hot", "dot", "dog", "lot", "log", "cog", "hit");
-        assertEquals(0, test.ladderLength("aaa", "", wordList));
     }
 
     @Test
     public void testSingleLetterWords() {
-        List<String> wordList = Lists.newArrayList("a", "b", "c");
+        List<String> wordList = List.of("a", "b", "c");
         assertEquals(2, test.ladderLength("a", "c", wordList));
     }
 
     @Test
-    public void testBeginEqualsEnd() {
-        List<String> wordList = Lists.newArrayList("same", "lame", "lime");
-        assertEquals(1, test.ladderLength("same", "same", wordList));
+    public void testDirectTransformation() {
+        List<String> wordList = List.of("dot");
+        assertEquals(2, test.ladderLength("hot", "dot", wordList));
     }
 
     @Test
-    public void testOneLetterChangeEach() {
-        List<String> wordList = Lists.newArrayList("hot", "dot", "dog", "cog");
+    public void testBeginWordDoesNotNeedToBeInWordList() {
+        List<String> wordList = List.of("hot", "dot", "dog", "cog");
         assertEquals(5, test.ladderLength("hit", "cog", wordList));
     }
 
     @Test
-    public void testCaseSensitiveFail() {
-        List<String> wordList = Lists.newArrayList("Hot", "Dot", "Dog", "Lot", "Log", "Cog");
-        assertEquals(0, test.ladderLength("hit", "cog", wordList));
+    public void testMissingEndWordEvenWhenItIsOneChangeAway() {
+        // "hut" is one change from reachable word "hot", but it is not in the dictionary.
+        List<String> wordList = List.of("hot");
+        assertEquals(0, test.ladderLength("hit", "hut", wordList));
     }
 
     @Test
     public void testDisconnectedGraph() {
-        List<String> wordList = Lists.newArrayList("aaa", "aab", "abb", "bbb", "ccc");
+        List<String> wordList = List.of("aab", "abb", "bbb", "ccc");
         assertEquals(0, test.ladderLength("aaa", "ccc", wordList));
     }
 
     @Test
+    public void testBeginWordMayAlsoAppearInWordList() {
+        List<String> wordList = List.of("hit", "hot", "dot", "dog", "lot", "log", "cog");
+        assertEquals(5, test.ladderLength("hit", "cog", wordList));
+    }
+
+    @Test
     public void testCycleAvoidance() {
-        List<String> wordList = Lists.newArrayList("hot", "dot", "dog", "lot", "log", "cog", "hit");
+        List<String> wordList = List.of("hot", "dot", "dog", "lot", "log", "cog");
         assertEquals(5, test.ladderLength("hit", "cog", wordList));
     }
 
     @Test
     public void testLongerChain() {
-        List<String> wordList = Lists.newArrayList("hot", "hat", "bat", "bad");
+        List<String> wordList = List.of("hot", "hat", "bat", "bad");
         assertEquals(4, test.ladderLength("hot", "bad", wordList));
     }
 
     @Test
-    public void testEndNotInWordList() {
-        List<String> wordList = Lists.newArrayList("hot", "dot", "dog", "lot", "log");
-        assertEquals(0, test.ladderLength("hit", "xyz", wordList));
-    }
-
-    @Test
-    public void testSingleStepTransform() {
-        // "hot" -> "dot" is one character change, length = 2 (begin + end)
-        List<String> wordList = Lists.newArrayList("dot");
-        assertEquals(2, test.ladderLength("hot", "dot", wordList));
+    public void testShortestPathIsSelected() {
+        List<String> wordList = List.of("hig", "hog", "hot", "dot", "dog", "cog");
+        // hit -> hig -> hog -> cog is shorter than hit -> hot -> dot -> dog -> cog.
+        assertEquals(4, test.ladderLength("hit", "cog", wordList));
     }
 
     @Test
     public void testMultipleEquallyShortPaths() {
         // hit->hot->dot->dog->cog AND hit->hot->lot->log->cog both length 5
-        List<String> wordList = Lists.newArrayList("hot", "dot", "dog", "lot", "log", "cog");
+        List<String> wordList = List.of("hot", "dot", "dog", "lot", "log", "cog");
         assertEquals(5, test.ladderLength("hit", "cog", wordList));
     }
 
     @Test
-    public void testBeginEqualsEndNotInWordList() {
-        // begin == end but end not in wordList -> 0 (early return)
-        List<String> wordList = Lists.newArrayList("abc", "def");
-        assertEquals(0, test.ladderLength("xyz", "xyz", wordList));
+    public void testEveryCharacterCanBeChanged() {
+        List<String> wordList = List.of("baaa", "bbaa", "bbba", "bbbb");
+        assertEquals(5, test.ladderLength("aaaa", "bbbb", wordList));
     }
 
     @Test
-    public void testNullWordList() {
-        assertEquals(0, test.ladderLength("hit", "cog", null));
-    }
-
-    @Test
-    public void testAllNeighborsFiltered() {
-        // "a" has 25 single-char neighbors; only "z" is in list, path a->z = 2
-        List<String> wordList = Lists.newArrayList("z");
+    public void testAllNeighborsAreFilteredByDictionary() {
+        List<String> wordList = List.of("z");
         assertEquals(2, test.ladderLength("a", "z", wordList));
     }
 
     @Test
-    public void testDisjointClustersNoPath() {
-        // Two clusters: {aaa,aab,abb} and {zzz,zzy,zyy} — no bridge
-        List<String> wordList = Lists.newArrayList("aab", "abb", "bbb", "zzz", "zzy", "zyy");
-        assertEquals(0, test.ladderLength("aaa", "zyy", wordList));
+    public void testTargetInDisconnectedComponent() {
+        List<String> wordList = List.of("aab", "abb", "bbb", "ccc", "ccd", "cdd");
+        assertEquals(0, test.ladderLength("aaa", "ccc", wordList));
     }
 
     @Test
-    public void testLargeWordList() {
-        // Generate 100+ 4-letter words from seed 42L, ensure result is reasonable
-        Random random = new Random(42L);
+    public void testIrrelevantWordsDoNotChangeResult() {
+        List<String> wordList = List.of(
+                "hot", "dot", "dog", "cog", "aaa", "bbb", "ccc", "ddd");
+        assertEquals(5, test.ladderLength("hit", "cog", wordList));
+    }
+
+    @Test
+    public void testTenCharacterWords() {
+        List<String> wordList = List.of("abcdefghik");
+        assertEquals(2, test.ladderLength("abcdefghij", "abcdefghik", wordList));
+    }
+
+    @Test
+    public void testMaximumWordListSize() {
+        // 4,999 unique distractors plus the target, matching the 5,000-word limit.
         List<String> wordList = new ArrayList<>();
-        for (int i = 0; i < 150; i++) {
-            StringBuilder sb = new StringBuilder();
-            for (int j = 0; j < 4; j++) {
-                sb.append((char) ('a' + random.nextInt(26)));
-            }
-            wordList.add(sb.toString());
+        for (int i = 1; i <= 4_999; i++) {
+            wordList.add(wordFromNumber(i, 10));
         }
-        String begin = "aaaa";
-        String end = wordList.get(10);
-        wordList.add(end); // ensure end is in list
-        int result = test.ladderLength(begin, end, wordList);
-        // Result is either 0 (no path) or >= 2 (at least begin + end)
-        assertTrue(result == 0 || result >= 2, "Result should be 0 or at least 2, got: " + result);
+        wordList.add("baaaaaaaaa");
+
+        assertEquals(2, test.ladderLength("aaaaaaaaaa", "baaaaaaaaa", wordList));
     }
 
     @Test
-    public void testBeginEqualsEndInWordList() {
-        // begin == end and end is in wordList -> 1 (found immediately in BFS)
-        List<String> wordList = Lists.newArrayList("hot", "dot", "dog");
-        assertEquals(1, test.ladderLength("hot", "hot", wordList));
+    public void testNullInputs() {
+        List<String> wordList = List.of("cog");
+        assertEquals(0, test.ladderLength(null, "cog", wordList));
+        assertEquals(0, test.ladderLength("hit", null, wordList));
+        assertEquals(0, test.ladderLength("hit", "cog", null));
+    }
+
+    @Test
+    public void testEmptyWordList() {
+        assertEquals(0, test.ladderLength("hit", "cog", List.of()));
+    }
+
+    @Test
+    public void testEmptyWords() {
+        List<String> wordList = List.of("a");
+        assertEquals(0, test.ladderLength("", "a", wordList));
+        assertEquals(0, test.ladderLength("a", "", wordList));
+    }
+
+    @Test
+    public void testEndWordAloneCannotBridgeTheGap() {
+        // The target is present, but no valid intermediate word is available.
+        assertEquals(0, test.ladderLength("hit", "cog", List.of("cog")));
+    }
+
+    @Test
+    public void testChangesCanBeMadeInAnyPositionOrder() {
+        List<String> wordList = List.of("bbc", "bba", "cba");
+        // abc -> bbc -> bba -> cba
+        assertEquals(4, test.ladderLength("abc", "cba", wordList));
+    }
+
+    @Test
+    public void testSharedIntermediateIsVisitedOnlyOnce() {
+        List<String> wordList = List.of("baa", "aba", "bba", "bbb");
+        // Both baa and aba lead to bba; bba must remain at the correct level.
+        assertEquals(4, test.ladderLength("aaa", "bbb", wordList));
+    }
+
+    @Test
+    public void testWordListOrderDoesNotAffectResult() {
+        List<String> wordList = List.of("cog", "log", "lot", "dog", "dot", "hot");
+        assertEquals(5, test.ladderLength("hit", "cog", wordList));
+    }
+
+    @Test
+    public void testDuplicateWordListEntriesAreHarmless() {
+        List<String> wordList = new ArrayList<>(List.of("hot", "hot", "dot", "dog", "cog"));
+        assertEquals(5, test.ladderLength("hit", "cog", wordList));
+    }
+
+    @Test
+    public void testInputWordListIsNotModified() {
+        List<String> wordList = new ArrayList<>(List.of("hot", "dot", "dog", "cog"));
+        List<String> original = new ArrayList<>(wordList);
+
+        test.ladderLength("hit", "cog", wordList);
+
+        assertEquals(original, wordList);
+    }
+
+    private String wordFromNumber(int number, int length) {
+        char[] word = new char[length];
+        for (int i = length - 1; i >= 0; i--) {
+            word[i] = (char) ('a' + number % 26);
+            number /= 26;
+        }
+        return new String(word);
     }
 }

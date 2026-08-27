@@ -41,8 +41,7 @@ public class LevelOrderBottom_107 {
         }
 
         List<List<Integer>> output = new ArrayList<>();
-        Queue<TreeNode> queue = new ArrayDeque<>();
-        queue.offer(root);
+        Queue<TreeNode> queue = new ArrayDeque<>(List.of(root));
 
         while (!queue.isEmpty()) {
             int levelSize = queue.size();
