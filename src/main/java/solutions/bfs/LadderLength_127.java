@@ -1,10 +1,11 @@
 package solutions.bfs;
 
 import java.util.ArrayDeque;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Given beginWord and endWord and a dictionary's word list.
@@ -54,12 +55,14 @@ public class LadderLength_127 {
             return 0;
         }
 
-        Set<String> words = new HashSet<>(wordList);
+        Set<String> words = wordList.stream()
+                .filter(Objects::nonNull)
+                .filter(w -> !w.equals(beginWord))
+                .collect(Collectors.toSet());
+
         if (!words.contains(endWord)) {
             return 0;
         }
-
-        words.remove(beginWord);
 
         Queue<String> queue = new ArrayDeque<>(List.of(beginWord));
         int length = 1;
