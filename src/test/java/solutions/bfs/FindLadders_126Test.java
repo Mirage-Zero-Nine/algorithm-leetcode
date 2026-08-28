@@ -1,12 +1,15 @@
 package solutions.bfs;
 
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author BorisMirage
@@ -24,7 +27,7 @@ public class FindLadders_126Test {
         List<List<String>> expected = Lists.newArrayList(
                 Lists.newArrayList("hit", "hot", "dot", "dog", "cog"),
                 Lists.newArrayList("hit", "hot", "lot", "log", "cog"));
-        assertIterableEquals(expected, test.findLadders("hit", "cog", list));
+        assertAllApproaches(expected, "hit", "cog", list);
     }
 
     @Test
@@ -34,7 +37,7 @@ public class FindLadders_126Test {
                 Lists.newArrayList("red", "ted", "tad", "tax"),
                 Lists.newArrayList("red", "ted", "tex", "tax"),
                 Lists.newArrayList("red", "rex", "tex", "tax"));
-        assertIterableEquals(expected, test.findLadders("red", "tax", list));
+        assertAllApproaches(expected, "red", "tax", list);
     }
 
     @Test
@@ -43,7 +46,7 @@ public class FindLadders_126Test {
         List<String> temp = Lists.newArrayList("hit", "hot", "dot", "dog", "cog");
         List<List<String>> expected = Lists.newArrayList();
         expected.add(temp);
-        assertIterableEquals(expected, test.findLadders("hit", "cog", list));
+        assertAllApproaches(expected, "hit", "cog", list);
     }
 
     @Test
@@ -52,11 +55,11 @@ public class FindLadders_126Test {
         List<String> temp = Lists.newArrayList("a", "c");
         List<List<String>> expected = Lists.newArrayList();
         expected.add(temp);
-        assertIterableEquals(expected, test.findLadders("a", "c", list));
+        assertAllApproaches(expected, "a", "c", list);
     }
 
     @Test
-    public void testLarge() {
+    public void testLargeWordListBeyondConstraintIsStillHandled() {
         List<String> list = Lists.newArrayList(
                 "kid", "tag", "pup", "ail", "tun", "woo", "erg", "luz", "brr", "gay", "sip", "kay", "per", "val",
                 "mes", "ohs", "now", "boa", "cet", "pal", "bar", "die", "war", "hay", "eco", "pub", "lob", "rue", "fry",
@@ -98,11 +101,14 @@ public class FindLadders_126Test {
                 "her", "nor", "ace", "adz", "fun", "ned", "coo", "win", "tao", "coy", "van", "man", "pit", "guy", "foe",
                 "hid", "mai", "sup", "jay", "hob", "mow", "jot", "are", "pol", "arc", "lax", "aft", "alb", "len", "air",
                 "pug", "pox", "vow", "got", "meg", "zoe", "amp", "ale", "bud", "gee", "pin", "dun", "pat", "ten", "mob");
+        // Defensive stress case: this fixture intentionally contains 599 words,
+        // exceeding LeetCode's current 500-word constraint.
+        assertTrue(list.size() > 500);
         List<List<String>> expected = Lists.newArrayList(
                 Lists.newArrayList("cet", "get", "gee", "gte", "ate", "ats", "its", "ito", "ibo", "ibm", "ism"),
                 Lists.newArrayList("cet", "cat", "can", "ian", "inn", "ins", "its", "ito", "ibo", "ibm", "ism"),
                 Lists.newArrayList("cet", "cot", "con", "ion", "inn", "ins", "its", "ito", "ibo", "ibm", "ism"));
-        assertIterableEquals(expected, test.findLadders("cet", "ism", list));
+        assertAllApproaches(expected, "cet", "ism", list);
     }
 
     @Test
@@ -151,21 +157,22 @@ public class FindLadders_126Test {
         List<List<String>> expected = new ArrayList<List<String>>() {{
             add(tmp);
         }};
-        assertIterableEquals(expected, test.findLadders("aaaaa", "ggggg", list));
+        assertAllApproaches(expected, "aaaaa", "ggggg", list);
     }
 
     @Test
     public void testNoPath() {
         List<String> list = Lists.newArrayList("hot", "dot", "dog", "lot", "log");
         List<List<String>> expected = Lists.newArrayList();
-        assertIterableEquals(expected, test.findLadders("hit", "cog", list));
+        assertAllApproaches(expected, "hit", "cog", list);
     }
 
     @Test
-    public void testBeginEqualsEnd() {
+    public void testBeginEqualsEndIsHandledDefensively() {
+        // beginWord != endWord is a LeetCode constraint; this checks local input handling.
         List<String> list = Lists.newArrayList("hot", "dot");
         List<List<String>> expected = Lists.newArrayList();
-        assertIterableEquals(expected, test.findLadders("hot", "hot", list));
+        assertAllApproaches(expected, "hot", "hot", list);
     }
 
     @Test
@@ -174,20 +181,290 @@ public class FindLadders_126Test {
         List<String> path = Lists.newArrayList("hit", "hot");
         List<List<String>> expected = new ArrayList<>();
         expected.add(path);
-        assertIterableEquals(expected, test.findLadders("hit", "hot", list));
+        assertAllApproaches(expected, "hit", "hot", list);
     }
 
     @Test
     public void testEndNotInList() {
         List<String> list = Lists.newArrayList("hot", "dot", "dog");
         List<List<String>> expected = Lists.newArrayList();
-        assertIterableEquals(expected, test.findLadders("hit", "cog", list));
+        assertAllApproaches(expected, "hit", "cog", list);
     }
 
     @Test
     public void testEmptyWordList() {
+        // LeetCode requires at least one dictionary word; this is a defensive case.
         List<String> list = Lists.newArrayList();
         List<List<String>> expected = Lists.newArrayList();
-        assertIterableEquals(expected, test.findLadders("hit", "cog", list));
+        assertAllApproaches(expected, "hit", "cog", list);
+    }
+
+    @Test
+    public void testConvergingShortestPaths() {
+        List<String> list = List.of("baa", "aba", "bba", "bbb");
+        List<List<String>> expected = List.of(
+                List.of("aaa", "baa", "bba", "bbb"),
+                List.of("aaa", "aba", "bba", "bbb"));
+
+        assertAllApproaches(expected, "aaa", "bbb", list);
+    }
+
+    @Test
+    public void testAllThreePositionPermutationsAreReturned() {
+        List<String> list = List.of("aab", "aba", "baa", "abb", "bab", "bba", "bbb");
+        List<List<String>> expected = List.of(
+                List.of("aaa", "aab", "abb", "bbb"),
+                List.of("aaa", "aab", "bab", "bbb"),
+                List.of("aaa", "aba", "abb", "bbb"),
+                List.of("aaa", "aba", "bba", "bbb"),
+                List.of("aaa", "baa", "bab", "bbb"),
+                List.of("aaa", "baa", "bba", "bbb"));
+
+        assertAllApproaches(expected, "aaa", "bbb", list);
+    }
+
+    @Test
+    public void testLongerCompletePathsAreExcluded() {
+        List<String> list = List.of("aab", "abb", "aac", "acc", "bcc", "bbc", "bbb");
+        List<List<String>> expected = List.of(
+                List.of("aaa", "aab", "abb", "bbb"));
+
+        // aaa -> aac -> acc -> bcc -> bbc -> bbb is valid, but is not shortest.
+        assertAllApproaches(expected, "aaa", "bbb", list);
+    }
+
+    @Test
+    public void testAllFourPositionPermutationsAreReturnedExactlyOnce() {
+        List<String> list = List.of(
+                "baaa", "abaa", "aaba", "aaab",
+                "bbaa", "baba", "baab", "abba", "abab", "aabb",
+                "bbba", "bbab", "babb", "abbb", "bbbb");
+
+        // Each shortest path changes the four positions in one of 4! orders.
+        assertValidPathsForAllApproaches("aaaa", "bbbb", list, 24, 5);
+    }
+
+    @Test
+    public void testShortestPathCanUseEveryCharacterPosition() {
+        List<String> list = List.of("baaa", "bbaa", "bbba", "bbbb");
+        List<List<String>> expected = List.of(
+                List.of("aaaa", "baaa", "bbaa", "bbba", "bbbb"));
+
+        assertAllApproaches(expected, "aaaa", "bbbb", list);
+    }
+
+    @Test
+    public void testDirectTransformationWinsOverIrrelevantWords() {
+        List<String> list = List.of("hot", "hut", "zzz", "aaa");
+        List<List<String>> expected = List.of(
+                List.of("hit", "hot"));
+
+        assertAllApproaches(expected, "hit", "hot", list);
+    }
+
+    @Test
+    public void testEndWordAloneCannotBridgeTheGapWithoutIntermediate() {
+        assertAllApproaches(List.of(), "hit", "cog", List.of("cog"));
+    }
+
+    @Test
+    public void testMissingIntermediateWordMakesTheTargetUnreachable() {
+        List<String> list = List.of("cog", "dog");
+
+        // Neither word provides a valid first hop from hit.
+        assertAllApproaches(List.of(), "hit", "cog", list);
+    }
+
+    @Test
+    public void testDisconnectedTargetComponentDoesNotProduceAPath() {
+        List<String> list = List.of("hot", "dot", "cog", "cod", "cad");
+
+        assertAllApproaches(List.of(), "hit", "cog", list);
+    }
+
+    @Test
+    public void testBeginWordMayAppearInTheWordList() {
+        List<String> list = List.of("hit", "hot", "dot", "dog", "lot", "log", "cog");
+        List<List<String>> expected = List.of(
+                List.of("hit", "hot", "dot", "dog", "cog"),
+                List.of("hit", "hot", "lot", "log", "cog"));
+
+        assertAllApproaches(expected, "hit", "cog", list);
+    }
+
+    @Test
+    public void testDuplicateWordListEntriesAreIgnored() {
+        // Word-list entries are required to be unique; this is a defensive case.
+        List<String> list = new ArrayList<>(List.of("hot", "hot", "dot", "dog", "cog", "cog"));
+        List<List<String>> expected = List.of(
+                List.of("hit", "hot", "dot", "dog", "cog"));
+
+        assertAllApproaches(expected, "hit", "cog", list);
+    }
+
+    @Test
+    public void testWordListOrderDoesNotAffectTheSetOfPaths() {
+        List<String> forward = List.of("hot", "dot", "dog", "lot", "log", "cog");
+        List<String> reverse = List.of("cog", "log", "lot", "dog", "dot", "hot");
+        List<List<String>> expected = List.of(
+                List.of("hit", "hot", "dot", "dog", "cog"),
+                List.of("hit", "hot", "lot", "log", "cog"));
+
+        assertAllApproaches(expected, "hit", "cog", forward);
+        assertAllApproaches(expected, "hit", "cog", reverse);
+    }
+
+    @Test
+    public void testNullInputsReturnNoPaths() {
+        // Null values are outside the lowercase-word constraints; this is defensive coverage.
+        List<String> list = List.of("hit", "hot", "cog");
+
+        assertAllApproaches(List.of(), null, "cog", list);
+        assertAllApproaches(List.of(), "hit", null, list);
+        assertAllApproaches(List.of(), "hit", "cog", null);
+    }
+
+    @Test
+    public void testEmptyWordsReturnNoPaths() {
+        // Word lengths must be at least one; this is defensive coverage.
+        List<String> list = List.of("a", "b");
+
+        assertAllApproaches(List.of(), "", "b", list);
+        assertAllApproaches(List.of(), "a", "", list);
+    }
+
+    @Test
+    public void testDifferentBeginAndEndWordLengthsReturnNoPaths() {
+        // Equal begin/end lengths are required; this is defensive coverage.
+        assertAllApproaches(List.of(), "a", "bb", List.of("bb"));
+    }
+
+    @Test
+    public void testDifferentLengthDictionaryWordsCannotBeUsedAsHops() {
+        // Dictionary words must match beginWord's length; this is defensive coverage.
+        List<String> list = List.of("h", "hot", "cog");
+
+        assertAllApproaches(List.of(), "hit", "cog", list);
+    }
+
+    @Test
+    public void testNullDictionaryEntryDoesNotCreateAPath() {
+        // Dictionary entries must be lowercase words; null is an invalid entry.
+        List<String> list = new ArrayList<>();
+        list.add("hot");
+        list.add(null);
+        list.add("cog");
+
+        assertAllApproaches(List.of(), "hit", "cog", list);
+    }
+
+    @Test
+    public void testBeginEqualsEndIsHandledAsAnInvalidRequest() {
+        // beginWord != endWord is a LeetCode constraint; this is defensive coverage.
+        assertAllApproaches(List.of(), "same", "same", List.of("same"));
+    }
+
+    @Test
+    public void testInputWordListIsNotModified() {
+        List<String> list = new ArrayList<>(List.of("hot", "dot", "dog", "cog"));
+        List<String> original = new ArrayList<>(list);
+
+        test.findLadders("hit", "cog", list);
+        test.findLaddersWithPatternIndexing("hit", "cog", list);
+        test.findLaddersBidirectional("hit", "cog", list);
+
+        assertEquals(original, list);
+    }
+
+    @Test
+    public void testRepeatedCallsDoNotShareSearchState() {
+        List<List<String>> firstExpected = List.of(
+                List.of("hit", "hot", "dot", "dog", "cog"));
+        List<List<String>> secondExpected = List.of(
+                List.of("a", "c"));
+
+        assertAllApproaches(firstExpected, "hit", "cog", List.of("hot", "dot", "dog", "cog"));
+        assertAllApproaches(secondExpected, "a", "c", List.of("b", "c"));
+    }
+
+    private void assertAllApproaches(
+            List<List<String>> expected,
+            String begin,
+            String end,
+            List<String> wordList) {
+        assertPaths(expected, test.findLadders(begin, end, wordList));
+        assertPaths(expected, test.findLaddersWithPatternIndexing(begin, end, wordList));
+        assertPaths(expected, test.findLaddersBidirectional(begin, end, wordList));
+    }
+
+    private void assertValidPathsForAllApproaches(
+            String begin,
+            String end,
+            List<String> wordList,
+            int expectedCount,
+            int expectedPathLength) {
+        assertValidPaths(
+                test.findLadders(begin, end, wordList),
+                begin,
+                end,
+                wordList,
+                expectedCount,
+                expectedPathLength);
+        assertValidPaths(
+                test.findLaddersWithPatternIndexing(begin, end, wordList),
+                begin,
+                end,
+                wordList,
+                expectedCount,
+                expectedPathLength);
+        assertValidPaths(
+                test.findLaddersBidirectional(begin, end, wordList),
+                begin,
+                end,
+                wordList,
+                expectedCount,
+                expectedPathLength);
+    }
+
+    private void assertPaths(List<List<String>> expected, List<List<String>> actual) {
+        // The problem does not specify an order for the returned sequences.
+        assertEquals(expected.size(), actual.size());
+        assertEquals(new HashSet<>(expected), new HashSet<>(actual));
+    }
+
+    private void assertValidPaths(
+            List<List<String>> actual,
+            String begin,
+            String end,
+            List<String> wordList,
+            int expectedCount,
+            int expectedPathLength) {
+        Set<String> dictionary = new HashSet<>(wordList);
+        assertEquals(expectedCount, actual.size());
+        assertEquals(expectedCount, new HashSet<>(actual).size());
+
+        for (List<String> path : actual) {
+            assertEquals(expectedPathLength, path.size());
+            assertEquals(begin, path.get(0));
+            assertEquals(end, path.get(path.size() - 1));
+            for (int i = 1; i < path.size(); i++) {
+                assertTrue(dictionary.contains(path.get(i)));
+                assertTrue(differsByExactlyOneCharacter(path.get(i - 1), path.get(i)));
+            }
+        }
+    }
+
+    private boolean differsByExactlyOneCharacter(String first, String second) {
+        if (first.length() != second.length()) {
+            return false;
+        }
+
+        int differences = 0;
+        for (int i = 0; i < first.length(); i++) {
+            if (first.charAt(i) != second.charAt(i)) {
+                differences++;
+            }
+        }
+        return differences == 1;
     }
 }
