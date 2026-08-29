@@ -46,7 +46,7 @@ public class FindLadders_126 {
      * valid sequence exists
      */
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-        // Defensive checks for null, empty, mismatched, or equal inputs.
+        // corner case
         if (beginWord == null
                 || endWord == null
                 || wordList == null
@@ -58,156 +58,159 @@ public class FindLadders_126 {
             return new ArrayList<>();
         }
 
-        // Work on a private set: BFS removes visited words from this set, but
-        // the caller's wordList must remain unchanged.
         Set<String> words = wordList.stream()
                 .filter(Objects::nonNull)
                 .filter(w -> !w.equals(beginWord))
                 .filter(w -> w.length() == beginWord.length())
                 .collect(Collectors.toSet());
-
+        // corner case
         if (!words.contains(endWord)) {
             return new ArrayList<>();
         }
 
-        // map[child] contains every word from the previous BFS level that can
-        // transform into child. It is a DAG of shortest-path choices.
+        // BFS records every predecessor that can lead to a word by a shortest route.
+        // DFS can then enumerate the combinations represented by that predecessor graph.
         Map<String, List<String>> map = new HashMap<>();
-        if (!bfs(beginWord, endWord, words, map)) {
-            return new ArrayList<>();
-        }
-
-        // BFS has established the shortest distance; DFS now enumerates all
-        // combinations of predecessor choices without searching longer paths.
         List<List<String>> output = new ArrayList<>();
-        dfs(endWord, beginWord, map, new ArrayList<>(List.of(endWord)), output);
+        if (bfs(beginWord, endWord, words, map)) {
+            dfs(endWord, beginWord, map, new ArrayList<>(List.of(endWord)), output);
+        }
         return output;
     }
 
     /**
-     * Builds the predecessor map by trying every replacement character at
-     * every position in each word.
+     * Builds the shortest-path predecessor graph with level-order BFS.
      *
-     * <p>{@code size} freezes the current BFS level. A discovered word stays
-     * available until that level is complete so that multiple words in the
-     * level can register themselves as predecessors.</p>
+     * <p>{@code size} freezes the number of words in the current BFS level.
+     * Words discovered while processing that level are queued for the next
+     * level, so every edge recorded in {@code map} advances the transformation
+     * by exactly one step. Words discovered in the same level are removed from
+     * {@code words} only after the level is complete; this allows multiple
+     * current words to become predecessors of the same next word.</p>
+     *
+     * @param begin the starting word
+     * @param end   the target word
+     * @param words the remaining unvisited dictionary words; this set is
+     *              consumed as BFS progresses
+     * @param map   the graph in which each key maps to its shortest-path
+     *              predecessors
+     * @return {@code true} when the target is reached; otherwise {@code false}
      */
-    private boolean bfs(
-            String begin,
-            String end,
-            Set<String> words,
-            Map<String, List<String>> map) {
-
+    private boolean bfs(String begin,
+                        String end,
+                        Set<String> words,
+                        Map<String, List<String>> map) {
         Queue<String> q = new ArrayDeque<>(List.of(begin));
         int size = q.size();
-
         while (!q.isEmpty()) {
-            // Only words already in the queue at this point belong to this
-            // level; newly queued words must wait for the next level.
+            // Every word currently in the queue is the same distance from the start.
+            // Newly discovered words belong to the following level.
             Set<String> usedWords = new HashSet<>();
             for (int i = 0; i < size; i++) {
-                if (charLooping(q.poll(), end, words, usedWords, q, map)) {
-                    // The target is dequeued only after every possible parent
-                    // from the previous level has already been recorded.
+                if (generateAndCheckNewWords(q.poll(), end, words, usedWords, q, map)) {
                     return true;
                 }
             }
 
-            // Do this after processing the entire level. Removing a word
-            // earlier would lose another shortest predecessor.
-            words.removeAll(usedWords);
+            // Delay removal until all parents in this level have been checked
+            // so that converging shortest paths are not lost.
             size = q.size();
+            words.removeAll(usedWords);
         }
-
         return false;
     }
 
     /**
-     * Generates all one-letter mutations of the current word and records the
-     * valid mutations in the BFS queue and predecessor map.
+     * Generates all one-letter mutations of {@code current} and adds valid
+     * mutations to the next BFS level.
      *
-     * <p>{@code usedWords} contains words discovered during the current BFS
-     * level. A word may have more than one predecessor at that level, so it is
-     * added to the queue only once while every valid predecessor is retained
-     * in {@code map}.</p>
+     * <p>The character array is mutated in place one position at a time. For
+     * every candidate present in {@code words}, the method queues it only once
+     * per level, but always records {@code current} as a predecessor. The
+     * distinction is important: several words in the current level may reach
+     * the same candidate, and every such predecessor is needed to reconstruct
+     * all shortest ladders.</p>
+     *
+     * <p>The target is checked when it is removed from the queue rather than
+     * when it is first discovered. Therefore, all shortest predecessors have
+     * already had an opportunity to register themselves before BFS stops.</p>
      *
      * @param current   the word currently being expanded
      * @param end       the target word
-     * @param words     the unvisited dictionary words
+     * @param words     the dictionary words that have not been visited by an
+     *                  earlier BFS level
      * @param usedWords words already queued during the current BFS level
-     * @param q         the BFS queue
-     * @param map       the predecessor map used later by DFS
-     * @return {@code true} when {@code current} is the target word;
-     * otherwise {@code false}
+     * @param q         the BFS queue containing the current and subsequent levels
+     * @param map       the predecessor graph used later by DFS
+     * @return {@code true} when {@code current} is the target; otherwise
+     * {@code false}
      */
-    private boolean charLooping(String current,
-                                String end,
-                                Set<String> words,
-                                Set<String> usedWords,
-                                Queue<String> q,
-                                Map<String, List<String>> map) {
+    private boolean generateAndCheckNewWords(String current,
+                                             String end,
+                                             Set<String> words,
+                                             Set<String> usedWords,
+                                             Queue<String> q,
+                                             Map<String, List<String>> map) {
         if (current.equals(end)) {
             return true;
         }
 
-        char[] arr = current.toCharArray();
-        // Change one position at a time. The character array avoids creating
-        // a new base word for every attempted mutation.
-        for (int j = 0; j < arr.length; j++) {
-            char c = arr[j];
-            // Try all lowercase replacements for this position. Only words
-            // present in the remaining dictionary are graph neighbors.
-            for (char k = 'a'; k <= 'z'; k++) {
-                if (k != c) {
-                    arr[j] = k;
-                    String tmp = new String(arr);
-                    if (words.contains(tmp)) {
-                        // Queue each word once per level, but preserve all
-                        // same-level predecessors for every shortest path.
-                        if (!usedWords.contains(tmp)) {
-                            q.add(tmp);
-                            usedWords.add(tmp);
-                        }
-                        map.computeIfAbsent(tmp, _ -> new ArrayList<>()).add(current);
+        // Reuse one array for all mutations instead of constructing a new
+        // base word for every position and replacement character.
+        char[] array = current.toCharArray();
+        for (int j = 0; j < array.length; j++) {
+            char c = array[j];
+
+            // Try every lowercase replacement. The original character is
+            // harmless here because visited words have already been removed
+            // from `words`, and a valid mutation must be in that set.
+            for (char newChar = 'a'; newChar <= 'z'; newChar++) {
+                array[j] = newChar;
+                String newWord = new String(array);
+                if (words.contains(newWord)) {
+                    // Add each word to the queue once, but save every current word that can reach it.
+                    if (!usedWords.contains(newWord)) {
+                        usedWords.add(newWord);
+                        q.add(newWord);
                     }
+                    // Save the current word as a previous step in the path.
+                    map.computeIfAbsent(newWord, _ -> new ArrayList<>()).add(current);
                 }
             }
 
-            // Restore the original character before changing the next position.
-            arr[j] = c;
+            array[j] = c;
         }
         return false;
     }
 
     /**
-     * Walks the predecessor map backward from {@code end} to {@code begin}.
+     * Enumerates paths by walking the predecessor graph backward from the
+     * target to the start.
      *
-     * <p>The initial call uses {@code begin = endWord} and
-     * {@code current = [endWord]}. Each predecessor is inserted at the front,
-     * so a completed path is already ordered from the original begin word to
-     * the original end word.</p>
+     * <p>Each predecessor is inserted at the front of {@code tmp}, keeping a
+     * completed path in the original start-to-target order. BFS guarantees
+     * that these links belong to shortest paths, so DFS only explores valid
+     * shortest-path choices.</p>
+     *
+     * @param begin  the word currently being followed backward
+     * @param end    the original starting word; despite the parameter name, this
+     *               is the stopping point for the reverse traversal
+     * @param map    the predecessor graph built by BFS
+     * @param tmp    the path currently being assembled
+     * @param output the collection receiving completed paths
      */
-    private void dfs(
-            String begin,
-            String end,
-            Map<String, List<String>> map,
-            List<String> current,
-            List<List<String>> output) {
+    private void dfs(String begin, String end, Map<String, List<String>> map, List<String> tmp, List<List<String>> output) {
         if (begin.equals(end)) {
-            // The reverse walk reached the original begin word; copy the
-            // current path because the deque continues to be backtracked.
-            output.add(new ArrayList<>(current));
+            output.add(new ArrayList<>(tmp));
             return;
         }
 
-        // Every predecessor represents one branch of a possible shortest
-        // ladder. BFS guarantees that these links move one level toward the
-        // original begin word, so the predecessor graph has no cycles.
-        // Backtracking restores the path for the next branch.
-        map.get(begin).forEach(s -> {
-            current.addFirst(s);
-            dfs(s, end, map, current, output);
-            current.removeFirst();
+        // Backtrack after each predecessor so the next branch starts with the
+        // same partial path.
+        map.get(begin).forEach(w -> {
+            tmp.addFirst(w);
+            dfs(w, end, map, tmp, output);
+            tmp.removeFirst();
         });
     }
 
