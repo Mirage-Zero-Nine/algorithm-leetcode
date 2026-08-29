@@ -2,6 +2,8 @@ package solutions.backtracking;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Given a pattern and a string str, find if str follows the same pattern.
@@ -15,7 +17,7 @@ public class WordPatternMatch_291 {
     /**
      * Backtracking with hash map and hash set as pruning.
      * Each char in pattern should be mapping to one or more consecutive substring in string.
-     * Therefore, each char in pattern can be mapped into a substring, if if str follows the same pattern.
+     * Therefore, each char in pattern can be mapped into a substring, if str follows the same pattern.
      * The length is not fixed, therefore, use backtracking to try every substring and check if they can match.
      *
      * @param pattern given pattern string
@@ -23,8 +25,8 @@ public class WordPatternMatch_291 {
      * @return if str follows the same pattern
      */
     public boolean wordPatternMatch(String pattern, String str) {
-        HashMap<Character, String> m = new HashMap<>();     // pattern char -> matched substring
-        HashSet<String> s = new HashSet<>();                // previous matched pattern
+        Map<Character, String> m = new HashMap<>();     // pattern char -> matched substring
+        Set<String> s = new HashSet<>();                // previous matched pattern
         return backtracking(str, pattern, m, s, 0, 0);
     }
 
@@ -43,7 +45,7 @@ public class WordPatternMatch_291 {
      * @param j   start index of pattern
      * @return if str follows the same pattern
      */
-    private boolean backtracking(String s, String p, HashMap<Character, String> m, HashSet<String> set, int i, int j) {
+    private boolean backtracking(String s, String p, Map<Character, String> m, Set<String> set, int i, int j) {
 
         /*
          * Exit point.
@@ -90,5 +92,4 @@ public class WordPatternMatch_291 {
 
         return false;
     }
-
 }

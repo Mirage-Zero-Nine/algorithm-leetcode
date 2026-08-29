@@ -1,15 +1,14 @@
 package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WordBreak_140Test {
@@ -29,7 +28,7 @@ class WordBreak_140Test {
 
     @Test
     void testSingleWord() {
-        List<String> result = solution.wordBreak("cat", Arrays.asList("cat"));
+        List<String> result = solution.wordBreak("cat", List.of("cat"));
         assertEquals(1, result.size());
     }
 
@@ -47,16 +46,16 @@ class WordBreak_140Test {
 
     @Test
     void testRepeatedWord() {
-        List<String> result = solution.wordBreak("catcat", Arrays.asList("cat"));
+        List<String> result = solution.wordBreak("catcat", List.of("cat"));
         assertEquals(1, result.size());
-        assertEquals("cat cat", result.get(0));
+        assertEquals("cat cat", result.getFirst());
     }
 
     @Test
     void testSingleCharDict() {
-        List<String> result = solution.wordBreak("aaa", Arrays.asList("a"));
+        List<String> result = solution.wordBreak("aaa", List.of("a"));
         assertEquals(1, result.size());
-        assertEquals("a a a", result.get(0));
+        assertEquals("a a a", result.getFirst());
     }
 
     @Test
@@ -112,7 +111,7 @@ class WordBreak_140Test {
 
     @Test
     void testSingleDictWordMatchesExactly() {
-        List<String> result = solution.wordBreak("hello", Arrays.asList("hello"));
+        List<String> result = solution.wordBreak("hello", List.of("hello"));
         assertEquals(Set.of("hello"), new HashSet<>(result));
     }
 
@@ -149,5 +148,137 @@ class WordBreak_140Test {
                 assertTrue(dict.contains(word), "Word not in dict: " + word);
             }
         }
+    }
+
+    @Test
+    void testEmptyDictionaryReturnsEmpty() {
+        assertSentences("a", List.of(), Set.of());
+    }
+
+    @Test
+    void testNullStringReturnsEmpty() {
+        assertTrue(solution.wordBreak(null, List.of("a")).isEmpty());
+    }
+
+    @Test
+    void testNullDictionaryReturnsEmpty() {
+        assertTrue(solution.wordBreak("a", null).isEmpty());
+    }
+
+    @Test
+    void testEmptyStringWithEmptyDictionaryReturnsEmpty() {
+        assertTrue(solution.wordBreak("", List.of()).isEmpty());
+    }
+
+    @Test
+    void testEmptyDictionaryWordIsIgnored() {
+        assertSentences("a", List.of("", "a"), Set.of("a"));
+        assertSentences("a", List.of(""), Set.of());
+    }
+
+    @Test
+    void testDictionaryWordsLongerThanInput() {
+        assertSentences("cat", List.of("cats", "caterpillar", "dog"), Set.of());
+    }
+
+    @Test
+    void testSingleCharacterInput() {
+        assertSentences("a", List.of("a"), Set.of("a"));
+        assertSentences("a", List.of("b"), Set.of());
+    }
+
+    @Test
+    void testDirectWordAndSplitWordAreBothReturned() {
+        assertSentences(
+                "carpet",
+                List.of("car", "pet", "carpet"),
+                Set.of("carpet", "car pet"));
+    }
+
+    @Test
+    void testAllCandidateWordLengthsAreConsidered() {
+        assertSentences(
+                "aaaa",
+                List.of("a", "aa", "aaa", "aaaa"),
+                Set.of(
+                        "a a a a",
+                        "a a aa",
+                        "a aa a",
+                        "a aaa",
+                        "aa a a",
+                        "aa aa",
+                        "aaa a",
+                        "aaaa"));
+    }
+
+    @Test
+    void testMultiCharacterWordCanBeReused() {
+        assertSentences("ababab", List.of("ab"), Set.of("ab ab ab"));
+    }
+
+    @Test
+    void testMatchingPrefixWithDeadEndProducesNoPartialSentence() {
+        assertSentences("cars", List.of("car", "ca", "r"), Set.of());
+    }
+
+    @Test
+    void testRepeatedDictionaryEntriesDoNotDuplicateSentences() {
+        List<String> result = solution.wordBreak("aa", List.of("a", "a", "aa"));
+
+        assertEquals(Set.of("a a", "aa"), new HashSet<>(result));
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testDictionaryOrderDoesNotChangePossibleSentences() {
+        List<String> firstOrder = List.of("cat", "cats", "and", "sand", "dog");
+        List<String> secondOrder = List.of("dog", "sand", "and", "cats", "cat");
+
+        assertEquals(
+                new HashSet<>(solution.wordBreak("catsanddog", firstOrder)),
+                new HashSet<>(solution.wordBreak("catsanddog", secondOrder)));
+    }
+
+    @Test
+    void testMaximumDictionaryWordLengthIsSupported() {
+        assertSentences("abcdefghij", List.of("abcdefghij"), Set.of("abcdefghij"));
+    }
+
+    @Test
+    void testRepeatedSubproblemsReturnAllCombinations() {
+        // Number of compositions of six characters using pieces of length 1, 2, or 3 is 24.
+        List<String> result = solution.wordBreak("aaaaaa", List.of("a", "aa", "aaa"));
+
+        assertEquals(24, result.size());
+        assertEquals(result.size(), new HashSet<>(result).size());
+    }
+
+    @Test
+    void testUnrelatedDictionaryWordsAreIgnored() {
+        assertSentences(
+                "leetcode",
+                List.of("leet", "code", "apple", "dog"),
+                Set.of("leet code"));
+    }
+
+    @Test
+    void testInputDictionaryIsNotModified() {
+        List<String> dictionary = new ArrayList<>(List.of("cat", "cats", "and", "sand", "dog"));
+        List<String> original = new ArrayList<>(dictionary);
+
+        solution.wordBreak("catsanddog", dictionary);
+
+        assertEquals(original, dictionary);
+    }
+
+    /**
+     * Compares result sets because the problem allows sentences in any order.
+     * It also verifies that the implementation does not emit duplicate sentences.
+     */
+    private void assertSentences(String s, List<String> dictionary, Set<String> expected) {
+        List<String> actual = solution.wordBreak(s, dictionary);
+
+        assertEquals(expected, new HashSet<>(actual));
+        assertEquals(actual.size(), new HashSet<>(actual).size(), "Duplicate sentence returned");
     }
 }

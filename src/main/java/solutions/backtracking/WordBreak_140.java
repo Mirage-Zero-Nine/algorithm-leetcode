@@ -2,7 +2,10 @@ package solutions.backtracking;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Given a non-empty string s and a dictionary wordDict containing a list of non-empty words.
@@ -16,53 +19,83 @@ import java.util.List;
  * Time: 2019/06/06 16:23
  * Created with IntelliJ IDEA
  */
-
 public class WordBreak_140 {
     /**
-     * Backtracking + HashMap.
-     * Use hash map to store results during backtracking.
-     * The key of hash map is string, and the value is all result can be formed under current given string.
+     * Returns every possible sentence formed by inserting spaces into {@code s}
+     * so that every resulting word belongs to {@code wordDict}.
      *
-     * @param s        given string
-     * @param wordDict given word dictionary
-     * @return all possible sentences
+     * <p>Dictionary words may be reused, and the result may be returned in any
+     * order. An empty result means that no complete segmentation exists.
+     * Although the problem guarantees non-empty inputs, {@code null} or empty
+     * inputs are handled defensively by returning an empty list.
+     *
+     * @param s        the string to segment
+     * @param wordDict the dictionary of permitted, non-empty words
+     * @return all valid sentences, or an empty list when {@code s} cannot be segmented
      */
     public List<String> wordBreak(String s, List<String> wordDict) {
+        // Handle invalid or empty inputs defensively before building the dictionary set.
+        if (s == null || s.isEmpty() || wordDict == null || wordDict.isEmpty()) {
+            return new ArrayList<>();
+        }
 
-        return backtracking(s, wordDict, new HashMap<>());
+        Set<String> words = new HashSet<>(wordDict);
+        int maxWordLength = words.stream()
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+
+        // An empty dictionary word cannot advance the start index.
+        return maxWordLength == 0 ?
+                new ArrayList<>() :
+                backtracking(s, 0, words, maxWordLength, new HashMap<>());
     }
 
     /**
-     * Backtracking with hash map to store previous result.
-     * Use hash map to store previous result to avoid TLE.
+     * Builds all valid sentences that start at {@code start}.
      *
-     * @param s    string
-     * @param dict given word dictionary
-     * @param map  hash map store previous result
-     * @return all possible sentences
+     * @param s             the original string
+     * @param start         index of the next character to consume
+     * @param words         dictionary represented as a set for fast membership checks
+     * @param maxWordLength length of the longest dictionary word
+     * @param map           cached sentences keyed by their starting index
+     * @return all valid sentences from {@code start} to the end of {@code s}
      */
-    private List<String> backtracking(String s, List<String> dict, HashMap<String, List<String>> map) {
-
-        if (map.containsKey(s)) {
-            return map.get(s);        // avoid duplication
+    private List<String> backtracking(
+            String s,
+            int start,
+            Set<String> words,
+            int maxWordLength,
+            Map<Integer, List<String>> map) {
+        // Cache empty lists too: an impossible suffix should not be searched again.
+        if (map.containsKey(start)) {
+            return map.get(start);
         }
 
-        List<String> out = new ArrayList<>();       // save all combination under current result
+        List<String> output = new ArrayList<>();
 
-        for (String word : dict) {
+        // No dictionary word can extend beyond this bound.
+        int endLimit = Math.min(s.length(), start + maxWordLength);
+        for (int end = start + 1; end <= endLimit; end++) {
+            // The substring is the candidate word beginning at start.
+            String word = s.substring(start, end);
+            if (!words.contains(word)) {
+                continue;
+            }
 
-            if (s.startsWith(word)) {
-                if (s.substring(word.length()).length() == 0) {
-                    out.add(word);     // if it is last word in given string
-                } else {
-                    for (String substring : backtracking(s.substring(word.length()), dict, map)) {
-                        out.add(word + " " + substring);     // find all words in substring and add to current result
-                    }
+            // A dictionary word reaching the end forms a complete sentence.
+            if (end == s.length()) {
+                output.add(word);
+            } else {
+                // Otherwise, prepend this word to every valid sentence for the suffix.
+                for (String suffix : backtracking(s, end, words, maxWordLength, map)) {
+                    output.add(word + " " + suffix);
                 }
             }
         }
 
-        map.put(s, out);
-        return out;
+        // Store both successful and unsuccessful states.
+        map.put(start, output);
+        return output;
     }
 }
