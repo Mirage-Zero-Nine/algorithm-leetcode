@@ -1,5 +1,5 @@
 package solutions.dynamicprogramming;
-import java.util.HashSet;
+
 import java.util.List;
 
 /**
@@ -13,89 +13,63 @@ import java.util.List;
 
 public class WordBreak_139 {
     /**
-     * Dynamic programming with 1D boolean array.
-     * Iterate the given string.
-     * Under each substring in iteration, find a breaking point to split both substring exist in dictionary.
-     * State transition:
-     * dp(i) = true iff dp(j) == true && dic.contains(s.substring(j, i)), where j <= 0 < i.
-     * In substring function, j should be from
+     * Returns whether {@code s} can be completely segmented using words from {@code wordDict}.
+     * A dictionary word may be reused any number of times.
      *
-     * @param s        given string
-     * @param wordDict given dictionary
-     * @return if s can be segmented into a space-separated sequence of one or more dictionary words
+     * <p>This method returns {@code false} for {@code null}, an empty string, a {@code null}
+     * dictionary, or an empty dictionary.
+     *
+     * @param s        the string to segment
+     * @param wordDict the dictionary of reusable words
+     * @return {@code true} if the complete string can be segmented; otherwise {@code false}
      */
     public boolean wordBreak(String s, List<String> wordDict) {
-
-        /* Corner case */
-        if (s.isEmpty() || wordDict.isEmpty()) {
+        // corner case
+        if (s == null || s.isEmpty() || wordDict == null || wordDict.isEmpty()) {
             return false;
         }
 
-        HashSet<String> set = new HashSet<>(wordDict);
-        boolean[] dp = new boolean[s.length() + 1];
-        dp[0] = true;
-        for (int i = 1; i < dp.length; i++) {
-            for (int j = i - 1; j >= 0; j--) {
-                String tmp = s.substring(j, i);
-                if (dp[j] && set.contains(tmp)) {
-                    dp[i] = true;
-                    break;
-                }
-            }
-        }
-
-        return dp[s.length()];
+        return dfs(s, wordDict, new int[s.length()], 0);
     }
 
     /**
-     * Use DFS with memorization to find if s can be segmented.
-     * Use an integer array as memorization to avoid TLE.
-     * mem[i] means if s(0, i) can be segmented, where -1 is false, 0 is unknown, 1 is true.
+     * Checks whether the suffix beginning at {@code start} can be segmented.
      *
-     * @param s        given string
-     * @param wordDict given dictionary
-     * @return if s can be segmented into a space-separated sequence of one or more dictionary words
-     */
-    public boolean dfsWithMem(String s, List<String> wordDict) {
-
-        /* Corner case */
-        if (s.isEmpty() || wordDict.isEmpty()) {
-            return false;
-        }
-
-        HashSet<String> dict = new HashSet<>(wordDict);
-
-        return dfs(s, dict, new int[s.length()], 0);
-    }
-
-    /**
-     * Use DFS with memorization to find if s can be segmented. Use an integer array as memorization to avoid TLE.
+     * <p>{@code memory[start]} uses three states:
+     * <ul>
+     *     <li>{@code 0}: the suffix has not been evaluated;</li>
+     *     <li>{@code 1}: the suffix can be segmented;</li>
+     *     <li>{@code -1}: the suffix cannot be segmented.</li>
+     * </ul>
      *
-     * @param s          given string
-     * @param dictionary given dictionary
-     * @param mem        memorization array
-     * @param start      start index
-     * @return if s can be segmented into a space-separated sequence of one or more dictionary words
+     * @param s      the original string
+     * @param words  the dictionary words
+     * @param memory memoization state indexed by the suffix start position
+     * @param start  index of the next character to match
+     * @return whether the suffix beginning at {@code start} can be segmented
      */
-    private boolean dfs(String s, HashSet<String> dictionary, int[] mem, int start) {
-
-        if (dictionary.contains(s)) {
+    private boolean dfs(String s, List<String> words, int[] memory, int start) {
+        // Reaching the end means every character has been matched successfully.
+        if (start == s.length()) {
             return true;
         }
 
-        if (mem[start] != 0) {
-            return mem[start] == 1;
+        // Do not recompute a suffix that has already been evaluated.
+        if (memory[start] != 0) {
+            return memory[start] == 1;
         }
 
-        for (int i = 0; i < s.length(); i++) {
-            if (dictionary.contains(s.substring(i)) && dfs(s.substring(0, i), dictionary, mem, i)) {
-                mem[i] = 1;
+        String current = s.substring(start);
+        for (String word : words) {
+            // The word must fit, match the beginning of the suffix, and leave a segmentable rest.
+            if (word.length() <= current.length()
+                    && current.startsWith(word)
+                    && dfs(s, words, memory, start + word.length())) {
+                memory[start] = 1;
                 return true;
             }
         }
-
-        mem[start] = -1;
+        memory[start] = -1;
         return false;
     }
-
 }
