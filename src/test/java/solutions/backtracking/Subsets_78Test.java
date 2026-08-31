@@ -1,173 +1,192 @@
 package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Subsets_78Test {
     private final Subsets_78 solution = new Subsets_78();
 
-    @Test
-    void testThreeElements() {
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2, 3});
-        assertEquals(8, result.size());
+    private static Stream<Arguments> implementations() {
+        Subsets_78 solution = new Subsets_78();
+        return Stream.of(
+                Arguments.of("backtracking", (Function<int[], List<List<Integer>>>) solution::subsets),
+                Arguments.of("bit manipulation", (Function<int[], List<List<Integer>>>) solution::subsetsBit)
+        );
     }
 
-    @Test
-    void testSingleElement() {
-        List<List<Integer>> result = solution.subsets(new int[]{0});
-        assertEquals(2, result.size());
+    private static Stream<Arguments> exactCases() {
+        Subsets_78 solution = new Subsets_78();
+        Set<List<Integer>> oneElement = Set.of(List.of(), List.of(5));
+        Set<List<Integer>> twoElements = Set.of(List.of(), List.of(1), List.of(2), List.of(1, 2));
+        Set<List<Integer>> threeElements = Set.of(
+                List.of(), List.of(1), List.of(2), List.of(3),
+                List.of(1, 2), List.of(1, 3), List.of(2, 3), List.of(1, 2, 3));
+
+        return Stream.of(
+                Arguments.of("backtracking", (Function<int[], List<List<Integer>>>) solution::subsets,
+                        new int[]{}, Set.of(List.of())),
+                Arguments.of("bit manipulation", (Function<int[], List<List<Integer>>>) solution::subsetsBit,
+                        new int[]{}, Set.of(List.of())),
+                Arguments.of("backtracking", (Function<int[], List<List<Integer>>>) solution::subsets,
+                        new int[]{5}, oneElement),
+                Arguments.of("bit manipulation", (Function<int[], List<List<Integer>>>) solution::subsetsBit,
+                        new int[]{5}, oneElement),
+                Arguments.of("backtracking", (Function<int[], List<List<Integer>>>) solution::subsets,
+                        new int[]{1, 2}, twoElements),
+                Arguments.of("bit manipulation", (Function<int[], List<List<Integer>>>) solution::subsetsBit,
+                        new int[]{1, 2}, twoElements),
+                Arguments.of("backtracking", (Function<int[], List<List<Integer>>>) solution::subsets,
+                        new int[]{1, 2, 3}, threeElements),
+                Arguments.of("bit manipulation", (Function<int[], List<List<Integer>>>) solution::subsetsBit,
+                        new int[]{1, 2, 3}, threeElements),
+                Arguments.of("backtracking", (Function<int[], List<List<Integer>>>) solution::subsets,
+                        new int[]{3, 1, 2}, threeElements),
+                Arguments.of("bit manipulation", (Function<int[], List<List<Integer>>>) solution::subsetsBit,
+                        new int[]{3, 1, 2}, threeElements),
+                Arguments.of("backtracking", (Function<int[], List<List<Integer>>>) solution::subsets,
+                        new int[]{-1, 0, 1}, Set.of(
+                                List.of(), List.of(-1), List.of(0), List.of(1),
+                                List.of(-1, 0), List.of(-1, 1), List.of(0, 1), List.of(-1, 0, 1))),
+                Arguments.of("bit manipulation", (Function<int[], List<List<Integer>>>) solution::subsetsBit,
+                        new int[]{-1, 0, 1}, Set.of(
+                                List.of(), List.of(-1), List.of(0), List.of(1),
+                                List.of(-1, 0), List.of(-1, 1), List.of(0, 1), List.of(-1, 0, 1))),
+                Arguments.of("backtracking", (Function<int[], List<List<Integer>>>) solution::subsets,
+                        new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, Set.of(
+                                List.of(), List.of(Integer.MIN_VALUE), List.of(Integer.MAX_VALUE),
+                                List.of(Integer.MIN_VALUE, Integer.MAX_VALUE))),
+                Arguments.of("bit manipulation", (Function<int[], List<List<Integer>>>) solution::subsetsBit,
+                        new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, Set.of(
+                                List.of(), List.of(Integer.MIN_VALUE), List.of(Integer.MAX_VALUE),
+                                List.of(Integer.MIN_VALUE, Integer.MAX_VALUE)))
+        );
     }
 
-    @Test
-    void testTwoElements() {
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2});
-        assertEquals(4, result.size());
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void nullInputReturnsEmptyResult(String name, Function<int[], List<List<Integer>>> implementation) {
+        assertTrue(implementation.apply(null).isEmpty());
     }
 
-    @Test
-    void testFourElements() {
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2, 3, 4});
-        assertEquals(16, result.size());
+    @ParameterizedTest(name = "{0} - {1}")
+    @MethodSource("exactCases")
+    void representativeInputsProduceExactPowerSet(String name,
+                                                   Function<int[], List<List<Integer>>> implementation,
+                                                   int[] nums,
+                                                   Set<List<Integer>> expected) {
+        assertPowerSet(expected, implementation.apply(nums));
     }
 
-    @Test
-    void testNegativeNumbers() {
-        List<List<Integer>> result = solution.subsets(new int[]{-1, 0, 1});
-        assertEquals(8, result.size());
-    }
-
-    @Test
-    void testEmptyArray() {
-        List<List<Integer>> result = solution.subsets(new int[]{});
-        assertEquals(1, result.size()); // only empty set
-    }
-
-    @Test
-    void testFiveElements() {
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2, 3, 4, 5});
-        assertEquals(32, result.size());
-    }
-
-    @Test
-    void testBacktrackingMethod() {
-        List<List<Integer>> result = solution.backtracking(new int[]{1, 2, 3});
-        assertEquals(8, result.size());
-    }
-
-    @Test
-    void testBacktrackingEmpty() {
-        List<List<Integer>> result = solution.backtracking(new int[]{});
-        assertEquals(0, result.size());
-    }
-
-    @Test
-    void testContainsEmptySubset() {
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2});
-        assertTrue(result.stream().anyMatch(List::isEmpty));
-    }
-
-    @Test
-    void testGiantInput() {
-        // 10 elements -> 1024 subsets
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-        assertEquals(1024, result.size());
-    }
-
-    @Test
-    void testEmptyInputExactContent() {
-        List<List<Integer>> result = solution.subsets(new int[]{});
-        Set<List<Integer>> actual = new HashSet<>(result);
-        Set<List<Integer>> expected = Set.of(List.of());
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testSingleElementExactContent() {
-        List<List<Integer>> result = solution.subsets(new int[]{5});
-        Set<List<Integer>> actual = new HashSet<>(result);
-        Set<List<Integer>> expected = Set.of(List.of(), List.of(5));
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testTwoElementsExactContent() {
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2});
-        Set<List<Integer>> actual = new HashSet<>(result);
-        Set<List<Integer>> expected = Set.of(List.of(), List.of(1), List.of(2), List.of(1, 2));
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testNegativeNumbersExactContent() {
-        List<List<Integer>> result = solution.subsets(new int[]{-3, -1});
-        Set<List<Integer>> actual = new HashSet<>(result);
-        Set<List<Integer>> expected = Set.of(List.of(), List.of(-3), List.of(-1), List.of(-3, -1));
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testLargeInput15Elements() {
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-        assertEquals(32768, result.size());
-    }
-
-    @Test
-    void testContainsFullSet() {
-        int[] nums = {3, 7, 2, 9};
-        List<List<Integer>> result = solution.subsets(nums);
-        List<Integer> fullSet = Arrays.stream(nums).boxed().toList();
-        assertTrue(result.stream().anyMatch(s -> new HashSet<>(s).equals(new HashSet<>(fullSet)) && s.size() == fullSet.size()));
-    }
-
-    @Test
-    void testAllSubsetsUnique() {
-        List<List<Integer>> result = solution.subsets(new int[]{1, 2, 3, 4, 5});
-        Set<List<Integer>> uniqueSubsets = new HashSet<>();
-        for (List<Integer> subset : result) {
-            List<Integer> sorted = new ArrayList<>(subset);
-            sorted.sort(Integer::compareTo);
-            assertTrue(uniqueSubsets.add(sorted), "Duplicate subset found: " + sorted);
-        }
-    }
-
-    @Test
-    void testSubsetsOnlyContainOriginalElements() {
-        int[] nums = {-5, 0, 7, 13};
-        Set<Integer> originalElements = new HashSet<>(Arrays.stream(nums).boxed().toList());
-        List<List<Integer>> result = solution.subsets(nums);
-        for (List<Integer> subset : result) {
-            for (Integer val : subset) {
-                assertTrue(originalElements.contains(val), "Unexpected element: " + val);
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void subsetCountIsPowerOfTwo(String name, Function<int[], List<List<Integer>>> implementation) {
+        for (int length = 0; length <= 10; length++) {
+            int[] nums = new int[length];
+            for (int index = 0; index < length; index++) {
+                nums[index] = index;
             }
+
+            List<List<Integer>> result = implementation.apply(nums);
+
+            assertEquals(1 << length, result.size(), "Incorrect count for length " + length);
+            assertEquals(result.size(), canonicalize(result).size(),
+                    "Duplicate subset for length " + length);
         }
     }
 
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void resultContainsOnlyInputValuesAndNoRepeatedElements(
+            String name, Function<int[], List<List<Integer>>> implementation) {
+        int[] nums = {-5, 0, 7, 13};
+        Set<Integer> inputValues = Arrays.stream(nums).boxed().collect(Collectors.toSet());
+        List<List<Integer>> result = implementation.apply(nums);
+
+        for (List<Integer> subset : result) {
+            assertTrue(inputValues.containsAll(subset), "Unexpected value in subset: " + subset);
+            assertEquals(subset.size(), new HashSet<>(subset).size(),
+                    "Repeated value in subset: " + subset);
+        }
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void inputArrayIsNotModified(String name, Function<int[], List<List<Integer>>> implementation) {
+        int[] nums = {3, -1, 2, 0};
+        int[] original = nums.clone();
+
+        implementation.apply(nums);
+
+        assertArrayEquals(original, nums);
+    }
+
     @Test
-    void testBothMethodsProduceSameSubsets() {
-        int[] nums = {1, 2, 3, 4};
-        List<List<Integer>> bitResult = solution.subsets(nums);
-        List<List<Integer>> btResult = solution.backtracking(nums);
-        Set<List<Integer>> bitSet = new HashSet<>();
-        for (List<Integer> s : bitResult) {
-            List<Integer> sorted = new ArrayList<>(s);
-            sorted.sort(Integer::compareTo);
-            bitSet.add(sorted);
-        }
-        Set<List<Integer>> btSet = new HashSet<>();
-        for (List<Integer> s : btResult) {
-            List<Integer> sorted = new ArrayList<>(s);
-            sorted.sort(Integer::compareTo);
-            btSet.add(sorted);
-        }
-        assertEquals(bitSet, btSet);
+    void bothApproachesProduceTheSameSubsetsRegardlessOfOrdering() {
+        int[] nums = {3, -1, 2, 0};
+
+        Set<List<Integer>> backtrackingResult = canonicalize(solution.subsets(nums.clone()));
+        Set<List<Integer>> bitResult = canonicalize(solution.subsetsBit(nums.clone()));
+
+        assertEquals(backtrackingResult, bitResult);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void everyReturnedSubsetIsAnIndependentCopy(
+            String name, Function<int[], List<List<Integer>>> implementation) {
+        List<List<Integer>> result = implementation.apply(new int[]{1, 2, 3});
+
+        assertNotSame(result.get(0), result.get(1));
+        result.get(1).add(99);
+
+        assertFalse(result.get(0).contains(99));
+        assertFalse(result.get(2).contains(99));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void repeatedCallsDoNotShareState(String name, Function<int[], List<List<Integer>>> implementation) {
+        List<List<Integer>> first = implementation.apply(new int[]{1, 2, 3});
+        List<List<Integer>> second = implementation.apply(new int[]{1, 2, 3});
+
+        assertEquals(canonicalize(first), canonicalize(second));
+    }
+
+    @Test
+    void bitApproachRejectsInputThatCannotBeRepresentedByAnIntMask() {
+        assertThrows(IllegalArgumentException.class, () -> solution.subsetsBit(new int[Integer.SIZE - 1]));
+    }
+
+    private void assertPowerSet(Set<List<Integer>> expected, List<List<Integer>> actual) {
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, canonicalize(actual));
+    }
+
+    private Set<List<Integer>> canonicalize(List<List<Integer>> subsets) {
+        return subsets.stream()
+                .map(subset -> {
+                    List<Integer> sorted = new ArrayList<>(subset);
+                    sorted.sort(Integer::compareTo);
+                    return sorted;
+                })
+                .collect(Collectors.toSet());
     }
 }
