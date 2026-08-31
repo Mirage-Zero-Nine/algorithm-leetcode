@@ -1,14 +1,10 @@
 package solutions.backtracking;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Given a array of distinct integers.
- * Return all possible subsets (the power set).
- * Note: The solution set must not contain duplicate subsets.
+ * Generates all possible subsets (the power set) of an array of distinct integers.
  *
  * @author BorisMirage
  * Time: 2018/08/09 13:44
@@ -16,69 +12,96 @@ import java.util.List;
  */
 
 public class Subsets_78 {
+
     /**
-     * Bit manipulation.
-     * Index in array can be represented as a bit map, select ith element can be represented as 1, otherwise 0.
-     * Therefore, the whole array can be represented as a 2^n - 1 int, that each bit represent the element in array.
-     * Then loop from 0 to 1 << n, each 1 represent the jth element is selected into current subset.
+     * Generates the power set using recursive backtracking.
      *
-     * @param nums input int array
-     * @return list that contains all subsets
+     * <p>The empty array has one subset—the empty subset. A {@code null} input returns an
+     * empty result.</p>
+     *
+     * @param nums input array of distinct integers
+     * @return all subsets of {@code nums}; an empty array returns a list containing the empty subset
      */
     public List<List<Integer>> subsets(int[] nums) {
-        List<List<Integer>> out = new LinkedList<>();
-        int n = nums.length;
-
-        for (int i = 0; i < 1 << n; i++) {
-            List<Integer> tmp = new LinkedList<>();
-
-            for (int j = 0; j < nums.length; j++) {
-                if (((i >> j) & 1) == 1) {
-                    tmp.add(nums[j]);
-                }
-            }
-
-            out.add(tmp);
+        // corner case
+        if (nums == null) {
+            return new ArrayList<>();
         }
 
-        return out;
-    }
-
-    /**
-     * Normal backtracking.
-     *
-     * @param nums input int array
-     * @return list that contains all subsets
-     */
-    public List<List<Integer>> backtracking(int[] nums) {
-        List<List<Integer>> output = new LinkedList<>();
-
-        if (nums.length == 0) {
-            return output;
-        }
-
-        Arrays.sort(nums);      // avoid duplication
-        backtracking(output, new LinkedList<>(), nums, 0);
+        List<List<Integer>> output = new ArrayList<>();
+        backtracking(new ArrayList<>(), output, nums, 0);
         return output;
     }
 
     /**
-     * Basic backtracking.
-     * Each iteration starts at next int from previous iteration.
+     * Enumerates every subset that can be formed from {@code nums[start]} onward.
      *
-     * @param output output list
-     * @param temp   temp list
-     * @param nums   int array
-     * @param k      each recursion start position
+     * <p>{@code current} is the candidate subset for this recursion level. Every candidate
+     * is added to the result before exploring further choices, so the empty subset and all
+     * intermediate subsets are included. For each possible next element, the method follows
+     * the backtracking pattern: choose the element, explore recursively from the next index,
+     * and unchoose the element to restore the caller's state.</p>
+     *
+     * <p>A copy of {@code current} is stored because the same mutable list is reused while
+     * the recursion explores other branches.</p>
+     *
+     * @param current current candidate subset; it is restored before this method returns
+     * @param output  result list to which defensive copies of candidates are added
+     * @param arr     input array of distinct integers
+     * @param start   index of the first element that may be selected
      */
-    private void backtracking(List<List<Integer>> output, List<Integer> temp, int[] nums, int k) {
-        output.add(new ArrayList<>(temp));     // every subset should be added to final result
-        for (int i = k; i < nums.length; i++) {
-            temp.add(nums[i]);
-            backtracking(output, temp, nums, i + 1);
-            temp.removeLast();       // avoid duplication
+    private void backtracking(List<Integer> current, List<List<Integer>> output,
+                              int[] arr, int start) {
+        // every path is a valid subset
+        output.add(new ArrayList<>(current));
 
+        for (int i = start; i < arr.length; i++) {
+            // include arr[i] in the current subset.
+            current.add(arr[i]);
+
+            // only later elements may be selected, so elements are never reused.
+            backtracking(current, output, arr, i + 1);
+
+            // restore current before exploring the next sibling branch.
+            current.removeLast();
         }
     }
 
+    /**
+     * Generates the power set using one bit per input element.
+     *
+     * <p>For a mask, bit {@code j} is set when {@code nums[j]} belongs to that subset. There
+     * are {@code 2^n} masks for an input of length {@code n}.</p>
+     *
+     * @param nums input array of distinct integers
+     * @return all subsets of {@code nums}; an empty array returns a list containing the
+     * empty subset
+     * @throws IllegalArgumentException if {@code nums} is too large for an {@code int} mask
+     */
+    public List<List<Integer>> subsetsBit(int[] nums) {
+        // corner case
+        if (nums == null) {
+            return new ArrayList<>();
+        }
+
+        int n = nums.length;
+        if (n >= Integer.SIZE - 1) {
+            throw new IllegalArgumentException("Input is too large for an int bit mask");
+        }
+
+        List<List<Integer>> output = new ArrayList<>();
+        int subsetCount = 1 << n;
+
+        for (int mask = 0; mask < subsetCount; mask++) {
+            List<Integer> subset = new ArrayList<>();
+
+            for (int index = 0; index < n; index++) {
+                if ((mask & (1 << index)) != 0) {
+                    subset.add(nums[index]);
+                }
+            }
+            output.add(subset);
+        }
+        return output;
+    }
 }
