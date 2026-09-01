@@ -2,6 +2,8 @@ package solutions.bitmanipulation;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AddBinary_67Test {
@@ -43,8 +45,34 @@ public class AddBinary_67Test {
         assertEquals("100000000", solver.addBinary("11111111", "1"));
     }
 
-    @Test public void testEqualLengthNoCarry() {
-        assertEquals("1111", solver.addBinary("1010", "0101"));
+    @Test public void testEqualLength() {
+        assertEquals("10100", solver.addBinary("1010", "1010"));
+    }
+
+    @Test public void testExhaustiveSmallCanonicalInputs() {
+        String[] inputs = canonicalBinaryInputs(8);
+
+        for (String a : inputs) {
+            for (String b : inputs) {
+                String expected = new BigInteger(a, 2).add(new BigInteger(b, 2)).toString(2);
+                assertEquals(expected, solver.addBinary(a, b), () -> a + " + " + b);
+            }
+        }
+    }
+
+    private String[] canonicalBinaryInputs(int maxLength) {
+        java.util.List<String> inputs = new java.util.ArrayList<>();
+        inputs.add("0");
+
+        for (int length = 1; length <= maxLength; length++) {
+            int firstBit = 1 << (length - 1);
+            int limit = 1 << length;
+            for (int value = firstBit; value < limit; value++) {
+                inputs.add(Integer.toBinaryString(value));
+            }
+        }
+
+        return inputs.toArray(new String[0]);
     }
 
     @Test public void testGiantCase() {

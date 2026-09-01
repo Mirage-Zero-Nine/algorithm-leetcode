@@ -2,6 +2,8 @@ package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 public class CoinChange_322Test {
@@ -118,5 +120,55 @@ public class CoinChange_322Test {
         assertEquals(1, test.coinChange(new int[]{3, 7, 11}, 3));
         // amount=4 with coins [1,5,10] -> needs 4 of the smallest
         assertEquals(4, test.coinChange(new int[]{1, 5, 10}, 4));
+    }
+
+    @Test
+    public void testExhaustiveSmallValidInputs() {
+        int[] denominations = {1, 2, 3, 4, 5, 6};
+
+        // Every nonempty subset is a valid distinct positive coin set.
+        for (int mask = 1; mask < (1 << denominations.length); mask++) {
+            int[] coins = coinsForMask(denominations, mask);
+            for (int amount = 0; amount <= 20; amount++) {
+                int[] memo = new int[amount + 1];
+                Arrays.fill(memo, Integer.MIN_VALUE);
+                int expected = minimumCoins(amount, coins, memo);
+                assertEquals(expected, test.coinChange(coins, amount),
+                        "coins=" + Arrays.toString(coins) + ", amount=" + amount);
+            }
+        }
+    }
+
+    private int[] coinsForMask(int[] denominations, int mask) {
+        int[] coins = new int[Integer.bitCount(mask)];
+        int index = 0;
+        for (int bit = 0; bit < denominations.length; bit++) {
+            if ((mask & (1 << bit)) != 0) {
+                coins[index++] = denominations[bit];
+            }
+        }
+        return coins;
+    }
+
+    // Independently enumerate the first coin chosen, allowing unlimited reuse.
+    private int minimumCoins(int remaining, int[] coins, int[] memo) {
+        if (remaining == 0) {
+            return 0;
+        }
+        if (memo[remaining] != Integer.MIN_VALUE) {
+            return memo[remaining];
+        }
+
+        int minimum = Integer.MAX_VALUE;
+        for (int coin : coins) {
+            if (coin <= remaining) {
+                int subproblem = minimumCoins(remaining - coin, coins, memo);
+                if (subproblem != -1) {
+                    minimum = Math.min(minimum, subproblem + 1);
+                }
+            }
+        }
+        memo[remaining] = minimum == Integer.MAX_VALUE ? -1 : minimum;
+        return memo[remaining];
     }
 }

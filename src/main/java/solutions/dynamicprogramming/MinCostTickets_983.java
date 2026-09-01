@@ -42,7 +42,7 @@ public class MinCostTickets_983 {
 
         /* Corner case (days >= 1) */
         if (days.length < 2) {
-            return costs[0];
+            return Math.min(costs[0], Math.min(costs[1], costs[2]));
         }
 
         Queue<int[]> last7 = new LinkedList<>(), last30 = new LinkedList<>();

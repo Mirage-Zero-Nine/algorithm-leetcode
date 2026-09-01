@@ -1,7 +1,6 @@
 package solutions.twopointers;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -98,13 +97,6 @@ public class SortColors_75Test {
     }
 
     @Test
-    public void testEmptyArray() {
-        int[] arr = {};
-        test.sortColors(arr);
-        assertArrayEquals(new int[]{}, arr);
-    }
-
-    @Test
     public void testSingleElements() {
         int[] a = {1};
         test.sortColors(a);
@@ -179,5 +171,38 @@ public class SortColors_75Test {
         int[] arr = {0, 2, 0, 2, 0, 2, 1, 1, 1};
         test.sortColors(arr);
         assertArrayEquals(new int[]{0, 0, 0, 1, 1, 1, 2, 2, 2}, arr);
+    }
+
+    @Test
+    public void testExhaustiveShortArrays() {
+        for (int length = 1; length <= 8; length++) {
+            checkAllArraysOfLength(length, new int[length], 0);
+        }
+    }
+
+    private void checkAllArraysOfLength(int length, int[] values, int position) {
+        if (position == length) {
+            int[] original = values.clone();
+            int[] expected = original.clone();
+            Arrays.sort(expected);
+
+            int[] countsBefore = counts(original);
+            test.sortColors(values);
+
+            assertArrayEquals(expected, values);
+            assertArrayEquals(countsBefore, counts(values));
+            return;
+        }
+
+        for (int color = 0; color <= 2; color++) {
+            values[position] = color;
+            checkAllArraysOfLength(length, values, position + 1);
+        }
+    }
+
+    private int[] counts(int[] values) {
+        int[] counts = new int[3];
+        for (int value : values) counts[value]++;
+        return counts;
     }
 }

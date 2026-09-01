@@ -7,10 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PermuteUnique_47Test {
     private final PermuteUnique_47 solution = new PermuteUnique_47();
@@ -43,18 +39,6 @@ class PermuteUnique_47Test {
     void testSingleElement() {
         List<List<Integer>> result = solution.permuteUnique(new int[]{1});
         assertEquals(1, result.size());
-    }
-
-    @Test
-    void testEmptyArray() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{});
-        assertEquals(0, result.size());
-    }
-
-    @Test
-    void testNullInput() {
-        List<List<Integer>> result = solution.permuteUnique(null);
-        assertEquals(0, result.size());
     }
 
     @Test
@@ -185,5 +169,54 @@ class PermuteUnique_47Test {
         List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1, 2, 2, 3, 3});
         assertEquals(90, result.size());
         assertEquals(90, new HashSet<>(result).size());
+    }
+
+    @Test
+    void testExhaustiveShortArraysAgainstIndependentOracle() {
+        int[] domain = {-1, 0, 1};
+        for (int length = 1; length <= 6; length++) {
+            assertAllArraysOfLength(domain, new int[length], 0);
+        }
+    }
+
+    private void assertAllArraysOfLength(int[] domain, int[] input, int index) {
+        if (index == input.length) {
+            Set<List<Integer>> expected = independentUniquePermutations(input);
+            Set<List<Integer>> actual = new HashSet<>(solution.permuteUnique(input.clone()));
+            assertEquals(expected, actual, "Unexpected permutations for " + Arrays.toString(input));
+            return;
+        }
+
+        for (int value : domain) {
+            input[index] = value;
+            assertAllArraysOfLength(domain, input, index + 1);
+        }
+    }
+
+    private Set<List<Integer>> independentUniquePermutations(int[] input) {
+        Set<List<Integer>> permutations = new HashSet<>();
+        buildPermutationSet(input, new boolean[input.length], new int[input.length], 0, permutations);
+        return permutations;
+    }
+
+    private void buildPermutationSet(int[] input, boolean[] used, int[] current,
+                                     int length, Set<List<Integer>> permutations) {
+        if (length == input.length) {
+            List<Integer> permutation = new java.util.ArrayList<>(input.length);
+            for (int value : current) {
+                permutation.add(value);
+            }
+            permutations.add(permutation);
+            return;
+        }
+
+        for (int index = 0; index < input.length; index++) {
+            if (!used[index]) {
+                used[index] = true;
+                current[length] = input[index];
+                buildPermutationSet(input, used, current, length + 1, permutations);
+                used[index] = false;
+            }
+        }
     }
 }

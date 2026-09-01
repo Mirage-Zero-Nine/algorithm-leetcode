@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayDeque;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,16 @@ public class NumIslands_200Test {
     public void testDiagonalNotConnected() {
         // Diagonal cells are NOT connected
         assertAllImplementations(4, new char[][]{{'1', '0', '1'}, {'0', '0', '0'}, {'1', '0', '1'}});
+    }
+
+    @Test
+    public void testAllThreeByThreeBinaryGrids() {
+        // Exhaust every legal binary 3x3 grid. Each implementation gets its own
+        // fresh grid because the DFS and BFS implementations mark visited land.
+        for (int mask = 0; mask < (1 << 9); mask++) {
+            char[][] grid = gridFromMask(mask);
+            assertAllImplementations(countIslandsWithoutMutation(grid), grid);
+        }
     }
 
     @Test
@@ -265,5 +276,48 @@ public class NumIslands_200Test {
             copy[i] = grid[i] == null ? null : grid[i].clone();
         }
         return copy;
+    }
+
+    private char[][] gridFromMask(int mask) {
+        char[][] grid = new char[3][3];
+        for (int cell = 0; cell < 9; cell++) {
+            grid[cell / 3][cell % 3] = (mask & (1 << cell)) == 0 ? '0' : '1';
+        }
+        return grid;
+    }
+
+    private int countIslandsWithoutMutation(char[][] grid) {
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        int islands = 0;
+        int[] rowDelta = {-1, 1, 0, 0};
+        int[] columnDelta = {0, 0, -1, 1};
+
+        for (int row = 0; row < grid.length; row++) {
+            for (int column = 0; column < grid[row].length; column++) {
+                if (grid[row][column] != '1' || visited[row][column]) {
+                    continue;
+                }
+
+                islands++;
+                ArrayDeque<int[]> queue = new ArrayDeque<>();
+                queue.add(new int[]{row, column});
+                visited[row][column] = true;
+                while (!queue.isEmpty()) {
+                    int[] cell = queue.remove();
+                    for (int direction = 0; direction < 4; direction++) {
+                        int nextRow = cell[0] + rowDelta[direction];
+                        int nextColumn = cell[1] + columnDelta[direction];
+                        if (nextRow >= 0 && nextRow < grid.length
+                                && nextColumn >= 0 && nextColumn < grid[nextRow].length
+                                && grid[nextRow][nextColumn] == '1'
+                                && !visited[nextRow][nextColumn]) {
+                            visited[nextRow][nextColumn] = true;
+                            queue.add(new int[]{nextRow, nextColumn});
+                        }
+                    }
+                }
+            }
+        }
+        return islands;
     }
 }

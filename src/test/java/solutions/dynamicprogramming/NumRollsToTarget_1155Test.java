@@ -56,8 +56,28 @@ public class NumRollsToTarget_1155Test {
     }
 
     @Test
-    public void testGiantCase() {
-        int result = test.numRollsToTarget(30, 30, 450);
-        assertEquals(result, test.numRollsToTarget(30, 30, 450));
+    public void testExhaustiveSmallValidInputs() {
+        for (int n = 1; n <= 6; n++) {
+            for (int k = 1; k <= 5; k++) {
+                for (int target = 1; target <= n * k + 2; target++) {
+                    assertEquals(
+                            countWays(n, k, target),
+                            test.numRollsToTarget(n, k, target),
+                            "n=" + n + ", k=" + k + ", target=" + target);
+                }
+            }
+        }
+    }
+
+    private int countWays(int dice, int faces, int target) {
+        if (dice == 0) {
+            return target == 0 ? 1 : 0;
+        }
+
+        int ways = 0;
+        for (int face = 1; face <= faces; face++) {
+            ways += countWays(dice - 1, faces, target - face);
+        }
+        return ways;
     }
 }

@@ -2,6 +2,8 @@ package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 public class MinCostTickets_983Test {
@@ -61,12 +63,72 @@ public class MinCostTickets_983Test {
     }
 
     @Test
-    public void testGiantCase() {
-        // Travel every day of the year
-        int[] days = new int[365];
-        for (int i = 0; i < 365; i++) days[i] = i + 1;
-        // 13 monthly passes cover 390 days, so 13*15=195; but let's check actual
-        int result = test.minCostTickets(days, new int[]{2, 7, 15});
-        assertEquals(result, test.minCostTickets(days, new int[]{2, 7, 15})); // consistency check
+    public void testAllTravelDaySubsetsAndRepresentativeCosts() {
+        // Every non-empty subset of this valid ten-day travel range is tested.
+        int numberOfDays = 10;
+        int[] validCosts = {1, 2, 3, 7, 10, 15};
+
+        for (int subset = 1; subset < (1 << numberOfDays); subset++) {
+            int[] days = daysForSubset(subset, numberOfDays);
+
+            for (int oneDayCost : validCosts) {
+                for (int sevenDayCost : validCosts) {
+                    for (int thirtyDayCost : validCosts) {
+                        int[] costs = {oneDayCost, sevenDayCost, thirtyDayCost};
+                        assertEquals(bruteForceMinimum(days, costs), test.minCostTickets(days, costs),
+                                "days=" + subset + ", costs=" + oneDayCost + "," + sevenDayCost + ","
+                                        + thirtyDayCost);
+                    }
+                }
+            }
+        }
+    }
+
+    private int[] daysForSubset(int subset, int numberOfDays) {
+        int[] days = new int[Integer.bitCount(subset)];
+        int index = 0;
+        for (int day = 1; day <= numberOfDays; day++) {
+            if ((subset & (1 << (day - 1))) != 0) {
+                days[index++] = day;
+            }
+        }
+        return days;
+    }
+
+    /**
+     * Independent exhaustive oracle: buy each possible pass on the first
+     * uncovered travel day and recursively try all three choices. Memoization
+     * only avoids recalculating an identical suffix; it does not use the
+     * implementation's queue or recurrence.
+     */
+    private int bruteForceMinimum(int[] days, int[] costs) {
+        int[] minimumFrom = new int[days.length + 1];
+        Arrays.fill(minimumFrom, -1);
+        minimumFrom[days.length] = 0;
+        return bruteForceMinimum(days, costs, 0, minimumFrom);
+    }
+
+    private int bruteForceMinimum(int[] days, int[] costs, int firstUncovered, int[] minimumFrom) {
+        if (minimumFrom[firstUncovered] != -1) {
+            return minimumFrom[firstUncovered];
+        }
+
+        int day = days[firstUncovered];
+        int oneDayEnd = firstUncovered + 1;
+        int sevenDayEnd = firstDayOutsideCoverage(days, firstUncovered, day + 7);
+        int thirtyDayEnd = firstDayOutsideCoverage(days, firstUncovered, day + 30);
+
+        minimumFrom[firstUncovered] = Math.min(costs[0] + bruteForceMinimum(days, costs, oneDayEnd, minimumFrom),
+                Math.min(costs[1] + bruteForceMinimum(days, costs, sevenDayEnd, minimumFrom),
+                        costs[2] + bruteForceMinimum(days, costs, thirtyDayEnd, minimumFrom)));
+        return minimumFrom[firstUncovered];
+    }
+
+    private int firstDayOutsideCoverage(int[] days, int firstUncovered, int exclusiveEndDay) {
+        int next = firstUncovered;
+        while (next < days.length && days[next] < exclusiveEndDay) {
+            next++;
+        }
+        return next;
     }
 }

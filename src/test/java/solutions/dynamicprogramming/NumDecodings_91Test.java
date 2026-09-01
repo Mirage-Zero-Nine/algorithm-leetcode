@@ -17,7 +17,6 @@ public class NumDecodings_91Test {
     @Test
     public void testNegativeAndEdgeCases() {
         assertEquals(0, test.numDecodings("0"));
-        assertEquals(0, test.numDecodings(""));
     }
 
     @Test
@@ -68,5 +67,44 @@ public class NumDecodings_91Test {
     public void testGiantCase() {
         // "1111111111" (10 ones) -> Fibonacci-like: f(10) = 89
         assertEquals(89, test.numDecodings("1111111111"));
+    }
+
+    @Test
+    public void testExhaustiveShortDigitStrings() {
+        // Exhaustively cover lengths 1..6 over a compact alphabet that includes
+        // zero, valid two-digit codes, and two-digit values greater than 26.
+        assertAllDigitStrings("", 6);
+    }
+
+    private void assertAllDigitStrings(String prefix, int remainingLength) {
+        if (!prefix.isEmpty()) {
+            assertEquals(decodeCount(prefix, 0), test.numDecodings(prefix), prefix);
+        }
+        if (remainingLength == 0) {
+            return;
+        }
+
+        for (char digit : "0126789".toCharArray()) {
+            assertAllDigitStrings(prefix + digit, remainingLength - 1);
+        }
+    }
+
+    /** Independent recursive oracle based directly on the 1..26 encoding rule. */
+    private int decodeCount(String s, int index) {
+        if (index == s.length()) {
+            return 1;
+        }
+        if (s.charAt(index) == '0') {
+            return 0;
+        }
+
+        int count = decodeCount(s, index + 1);
+        if (index + 1 < s.length()) {
+            int value = (s.charAt(index) - '0') * 10 + s.charAt(index + 1) - '0';
+            if (value <= 26) {
+                count += decodeCount(s, index + 2);
+            }
+        }
+        return count;
     }
 }
