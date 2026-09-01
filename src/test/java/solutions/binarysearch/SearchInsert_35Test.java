@@ -59,11 +59,36 @@ public class SearchInsert_35Test {
     }
 
     @Test
-    public void testGiantCase() {
-        int[] arr = new int[1000];
-        for (int i = 0; i < 1000; i++) {
-            arr[i] = i * 3;
+    public void testExhaustiveSmallSortedArrays() {
+        int minValue = -3;
+        int maxValue = 3;
+
+        for (int mask = 1; mask < (1 << (maxValue - minValue + 1)); mask++) {
+            int[] nums = valuesForMask(mask, minValue, maxValue);
+            for (int target = minValue - 1; target <= maxValue + 1; target++) {
+                assertEquals(linearInsertionIndex(nums, target), test.searchInsert(nums, target),
+                        "nums=" + java.util.Arrays.toString(nums) + ", target=" + target);
+            }
         }
-        assertEquals(667, test.searchInsert(arr, 2000));
+    }
+
+    private int[] valuesForMask(int mask, int minValue, int maxValue) {
+        int[] values = new int[Integer.bitCount(mask)];
+        int index = 0;
+        for (int value = minValue; value <= maxValue; value++) {
+            if ((mask & (1 << (value - minValue))) != 0) {
+                values[index++] = value;
+            }
+        }
+        return values;
+    }
+
+    private int linearInsertionIndex(int[] nums, int target) {
+        for (int index = 0; index < nums.length; index++) {
+            if (nums[index] >= target) {
+                return index;
+            }
+        }
+        return nums.length;
     }
 }

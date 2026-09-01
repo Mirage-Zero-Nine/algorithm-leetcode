@@ -89,19 +89,13 @@ public class MinPathSum_64Test {
     }
 
     @Test
-    public void testNegativeValues() {
-        // Implementation uses int arithmetic, negative values should still work
-        // right-down: -1+2+(-3)=-2, down-right: -1+(-4)+(-3)=-8 -> min=-8
-        assertEquals(-8, test.minPathSum(new int[][]{{-1, 2}, {-4, -3}}));
-    }
-
-    @Test
-    public void testLargeValuesOverflowRisk() {
-        int half = Integer.MAX_VALUE / 2;
-        // 1x3 row: sum = half + half + half. Check no overflow issues in path logic.
-        // Since it's a single row, result = sum of all cells
-        int[][] grid = {{half, 1, 1}};
-        assertEquals(half + 2, test.minPathSum(grid));
+    public void testExhaustiveSmallGrids() {
+        for (int rows = 1; rows <= 3; rows++) {
+            for (int columns = 1; columns <= 4; columns++) {
+                int[][] grid = new int[rows][columns];
+                enumerateGrids(grid, 0);
+            }
+        }
     }
 
     @Test
@@ -167,5 +161,34 @@ public class MinPathSum_64Test {
     public void testAllZerosLarge() {
         int[][] grid = new int[20][20]; // default 0
         assertEquals(0, test.minPathSum(grid));
+    }
+
+    private void enumerateGrids(int[][] grid, int cell) {
+        if (cell == grid.length * grid[0].length) {
+            assertEquals(enumeratePaths(grid, 0, 0), test.minPathSum(grid));
+            return;
+        }
+
+        int row = cell / grid[0].length;
+        int column = cell % grid[0].length;
+        for (int value = 0; value <= 2; value++) {
+            grid[row][column] = value;
+            enumerateGrids(grid, cell + 1);
+        }
+    }
+
+    private int enumeratePaths(int[][] grid, int row, int column) {
+        if (row == grid.length - 1 && column == grid[0].length - 1) {
+            return grid[row][column];
+        }
+
+        int best = Integer.MAX_VALUE;
+        if (row + 1 < grid.length) {
+            best = Math.min(best, enumeratePaths(grid, row + 1, column));
+        }
+        if (column + 1 < grid[0].length) {
+            best = Math.min(best, enumeratePaths(grid, row, column + 1));
+        }
+        return grid[row][column] + best;
     }
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IsValid_20Test {
     private final IsValid_20 v = new IsValid_20();
@@ -68,6 +69,49 @@ public class IsValid_20Test {
     public void testMismatchedOverlapping() {
         // '({)}' -> false (overlapping but not properly nested)
         assertFalse(v.isValid("({)}"));
+    }
+
+    @Test
+    public void testExhaustiveShortStrings() {
+        char[] brackets = {'(', ')', '[', ']', '{', '}'};
+        for (int length = 1; length <= 6; length++) {
+            assertAllStringsOfLength(new StringBuilder(length), length, brackets);
+        }
+    }
+
+    private void assertAllStringsOfLength(StringBuilder candidate, int length, char[] brackets) {
+        if (candidate.length() == length) {
+            String input = candidate.toString();
+            assertEquals(isValidByReference(input), v.isValid(input),
+                    "Unexpected result for: " + input);
+            return;
+        }
+
+        for (char bracket : brackets) {
+            candidate.append(bracket);
+            assertAllStringsOfLength(candidate, length, brackets);
+            candidate.deleteCharAt(candidate.length() - 1);
+        }
+    }
+
+    private boolean isValidByReference(String input) {
+        java.util.ArrayDeque<Character> stack = new java.util.ArrayDeque<>();
+        for (char bracket : input.toCharArray()) {
+            if (bracket == '(' || bracket == '[' || bracket == '{') {
+                stack.push(bracket);
+            } else {
+                if (stack.isEmpty() || !matches(stack.pop(), bracket)) {
+                    return false;
+                }
+            }
+        }
+        return stack.isEmpty();
+    }
+
+    private boolean matches(char open, char close) {
+        return (open == '(' && close == ')')
+                || (open == '[' && close == ']')
+                || (open == '{' && close == '}');
     }
 
     @Test
