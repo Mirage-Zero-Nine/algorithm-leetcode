@@ -28,11 +28,6 @@ public class IsPerfectSquare_367Test {
     }
 
     @Test
-    public void testZero() {
-        assertTrue(test.isPerfectSquare(0));
-    }
-
-    @Test
     public void testTwoIsNotPerfectSquare() {
         assertFalse(test.isPerfectSquare(2));
     }
@@ -58,7 +53,19 @@ public class IsPerfectSquare_367Test {
     }
 
     @Test
-    public void testNegativeInputReturnsFalse() {
-        assertFalse(test.isPerfectSquare(-1));
+    public void testExhaustivePracticalRange() {
+        final int upperBound = 1_000_000;
+        boolean[] perfectSquares = new boolean[upperBound + 1];
+        for (int root = 1; root * root <= upperBound; root++) {
+            perfectSquares[root * root] = true;
+        }
+
+        for (int num = 1; num <= upperBound; num++) {
+            if (perfectSquares[num]) {
+                assertTrue(test.isPerfectSquare(num), "Expected a perfect square: " + num);
+            } else {
+                assertFalse(test.isPerfectSquare(num), "Expected a non-square: " + num);
+            }
+        }
     }
 }

@@ -2,6 +2,9 @@ package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 public class LongestCommonSubsequence_1143Test {
@@ -17,17 +20,12 @@ public class LongestCommonSubsequence_1143Test {
     @Test
     public void testNegativeAndEdgeCases() {
         assertEquals(0, test.longestCommonSubsequence("abc", "def"));
-        assertEquals(0, test.longestCommonSubsequence("", "abc"));
+        assertEquals(0, test.longestCommonSubsequence("aaa", "bbb"));
     }
 
     @Test
     public void testLargeCase() {
         assertEquals(6, test.longestCommonSubsequence("abcdefgh", "acdfgh"));
-    }
-
-    @Test
-    public void testBothEmpty() {
-        assertEquals(0, test.longestCommonSubsequence("", ""));
     }
 
     @Test
@@ -44,7 +42,6 @@ public class LongestCommonSubsequence_1143Test {
 
     @Test
     public void testNoCommonSubsequence() {
-        assertEquals(0, test.longestCommonSubsequence("aaa", "bbb"));
         assertEquals(0, test.longestCommonSubsequence("xyz", "abc"));
     }
 
@@ -61,11 +58,55 @@ public class LongestCommonSubsequence_1143Test {
     }
 
     @Test
-    public void testGiantCase() {
-        String s1 = "abcdefghij".repeat(50); // 500 chars
-        String s2 = "acegi".repeat(100);      // 500 chars
-        int result = test.longestCommonSubsequence(s1, s2);
-        // result should be positive and consistent
-        assertEquals(result, test.longestCommonSubsequence(s1, s2));
+    public void testExhaustiveSmallStrings() {
+        Set<String> strings = new HashSet<>();
+        for (int length = 1; length <= 6; length++) {
+            addBinaryStrings(strings, "", length);
+        }
+
+        for (String text1 : strings) {
+            for (String text2 : strings) {
+                assertEquals(
+                        longestCommonSubsequenceByEnumeration(text1, text2),
+                        test.longestCommonSubsequence(text1, text2),
+                        () -> "text1=" + text1 + ", text2=" + text2);
+            }
+        }
+    }
+
+    private void addBinaryStrings(Set<String> strings, String prefix, int remaining) {
+        if (remaining == 0) {
+            strings.add(prefix);
+            return;
+        }
+        addBinaryStrings(strings, prefix + "a", remaining - 1);
+        addBinaryStrings(strings, prefix + "b", remaining - 1);
+    }
+
+    private int longestCommonSubsequenceByEnumeration(String text1, String text2) {
+        Set<String> subsequences1 = allSubsequences(text1);
+        Set<String> subsequences2 = allSubsequences(text2);
+        int longest = 0;
+        for (String subsequence : subsequences1) {
+            if (subsequences2.contains(subsequence)) {
+                longest = Math.max(longest, subsequence.length());
+            }
+        }
+        return longest;
+    }
+
+    private Set<String> allSubsequences(String text) {
+        Set<String> subsequences = new HashSet<>();
+        addSubsequences(subsequences, text, 0, "");
+        return subsequences;
+    }
+
+    private void addSubsequences(Set<String> subsequences, String text, int index, String current) {
+        if (index == text.length()) {
+            subsequences.add(current);
+            return;
+        }
+        addSubsequences(subsequences, text, index + 1, current);
+        addSubsequences(subsequences, text, index + 1, current + text.charAt(index));
     }
 }

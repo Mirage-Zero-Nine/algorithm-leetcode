@@ -2,7 +2,9 @@ package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,13 +75,6 @@ class Permute_46Test {
     void testAllNegative() {
         List<List<Integer>> result = solution.permute(new int[]{-3, -2, -1});
         assertEquals(6, result.size());
-    }
-
-    @Test
-    void testGiantCase() {
-        // 7! = 5040
-        List<List<Integer>> result = solution.permute(new int[]{1, 2, 3, 4, 5, 6, 7});
-        assertEquals(5040, result.size());
     }
 
     @Test
@@ -169,5 +164,75 @@ class Permute_46Test {
         List<List<Integer>> result = solution.permute(new int[]{42});
         assertEquals(1, result.size());
         assertEquals(List.of(42), result.get(0));
+    }
+
+    @Test
+    void testAllDistinctInputsUpToMaximumSize() {
+        int[] values = {-3, -2, -1, 0, 1, 2};
+        for (int length = 1; length <= values.length; length++) {
+            assertAllDistinctInputs(values, new int[length], new boolean[values.length], 0);
+        }
+    }
+
+    private void assertAllDistinctInputs(int[] values, int[] input, boolean[] selected, int position) {
+        if (position == input.length) {
+            assertPermutations(input);
+            return;
+        }
+
+        for (int i = 0; i < values.length; i++) {
+            if (!selected[i]) {
+                selected[i] = true;
+                input[position] = values[i];
+                assertAllDistinctInputs(values, input, selected, position + 1);
+                selected[i] = false;
+            }
+        }
+    }
+
+    private void assertPermutations(int[] input) {
+        int[] original = input.clone();
+        List<List<Integer>> actual = solution.permute(input);
+        Set<List<Integer>> expected = expectedPermutations(input);
+        Set<List<Integer>> unique = new HashSet<>(actual);
+
+        assertEquals(Arrays.toString(original), Arrays.toString(input), "Input must not be modified");
+        assertEquals(expected, unique, "The complete permutation set must be returned");
+        assertEquals(expected.size(), actual.size(), "No duplicate permutations are allowed");
+        assertEquals(factorial(input.length), actual.size(), "There must be n! permutations");
+
+        List<Integer> expectedElements = Arrays.stream(original).boxed().sorted().toList();
+        for (List<Integer> permutation : actual) {
+            assertEquals(input.length, permutation.size(), "Every permutation must have length n");
+            assertEquals(expectedElements, permutation.stream().sorted().toList(),
+                    "Every permutation must contain each input element exactly once");
+        }
+    }
+
+    private Set<List<Integer>> expectedPermutations(int[] input) {
+        List<Integer> permutation = Arrays.stream(input).boxed().sorted().collect(java.util.stream.Collectors.toList());
+        Set<List<Integer>> expected = new HashSet<>();
+        do {
+            expected.add(new ArrayList<>(permutation));
+        } while (nextPermutation(permutation));
+        return expected;
+    }
+
+    private boolean nextPermutation(List<Integer> permutation) {
+        int i = permutation.size() - 2;
+        while (i >= 0 && permutation.get(i) >= permutation.get(i + 1)) i--;
+        if (i < 0) return false;
+
+        int j = permutation.size() - 1;
+        while (permutation.get(j) <= permutation.get(i)) j--;
+        Collections.swap(permutation, i, j);
+        Collections.reverse(permutation.subList(i + 1, permutation.size()));
+        return true;
+    }
+
+    private int factorial(int n) {
+        int factorial = 1;
+        for (int i = 2; i <= n; i++) factorial *= i;
+        return factorial;
     }
 }

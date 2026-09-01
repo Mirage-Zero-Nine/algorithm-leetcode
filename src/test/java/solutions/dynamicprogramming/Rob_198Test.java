@@ -152,4 +152,46 @@ public class Rob_198Test {
         assertEquals(4, test.rob(new int[]{1, 2, 3, 1}));
         assertEquals(12, test.rob(new int[]{2, 7, 9, 3, 1}));
     }
+
+    @Test
+    public void testExhaustiveSmallNonnegativeArrays() {
+        for (int length = 1; length <= 7; length++) {
+            assertAllArrays(new int[length], 0, 5);
+        }
+    }
+
+    private void assertAllArrays(int[] nums, int index, int valueCount) {
+        if (index == nums.length) {
+            assertEquals(expectedBySubsetEnumeration(nums), test.rob(nums),
+                "Unexpected result for " + Arrays.toString(nums));
+            return;
+        }
+
+        for (int value = 0; value < valueCount; value++) {
+            nums[index] = value;
+            assertAllArrays(nums, index + 1, valueCount);
+        }
+    }
+
+    private int expectedBySubsetEnumeration(int[] nums) {
+        int best = 0;
+        int subsetCount = 1 << nums.length;
+        for (int mask = 0; mask < subsetCount; mask++) {
+            int total = 0;
+            boolean valid = true;
+            for (int i = 0; i < nums.length; i++) {
+                if ((mask & (1 << i)) != 0) {
+                    if (i > 0 && (mask & (1 << (i - 1))) != 0) {
+                        valid = false;
+                        break;
+                    }
+                    total += nums[i];
+                }
+            }
+            if (valid) {
+                best = Math.max(best, total);
+            }
+        }
+        return best;
+    }
 }

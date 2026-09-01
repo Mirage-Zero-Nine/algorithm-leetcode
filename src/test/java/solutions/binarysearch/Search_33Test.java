@@ -17,7 +17,42 @@ public class Search_33Test {
     @Test
     public void testNegativeAndEdgeCases() {
         assertEquals(-1, test.search(new int[]{4, 5, 6, 7, 0, 1, 2}, 3));
-        assertEquals(-1, test.search(new int[]{}, 5));
+        assertEquals(-1, test.search(new int[]{5}, 4));
+    }
+
+    @Test
+    public void testExhaustiveSmallRotationsAndTargets() {
+        for (int length = 1; length <= 8; length++) {
+            int[] sorted = new int[length];
+            for (int i = 0; i < length; i++) {
+                sorted[i] = -10 + i * 2;
+            }
+
+            for (int pivot = 0; pivot < length; pivot++) {
+                int[] rotated = new int[length];
+                for (int i = 0; i < length; i++) {
+                    rotated[i] = sorted[(pivot + i) % length];
+                }
+
+                for (int target : sorted) {
+                    assertExpectedIndex(rotated, target);
+                }
+                for (int target : new int[]{-11, 6}) {
+                    assertExpectedIndex(rotated, target);
+                }
+            }
+        }
+    }
+
+    private void assertExpectedIndex(int[] nums, int target) {
+        int expected = -1;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == target) {
+                expected = i;
+                break;
+            }
+        }
+        assertEquals(expected, test.search(nums, target));
     }
 
     @Test

@@ -50,4 +50,23 @@ public class HammingDistance_461Test {
         // XOR = 0x7FFFFFFF = all 31 bits set -> 31
         assertEquals(31, solver.hammingDistance(0x55555555, 0x2AAAAAAA));
     }
+
+    @Test public void testAllPairsInSmallNonnegativeDomain() {
+        for (int x = 0; x <= 255; x++) {
+            for (int y = 0; y <= 255; y++) {
+                assertEquals(expectedHammingDistance(x, y), solver.hammingDistance(x, y),
+                        "x=" + x + ", y=" + y);
+            }
+        }
+    }
+
+    private int expectedHammingDistance(int x, int y) {
+        int distance = 0;
+        for (int bit = 0; bit < 31; bit++) {
+            if (((x >>> bit) & 1) != ((y >>> bit) & 1)) {
+                distance++;
+            }
+        }
+        return distance;
+    }
 }

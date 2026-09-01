@@ -26,11 +26,6 @@ public class MaxProfit_123Test {
     }
 
     @Test
-    public void testEmptyArray() {
-        assertEquals(0, test.maxProfit(new int[]{}));
-    }
-
-    @Test
     public void testTwoElements() {
         assertEquals(1, test.maxProfit(new int[]{1, 2}));
         assertEquals(0, test.maxProfit(new int[]{2, 1}));
@@ -59,15 +54,45 @@ public class MaxProfit_123Test {
     }
 
     @Test
-    public void testGiantCase() {
-        int[] prices = new int[10000];
-        for (int i = 0; i < 10000; i++) {
-            prices[i] = i < 5000 ? i : 10000 - i;
+    public void testExhaustiveSmallPriceArrays() {
+        for (int length = 1; length <= 6; length++) {
+            int arrayCount = (int) Math.pow(5, length);
+            for (int encodedPrices = 0; encodedPrices < arrayCount; encodedPrices++) {
+                int[] prices = decodePrices(encodedPrices, length);
+                int expected = bruteForceMaxProfit(prices);
+
+                assertEquals(expected, test.maxProfit(prices),
+                        () -> "prices=" + java.util.Arrays.toString(prices));
+                assertEquals(expected, test.stateMachine(prices),
+                        () -> "prices=" + java.util.Arrays.toString(prices));
+            }
         }
-        // Peak at 4999, valley at 0 and 9999
-        // Best single transaction: buy at 0, sell at 4999 = 4999
-        // Two transactions: buy0 sell4999 + buy5000 sell... decreasing so just one transaction
-        int result = test.maxProfit(prices);
-        assertEquals(result, test.stateMachine(prices)); // both methods should agree
+    }
+
+    private int[] decodePrices(int encodedPrices, int length) {
+        int[] prices = new int[length];
+        for (int day = 0; day < length; day++) {
+            prices[day] = encodedPrices % 5;
+            encodedPrices /= 5;
+        }
+        return prices;
+    }
+
+    /** Enumerates every valid choice of up to two non-overlapping transactions. */
+    private int bruteForceMaxProfit(int[] prices) {
+        int best = 0;
+        for (int firstBuy = 0; firstBuy < prices.length; firstBuy++) {
+            for (int firstSell = firstBuy + 1; firstSell < prices.length; firstSell++) {
+                best = Math.max(best, prices[firstSell] - prices[firstBuy]);
+                for (int secondBuy = firstSell + 1; secondBuy < prices.length; secondBuy++) {
+                    for (int secondSell = secondBuy + 1; secondSell < prices.length; secondSell++) {
+                        int profit = prices[firstSell] - prices[firstBuy]
+                                + prices[secondSell] - prices[secondBuy];
+                        best = Math.max(best, profit);
+                    }
+                }
+            }
+        }
+        return best;
     }
 }

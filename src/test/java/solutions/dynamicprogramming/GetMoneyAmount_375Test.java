@@ -58,10 +58,35 @@ public class GetMoneyAmount_375Test {
     }
 
     @Test
-    public void testConsistency() {
-        // Both implementations should return same result
-        for (int n = 1; n <= 15; n++) {
-            assertEquals(test.getMoneyAmount(n), test.bottomUp(n));
+    public void testExhaustiveSmallRangeAgainstIndependentOracle() {
+        // Exhaust every valid n in a small deterministic range. The oracle
+        // evaluates each possible first guess and minimizes the worst case,
+        // independently of either production implementation.
+        for (int n = 1; n <= 30; n++) {
+            int expected = oracle(1, n, new int[n + 1][n + 1]);
+
+            assertEquals(expected, test.getMoneyAmount(n), "top-down n=" + n);
+            assertEquals(expected, test.bottomUp(n), "bottom-up n=" + n);
         }
+    }
+
+    private int oracle(int low, int high, int[][] memo) {
+        if (low >= high) {
+            return 0;
+        }
+        if (memo[low][high] != 0) {
+            return memo[low][high];
+        }
+
+        int minimumWorstCaseCost = Integer.MAX_VALUE;
+        for (int guess = low; guess <= high; guess++) {
+            int costIfLower = oracle(low, guess - 1, memo);
+            int costIfHigher = oracle(guess + 1, high, memo);
+            int worstCaseCost = guess + Math.max(costIfLower, costIfHigher);
+            minimumWorstCaseCost = Math.min(minimumWorstCaseCost, worstCaseCost);
+        }
+
+        memo[low][high] = minimumWorstCaseCost;
+        return minimumWorstCaseCost;
     }
 }

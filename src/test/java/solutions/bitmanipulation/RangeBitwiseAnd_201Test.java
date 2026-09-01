@@ -52,4 +52,21 @@ public class RangeBitwiseAnd_201Test {
         // 6=110, 7=111 -> AND = 110 = 6
         assertEquals(6, solver.rangeBitwiseAnd(6, 7));
     }
+
+    @Test public void testExhaustiveSmallDomain() {
+        for (int left = 0; left <= 255; left++) {
+            for (int right = left; right <= 255; right++) {
+                assertEquals(rangeAndByEnumeration(left, right), solver.rangeBitwiseAnd(left, right),
+                        "Unexpected result for range [" + left + ", " + right + "]");
+            }
+        }
+    }
+
+    private int rangeAndByEnumeration(int left, int right) {
+        int result = left;
+        for (int value = left + 1; value <= right; value++) {
+            result &= value;
+        }
+        return result;
+    }
 }

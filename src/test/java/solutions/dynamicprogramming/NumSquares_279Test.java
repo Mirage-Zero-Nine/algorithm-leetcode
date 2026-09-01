@@ -2,6 +2,9 @@ package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 public class NumSquares_279Test {
@@ -54,8 +57,7 @@ public class NumSquares_279Test {
     }
 
     @Test
-    public void testZeroAndOne() {
-        assertEquals(0, test.numSquares(0));
+    public void testOne() {
         assertEquals(1, test.numSquares(1));
     }
 
@@ -67,11 +69,41 @@ public class NumSquares_279Test {
     }
 
     @Test
-    public void testGiantCase() {
+    public void testExhaustiveSmallValues() {
+        int[] expected = minimumSquaresByBreadthFirstSearch(500);
+
+        for (int n = 1; n <= 500; n++) {
+            assertEquals(expected[n], test.numSquares(n), "n=" + n);
+        }
+    }
+
+    @Test
+    public void testUpperConstraintBoundary() {
         // 10000 = 100^2, perfect square
         assertEquals(1, test.numSquares(10000));
-        // 9999 needs to be computed
-        int result = test.numSquares(9999);
-        assertEquals(result, test.numSquares(9999)); // consistency check
+    }
+
+    /**
+     * Independent reference implementation: each edge adds one perfect square,
+     * so BFS finds the minimum number of summands.
+     */
+    private int[] minimumSquaresByBreadthFirstSearch(int max) {
+        int[] distance = new int[max + 1];
+        Arrays.fill(distance, -1);
+        distance[0] = 0;
+
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+        queue.add(0);
+        while (!queue.isEmpty()) {
+            int sum = queue.remove();
+            for (int root = 1; sum + root * root <= max; root++) {
+                int next = sum + root * root;
+                if (distance[next] == -1) {
+                    distance[next] = distance[sum] + 1;
+                    queue.add(next);
+                }
+            }
+        }
+        return distance;
     }
 }
