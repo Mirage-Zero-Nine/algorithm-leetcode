@@ -2,95 +2,81 @@ package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PermuteUnique_47Test {
     private final PermuteUnique_47 solution = new PermuteUnique_47();
 
     @Test
     void testWithDuplicates() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1, 2});
-        assertEquals(3, result.size());
+        assertPermutationResult(new int[]{1, 1, 2});
     }
 
     @Test
     void testAllSame() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1, 1});
-        assertEquals(1, result.size());
+        assertPermutationResult(new int[]{1, 1, 1});
     }
 
     @Test
     void testNoDuplicates() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 2, 3});
-        assertEquals(6, result.size());
+        assertPermutationResult(new int[]{1, 2, 3});
     }
 
     @Test
     void testTwoDuplicates() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{2, 2, 1, 1});
-        assertEquals(6, result.size());
+        assertPermutationResult(new int[]{2, 2, 1, 1});
     }
 
     @Test
     void testSingleElement() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1});
-        assertEquals(1, result.size());
+        assertPermutationResult(new int[]{1});
     }
 
     @Test
     void testTwoElements() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 2});
-        assertEquals(2, result.size());
+        assertPermutationResult(new int[]{1, 2});
     }
 
     @Test
     void testNegativeNumbers() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{-1, -1, 2});
-        assertEquals(3, result.size());
+        assertPermutationResult(new int[]{-1, -1, 2});
     }
 
     @Test
     void testAllUnique() {
-        // 4! = 24
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 2, 3, 4});
-        assertEquals(24, result.size());
+        assertPermutationResult(new int[]{1, 2, 3, 4});
     }
 
     @Test
     void testNoDuplicatePermutations() {
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1, 2, 2});
-        Set<List<Integer>> set = new HashSet<>(result);
-        assertEquals(result.size(), set.size());
+        assertPermutationResult(new int[]{1, 1, 2, 2});
     }
 
     @Test
     void testCorrectPermutationLength() {
-        int[] input = {1, 2, 2, 3};
-        List<List<Integer>> result = solution.permuteUnique(input);
-        for (List<Integer> perm : result) {
-            assertEquals(input.length, perm.size());
-        }
+        assertPermutationResult(new int[]{1, 2, 2, 3});
     }
 
     @Test
     void testGiantCase() {
-        // 8 elements with duplicates: [1,1,2,2,3,3,4,4] -> 8!/(2!*2!*2!*2!) = 2520
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1, 2, 2, 3, 3, 4, 4});
-        assertEquals(2520, result.size());
+        // 8 elements with duplicates: 8!/(2!*2!*2!*2!) = 2520.
+        assertPermutationResult(new int[]{1, 1, 2, 2, 3, 3, 4, 4});
     }
 
     // --- NEW TESTS ---
 
     @Test
     void testTwoSameElements() {
-        // [1,1] -> only [[1,1]]
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1});
-        assertEquals(1, result.size());
-        assertEquals(List.of(1, 1), result.get(0));
+        // [1,1] -> only [[1,1]].
+        assertPermutationResult(new int[]{1, 1});
     }
 
     @Test
@@ -111,72 +97,82 @@ class PermuteUnique_47Test {
 
     @Test
     void testFiveAllDistinct() {
-        // 5! = 120
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 2, 3, 4, 5});
-        assertEquals(120, result.size());
-        // No duplicates
-        assertEquals(120, new HashSet<>(result).size());
+        // 5! = 120.
+        assertPermutationResult(new int[]{1, 2, 3, 4, 5});
     }
 
     @Test
     void testFiveAllSame() {
-        // [2,2,2,2,2] -> only 1 result
-        List<List<Integer>> result = solution.permuteUnique(new int[]{2, 2, 2, 2, 2});
-        assertEquals(1, result.size());
-        assertEquals(List.of(2, 2, 2, 2, 2), result.get(0));
+        // [2,2,2,2,2] -> only one result.
+        assertPermutationResult(new int[]{2, 2, 2, 2, 2});
     }
 
     @Test
     void testPropertyCountFormula() {
-        // [1,1,2,2,3] -> 5! / (2! * 2! * 1!) = 30
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1, 2, 2, 3});
-        assertEquals(30, result.size());
+        // [1,1,2,2,3] -> 5! / (2! * 2! * 1!) = 30.
+        assertPermutationResult(new int[]{1, 1, 2, 2, 3});
     }
 
     @Test
     void testPropertyEveryResultIsPermutation() {
-        // Every result must be a permutation of the input (same multiset)
-        int[] input = {1, 1, 2, 3};
-        List<Integer> sortedInput = Arrays.stream(input).sorted().boxed().toList();
-        List<List<Integer>> result = solution.permuteUnique(input);
-        for (List<Integer> perm : result) {
-            List<Integer> sorted = perm.stream().sorted().toList();
-            assertEquals(sortedInput, sorted, "Each result must be a permutation of input");
-        }
+        // Every result must be a permutation of the input's multiset.
+        assertPermutationResult(new int[]{1, 1, 2, 3});
     }
 
     @Test
     void testPropertyNoDuplicateResults() {
-        // Verify uniqueness for a case with many duplicates: [1,1,1,2,2]
-        // Expected: 5! / (3! * 2!) = 10
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1, 1, 2, 2});
-        assertEquals(10, result.size());
-        Set<List<Integer>> unique = new HashSet<>(result);
-        assertEquals(result.size(), unique.size(), "All results must be distinct");
+        // [1,1,1,2,2] -> 5! / (3! * 2!) = 10.
+        assertPermutationResult(new int[]{1, 1, 1, 2, 2});
     }
 
     @Test
     void testNegativeAndPositiveMixed() {
-        // [-1, -1, 0, 1] -> 4! / 2! = 12
-        List<List<Integer>> result = solution.permuteUnique(new int[]{-1, -1, 0, 1});
-        assertEquals(12, result.size());
-        assertEquals(12, new HashSet<>(result).size());
+        // [-1, -1, 0, 1] -> 4! / 2! = 12.
+        assertPermutationResult(new int[]{-1, -1, 0, 1});
     }
 
     @Test
     void testThreePairsOfDuplicates() {
-        // [1,1,2,2,3,3] -> 6! / (2! * 2! * 2!) = 90
-        List<List<Integer>> result = solution.permuteUnique(new int[]{1, 1, 2, 2, 3, 3});
-        assertEquals(90, result.size());
-        assertEquals(90, new HashSet<>(result).size());
+        // [1,1,2,2,3,3] -> 6! / (2! * 2! * 2!) = 90.
+        assertPermutationResult(new int[]{1, 1, 2, 2, 3, 3});
     }
 
     @Test
-    void testExhaustiveShortArraysAgainstIndependentOracle() {
-        int[] domain = {-1, 0, 1};
-        for (int length = 1; length <= 6; length++) {
+    void testExhaustiveArraysFromSmallDomainThroughMaximumLength() {
+        // Every generated input satisfies LeetCode 47's constraints. The
+        // three-value domain covers every duplicate pattern and all lengths
+        // through the maximum n = 8 without enumerating the entire 21-value
+        // input space.
+        int[] domain = {-10, 0, 10};
+        for (int length = 1; length <= 8; length++) {
             assertAllArraysOfLength(domain, new int[length], 0);
         }
+    }
+
+    @Test
+    void testExhaustiveShortArraysAcrossTheAllowedValueRange() {
+        // Full-range exhaustion is practical for lengths 1 through 3:
+        // 21^1 + 21^2 + 21^3 = 9,723 inputs.
+        int[] domain = IntStream.rangeClosed(-10, 10).toArray();
+        for (int length = 1; length <= 3; length++) {
+            assertAllArraysOfLength(domain, new int[length], 0);
+        }
+    }
+
+    @Test
+    void testMaximumLengthWithAllDistinctBoundaryValues() {
+        // Validate a complete 8! result set, including both allowed boundaries.
+        assertPermutationResult(new int[]{-10, -7, -3, 0, 4, 8, 9, 10});
+    }
+
+    @Test
+    void testNullInput() {
+        assertTrue(solution.permuteUnique(null).isEmpty());
+    }
+
+    @Test
+    void testEmptyInput() {
+        assertTrue(solution.permuteUnique(new int[]{}).isEmpty());
     }
 
     private void assertAllArraysOfLength(int[] domain, int[] input, int index) {
@@ -184,6 +180,8 @@ class PermuteUnique_47Test {
             Set<List<Integer>> expected = independentUniquePermutations(input);
             Set<List<Integer>> actual = new HashSet<>(solution.permuteUnique(input.clone()));
             assertEquals(expected, actual, "Unexpected permutations for " + Arrays.toString(input));
+            assertEquals(expected.size(), actual.size(),
+                    "Duplicate permutations for " + Arrays.toString(input));
             return;
         }
 
@@ -193,30 +191,52 @@ class PermuteUnique_47Test {
         }
     }
 
+    private void assertPermutationResult(int[] input) {
+        int[] original = input.clone();
+        List<List<Integer>> actual = solution.permuteUnique(input);
+        Set<List<Integer>> expected = independentUniquePermutations(original);
+        Set<List<Integer>> unique = new HashSet<>(actual);
+
+        assertEquals(expected, unique,
+                "The complete permutation set must be returned for " + Arrays.toString(original));
+        assertEquals(expected.size(), actual.size(),
+                "The result must not contain duplicate permutations for " + Arrays.toString(original));
+    }
+
+    /**
+     * Independent oracle that starts with sorted values and enumerates each
+     * lexicographical permutation. It handles duplicates without generating
+     * duplicate candidates and does not reuse the solution's backtracking rule.
+     */
     private Set<List<Integer>> independentUniquePermutations(int[] input) {
+        List<Integer> permutation = new ArrayList<>();
+        for (int value : input) {
+            permutation.add(value);
+        }
+        Collections.sort(permutation);
+
         Set<List<Integer>> permutations = new HashSet<>();
-        buildPermutationSet(input, new boolean[input.length], new int[input.length], 0, permutations);
+        do {
+            permutations.add(new ArrayList<>(permutation));
+        } while (nextPermutation(permutation));
         return permutations;
     }
 
-    private void buildPermutationSet(int[] input, boolean[] used, int[] current,
-                                     int length, Set<List<Integer>> permutations) {
-        if (length == input.length) {
-            List<Integer> permutation = new java.util.ArrayList<>(input.length);
-            for (int value : current) {
-                permutation.add(value);
-            }
-            permutations.add(permutation);
-            return;
+    private boolean nextPermutation(List<Integer> permutation) {
+        int i = permutation.size() - 2;
+        while (i >= 0 && permutation.get(i) >= permutation.get(i + 1)) {
+            i--;
+        }
+        if (i < 0) {
+            return false;
         }
 
-        for (int index = 0; index < input.length; index++) {
-            if (!used[index]) {
-                used[index] = true;
-                current[length] = input[index];
-                buildPermutationSet(input, used, current, length + 1, permutations);
-                used[index] = false;
-            }
+        int j = permutation.size() - 1;
+        while (permutation.get(j) <= permutation.get(i)) {
+            j--;
         }
+        Collections.swap(permutation, i, j);
+        Collections.reverse(permutation.subList(i + 1, permutation.size()));
+        return true;
     }
 }
