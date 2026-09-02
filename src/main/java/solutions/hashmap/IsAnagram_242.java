@@ -1,85 +1,113 @@
 package solutions.hashmap;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
- * Given two strings s and t , write a function to determine if t is an anagram of s.
+ * Provides two solutions for LeetCode 242, {@code Valid Anagram}.
+ *
+ * <p>The array-based solution is specialized for the problem's lowercase
+ * English-letter input. The HashMap-based solution is more general and can
+ * also be used for the Unicode follow-up, treating Java strings as sequences
+ * of UTF-16 {@code char} values.
  *
  * @author BorisMirage
- * Time: 2018/06/26 11:39
- * Created with IntelliJ IDEA
+ * @see <a href="https://leetcode.com/problems/valid-anagram/">LeetCode 242: Valid Anagram</a>
  */
-
 public class IsAnagram_242 {
+
     /**
-     * Keep an array to store each char's appearance in string.
-     * If one char appeared in first string, then +1 in array's represented position.
-     * If one char appeared in second string, -1 in array's represented position.
-     * If two strings are anagram, all chars will appear exact same times. Hence, all elements in array should be 0.
-     * Finally, check each element in array, if there is one element in array is not 0, return false.
+     * Determines whether {@code t} is an anagram of {@code s} with a fixed
+     * frequency array.
      *
-     * @param s input string
-     * @param t input string
-     * @return whether they are anagram.
+     * <p>Each lowercase English letter maps to one of 26 slots. The method
+     * counts every character in {@code s}, consumes those counts while reading
+     * {@code t}, and rejects immediately if {@code t} uses a character too many
+     * times. Because the strings have equal length, no remaining positive count
+     * is possible after the second pass when no negative count was found.
+     *
+     * <p>This approach is valid for the LeetCode constraint that both strings
+     * contain only lowercase English letters. It uses {@code O(1)} auxiliary
+     * space because the frequency table always has 26 entries.
+     *
+     * @param s first lowercase English-letter string
+     * @param t second lowercase English-letter string
+     * @return {@code true} if {@code t} has exactly the same character counts as
+     *         {@code s}; otherwise {@code false}
+     * @see <a href="https://leetcode.com/problems/valid-anagram/">LeetCode 242: Valid Anagram</a>
      */
-
     public boolean isAnagram(String s, String t) {
-
-        /* Corner case */
-        if (s.length() != t.length()) {
+        if (s == null || t == null || s.length() != t.length()) {
             return false;
         }
 
-        int[] store = new int[26];
+        int[] count = new int[26];
 
+        // Count each lowercase letter in the first string.
         for (int i = 0; i < s.length(); i++) {
-            store[s.charAt(i) - 'a']++;
-            store[t.charAt(i) - 'a']--;
+            count[s.charAt(i) - 'a']++;
         }
 
-        for (int i : store) {
-            if (i != 0) {
+        // Consume the counts with the second string.
+        for (int i = 0; i < t.length(); i++) {
+            int index = t.charAt(i) - 'a';
+            count[index]--;
+
+            // A negative count means t contains this letter too often.
+            if (count[index] < 0) {
                 return false;
             }
         }
 
-        return true;
+        // Equal lengths and no negative count imply every count is balanced.
+        return Arrays.stream(count).sum() == 0;
     }
 
     /**
-     * Use hash map instead of int array.
-     * It is slower than use an array to record char appearance. But it can be used in larger char set like Unicode.
+     * Determines whether {@code t} is an anagram of {@code s} with a character
+     * frequency map.
      *
-     * @param s input string
-     * @param t input string
-     * @return whether they are anagram.
+     * <p>The map records the number of occurrences of each character in
+     * {@code s}. While traversing {@code t}, each matching count is decremented;
+     * a missing or exhausted entry proves that the strings are not anagrams.
+     * The remaining entries must all be zero for the strings to match exactly.
+     *
+     * <p>Unlike the fixed-array approach, this implementation supports any
+     * Java {@code char} value and therefore also covers the problem's Unicode
+     * follow-up at the UTF-16 code-unit level.
+     *
+     * @param s first string
+     * @param t second string
+     * @return {@code true} if {@code t} has exactly the same character counts as
+     *         {@code s}; otherwise {@code false}
+     * @see <a href="https://leetcode.com/problems/valid-anagram/">LeetCode 242: Valid Anagram</a>
      */
     public boolean isAnagramWithHashMap(String s, String t) {
 
-        /* Corner case*/
-        if (s.length() != t.length()) {
+        if (s == null || t == null || s.length() != t.length()) {
             return false;
         }
-        if (s.length() == 1) {
-            return s.charAt(0) == t.charAt(0);
+
+        Map<Character, Integer> counts = new HashMap<>();
+
+        // Build a frequency table from the first string.
+        for (char c : s.toCharArray()) {
+            counts.merge(c, 1, Integer::sum);
         }
 
-        Map<Character, Integer> map = new HashMap<>();
+        // Consume one occurrence for every character in the second string.
+        for (char c : t.toCharArray()) {
+            int count = counts.getOrDefault(c, 0);
 
-        for (int i = 0; i < s.length(); i++) {
-            map.putIfAbsent(s.charAt(i), 0);
-            map.putIfAbsent(t.charAt(i), 0);
-
-            map.put(s.charAt(i), map.get(s.charAt(i)) + 1);
-            map.put(t.charAt(i), map.get(t.charAt(i)) - 1);
+            // No remaining occurrence means t cannot be an anagram of s.
+            if (count == 0) {
+                return false;
+            }
+            counts.put(c, count - 1);
         }
 
-        // if they are anagram, then all values in map entry should be 0
-        return map.entrySet().stream()
-                .filter(e -> e.getValue() != 0)
-                .collect(Collectors.toSet())
-                .size() == 0;
+        // Every character from s must have been consumed exactly once.
+        return counts.values().stream().allMatch(i -> i == 0);
     }
 }

@@ -3,202 +3,116 @@ package solutions.hashmap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.stream.Stream;
-
-import static util.TestingUtility.readData;
-
 /**
- * @author BorisMirage
- * Time: 2022/06/18 11:09
- * Created with IntelliJ IDEA
+ * Tests for {@link TwoSum_1} using only the input contract from LeetCode 1:
+ * arrays contain between 2 and 10,000 integers, values and targets are within
+ * [-1,000,000,000, 1,000,000,000], and every case has exactly one solution.
+ *
+ * @see <a href="https://leetcode.com/problems/two-sum/">LeetCode 1: Two Sum</a>
  */
+class TwoSum_1Test {
 
-public class TwoSum_1Test {
+    private final TwoSum_1 twoSum = new TwoSum_1();
 
-    private final TwoSum_1 test = new TwoSum_1();
+    @ParameterizedTest(name = "case {index}: target={1}, expected indices={2}")
+    @MethodSource("validCases")
+    void findsTheUniquePair(int[] nums, int target, int[] expectedIndices) {
+        assertPairEquals(expectedIndices, twoSum.twoSum(nums, target));
+    }
 
-    @Test
-    public void testTwoSum() {
-        int[] testArray = {3, 5, 6, 8, 7};
-        assertArrayEquals(new int[]{0, 1}, Arrays.stream(test.twoSum(testArray, 8)).sorted().toArray());
+    private static Stream<Arguments> validCases() {
+        return Stream.of(
+                // Official examples.
+                Arguments.of(new int[]{2, 7, 11, 15}, 9, new int[]{0, 1}),
+                Arguments.of(new int[]{3, 2, 4}, 6, new int[]{1, 2}),
+                Arguments.of(new int[]{3, 3}, 6, new int[]{0, 1}),
+
+                // Pair positions and input ordering.
+                Arguments.of(new int[]{5, 75, 25, 10, 100}, 125, new int[]{2, 4}),
+                Arguments.of(new int[]{8, 7, 2, 15}, 9, new int[]{1, 2}),
+                Arguments.of(new int[]{10, 20, 30, 40}, 70, new int[]{2, 3}),
+                Arguments.of(new int[]{1, 5, 6, 7, 9}, 10, new int[]{0, 4}),
+                Arguments.of(new int[]{4, 9, 1, 6, 12, 20}, 15, new int[]{1, 3}),
+                Arguments.of(new int[]{12, -4, 8, 21, 3}, 17, new int[]{1, 3}),
+
+                // Duplicate values, including a pair made from equal values.
+                Arguments.of(new int[]{1, 1, 3, 5}, 2, new int[]{0, 1}),
+                Arguments.of(new int[]{6, 1, 6, 4}, 12, new int[]{0, 2}),
+                Arguments.of(new int[]{7, 7, 1, 3, 7, 10}, 4, new int[]{2, 3}),
+                Arguments.of(new int[]{0, 4, 3, 0}, 0, new int[]{0, 3}),
+
+                // Negative numbers and zero.
+                Arguments.of(new int[]{-3, 4, 3, 90}, 0, new int[]{0, 2}),
+                Arguments.of(new int[]{-5, -3, 4}, -8, new int[]{0, 1}),
+                Arguments.of(new int[]{-10, -5, -3, 0, 7, 12}, 9, new int[]{2, 5}),
+                Arguments.of(new int[]{-8, 1, -2, 5}, -7, new int[]{0, 1}),
+                Arguments.of(new int[]{-10, 8, 15, -3}, 12, new int[]{2, 3}),
+                Arguments.of(new int[]{0, 0}, 0, new int[]{0, 1}),
+
+                // Boundary values allowed by the problem constraints.
+                Arguments.of(new int[]{-1_000_000_000, 1_000_000_000}, 0, new int[]{0, 1}),
+                Arguments.of(new int[]{-1_000_000_000, 999_999_999, 123}, -1, new int[]{0, 1}),
+                Arguments.of(new int[]{1_000_000_000, -999_999_999, -1}, 1, new int[]{0, 1}),
+                Arguments.of(new int[]{999_999_999, 1}, 1_000_000_000, new int[]{0, 1}),
+                Arguments.of(new int[]{-999_999_999, -1}, -1_000_000_000, new int[]{0, 1}),
+                Arguments.of(new int[]{-500_000_000, -500_000_000}, -1_000_000_000, new int[]{0, 1}),
+                Arguments.of(new int[]{500_000_000, 500_000_000}, 1_000_000_000, new int[]{0, 1})
+        );
     }
 
     @Test
-    public void testHappyCases() {
-        assertPairEquals(new int[]{0, 1}, test.twoSum(new int[]{2, 7, 11, 15}, 9));
-        assertPairEquals(new int[]{1, 2}, test.twoSum(new int[]{3, 2, 4}, 6));
-        assertPairEquals(new int[]{0, 1}, test.twoSum(new int[]{3, 3}, 6));
-        assertPairEquals(new int[]{2, 4}, test.twoSum(new int[]{5, 75, 25, 10, 100}, 125));
-    }
-
-    @Test
-    public void testNegativeAndEdgeCases() {
-        assertNull(test.twoSum(new int[]{1, 2, 3}, 100));
-        assertPairEquals(new int[]{0, 2}, test.twoSum(new int[]{-3, 4, 3, 90}, 0));
-        assertPairEquals(new int[]{0, 3}, test.twoSum(new int[]{0, 4, 3, 0}, 0));
-        assertPairEquals(new int[]{1, 2}, test.twoSum(new int[]{Integer.MAX_VALUE, -2, 1, Integer.MIN_VALUE}, -1));
-    }
-
-    @Test
-    public void testGiantCase() {
-        int[] nums = new int[1000];
+    void handlesTheMaximumAllowedArrayLength() {
+        int[] nums = new int[10_000];
         for (int i = 0; i < nums.length; i++) {
-            nums[i] = -1_000_000;
+            // All filler values are negative, so they cannot form a zero-sum pair.
+            nums[i] = -10_000 - i;
         }
-        nums[123] = 111_111;
-        nums[987] = 222_222;
-        assertPairEquals(new int[]{123, 987}, test.twoSum(nums, 333_333));
+
+        int firstIndex = 123;
+        int secondIndex = 9_876;
+        nums[firstIndex] = 500_000_000;
+        nums[secondIndex] = -500_000_000;
+
+        assertPairEquals(new int[]{firstIndex, secondIndex}, twoSum.twoSum(nums, 0));
     }
 
     @Test
-    public void testNegativeNumbers() {
-        assertPairEquals(new int[]{0, 1}, test.twoSum(new int[]{-5, -3, 4}, -8));
-    }
+    void handlesPairsAtDifferentPositions() {
+        int[][] positions = {
+                {0, 1},
+                {0, 127},
+                {63, 64},
+                {126, 127}
+        };
 
-    @Test
-    public void testZeroTarget() {
-        assertPairEquals(new int[]{0, 1}, test.twoSum(new int[]{0, 0, 5}, 0));
-    }
-
-    @Test
-    public void testLargeNumbers() {
-        assertPairEquals(new int[]{0, 1}, test.twoSum(new int[]{Integer.MAX_VALUE, 0}, Integer.MAX_VALUE));
-    }
-
-    @Test
-    public void testFirstAndLast() {
-        assertPairEquals(new int[]{0, 4}, test.twoSum(new int[]{1, 5, 6, 7, 9}, 10));
-    }
-
-    @Test
-    public void testAdjacentElements() {
-        assertPairEquals(new int[]{2, 3}, test.twoSum(new int[]{10, 20, 30, 40}, 70));
-    }
-
-    @Test
-    public void testSinglePairAvailable() {
-        assertPairEquals(new int[]{0, 1}, test.twoSum(new int[]{1, 2}, 3));
-    }
-
-    /**
-     * Parameterized "no solution" cases. The algorithm must return null
-     * when no pair sums to the target.
-     */
-    @ParameterizedTest(name = "no solution for target {1} in {0}")
-    @MethodSource("noSolutionCases")
-    public void testNoSolutionCases(int[] nums, int target) {
-        assertNull(test.twoSum(nums, target));
-    }
-
-    private static Stream<Arguments> noSolutionCases() {
-        return Stream.of(
-                Arguments.of(new int[]{}, 0),
-                Arguments.of(new int[]{5}, 5),
-                Arguments.of(new int[]{1, 2}, 100),
-                Arguments.of(new int[]{1, 2, 3, 4, 5}, 100),
-                Arguments.of(new int[]{-5, -3, -1}, 0),
-                Arguments.of(new int[]{0, 0, 0}, 1),
-                Arguments.of(new int[]{1, 1, 1, 1}, 3)
-        );
-    }
-
-    /**
-     * Parameterized happy-path cases. Asserts the returned indices are
-     * distinct and the elements at those indices sum to the target.
-     */
-    @ParameterizedTest(name = "twoSum sums to {1}")
-    @MethodSource("happyPathCases")
-    public void testHappyPathProperty(int[] nums, int target) {
-        int[] result = test.twoSum(nums, target);
-        assertNotNull(result, "expected a pair");
-        assertEquals(2, result.length);
-        assertNotEquals(result[0], result[1], "indices must be distinct");
-        assertEquals(target, nums[result[0]] + nums[result[1]]);
-    }
-
-    private static Stream<Arguments> happyPathCases() {
-        return Stream.of(
-                Arguments.of(new int[]{1, 2}, 3),
-                Arguments.of(new int[]{2, 7, 11, 15}, 9),
-                Arguments.of(new int[]{3, 2, 4}, 6),
-                Arguments.of(new int[]{3, 3}, 6),
-                Arguments.of(new int[]{0, 0}, 0),
-                Arguments.of(new int[]{-1, 1}, 0),
-                Arguments.of(new int[]{-3, 4, 3, 90}, 0),
-                Arguments.of(new int[]{1000000000, 1000000000}, 2000000000),
-                Arguments.of(new int[]{5, 75, 25, 10, 100}, 125),
-                Arguments.of(new int[]{Integer.MAX_VALUE, -2, 1, Integer.MIN_VALUE}, -1)
-        );
-    }
-
-    /**
-     * Large-scale property-based test using the shared LargeData.txt
-     * fixture (line 0 has ~38,000 ints in [0, 10000]). Builds a target
-     * from two known indices to guarantee a solution exists, then asserts
-     * the returned pair sums to the target. Allows for the possibility
-     * that the algorithm finds a different valid pair (LargeData has
-     * duplicate values).
-     */
-    @Test
-    public void testLargeArrayFromFixtureFile() throws FileNotFoundException {
-        int[] nums = readData(0);
-        assertNotNull(nums);
-        // Pick a target that is guaranteed achievable: nums[10] + nums[20].
-        int target = nums[10] + nums[20];
-
-        int[] result = test.twoSum(nums, target);
-        assertNotNull(result);
-        assertEquals(2, result.length);
-        assertNotEquals(result[0], result[1]);
-        assertEquals(target, nums[result[0]] + nums[result[1]]);
-    }
-
-    /**
-     * Large randomized property test with a fixed seed so failures are
-     * reproducible. Builds 50 random arrays of size 5000, plants a known
-     * pair, verifies the algorithm finds a valid one.
-     */
-    @Test
-    public void testLargeRandomizedReproducible() {
-        Random rng = new Random(42L);
-        int trials = 50;
-        int n = 5000;
-
-        for (int t = 0; t < trials; t++) {
-            int[] nums = new int[n];
-            for (int i = 0; i < n; i++) {
-                nums[i] = rng.nextInt(2_000_000) - 1_000_000;
+        for (int[] position : positions) {
+            int[] nums = new int[128];
+            for (int i = 0; i < nums.length; i++) {
+                // Filler values are all negative and distinct from the pair.
+                nums[i] = -1_000 - i;
             }
-            int idxA = rng.nextInt(n);
-            int idxB;
-            do {
-                idxB = rng.nextInt(n);
-            } while (idxB == idxA);
-            int target = nums[idxA] + nums[idxB];
+            nums[position[0]] = 600_000_000;
+            nums[position[1]] = -600_000_000;
 
-            int[] result = test.twoSum(nums, target);
-            assertNotNull(result, "trial " + t + " expected a pair");
-            assertEquals(2, result.length);
-            assertNotEquals(result[0], result[1]);
-            // Use long arithmetic to avoid overflow in the assertion.
-            assertEquals((long) target,
-                    (long) nums[result[0]] + (long) nums[result[1]],
-                    "trial " + t + " produced wrong sum");
+            assertPairEquals(position, twoSum.twoSum(nums, 0));
         }
     }
 
-    private void assertPairEquals(int[] expected, int[] actual) {
-        assertArrayEquals(expected, Arrays.stream(actual).sorted().toArray());
+    private static void assertPairEquals(int[] expected, int[] actual) {
+        assertNotNull(actual, "LeetCode guarantees that a valid pair exists");
+        assertEquals(2, actual.length, "the result must contain exactly two indices");
+        assertArrayEquals(
+                Arrays.stream(expected).sorted().toArray(),
+                Arrays.stream(actual).sorted().toArray()
+        );
     }
 }
