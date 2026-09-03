@@ -1,196 +1,210 @@
 package solutions.twopointers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-public class ThreeSum_15Test {
+/**
+ * Tests for the two-pointer implementation in {@link ThreeSum_15}.
+ *
+ * <p>The problem permits the triplets and their values to be returned in any
+ * order. Assertions therefore sort each triplet and then sort the result list
+ * before comparing it. The canonical representation remains list-based so
+ * duplicate result occurrences would not be hidden by a {@code Set}.</p>
+ */
+class ThreeSum_15Test {
 
-    private final ThreeSum_15 test = new ThreeSum_15();
+    private static final Comparator<List<Integer>> TRIPLET_COMPARATOR = Comparator
+            .comparing((List<Integer> triplet) -> triplet.get(0))
+            .thenComparing(triplet -> triplet.get(1))
+            .thenComparing(triplet -> triplet.get(2));
 
-    @Test
-    public void testHappyCases() {
-        List<List<Integer>> result = test.threeSum(new int[]{-1, 0, 1, 2, -1, -4});
-        assertEquals(2, result.size());
+    private final ThreeSum_15 solution = new ThreeSum_15();
+
+    @ParameterizedTest(name = "valid case {index}")
+    @MethodSource("validCases")
+    void findsTheExpectedUniqueTriplets(int[] input, List<List<Integer>> expected) {
+        assertTripletsEqual(expected, solution.threeSum(input.clone()));
     }
 
-    @Test
-    public void testNegativeAndEdgeCases() {
-        assertEquals(0, test.threeSum(new int[]{}).size());
-        assertEquals(0, test.threeSum(new int[]{0}).size());
-        assertEquals(1, test.threeSum(new int[]{0, 0, 0}).size());
-    }
+    private static Stream<Arguments> validCases() {
+        return Stream.of(
+                // Official example.
+                Arguments.of(
+                        new int[]{-1, 0, 1, 2, -1, -4},
+                        List.of(List.of(-1, -1, 2), List.of(-1, 0, 1))
+                ),
 
-    @Test
-    public void testLargeCase() {
-        List<List<Integer>> result = test.threeSum(new int[]{-4, -2, -2, -2, 0, 1, 2, 2, 2, 3, 3, 4, 4, 6, 6});
-        assertTrue(result.size() > 0);
-    }
+                // Unsorted input with several overlapping answers.
+                Arguments.of(
+                        new int[]{3, -3, 0, 2, -2, 1, -1},
+                        List.of(
+                                List.of(-3, 0, 3),
+                                List.of(-3, 1, 2),
+                                List.of(-2, -1, 3),
+                                List.of(-2, 0, 2),
+                                List.of(-1, 0, 1)
+                        )
+                ),
 
-    @Test
-    public void testAdditionalHappyCases() {
-        assertTripletsEqual(
-            List.of(List.of(-2, 0, 2), List.of(-2, 1, 1)),
-            test.threeSum(new int[]{-2, 0, 1, 1, 2})
+                // A valid triplet may contain repeated values.
+                Arguments.of(
+                        new int[]{-2, 0, 1, 1, 2},
+                        List.of(List.of(-2, 0, 2), List.of(-2, 1, 1))
+                ),
+
+                // Valid triplets do not need to contain zero.
+                Arguments.of(
+                        new int[]{-10, -4, -3, 7, 10, 13},
+                        List.of(List.of(-10, -3, 13), List.of(-4, -3, 7))
+                ),
+
+                // Duplicate values must produce each value combination only once.
+                Arguments.of(
+                        new int[]{-2, -2, -2, 0, 0, 0, 2, 2, 2},
+                        List.of(List.of(-2, 0, 2), List.of(0, 0, 0))
+                ),
+                Arguments.of(
+                        new int[]{0, 0, 0, 0, 0},
+                        List.of(List.of(0, 0, 0))
+                ),
+                Arguments.of(
+                        new int[]{-1, -1, -1, 2, 2, 2},
+                        List.of(List.of(-1, -1, 2))
+                ),
+
+                // Boundary values within the LeetCode input constraint.
+                Arguments.of(
+                        new int[]{-100_000, -99_999, -1, 0, 1, 99_999, 100_000},
+                        List.of(
+                                List.of(-100_000, 0, 100_000),
+                                List.of(-100_000, 1, 99_999),
+                                List.of(-99_999, -1, 100_000),
+                                List.of(-99_999, 0, 99_999),
+                                List.of(-1, 0, 1)
+                        )
+                )
         );
-        assertTripletsEqual(
-            List.of(List.of(-1, -1, 2), List.of(-1, 0, 1)),
-            test.threeSum(new int[]{-1, -1, 0, 1, 2})
+    }
+
+    @ParameterizedTest(name = "no-solution case {index}")
+    @MethodSource("noSolutionCases")
+    void returnsNoTripletsWhenNoZeroSumExists(int[] input) {
+        assertEquals(List.of(), solution.threeSum(input.clone()));
+    }
+
+    private static Stream<Arguments> noSolutionCases() {
+        return Stream.of(
+                Arguments.of(new int[]{1, 2, 3}),
+                Arguments.of(new int[]{1, 2, 3, 4, 5, 6}),
+                Arguments.of(new int[]{-6, -5, -4, -3, -2, -1}),
+                Arguments.of(new int[]{-5, -4, -2, 1, 2}),
+                Arguments.of(new int[]{-2, 0, 1, 4}),
+                Arguments.of(new int[]{0, 0, 1}),
+                Arguments.of(new int[]{1, 1, 1, 1})
+        );
+    }
+
+    @ParameterizedTest(name = "short/null input case {index}")
+    @MethodSource("shortOrNullInputs")
+    void returnsNoTripletsForNullOrTooSmallInput(int[] input) {
+        assertEquals(List.of(), solution.threeSum(input));
+    }
+
+    private static Stream<Arguments> shortOrNullInputs() {
+        return Stream.of(
+                Arguments.of((int[]) null),
+                Arguments.of(new int[]{}),
+                Arguments.of(new int[]{0}),
+                Arguments.of(new int[]{-1, 1}),
+                Arguments.of(new int[]{1, 2})
         );
     }
 
     @Test
-    public void testAdditionalEdgeCases() {
-        assertEquals(0, test.threeSum(new int[]{1, 2, 3, 4}).size());
-        assertEquals(0, test.threeSum(new int[]{-4, -3, -2}).size());
-        assertTripletsEqual(List.of(List.of(0, 0, 0)), test.threeSum(new int[]{0, 0, 0, 0}));
+    void crossChecksTheTwoPointerApproachAgainstBruteForce() {
+        Random random = new Random(42L);
+
+        // Small arrays make the cubic reference implementation practical while
+        // exercising duplicates, unsorted input, and positive/negative values.
+        for (int caseNumber = 0; caseNumber < 250; caseNumber++) {
+            int[] input = new int[3 + random.nextInt(8)];
+            for (int i = 0; i < input.length; i++) {
+                input[i] = random.nextInt(21) - 10;
+            }
+
+            assertTripletsEqual(bruteForceTriplets(input), solution.threeSum(input.clone()));
+        }
     }
 
     @Test
-    public void testAdditionalGiantCase() {
-        List<List<Integer>> result = test.threeSum(new int[]{-6, -4, -2, 0, 2, 4, 6, -1, 1, -3, 3, -5, 5});
-        assertTrue(result.size() >= 10);
-    }
-
-    @Test
-    public void testAllPositive() {
-        assertEquals(0, test.threeSum(new int[]{1, 2, 3, 4, 5, 6}).size());
-    }
-
-    @Test
-    public void testDuplicateElements() {
-        List<List<Integer>> result = test.threeSum(new int[]{0, 0, 0, 0, 0});
-        assertEquals(1, result.size());
-        assertEquals(List.of(0, 0, 0), result.get(0));
-    }
-
-    @Test
-    public void testTwoElements() {
-        assertEquals(0, test.threeSum(new int[]{-1, 1}).size());
-    }
-
-    @Test
-    public void testGiantWithManyDuplicates() {
-        int[] nums = new int[300];
-        for (int i = 0; i < 100; i++) nums[i] = -1;
-        for (int i = 100; i < 200; i++) nums[i] = 0;
-        for (int i = 200; i < 300; i++) nums[i] = 1;
-        List<List<Integer>> result = test.threeSum(nums);
-        // should contain [-1, 0, 1] and [0, 0, 0]
-        assertEquals(2, result.size());
-    }
-
-    @Test
-    public void testEmptyArray() {
-        assertEquals(List.of(), test.threeSum(new int[]{}));
-    }
-
-    @Test
-    public void testLessThanThreeElements() {
-        assertEquals(List.of(), test.threeSum(new int[]{0}));
-        assertEquals(List.of(), test.threeSum(new int[]{-1, 1}));
-    }
-
-    @Test
-    public void testAllZeros() {
-        List<List<Integer>> result = test.threeSum(new int[]{0, 0, 0, 0, 0});
-        assertEquals(Set.of(List.of(0, 0, 0)), new HashSet<>(result));
-    }
-
-    @Test
-    public void testAllNegatives() {
-        assertEquals(List.of(), test.threeSum(new int[]{-5, -4, -3, -2, -1}));
-    }
-
-    @Test
-    public void testThreeElementsTriplet() {
-        // [3, -3, 0] sorted -> [-3, 0, 3]
-        List<List<Integer>> result = test.threeSum(new int[]{3, -3, 0});
-        assertEquals(Set.of(List.of(-3, 0, 3)), new HashSet<>(result));
-    }
-
-    @Test
-    public void testLeetCodeExample() {
-        List<List<Integer>> result = test.threeSum(new int[]{-1, 0, 1, 2, -1, -4});
-        Set<List<Integer>> expected = Set.of(List.of(-1, -1, 2), List.of(-1, 0, 1));
-        assertEquals(expected, new HashSet<>(result));
-    }
-
-    @Test
-    public void testManyDuplicatesDeduplication() {
-        // [-2,-2,-2,0,0,0,2,2,2] should only produce [-2,0,2] and [0,0,0]
-        List<List<Integer>> result = test.threeSum(new int[]{-2, -2, -2, 0, 0, 0, 2, 2, 2});
-        Set<List<Integer>> expected = Set.of(List.of(-2, 0, 2), List.of(0, 0, 0));
-        assertEquals(expected, new HashSet<>(result));
-    }
-
-    @Test
-    public void testLargeRandomCrossCheckBruteForce() {
-        Random rng = new Random(42L);
-        int[] nums = new int[200];
-        for (int i = 0; i < nums.length; i++) {
-            nums[i] = rng.nextInt(201) - 100; // [-100, 100]
+    void handlesTheMaximumAllowedInputSize() {
+        // LeetCode 15 allows at most 300 values. This input has many duplicate
+        // values and several distinct expected combinations.
+        int[] input = new int[300];
+        for (int i = 0; i < input.length; i++) {
+            input[i] = (i % 21) - 10;
         }
 
-        List<List<Integer>> result = test.threeSum(nums);
+        List<List<Integer>> result = solution.threeSum(input.clone());
+        assertTripletsEqual(bruteForceTriplets(input), result);
+        assertResultProperties(result);
+    }
 
-        // Brute-force to find all unique triplets
-        int[] sorted = nums.clone();
+    private static List<List<Integer>> bruteForceTriplets(int[] input) {
+        int[] sorted = input.clone();
         Arrays.sort(sorted);
-        Set<List<Integer>> bruteForce = new HashSet<>();
+        Set<List<Integer>> triplets = new HashSet<>();
+
         for (int i = 0; i < sorted.length - 2; i++) {
             for (int j = i + 1; j < sorted.length - 1; j++) {
                 for (int k = j + 1; k < sorted.length; k++) {
-                    if (sorted[i] + sorted[j] + sorted[k] == 0) {
-                        bruteForce.add(List.of(sorted[i], sorted[j], sorted[k]));
+                    if ((long) sorted[i] + sorted[j] + sorted[k] == 0) {
+                        triplets.add(List.of(sorted[i], sorted[j], sorted[k]));
                     }
                 }
             }
         }
 
-        assertEquals(bruteForce, new HashSet<>(result));
+        return new ArrayList<>(triplets);
     }
 
-    @Test
-    public void testPropertyEveryTripletSumsToZero() {
-        int[] nums = {-4, -2, -2, -2, 0, 1, 2, 2, 2, 3, 3, 4, 4, 6, 6};
-        List<List<Integer>> result = test.threeSum(nums);
-        for (List<Integer> triplet : result) {
-            assertEquals(0, triplet.get(0) + triplet.get(1) + triplet.get(2),
-                "Triplet does not sum to 0: " + triplet);
-        }
-    }
+    private static void assertResultProperties(List<List<Integer>> result) {
+        List<List<Integer>> normalized = normalizeTriplets(result);
 
-    @Test
-    public void testPropertyNoDuplicateTripletsAndSortedInternally() {
-        int[] nums = {-4, -2, -2, -2, 0, 1, 2, 2, 2, 3, 3, 4, 4, 6, 6};
-        List<List<Integer>> result = test.threeSum(nums);
-
-        // No duplicate triplets
-        Set<List<Integer>> asSet = new HashSet<>(result);
-        assertEquals(result.size(), asSet.size(), "Duplicate triplets found");
-
-        // Each triplet is sorted internally
-        for (List<Integer> triplet : result) {
+        // Every returned candidate must contain exactly three values and sum to zero.
+        for (List<Integer> triplet : normalized) {
             assertEquals(3, triplet.size());
-            assertTrue(triplet.get(0) <= triplet.get(1) && triplet.get(1) <= triplet.get(2),
-                "Triplet not sorted: " + triplet);
+            assertEquals(0L, (long) triplet.get(0) + triplet.get(1) + triplet.get(2));
         }
+
+        // A value combination must not be returned more than once.
+        assertEquals(normalized.size(), new HashSet<>(normalized).size());
     }
 
-    private void assertTripletsEqual(List<List<Integer>> expected, List<List<Integer>> actual) {
-        Comparator<List<Integer>> cmp = Comparator
-            .comparing((List<Integer> triplet) -> triplet.get(0))
-            .thenComparing(triplet -> triplet.get(1))
-            .thenComparing(triplet -> triplet.get(2));
-        assertEquals(expected.stream().sorted(cmp).toList(), actual.stream().sorted(cmp).toList());
+    private static void assertTripletsEqual(List<List<Integer>> expected, List<List<Integer>> actual) {
+        assertEquals(normalizeTriplets(expected), normalizeTriplets(actual));
+    }
+
+    private static List<List<Integer>> normalizeTriplets(List<List<Integer>> triplets) {
+        List<List<Integer>> normalized = new ArrayList<>();
+        for (List<Integer> triplet : triplets) {
+            List<Integer> sortedTriplet = new ArrayList<>(triplet);
+            sortedTriplet.sort(Comparator.naturalOrder());
+            normalized.add(sortedTriplet);
+        }
+        normalized.sort(TRIPLET_COMPARATOR);
+        return normalized;
     }
 }
