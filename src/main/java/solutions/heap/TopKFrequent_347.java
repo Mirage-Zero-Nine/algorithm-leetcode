@@ -1,11 +1,13 @@
 package solutions.heap;
-import java.util.ArrayList;
+
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.stream.IntStream;
 
 /**
  * Given a non-empty array of integers, return the k most frequent elements.
@@ -20,104 +22,90 @@ import java.util.PriorityQueue;
 
 public class TopKFrequent_347 {
     /**
-     * Use min heap to find top k frequent elements. Note that the heap size should be kept to less than k.
-     * Time complexity: O(nlogk).
+     * Finds the {@code k} most frequent values with a min-heap limited to {@code k} entries.
      *
-     * @param nums given array
-     * @param k    k most frequent elements
-     * @return k most frequent elements
+     * <p>A min-heap is chosen rather than a max-heap because its root is the least frequent of
+     * the currently selected values. When a new candidate causes the heap to exceed {@code k},
+     * that root is the exact entry to discard. This keeps only {@code k} candidates. A max-heap
+     * exposes the most frequent entry instead, so it normally needs to retain all {@code u}
+     * distinct values before removing the top {@code k} entries. The result order is
+     * unspecified.</p>
+     *
+     * <p>Time complexity: {@code O(n + u log k)}. Space complexity: {@code O(u + k)}, where
+     * {@code n} is {@code nums.length} and {@code u} is the number of distinct values.</p>
+     *
+     * @param nums the values whose frequencies are examined
+     * @param k    the number of most-frequent values to return; the problem guarantees it is valid
+     * @return the {@code k} most frequent values, or an empty array for the explicitly handled
+     * invalid inputs
      */
-    @SuppressWarnings("ConstantConditions")
-    public int[] heap(int[] nums, int k) {
-        Map<Integer, Integer> m = new HashMap<>();
-
-        for (int n : nums) {
-            m.put(n, m.getOrDefault(n, 0) + 1);
+    public int[] topKFrequent(int[] nums, int k) {
+        // corner case
+        if (nums == null || nums.length == 0 || k > nums.length) {
+            return new int[0];
         }
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.comparingInt(m::get));
+        // Count each distinct value before selecting the k largest counts.
+        Map<Integer, Integer> map = new HashMap<>();
+        Arrays.stream(nums).forEach(n -> map.put(n, map.getOrDefault(n, 0) + 1));
 
-        for (Integer n : m.keySet()) {
-            pq.add(n);
+        // Use a min-heap (not a max-heap): its root is the least frequent retained value and is
+        // therefore the exact candidate to discard when the heap grows beyond k.
+        PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
+        map.entrySet().forEach(e -> {
+            pq.add(e);
             if (pq.size() > k) {
                 pq.poll();
             }
-        }
+        });
 
-        int[] out = new int[k];
-        for (int i = k - 1; i >= 0; i--) {
-            out[i] = pq.poll();
-        }
-
-        return out;
+        return pq.stream().mapToInt(Map.Entry::getKey).toArray();
     }
 
     /**
-     * Bucket sorting. The bucket index is the frequency of each element.
-     * Number of bucket should be the length of array to avoid out of boundary exception.
-     * After adding all elements with their frequency into hash map, iterate the map and add all frequency to list.
-     * Iterate the bucket list, find k elements that are most frequent.
+     * Finds the {@code k} most frequent values by grouping values into frequency buckets.
      *
-     * @param nums given array
-     * @param k    k most frequent elements
-     * @return k most frequent elements
-     */
-    @SuppressWarnings("unchecked")
-    public int[] topKFrequent(int[] nums, int k) {
-
-        Map<Integer, Integer> m = new HashMap<>();
-        List<Integer>[] bucket = new List[nums.length + 1];     // index is the frequency, value is elements with this frequency
-
-        for (int n : nums) {
-            m.put(n, m.getOrDefault(n, 0) + 1);
-        }
-
-        for (int key : m.keySet()) {
-            int frequency = m.get(key);
-            if (bucket[frequency] == null) {
-                bucket[frequency] = new ArrayList<>();
-            }
-            bucket[frequency].add(key);
-        }
-
-        int[] out = new int[k];
-        int index = 0;
-        for (int pos = bucket.length - 1; pos >= 0; pos--) {
-
-            if (bucket[pos] != null) {
-                for (int i = 0; i < bucket[pos].size() && index < k; i++) {
-                    out[index++] = bucket[pos].get(i);
-                }
-            }
-        }
-
-        return out;
-    }
-
-    /**
-     * Direct approach.
-     * Use a hash map to count the element frequency. Sort the map by value after the traverse.
+     * <p>Bucket {@code i} stores values that occur {@code i + 1} times. Traversing the buckets
+     * from highest to lowest frequency yields the requested values. The result order is
+     * unspecified for values with equal frequency.</p>
      *
-     * @param nums given array
-     * @param k    k most frequent elements
-     * @return k most frequent elements
+     * <p>Time complexity: {@code O(n)}. Space complexity: {@code O(n)}, where {@code n} is
+     * {@code nums.length}.</p>
+     *
+     * @param nums the values whose frequencies are examined
+     * @param k    the number of most-frequent values to return; the problem guarantees it is valid
+     * @return the {@code k} most frequent values, or an empty array for the explicitly handled
+     * invalid inputs
      */
-    public int[] twoHashMap(int[] nums, int k) {
-        int[] out = new int[k];
-        HashMap<Integer, Integer> m = new HashMap<>();     // number and its frequency
-
-        for (int num : nums) {
-            m.put(num, m.getOrDefault(num, 0) - 1);
+    @SuppressWarnings("DataFlowIssue")
+    public int[] topKFrequentBucketSort(int[] nums, int k) {
+        // corner case
+        if (nums == null || nums.length == 0 || k > nums.length) {
+            return new int[0];
         }
 
-        List<Map.Entry<Integer, Integer>> list = new LinkedList<>(m.entrySet());
-        list.sort(Map.Entry.comparingByValue());       // sort map based on value instead of key
+        // Count each distinct value so it can be placed into its frequency bucket.
+        Map<Integer, Integer> map = new HashMap<>();
+        Arrays.stream(nums).forEach(n -> map.put(n, map.getOrDefault(n, 0) + 1));
 
-        for (int i = 0; i < k; i++) {
-            out[i] = list.get(i).getKey();
+        // Index i represents frequency i + 1; all possible frequencies are in [1, nums.length].
+        List<ArrayDeque<Integer>> frequency = IntStream.range(0, nums.length)
+                .mapToObj(_ -> new ArrayDeque<Integer>())
+                .toList();
+        map.forEach((key, value) -> frequency.get(value - 1).add(key));
+
+        int[] output = new int[k];
+        int index = 0, currentList = frequency.size() - 1;
+
+        // Drain the non-empty buckets from highest to lowest frequency until k values are found.
+        while (k > 0) {
+            while (frequency.get(currentList).isEmpty()) {
+                currentList--;
+            }
+            while (!frequency.get(currentList).isEmpty() && k-- > 0) {
+                output[index++] = frequency.get(currentList).poll();
+            }
         }
-
-        return out;
+        return output;
     }
-
 }
