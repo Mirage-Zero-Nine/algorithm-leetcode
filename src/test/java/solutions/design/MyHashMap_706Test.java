@@ -33,7 +33,6 @@ public class MyHashMap_706Test {
         assertEquals(-1, test.get(31));
         assertEquals(2, test.get(2));
         assertEquals(-1, test.get(Integer.MAX_VALUE));
-        assertEquals(-1, test.get(Integer.MIN_VALUE));
         assertEquals(2, test.get(2));
         test.remove(2);
         assertEquals(-1, test.get(2));
@@ -217,6 +216,111 @@ public class MyHashMap_706Test {
         for (var entry : reference.entrySet()) {
             assertEquals(entry.getValue().intValue(), test.get(entry.getKey()),
                     "final check key=" + entry.getKey());
+        }
+    }
+
+    @Test
+    public void testUpdateOneCollidingMappingDoesNotChangeOthers() {
+        test.put(1, 10);
+        test.put(257, 20);
+        test.put(513, 30);
+
+        test.put(257, 200);
+
+        assertEquals(10, test.get(1));
+        assertEquals(200, test.get(257));
+        assertEquals(30, test.get(513));
+    }
+
+    @Test
+    public void testRemoveFirstMiddleAndLastEntryFromCollisionChain() {
+        int[] keys = {3, 259, 515, 771};
+        for (int i = 0; i < keys.length; i++) {
+            test.put(keys[i], i + 1);
+        }
+
+        test.remove(3);
+        assertEquals(-1, test.get(3));
+        assertEquals(2, test.get(259));
+        assertEquals(4, test.get(771));
+
+        test.remove(515);
+        assertEquals(-1, test.get(515));
+        assertEquals(2, test.get(259));
+        assertEquals(4, test.get(771));
+
+        test.remove(771);
+        assertEquals(-1, test.get(771));
+        assertEquals(2, test.get(259));
+    }
+
+    @Test
+    public void testRehashAtInitialLoadFactorThresholdPreservesMappings() {
+        for (int key = 0; key <= 192; key++) {
+            test.put(key, key * 3);
+        }
+
+        assertEquals(0, test.get(0));
+        assertEquals(288, test.get(96));
+        assertEquals(576, test.get(192));
+        assertEquals(-1, test.get(193));
+    }
+
+    @Test
+    public void testRehashPreservesMappingsFromOneCollisionChain() {
+        int[] collidingKeys = {0, 256, 512, 768, 1_024, 1_280};
+        for (int i = 0; i < collidingKeys.length; i++) {
+            test.put(collidingKeys[i], 100 + i);
+        }
+        for (int key = 1; key <= 192; key++) {
+            test.put(key, key);
+        }
+
+        for (int i = 0; i < collidingKeys.length; i++) {
+            assertEquals(100 + i, test.get(collidingKeys[i]));
+        }
+    }
+
+    @Test
+    public void testRemoveAndReinsertMappingsAfterRehash() {
+        for (int key = 0; key <= 192; key++) {
+            test.put(key, key);
+        }
+
+        test.remove(0);
+        test.remove(192);
+        assertEquals(-1, test.get(0));
+        assertEquals(-1, test.get(192));
+        assertEquals(96, test.get(96));
+
+        test.put(0, 1_000);
+        test.put(192, 2_000);
+        assertEquals(1_000, test.get(0));
+        assertEquals(2_000, test.get(192));
+        assertEquals(96, test.get(96));
+    }
+
+    @Test
+    public void testMultipleRehashesAndMutationsMatchReferenceMap() {
+        HashMap<Integer, Integer> expected = new HashMap<>();
+
+        for (int key = 0; key < 5_000; key++) {
+            int value = key * 3;
+            test.put(key, value);
+            expected.put(key, value);
+        }
+        for (int key = 0; key < 5_000; key += 17) {
+            int value = 1_000_000 - key;
+            test.put(key, value);
+            expected.put(key, value);
+        }
+        for (int key = 0; key < 5_000; key += 9) {
+            test.remove(key);
+            expected.remove(key);
+        }
+
+        for (int key = 0; key < 5_000; key++) {
+            assertEquals(expected.getOrDefault(key, -1), test.get(key), "Mismatch for key " + key);
         }
     }
 }

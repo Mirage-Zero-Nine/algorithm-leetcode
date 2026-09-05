@@ -20,7 +20,6 @@ import java.util.stream.IntStream;
  * Created with IntelliJ IDEA
  */
 
-
 public class MyHashSet_705 {
     // Separate chaining buckets; their count is always maxSize.
     private List<ArrayList<Integer>> bucket;
@@ -44,10 +43,10 @@ public class MyHashSet_705 {
      * @param key the non-negative key to add
      */
     public void add(int key) {
-        setSize++;
         List<Integer> list = bucket.get(key % maxSize);
         if (!list.contains(key)) {
             list.add(key);
+            setSize++;
         }
 
         if (setSize > maxSize * 0.75) {
@@ -80,11 +79,13 @@ public class MyHashSet_705 {
      * Doubles the bucket count and redistributes each stored key using the new capacity.
      */
     private void rehash() {
-        this.maxSize *= 2;
-        List<ArrayList<Integer>> tmp = new ArrayList<>(this.bucket);
-        this.bucket = IntStream.range(0, this.maxSize).mapToObj(_ -> new ArrayList<Integer>()).toList();
-        tmp.stream()
-                .filter(list -> !list.isEmpty())
-                .forEach(list -> list.forEach(this::add));
+        maxSize *= 2;
+        List<ArrayList<Integer>> old = this.bucket;
+        this.bucket = IntStream.range(0, maxSize)
+                .mapToObj(ignored -> new ArrayList<Integer>())
+                .toList();
+        old.stream()
+                .filter(l -> !l.isEmpty())
+                .forEach(l -> l.forEach(key -> this.bucket.get(key % maxSize).add(key)));
     }
 }

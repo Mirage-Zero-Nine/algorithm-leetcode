@@ -1,7 +1,8 @@
 package solutions.design;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Design a HashMap without using any built-in hash table libraries.
@@ -17,123 +18,99 @@ import java.util.List;
  */
 
 public class MyHashMap_706 {
-    private List<Cell>[] map;
-    int MAX_SIZE = 256;
-    int size;
+    // Separate-chaining buckets; their count is always maxSize.
+    private List<ArrayList<Entry>> buckets;
+    // Number of buckets used to calculate a key's hash index.
+    private int maxSize = 256;
+    // Number of distinct key-to-value mappings stored in this map.
+    private int mapSize;
 
     /**
-     * Initialize map.
+     * Creates an empty hash map with 256 buckets.
      */
-    @SuppressWarnings("unchecked")
     public MyHashMap_706() {
-        this.map = new LinkedList[MAX_SIZE];
+        buckets = IntStream.range(0, maxSize).mapToObj(_ -> new ArrayList<Entry>()).toList();
     }
 
     /**
-     * Value will always be non-negative.
+     * Associates {@code value} with {@code key}, replacing the previous value when the key exists.
      *
-     * @param key   given key
-     * @param value given value
+     * @param key the key to add or update
+     * @param value the value associated with {@code key}
      */
     public void put(int key, int value) {
-        int index = key % MAX_SIZE;
-        if (map[index] == null) {
-            map[index] = new LinkedList<>();
-        }
-
-        Cell tmp = new Cell(key, value);
-        List<Cell> l = map[index];
-
-        for (Cell c : l) {
-            if (c.key == key) {
-                l.remove(c);
-                break;
+        int index = key % maxSize;
+        List<Entry> list = buckets.get(index);
+        for (Entry entry : list) {
+            if (entry.key == key) {
+                entry.value = value;
+                return;
             }
         }
+        list.add(new Entry(key, value));
+        mapSize++;
 
-        l.add(tmp);
-        size++;
-
-        if (size >= MAX_SIZE * 0.75) {
-            rehashing();
+        if (mapSize > maxSize * 0.75) {
+            rehash();
         }
     }
 
     /**
-     * Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key
+     * Returns the value associated with {@code key}, or {@code -1} when the key is absent.
      *
-     * @param key given key
-     * @return corresponding value
+     * @param key the key to look up
+     * @return the mapped value, or {@code -1} when no mapping exists
      */
     public int get(int key) {
-        int index = key % MAX_SIZE;
-        if (map[index] == null) {
-            return -1;
-        }
-
-        List<Cell> l = map[index];
-
-        for (Cell c : l) {
-            if (c.key == key) {
-                return c.val;
+        int index = key % maxSize;
+        List<Entry> list = buckets.get(index);
+        for (Entry entry : list) {
+            if (entry.key == key) {
+                return entry.value;
             }
         }
-
         return -1;
     }
 
     /**
-     * Removes the mapping of the specified value key if this map contains a mapping for the key
+     * Removes the mapping for {@code key} when present; otherwise this operation has no effect.
      *
-     * @param key given key
+     * @param key the key to remove
      */
     public void remove(int key) {
-        int index = key % MAX_SIZE;
-        if (map[index] == null) {
-            return;
-        }
-
-        List<Cell> l = map[index];
-
-        l.removeIf(c -> c.key == key);
-
-        size--;
-    }
-
-    /**
-     * Rehashing to make hash set more balanced.
-     */
-    @SuppressWarnings("unchecked")
-    private void rehashing() {
-        MAX_SIZE *= 2;
-
-        List<Cell>[] tmp = new LinkedList[MAX_SIZE];
-
-        for (List<Cell> l : map) {
-            if (l != null) {
-                for (Cell c : l) {
-                    int index = c.key % MAX_SIZE;
-                    if (tmp[index] == null) {
-                        tmp[index] = new LinkedList<>();
-                    }
-                    tmp[index].add(c);
-                }
+        int index = key % maxSize;
+        List<Entry> list = buckets.get(index);
+        for (Entry entry : list) {
+            if (entry.key == key) {
+                list.remove(entry);
+                mapSize--;
+                return;
             }
         }
-
-        map = tmp;
     }
 
     /**
-     * Cell used in map.
+     * Doubles the bucket count and redistributes the existing mappings using the new capacity.
      */
-    private static class Cell {
-        int key;
-        int val;
+    private void rehash() {
+        maxSize *= 2;
+        List<ArrayList<Entry>> old = this.buckets;
+        buckets = IntStream.range(0, maxSize).mapToObj(_ -> new ArrayList<Entry>()).toList();
+        old.stream()
+                .filter(list -> !list.isEmpty())
+                .forEach(list -> list.forEach(e -> this.buckets.get(e.key % maxSize).add(e)));
+    }
 
-        public Cell(int key, int val) {
+    /**
+     * A key-to-value mapping stored in a bucket chain.
+     */
+    private static class Entry {
+        int key;
+        int value;
+
+        Entry(int key, int value) {
             this.key = key;
-            this.val = val;
+            this.value = value;
         }
     }
 }
