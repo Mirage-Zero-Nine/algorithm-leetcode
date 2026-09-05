@@ -1,7 +1,8 @@
 package solutions.design;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Design a HashSet without using any built-in hash table libraries.
@@ -19,104 +20,71 @@ import java.util.List;
  * Created with IntelliJ IDEA
  */
 
-@SuppressWarnings("unchecked")
+
 public class MyHashSet_705 {
-    private List<Integer>[] arr;
-    private int MAX_SIZE = 256; // set initial max capacity to 256
-    private int size;
+    // Separate chaining buckets; their count is always maxSize.
+    private List<ArrayList<Integer>> bucket;
+    // Number of buckets used to calculate a key's hash index.
+    private int maxSize = 256;
+    // Counter used to determine when the bucket array should be resized.
+    private int setSize = 0;
 
     /**
-     * Initialize hash set.
+     * Creates an empty hash set with 256 buckets.
      */
     public MyHashSet_705() {
-        arr = new LinkedList[MAX_SIZE];
-        size = 0;
+        bucket = IntStream.range(0, maxSize)
+                .mapToObj(_ -> new ArrayList<Integer>())
+                .toList();
     }
 
     /**
-     * Add value to hash set.
-     * Note that hash set will not contain duplicated value.
+     * Adds {@code key} when it is not already present.
      *
-     * @param key value to be added
+     * @param key the non-negative key to add
      */
     public void add(int key) {
-        int index = key % MAX_SIZE;
-
-        if (arr[index] == null) {
-            arr[index] = new LinkedList<>();
+        setSize++;
+        List<Integer> list = bucket.get(key % maxSize);
+        if (!list.contains(key)) {
+            list.add(key);
         }
 
-        List<Integer> tmp = arr[index];
-
-        for (int i : tmp) {
-            if (i == key) {
-                return;
-            }
-        }
-        tmp.add(key);
-
-        if (size >= MAX_SIZE * 0.75) {
-            rehashing();
+        if (setSize > maxSize * 0.75) {
+            rehash();
         }
     }
 
     /**
-     * Remove value from hash set.
+     * Removes {@code key} when it is present; otherwise this operation has no effect.
      *
-     * @param key value to be removed from hash set.
+     * @param key the non-negative key to remove
      */
     public void remove(int key) {
-        int index = key % MAX_SIZE;
-        if (arr[index] == null) {
-            return;
-        }
-
-        for (int i = 0; i < arr[index].size(); i++) {
-            if (arr[index].get(i).equals(key)) {
-                arr[index].remove(i);
-                size--;
-                return;
-            }
+        if (bucket.get(key % maxSize).remove(Integer.valueOf(key))) {
+            setSize--;
         }
     }
 
     /**
-     * Rehashing when total elements are more than 75% of total capacity to make hash set more balanced.
-     */
-    private void rehashing() {
-        MAX_SIZE *= 2;
-        List<Integer>[] newArr = new LinkedList[MAX_SIZE];
-
-        for (List<Integer> l : arr) {
-            if (l != null) {
-                for (int i : l) {
-                    int index = i % MAX_SIZE;
-                    if (newArr[index] == null) {
-                        newArr[index] = new LinkedList<>();
-                    }
-                    newArr[index].add(i);
-                }
-            }
-
-        }
-        arr = newArr;
-    }
-
-    /**
-     * Returns true if this set contains the specified element
+     * Returns whether {@code key} is currently stored in this set.
+     *
+     * @param key the non-negative key to look up
+     * @return {@code true} if {@code key} is present, otherwise {@code false}
      */
     public boolean contains(int key) {
-        int index = key % MAX_SIZE;
-        if (arr[index] == null) {
-            return false;
-        }
+        return bucket.get(key % maxSize).stream().anyMatch(i -> i == key);
+    }
 
-        for (int i : arr[index]) {
-            if (i == key) {
-                return true;
-            }
-        }
-
-        return false;
+    /**
+     * Doubles the bucket count and redistributes each stored key using the new capacity.
+     */
+    private void rehash() {
+        this.maxSize *= 2;
+        List<ArrayList<Integer>> tmp = new ArrayList<>(this.bucket);
+        this.bucket = IntStream.range(0, this.maxSize).mapToObj(_ -> new ArrayList<Integer>()).toList();
+        tmp.stream()
+                .filter(list -> !list.isEmpty())
+                .forEach(list -> list.forEach(this::add));
     }
 }

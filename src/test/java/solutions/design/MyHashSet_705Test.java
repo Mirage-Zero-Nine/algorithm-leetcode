@@ -1,6 +1,7 @@
 package solutions.design;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -206,6 +207,140 @@ public class MyHashSet_705Test {
         for (int key = 0; key < 1000; key++) {
             if (expected.contains(key) != test.contains(key)) {
                 throw new AssertionError("Final mismatch at key=" + key);
+            }
+        }
+    }
+
+    @Test
+    public void testRehashPreservesKeysAtInitialLoadFactorThreshold() {
+        for (int key = 0; key <= 192; key++) {
+            test.add(key);
+        }
+
+        for (int key = 0; key <= 192; key++) {
+            assertTrue(test.contains(key), "Key should survive rehash: " + key);
+        }
+        assertFalse(test.contains(193));
+    }
+
+    @Test
+    public void testRehashPreservesCollidingKeys() {
+        int[] keys = {0, 256, 512, 768, 1_024, 1_280, 1_536, 1_792};
+        for (int key : keys) {
+            test.add(key);
+        }
+        for (int key = 1; key <= 192; key++) {
+            test.add(key);
+        }
+
+        for (int key : keys) {
+            assertTrue(test.contains(key), "Colliding key should survive rehash: " + key);
+        }
+    }
+
+    @Test
+    public void testRemoveAndReAddCollidingKeysAfterRehash() {
+        for (int key = 0; key <= 192; key++) {
+            test.add(key);
+        }
+        test.add(1_024);
+        test.add(2_048);
+
+        test.remove(1_024);
+        assertFalse(test.contains(1_024));
+        assertTrue(test.contains(2_048));
+
+        test.add(1_024);
+        assertTrue(test.contains(1_024));
+        assertTrue(test.contains(2_048));
+    }
+
+    @Test
+    public void testDuplicateAddsRemainIdempotentAcrossRehash() {
+        for (int key = 0; key <= 192; key++) {
+            test.add(key);
+        }
+        for (int i = 0; i < 100; i++) {
+            test.add(0);
+            test.add(192);
+        }
+
+        test.remove(0);
+        assertFalse(test.contains(0));
+        assertTrue(test.contains(192));
+    }
+
+    @Test
+    public void testProvidedOperationSequencePrefixAgainstReferenceSet() {
+        String[] operations = {
+                "add", "add", "add", "add", "remove", "add", "add", "add", "add", "add",
+                "add", "remove", "remove", "add", "add", "add", "add", "add", "contains", "contains",
+                "add", "add", "add", "add", "remove", "add", "remove", "contains", "contains", "contains",
+                "add", "remove", "add", "add", "remove", "add", "add", "remove", "add", "add",
+                "add", "remove", "add", "add", "add", "add", "add", "add", "add", "add",
+                "add", "add", "add", "add", "remove", "add", "add", "contains", "add", "add",
+                "contains", "add", "add", "add", "add", "add", "add", "add", "add", "add",
+                "add", "add", "remove", "contains", "add", "add", "contains", "add", "add", "remove",
+                "contains", "add", "contains", "add", "contains", "remove", "remove", "remove", "add", "remove"
+        };
+        int[] keys = {
+                594, 175, 820, 872, 319, 933, 543, 667, 417, 300,
+                818, 707, 822, 742, 369, 520, 713, 567, 417, 784,
+                468, 108, 339, 675, 409, 177, 615, 417, 594, 216,
+                392, 104, 242, 894, 251, 893, 92, 770, 350, 420,
+                493, 893, 293, 322, 389, 795, 482, 253, 848, 320,
+                211, 939, 378, 326, 31, 216, 286, 282, 390, 867,
+                201, 590, 85, 475, 68, 733, 259, 70, 293, 349,
+                111, 276, 962, 637, 930, 870, 893, 328, 25, 99,
+                997, 319, 729, 998, 885, 323, 344, 430, 910, 517
+        };
+
+        replayAndAssertAgainstReferenceSet(operations, keys);
+    }
+
+    @Test
+    public void testGiantMixedOperationsAgainstReferenceSet() {
+        HashSet<Integer> expected = new HashSet<>();
+
+        for (int step = 0; step < 10_000; step++) {
+            int key = (step * 997) % 1_000_001;
+            if (step % 5 == 0) {
+                test.remove(key);
+                expected.remove(key);
+            } else {
+                test.add(key);
+                expected.add(key);
+            }
+
+            if (step % 97 == 0) {
+                assertEquals(expected.contains(key), test.contains(key), "Mismatch at step " + step);
+            }
+        }
+
+        for (int step = 0; step < 10_000; step += 113) {
+            int key = (step * 997) % 1_000_001;
+            assertEquals(expected.contains(key), test.contains(key), "Final mismatch for key " + key);
+        }
+    }
+
+    private void replayAndAssertAgainstReferenceSet(String[] operations, int[] keys) {
+        assertEquals(operations.length, keys.length, "Each operation must have one key");
+        HashSet<Integer> expected = new HashSet<>();
+
+        for (int i = 0; i < operations.length; i++) {
+            int key = keys[i];
+            switch (operations[i]) {
+                case "add" -> {
+                    test.add(key);
+                    expected.add(key);
+                }
+                case "remove" -> {
+                    test.remove(key);
+                    expected.remove(key);
+                }
+                case "contains" -> assertEquals(expected.contains(key), test.contains(key),
+                        "Mismatch at operation " + i + " for key " + key);
+                default -> throw new IllegalArgumentException("Unsupported operation: " + operations[i]);
             }
         }
     }
