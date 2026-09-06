@@ -1,6 +1,7 @@
 package solutions.prefixsum;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Given an array of integers and an integer k, find the total number of continuous sub arrays whose sum equals to k.
@@ -11,35 +12,53 @@ import java.util.HashMap;
  */
 
 public class SubarraySum_560 {
+
     /**
-     * Calculate the prefix sum of array.
-     * Array may contains negative numbers. Therefore, use a hash map to save numbers of subarray with this sum.
-     * At each element in array, find if sum - k exist in hash map.
-     * If so, then there are m.get(sum - k) subarray sum equals to k.
+     * Counts the continuous subarrays whose elements add up to {@code k} in one pass.
      *
-     * @param nums given int array
-     * @param k    target number
-     * @return total number of continuous sub arrays whose sum equals to k
+     * <p>Let {@code prefix(i)} be the sum from index {@code 0} through {@code i}.
+     * A subarray from {@code j + 1} through {@code i} has this sum:</p>
+     *
+     * <pre>
+     * prefix(i) - prefix(j)
+     * </pre>
+     *
+     * <p>That sum equals {@code k} exactly when
+     * {@code prefix(j) = prefix(i) - k}. The map stores how many earlier indices
+     * have each prefix sum, so the frequency of {@code prefix(i) - k} is exactly
+     * the number of valid subarrays ending at {@code i}. Every subarray is counted
+     * once when its ending index is processed.</p>
+     *
+     * <p>Time: {@code O(n)} expected. Space: {@code O(n)}.</p>
+     *
+     * @param nums the input array
+     * @param k    the target subarray sum
+     * @return the number of continuous subarrays whose sum is {@code k}, or
+     * {@code 0} when {@code nums} is {@code null} or empty
      */
     public int subarraySum(int[] nums, int k) {
 
-        HashMap<Integer, Integer> m = new HashMap<>();
-        int out = 0;
-        m.put(0, 1);        // if prefix sum + current value == target, then at least 1 sub array is found
-
-        int prefix = 0;
-        for (int i : nums) {
-            prefix += i;      // calculate prefix sum
-
-            /*
-             * prefix - k:
-             * Assume prefix from 0 to j has prefix, that sum(0, j) = prefix - k.
-             * Then it means, the sub array sum from j to i is equal to k. */
-            out += m.getOrDefault(prefix - k, 0);
-            m.put(prefix, m.getOrDefault(prefix, 0) + 1);
+        if (nums == null || nums.length == 0) {
+            return 0;
         }
 
-        return out;
-    }
+        // Invariant: contains every prefix sum ending before the current index.
+        Map<Integer, Integer> prefixCounts = new HashMap<>();
 
+        // prefix(-1) = 0 represents the empty prefix before the array.
+        prefixCounts.put(0, 1);
+        int prefix = 0, output = 0;
+
+        for (int n : nums) {
+            prefix += n;
+
+            // Each earlier (prefix - k) forms one subarray ending here with sum k.
+            output += prefixCounts.getOrDefault(prefix - k, 0);
+
+            // Insert afterward to keep only strictly earlier prefixes in the lookup.
+            prefixCounts.put(prefix, prefixCounts.getOrDefault(prefix, 0) + 1);
+        }
+
+        return output;
+    }
 }
