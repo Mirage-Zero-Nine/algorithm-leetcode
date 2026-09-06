@@ -11,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
@@ -83,6 +85,33 @@ class ProductExceptSelf_238Test {
     }
 
     @Test
+    void testEmptyArrayReturnsTheProvidedArray() {
+        int[] input = {};
+
+        // This is outside the original LeetCode constraint but exercises the method's explicit
+        // empty-input branch.
+        assertSame(input, solution.productExceptSelf(input));
+    }
+
+    @Test
+    void testDoesNotMutateInputAndReturnsNewArray() {
+        int[] input = {-2, 3, 4};
+
+        int[] result = solution.productExceptSelf(input);
+
+        assertArrayEquals(new int[]{12, -8, -6}, result);
+        assertArrayEquals(new int[]{-2, 3, 4}, input);
+        assertNotSame(input, result);
+    }
+
+    @Test
+    void testProductAtIntBoundaryWithoutOverflow() {
+        // 46,340 squared is 2,147,395,600, the largest square that fits in an int.
+        assertArrayEquals(new int[]{46_340, 46_340, 2_147_395_600},
+                solution.productExceptSelf(new int[]{46_340, 46_340, 1}));
+    }
+
+    @Test
     void testAllNegativesEvenCount() {
         // Even number of negatives: mixed signs
         assertArrayEquals(new int[]{-24, 12, -8, 6}, solution.productExceptSelf(new int[]{-1, 2, -3, 4}));
@@ -128,6 +157,22 @@ class ProductExceptSelf_238Test {
         java.util.Arrays.fill(nums, 1);
         int[] expected = new int[n];
         java.util.Arrays.fill(expected, 1);
+        assertArrayEquals(expected, solution.productExceptSelf(nums));
+    }
+
+    @Test
+    void testGiantArrayWithFactorsAtBothEnds() {
+        int n = 100_000;
+        int[] nums = new int[n];
+        java.util.Arrays.fill(nums, 1);
+        nums[0] = -1;
+        nums[n - 1] = 2;
+
+        int[] expected = new int[n];
+        java.util.Arrays.fill(expected, -2);
+        expected[0] = 2;
+        expected[n - 1] = -1;
+
         assertArrayEquals(expected, solution.productExceptSelf(nums));
     }
 
