@@ -6,6 +6,34 @@ import org.junit.jupiter.api.Test;
 
 public class NumOfSubarrays_1524Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 2, 7, 19, 42, 97, 211, 2026, 65537})
+    void oddCountsMatchDirectSubarraySums(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int trial = 0; trial < 100; trial++) {
+            int[] nums = random.ints(1 + random.nextInt(30), 1, 101).toArray();
+            int expected = 0;
+            for (int left = 0; left < nums.length; left++) {
+                int sum = 0;
+                for (int right = left; right < nums.length; right++) {
+                    sum += nums[right];
+                    if (sum % 2 != 0) expected++;
+                }
+            }
+            assertEquals(expected, test.numOfSubarrays(nums));
+        }
+    }
+
+    @Test
+    void largeOddArrayChecksModuloWithIndependentClosedForm() {
+        int n = 100_000;
+        int[] nums = new int[n];
+        java.util.Arrays.fill(nums, 1);
+        long expected = ((long) (n + 1) / 2) * ((n + 2) / 2);
+        assertEquals(expected % 1_000_000_007, test.numOfSubarrays(nums));
+    }
+
+
     private final NumOfSubarrays_1524 test = new NumOfSubarrays_1524();
 
     @Test

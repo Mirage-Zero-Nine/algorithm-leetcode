@@ -8,6 +8,31 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NumSubmatrixSumTarget_1074Test {
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6})
+    void allTwoByThreeSignedMatricesMatchRectangleEnumeration(int target) {
+        for (int code = 0; code < 729; code++) {
+            int[][] matrix = new int[2][3];
+            for (int i = 0, value = code; i < 6; i++, value /= 3) matrix[i / 3][i % 3] = value % 3 - 1;
+            int expected = 0;
+            for (int top = 0; top < 2; top++) for (int bottom = top; bottom < 2; bottom++) {
+                for (int left = 0; left < 3; left++) for (int right = left; right < 3; right++) {
+                    int sum = 0;
+                    for (int row = top; row <= bottom; row++) for (int col = left; col <= right; col++) sum += matrix[row][col];
+                    if (sum == target) expected++;
+                }
+            }
+            assertEquals(expected, solution.numSubmatrixSumTarget(matrix, target), "matrix code=" + code);
+        }
+    }
+
+    @Test
+    void zeroRectangleCountsAllChoicesOfBothBoundaries() {
+        assertEquals(100 * 101 / 2 * (100 * 101 / 2),
+                solution.numSubmatrixSumTarget(new int[100][100], 0));
+    }
+
     private final NumSubmatrixSumTarget_1074 solution = new NumSubmatrixSumTarget_1074();
 
     @Test

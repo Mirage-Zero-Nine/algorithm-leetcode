@@ -82,4 +82,33 @@ public class FindRepeatedDnaSequences_187Test {
         // should find repeats without error
         assertTrue(res.size() > 0);
     }
+
+    @Test public void testPeriodicGiantDnaHasExactlyFourUniqueRepeats() {
+        java.util.List<String> result = solver.findRepeatedDnaSequences("ACGT".repeat(10000));
+        assertEquals(java.util.Set.of("ACGTACGTAC", "CGTACGTACG", "GTACGTACGT", "TACGTACGTA"),
+                new java.util.HashSet<>(result));
+        assertEquals(4, result.size());
+    }
+
+    @Test public void testSeededDnaAgainstSubstringFrequencyOracle() {
+        java.util.Random random = new java.util.Random(1870906L);
+        for (int sample = 0; sample < 100; sample++) {
+            StringBuilder input = new StringBuilder();
+            for (int i = 0; i < 80; i++) input.append("ACGT".charAt(random.nextInt(4)));
+            input.append(input.substring(5, 35));
+            java.util.Map<String, Integer> counts = new java.util.HashMap<>();
+            for (int i = 0; i + 10 <= input.length(); i++)
+                counts.merge(input.substring(i, i + 10), 1, Integer::sum);
+            java.util.Set<String> expected = new java.util.HashSet<>();
+            counts.forEach((sequence, count) -> { if (count > 1) expected.add(sequence); });
+            java.util.List<String> actual = solver.findRepeatedDnaSequences(input.toString());
+            assertEquals(expected, new java.util.HashSet<>(actual), "sample=" + sample);
+            assertEquals(expected.size(), actual.size());
+        }
+    }
+
+    @Test public void testRepeatedTSequenceAcrossElevenCharacterBoundary() {
+        assertEquals(java.util.List.of("TTTTTTTTTT"), solver.findRepeatedDnaSequences("TTTTTTTTTTT"));
+        assertEquals(java.util.List.of(), solver.findRepeatedDnaSequences("TTTTTTTTTT"));
+    }
 }

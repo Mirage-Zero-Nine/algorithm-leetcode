@@ -64,4 +64,32 @@ public class HIndex_275Test {
         }
         assertEquals(150, test.hIndex(citations));
     }
+@Test
+    public void testRandomCitationsAgainstDefinition() {
+        java.util.Random random = new java.util.Random(2752026L);
+        for (int trial = 0; trial < 300; trial++) {
+            int[] citations = new int[random.nextInt(60)];
+            for (int i = 0; i < citations.length; i++) citations[i] = random.nextInt(80);
+            java.util.Arrays.sort(citations);
+            int expected = 0;
+            for (int h = 1; h <= citations.length; h++) {
+                int papers = 0;
+                for (int citation : citations) if (citation >= h) papers++;
+                if (papers >= h) expected = h;
+            }
+            assertEquals(expected, test.hIndex(citations), "trial=" + trial);
+        }
+    }
+
+    @Test
+    public void testCitationCountCannotExceedNumberOfPapers() {
+        assertEquals(3, test.hIndex(new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE}));
+    }
+
+    @Test
+    public void testGiantZeroPrefixWithExactlyEnoughCitedPapers() {
+        int[] citations = new int[100000];
+        java.util.Arrays.fill(citations, 87655, citations.length, 12345);
+        assertEquals(12345, test.hIndex(citations));
+    }
 }

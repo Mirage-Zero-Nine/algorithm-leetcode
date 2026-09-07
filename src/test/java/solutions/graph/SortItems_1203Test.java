@@ -23,6 +23,37 @@ import java.util.stream.Collectors;
 
 public class SortItems_1203Test {
 
+    @Test
+    public void testMultipleDependenciesBetweenSameGroupsCountOnce() {
+        int[] groups = {2, 2, 0, 0, 1, 1};
+        List<List<Integer>> before = List.of(List.of(), List.of(),
+                List.of(0, 1), List.of(0, 1), List.of(2, 3), List.of(2, 3));
+        assertValidOrder(6, groups, before, test.sortItems(6, 3, groups.clone(), before));
+    }
+
+    @Test
+    public void testUnusedGroupNumbersAndUngroupedItems() {
+        int[] groups = {4, -1, 4, 1, -1};
+        List<List<Integer>> before = List.of(List.of(), List.of(0, 2), List.of(0), List.of(1), List.of(3));
+        assertValidOrder(5, groups, before, test.sortItems(5, 5, groups.clone(), before));
+    }
+
+    @Test
+    public void testSeededForwardDependenciesPreserveContiguousGroups() {
+        java.util.Random random = new java.util.Random(12032026L);
+        for (int sample = 0; sample < 100; sample++) {
+            int[] groups = {2, 2, 0, 0, 3, 3, 1, 1};
+            List<List<Integer>> before = new java.util.ArrayList<>();
+            for (int item = 0; item < groups.length; item++) {
+                List<Integer> prerequisites = new java.util.ArrayList<>();
+                for (int prior = 0; prior < item; prior++) if (random.nextBoolean()) prerequisites.add(prior);
+                before.add(prerequisites);
+            }
+            assertValidOrder(8, groups, before, test.sortItems(8, 4, groups.clone(), before));
+        }
+    }
+
+
     private final SortItems_1203 test = new SortItems_1203();
 
     @Test

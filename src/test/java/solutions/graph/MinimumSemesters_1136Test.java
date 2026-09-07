@@ -12,6 +12,36 @@ import org.junit.jupiter.api.Test;
 
 public class MinimumSemesters_1136Test {
 
+    @Test
+    public void testAllForwardFourCourseDependenciesAgainstLongestPath() {
+        for (int mask = 1; mask < 64; mask++) {
+            java.util.List<int[]> relations = new java.util.ArrayList<>();
+            int[] depth = {1, 1, 1, 1};
+            int bit = 0;
+            for (int from = 0; from < 4; from++) {
+                for (int to = from + 1; to < 4; to++) {
+                    if ((mask & (1 << bit++)) != 0) {
+                        relations.add(new int[]{from + 1, to + 1});
+                        depth[to] = Math.max(depth[to], depth[from] + 1);
+                    }
+                }
+            }
+            int expected = java.util.Arrays.stream(depth).max().orElseThrow();
+            assertEquals(expected, test.minimumSemesters(4, relations.toArray(new int[0][])));
+        }
+    }
+
+    @Test
+    public void testHighNumberedPrerequisitesAndShortcuts() {
+        assertEquals(4, test.minimumSemesters(6, new int[][]{{6, 4}, {4, 2}, {2, 1}, {6, 1}, {5, 3}}));
+    }
+
+    @Test
+    public void testOneCycleBlocksOtherwiseIndependentCourses() {
+        assertEquals(-1, test.minimumSemesters(5000, new int[][]{{4998, 4999}, {4999, 5000}, {5000, 4998}}));
+    }
+
+
     private final MinimumSemesters_1136 test = new MinimumSemesters_1136();
 
     @Test

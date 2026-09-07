@@ -82,4 +82,36 @@ public class FindPeakElement_162Test {
         boolean rightOk = (i == arr.length - 1) || arr[i] > arr[i + 1];
         return leftOk && rightOk;
     }
+@Test
+    public void testEverySmallArrayWithDistinctNeighborsHasAValidPeak() {
+        for (int encoded = 0; encoded < 2187; encoded++) {
+            int[] values = new int[7];
+            int remaining = encoded;
+            boolean valid = true;
+            for (int i = 0; i < values.length; i++) {
+                values[i] = remaining % 3 - 1;
+                remaining /= 3;
+                if (i > 0 && values[i] == values[i - 1]) valid = false;
+            }
+            if (!valid) continue;
+            int index = test.findPeakElement(values);
+            assertTrue(index >= 0 && index < values.length);
+            assertTrue(isPeak(values, index), "encoded=" + encoded);
+        }
+    }
+
+    @Test
+    public void testIntegerMinimumIsGreaterThanVirtualNegativeInfinity() {
+        assertEquals(0, test.findPeakElement(new int[]{Integer.MIN_VALUE}));
+        assertEquals(1, test.findPeakElement(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE}));
+    }
+
+    @Test
+    public void testGiantSawtoothReturnsAnActualPeak() {
+        int[] values = new int[100000];
+        for (int i = 0; i < values.length; i++) values[i] = i % 2 == 0 ? -i - 1 : i;
+        int index = test.findPeakElement(values);
+        assertTrue(index >= 0 && index < values.length);
+        assertTrue(isPeak(values, index));
+    }
 }

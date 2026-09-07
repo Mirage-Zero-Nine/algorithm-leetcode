@@ -17,6 +17,36 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class ProductExceptSelf_238Test {
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {2, 3, 4, 5, 6, 7})
+    void allSmallProductsIncludingZeroAndSignsMatchExcludedIndexMultiplication(int size) {
+        int combinations = (int) Math.pow(5, size);
+        for (int code = 0; code < combinations; code++) {
+            int[] nums = new int[size];
+            for (int i = 0, value = code; i < size; i++, value /= 5) nums[i] = value % 5 - 2;
+            int[] expected = new int[size];
+            for (int omitted = 0; omitted < size; omitted++) {
+                int product = 1;
+                for (int i = 0; i < size; i++) if (i != omitted) product *= nums[i];
+                expected[omitted] = product;
+            }
+            assertArrayEquals(expected, solution.productExceptSelf(nums), "input code=" + code);
+        }
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 49_999, 99_998, 99_999})
+    void largeSingleZeroLeavesExactlyOneNonzeroProduct(int zeroIndex) {
+        int[] nums = new int[100_000];
+        java.util.Arrays.fill(nums, 1);
+        nums[(zeroIndex + 1) % nums.length] = -3;
+        nums[zeroIndex] = 0;
+        int[] expected = new int[nums.length];
+        expected[zeroIndex] = -3;
+        assertArrayEquals(expected, solution.productExceptSelf(nums));
+    }
+
     private final ProductExceptSelf_238 solution = new ProductExceptSelf_238();
 
     @Test

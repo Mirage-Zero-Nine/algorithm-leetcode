@@ -8,6 +8,43 @@ import org.junit.jupiter.api.Test;
 
 public class FindOrder_210Test {
 
+    @Test
+    public void testAllFourCourseGraphsProduceValidPermutationsOrDetectCycles() {
+        for (int mask = 0; mask < 4096; mask++) {
+            java.util.List<int[]> edges = new java.util.ArrayList<>();
+            boolean[][] reachable = new boolean[4][4];
+            int bit = 0;
+            for (int from = 0; from < 4; from++) {
+                for (int to = 0; to < 4; to++) {
+                    if (from != to && (mask & (1 << bit++)) != 0) {
+                        edges.add(new int[]{to, from});
+                        reachable[from][to] = true;
+                    }
+                }
+            }
+            for (int via = 0; via < 4; via++)
+                for (int from = 0; from < 4; from++)
+                    for (int to = 0; to < 4; to++)
+                        reachable[from][to] |= reachable[from][via] && reachable[via][to];
+            boolean cyclic = false;
+            for (int i = 0; i < 4; i++) cyclic |= reachable[i][i];
+            int[] actual = test.findOrder(4, edges.toArray(new int[0][]));
+            assertEquals(cyclic ? 0 : 4, actual.length, "graph " + mask);
+            if (!cyclic) {
+                boolean[] seen = new boolean[4];
+                int[] positions = new int[4];
+                for (int i = 0; i < actual.length; i++) {
+                    assertTrue(actual[i] >= 0 && actual[i] < 4);
+                    assertTrue(!seen[actual[i]], "duplicate course");
+                    seen[actual[i]] = true;
+                    positions[actual[i]] = i;
+                }
+                for (int[] edge : edges) assertTrue(positions[edge[1]] < positions[edge[0]]);
+            }
+        }
+    }
+
+
     private final FindOrder_210 test = new FindOrder_210();
 
     @Test

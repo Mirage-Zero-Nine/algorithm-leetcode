@@ -162,4 +162,41 @@ public class Merge_56Test {
         int[][] twice = solver.merge(once.clone());
         assertArrayEquals(once, twice);
     }
+@Test
+    public void testSmallIntervalsAgainstOccupiedHalfStepOracle() {
+        Random random = new Random(562026L);
+        for (int trial = 0; trial < 100; trial++) {
+            int[][] intervals = new int[1 + random.nextInt(15)][2];
+            boolean[] occupied = new boolean[41];
+            for (int[] interval : intervals) {
+                interval[0] = random.nextInt(20);
+                interval[1] = interval[0] + random.nextInt(21 - interval[0]);
+                for (int p = 2 * interval[0]; p <= 2 * interval[1]; p++) occupied[p] = true;
+            }
+            java.util.List<int[]> expected = new java.util.ArrayList<>();
+            for (int p = 0; p < occupied.length; p++) {
+                if (!occupied[p]) continue;
+                int start = p;
+                while (p + 1 < occupied.length && occupied[p + 1]) p++;
+                expected.add(new int[]{start / 2, p / 2});
+            }
+            assertArrayEquals(expected.toArray(new int[0][]), solver.merge(intervals), "trial=" + trial);
+        }
+    }
+
+    @Test
+    public void testCoincidentPointsAreAbsorbedAtBothEnds() {
+        assertArrayEquals(new int[][]{{2, 8}},
+                solver.merge(new int[][]{{8, 8}, {2, 2}, {2, 8}, {5, 5}}));
+    }
+
+    @Test
+    public void testGiantReverseDisjointIntervalsPreserveEveryInterval() {
+        int[][] input = new int[10000][2], expected = new int[10000][2];
+        for (int i = 0; i < input.length; i++) {
+            expected[i] = new int[]{3 * i, 3 * i + 1};
+            input[input.length - 1 - i] = expected[i].clone();
+        }
+        assertArrayEquals(expected, solver.merge(input));
+    }
 }

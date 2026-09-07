@@ -69,4 +69,33 @@ public class SingleNonDuplicate_540Test {
         }
         assertEquals(777, test.singleNonDuplicate(nums));
     }
+@Test
+    public void testSingletonAtEveryPairBoundary() {
+        for (int pairs = 0; pairs <= 60; pairs++) for (int singleton = 0; singleton <= pairs; singleton++) {
+            int[] values = new int[2 * pairs + 1];
+            int index = 0;
+            for (int value = 0; value <= pairs; value++) {
+                values[index++] = value * 7 - 100;
+                if (value != singleton) values[index++] = value * 7 - 100;
+            }
+            assertEquals(singleton * 7 - 100, test.singleNonDuplicate(values));
+        }
+    }
+
+    @Test
+    public void testIntegerBoundarySingletons() {
+        assertEquals(Integer.MIN_VALUE, test.singleNonDuplicate(new int[]{Integer.MIN_VALUE, 0, 0}));
+        assertEquals(Integer.MAX_VALUE, test.singleNonDuplicate(new int[]{0, 0, Integer.MAX_VALUE}));
+    }
+
+    @Test
+    public void testGiantArrayWithSingletonBeforeLastPair() {
+        int[] values = new int[99999];
+        int index = 0;
+        for (int value = 0; value < 50000; value++) {
+            values[index++] = value;
+            if (value != 49998) values[index++] = value;
+        }
+        assertEquals(49998, test.singleNonDuplicate(values));
+    }
 }

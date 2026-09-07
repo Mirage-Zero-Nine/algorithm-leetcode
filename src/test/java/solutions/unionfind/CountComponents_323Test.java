@@ -12,6 +12,37 @@ import org.junit.jupiter.api.Test;
  */
 public class CountComponents_323Test {
 
+    @Test
+    public void testAllFourVertexGraphsAgainstReachability() {
+
+        int[][] possible = {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}};
+        for (int mask = 0; mask < 64; mask++) {
+            java.util.List<int[]> edges = new java.util.ArrayList<>();
+            boolean[][] connected = new boolean[4][4];
+            for (int i = 0; i < 4; i++) connected[i][i] = true;
+            for (int bit = 0; bit < 6; bit++) {
+                if ((mask & (1 << bit)) != 0) {
+                    edges.add(possible[bit].clone());
+                    connected[possible[bit][0]][possible[bit][1]] = true;
+                    connected[possible[bit][1]][possible[bit][0]] = true;
+                }
+            }
+            for (int via = 0; via < 4; via++)
+                for (int from = 0; from < 4; from++)
+                    for (int to = 0; to < 4; to++)
+                        connected[from][to] |= connected[from][via] && connected[via][to];
+            int components = 0;
+            for (int node = 0; node < 4; node++) {
+                boolean firstInComponent = true;
+                for (int prior = 0; prior < node; prior++) firstInComponent &= !connected[node][prior];
+                if (firstInComponent) components++;
+            }
+
+            assertEquals(components, test.countComponents(4, edges.toArray(new int[0][])), "graph " + mask);
+        }
+    }
+
+
     private CountComponents_323 test;
 
     @BeforeEach

@@ -64,4 +64,33 @@ public class MaxProduct_318Test {
         String[] words = {"abcdefghij", "klmnopqrst"};
         assertEquals(100, solver.maxProduct(words));
     }
+
+    @Test public void testSeededWordsAgainstCharacterComparisonOracle() {
+        java.util.Random random = new java.util.Random(3180906L);
+        for (int sample = 0; sample < 100; sample++) {
+            String[] words = new String[12];
+            for (int i = 0; i < words.length; i++) {
+                StringBuilder word = new StringBuilder();
+                for (int j = 0, length = 1 + random.nextInt(12); j < length; j++)
+                    word.append((char) ('a' + random.nextInt(26)));
+                words[i] = word.toString();
+            }
+            int expected = 0;
+            for (int i = 0; i < words.length; i++)
+                for (int j = i + 1; j < words.length; j++) {
+                    boolean disjoint = true;
+                    for (char letter : words[i].toCharArray()) disjoint &= words[j].indexOf(letter) < 0;
+                    if (disjoint) expected = Math.max(expected, words[i].length() * words[j].length());
+                }
+            assertEquals(expected, solver.maxProduct(words));
+        }
+    }
+
+    @Test public void testHighAlphabetBitsAndRepeatedCharacters() {
+        assertEquals(30, solver.maxProduct(new String[]{"zzzzz", "yyyyyy", "zyzyzyzy"}));
+    }
+
+    @Test public void testLongestDisjointWordsAtConstraintLength() {
+        assertEquals(1000000, solver.maxProduct(new String[]{"a".repeat(1000), "z".repeat(1000), "az"}));
+    }
 }

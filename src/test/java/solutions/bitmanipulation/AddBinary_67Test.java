@@ -83,4 +83,25 @@ public class AddBinary_67Test {
         // 64 ones + 1 = 1 followed by 64 zeros
         assertEquals("1" + "0".repeat(64), result);
     }
+
+    @Test public void testWideBinaryInputsAgainstBigInteger() {
+        java.util.Random random = new java.util.Random(670906L);
+        for (int bits : new int[]{31, 32, 63, 64, 127, 255, 1024, 4096}) {
+            for (int sample = 0; sample < 8; sample++) {
+                java.math.BigInteger a = new java.math.BigInteger(bits, random).setBit(bits - 1);
+                java.math.BigInteger b = new java.math.BigInteger(bits / 2 + 1, random);
+                assertEquals(a.add(b).toString(2), solver.addBinary(a.toString(2), b.toString(2)));
+                assertEquals(a.add(b).toString(2), solver.addBinary(b.toString(2), a.toString(2)));
+            }
+        }
+    }
+
+    @Test public void testAlternatingTenThousandBitInputs() {
+        assertEquals("1".repeat(10000),
+                solver.addBinary("10".repeat(5000), "01".repeat(5000)));
+    }
+
+    @Test public void testCarryAcrossTenThousandOnes() {
+        assertEquals("1" + "0".repeat(10000), solver.addBinary("1".repeat(10000), "1"));
+    }
 }

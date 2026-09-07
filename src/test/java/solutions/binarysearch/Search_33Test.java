@@ -100,4 +100,30 @@ public class Search_33Test {
         }
         assertEquals(123, test.search(nums, (123 + pivot) % n));
     }
+@Test
+    public void testEveryRotationOfIntegerBoundaryValues() {
+        int[] sorted = {Integer.MIN_VALUE, -100, -1, 0, 1, 100, Integer.MAX_VALUE};
+        for (int pivot = 0; pivot < sorted.length; pivot++) {
+            int[] values = new int[sorted.length];
+            for (int i = 0; i < values.length; i++) values[i] = sorted[(i + pivot) % sorted.length];
+            for (int i = 0; i < values.length; i++) assertEquals(i, test.search(values, values[i]));
+            assertEquals(-1, test.search(values, Integer.MIN_VALUE + 1));
+            assertEquals(-1, test.search(values, Integer.MAX_VALUE - 1));
+        }
+    }
+
+    @Test
+    public void testGiantSparseRotationAbsentTargetsAroundPivot() {
+        int[] values = new int[100000];
+        for (int i = 0; i < values.length; i++) values[i] = ((i + 76543) % values.length) * 3;
+        for (int i : new int[]{0, 1, 23456, 23457, 50000, 99999}) {
+            assertEquals(i, test.search(values, values[i]));
+            assertEquals(-1, test.search(values, values[i] + 1));
+        }
+    }
+
+    @Test
+    public void testEmptyRotatedArrayHasNoTarget() {
+        assertEquals(-1, test.search(new int[0], Integer.MIN_VALUE));
+    }
 }

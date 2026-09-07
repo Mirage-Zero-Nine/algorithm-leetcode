@@ -60,4 +60,26 @@ public class ReverseBits_190Test {
         // 0x0000FFFF -> reversed = 0xFFFF0000
         assertEquals(0xFFFF0000, solver.reverseBits(0x0000FFFF));
     }
+
+    @Test public void testEverySingleSetBitAndClearedBit() {
+        for (int bit = 0; bit < 32; bit++) {
+            assertEquals(1 << (31 - bit), solver.reverseBits(1 << bit));
+            assertEquals(~(1 << (31 - bit)), solver.reverseBits(~(1 << bit)));
+        }
+    }
+
+    @Test public void testSeededValuesAgainstJdkReverse() {
+        java.util.Random random = new java.util.Random(1900906L);
+        for (int sample = 0; sample < 10000; sample++) {
+            int value = random.nextInt();
+            assertEquals(Integer.reverse(value), solver.reverseBits(value));
+        }
+    }
+
+    @Test public void testAllSixteenBitPatternsInBothHalves() {
+        for (int value = 0; value <= 65535; value++) {
+            assertEquals(Integer.reverse(value), solver.reverseBits(value));
+            assertEquals(Integer.reverse(value << 16), solver.reverseBits(value << 16));
+        }
+    }
 }

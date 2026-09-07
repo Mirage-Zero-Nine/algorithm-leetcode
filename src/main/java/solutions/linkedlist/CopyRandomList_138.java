@@ -52,7 +52,7 @@ public class CopyRandomList_138 {
             current.next = tmp;
             current = tmp;
 
-            head.next = next;
+            h.next = next;
             h = next;
         }
 

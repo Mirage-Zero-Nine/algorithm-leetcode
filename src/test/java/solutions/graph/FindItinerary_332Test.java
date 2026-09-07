@@ -8,6 +8,35 @@ import org.junit.jupiter.api.Test;
 
 public class FindItinerary_332Test {
 
+    @Test
+    public void testLexicallyFirstDestinationMustBeSavedForLast() {
+        assertEquals(List.of("JFK", "NRT", "JFK", "KUL"),
+                test.findItinerary(List.of(List.of("JFK", "KUL"), List.of("JFK", "NRT"), List.of("NRT", "JFK"))));
+    }
+
+    @Test
+    public void testParallelTicketsMustEachBeConsumed() {
+        assertEquals(List.of("JFK", "AAA", "JFK", "AAA", "JFK"),
+                test.findItinerary(List.of(List.of("AAA", "JFK"), List.of("JFK", "AAA"),
+                        List.of("AAA", "JFK"), List.of("JFK", "AAA"))));
+    }
+
+    @Test
+    public void testManyLexicalRoundTripsUseEveryTicket() {
+        List<List<String>> tickets = new ArrayList<>();
+        List<String> expected = new ArrayList<>(List.of("JFK"));
+        for (char letter = 'A'; letter <= 'Z'; letter++) {
+            String airport = "AA" + letter;
+            tickets.add(List.of("JFK", airport));
+            tickets.add(List.of(airport, "JFK"));
+            expected.add(airport);
+            expected.add("JFK");
+        }
+        java.util.Collections.reverse(tickets);
+        assertEquals(expected, test.findItinerary(tickets));
+    }
+
+
     private final FindItinerary_332 test = new FindItinerary_332();
 
     @Test

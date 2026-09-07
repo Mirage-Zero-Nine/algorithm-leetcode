@@ -8,6 +8,29 @@ import org.junit.jupiter.api.Test;
 
 public class InsertionSortList_147Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5, 8, 15, 32, 100, 1000})
+    void sortingPreservesAllNodesAndMatchesArraySort(int size) {
+        java.util.List<ListNode> originals = new java.util.ArrayList<>();
+        for (int i = 0; i < size; i++) originals.add(new ListNode(i % 7 - 3));
+        for (int i = 1; i < size; i++) originals.get(i - 1).next = originals.get(i);
+        java.util.List<ListNode> expected = new java.util.ArrayList<>(originals);
+        int[] values = originals.stream().mapToInt(node -> node.val).sorted().toArray();
+        java.util.Set<ListNode> remaining = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        remaining.addAll(originals);
+        ListNode current = test.insertionSortList(originals.get(0));
+        for (int value : values) {
+            org.junit.jupiter.api.Assertions.assertNotNull(current);
+            assertEquals(value, current.val);
+            org.junit.jupiter.api.Assertions.assertTrue(remaining.remove(current), "Duplicate or newly allocated node");
+            current = current.next;
+        }
+        assertNull(current);
+        org.junit.jupiter.api.Assertions.assertTrue(remaining.isEmpty());
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+    }
+
+
     private final InsertionSortList_147 test = new InsertionSortList_147();
 
     private ListNode build(int... vals) {

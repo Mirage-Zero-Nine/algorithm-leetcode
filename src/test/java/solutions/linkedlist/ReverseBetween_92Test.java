@@ -7,6 +7,45 @@ import org.junit.jupiter.api.Test;
 
 public class ReverseBetween_92Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5, 8, 15, 24})
+    void everyValidRangePreservesNodeIdentityAndOutsideOrder(int size) {
+        for (int left = 1; left <= size; left++) {
+            for (int right = left; right <= size; right++) {
+        java.util.List<ListNode> originals = new java.util.ArrayList<>();
+        for (int i = 0; i < size; i++) originals.add(new ListNode(i % 7 - 3));
+        for (int i = 1; i < size; i++) originals.get(i - 1).next = originals.get(i);
+        java.util.List<ListNode> expected = new java.util.ArrayList<>(originals);
+                java.util.Collections.reverse(expected.subList(left - 1, right));
+                ListNode current = test.reverseBetween(originals.get(0), left, right);
+        for (ListNode node : expected) {
+            org.junit.jupiter.api.Assertions.assertSame(node, current);
+            current = current.next;
+        }
+        org.junit.jupiter.api.Assertions.assertNull(current);
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+            }
+        }
+    }
+
+    @Test
+    void largeInteriorRangeChecksBothBoundariesAndTail() {
+        int size = 1000;
+        java.util.List<ListNode> originals = new java.util.ArrayList<>();
+        for (int i = 0; i < size; i++) originals.add(new ListNode(i % 7 - 3));
+        for (int i = 1; i < size; i++) originals.get(i - 1).next = originals.get(i);
+        java.util.List<ListNode> expected = new java.util.ArrayList<>(originals);
+        java.util.Collections.reverse(expected.subList(101, 899));
+        ListNode current = test.reverseBetween(originals.get(0), 102, 899);
+        for (ListNode node : expected) {
+            org.junit.jupiter.api.Assertions.assertSame(node, current);
+            current = current.next;
+        }
+        org.junit.jupiter.api.Assertions.assertNull(current);
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+    }
+
+
     private final ReverseBetween_92 test = new ReverseBetween_92();
 
     private ListNode build(int... vals) {

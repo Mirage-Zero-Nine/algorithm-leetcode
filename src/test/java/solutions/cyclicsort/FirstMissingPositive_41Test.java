@@ -179,4 +179,34 @@ public class FirstMissingPositive_41Test {
             assertTrue(result <= nums.length + 1, "Result must be <= n+1, got " + result);
         }
     }
+@Test
+    public void testEverySmallArrayAgainstPositiveSet() {
+        for (int encoded = 0; encoded < 46656; encoded++) {
+            int[] values = new int[6];
+            Set<Integer> present = new HashSet<>();
+            int remaining = encoded;
+            for (int i = 0; i < values.length; i++) {
+                values[i] = remaining % 6 - 1;
+                remaining /= 6;
+                present.add(values[i]);
+            }
+            int expected = 1;
+            while (present.contains(expected)) expected++;
+            assertEquals(expected, solver.firstMissingPositive(values), "encoded=" + encoded);
+        }
+    }
+
+    @Test
+    public void testIntegerMinimumDoesNotBecomeAPresentIndex() {
+        assertEquals(4, solver.firstMissingPositive(
+                new int[]{Integer.MIN_VALUE, 3, Integer.MAX_VALUE, 2, 1, 0}));
+    }
+
+    @Test
+    public void testGiantReversedSequenceWithInteriorGap() {
+        int[] values = new int[20000];
+        for (int i = 0; i < values.length; i++) values[i] = values.length - i;
+        values[7654] = Integer.MIN_VALUE;
+        assertEquals(12346, solver.firstMissingPositive(values));
+    }
 }

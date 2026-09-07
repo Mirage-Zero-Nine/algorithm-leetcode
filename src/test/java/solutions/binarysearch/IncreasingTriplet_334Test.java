@@ -77,4 +77,31 @@ public class IncreasingTriplet_334Test {
         assertFalse(test.increasingTriplet(arr));
         assertFalse(test.traverse(arr));
     }
+@Test
+    public void testBothMethodsAgainstEverySmallTripleSearch() {
+        for (int encoded = 0; encoded < 4096; encoded++) {
+            int[] values = new int[6];
+            int remaining = encoded;
+            for (int i = 0; i < values.length; i++) { values[i] = remaining % 4 - 2; remaining /= 4; }
+            boolean expected = false;
+            for (int i = 0; i < values.length; i++) for (int j = i + 1; j < values.length; j++)
+                for (int k = j + 1; k < values.length; k++)
+                    if (values[i] < values[j] && values[j] < values[k]) expected = true;
+            org.junit.jupiter.api.Assertions.assertEquals(expected, test.increasingTriplet(values));
+            org.junit.jupiter.api.Assertions.assertEquals(expected, test.traverse(values));
+        }
+    }
+
+    @Test
+    public void testEarlierSecondElementSurvivesNewMinimum() {
+        int[] values = {10, 20, 1, 30};
+        assertTrue(test.increasingTriplet(values));
+        assertTrue(test.traverse(values));
+    }
+
+    @Test
+    public void testIntegerExtremesRequireStrictIncrease() {
+        assertTrue(test.increasingTriplet(new int[]{Integer.MIN_VALUE, 0, Integer.MAX_VALUE}));
+        assertFalse(test.traverse(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE}));
+    }
 }

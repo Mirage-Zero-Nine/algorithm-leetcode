@@ -64,4 +64,35 @@ public class NextGreatestLetter_744Test {
         java.util.Arrays.sort(letters);
         assertEquals('z', test.nextGreatestLetter(letters, 'y'));
     }
+@Test
+    public void testAllTargetsForEverySmallLetterSubset() {
+        for (int mask = 1; mask < 64; mask++) {
+            if (Integer.bitCount(mask) < 2) continue;
+            char[] letters = new char[Integer.bitCount(mask) * 2];
+            int index = 0;
+            for (int i = 0; i < 6; i++) if ((mask & (1 << i)) != 0) {
+                letters[index++] = (char) ('b' + i * 4);
+                letters[index++] = (char) ('b' + i * 4);
+            }
+            for (char target = 'a'; target <= 'z'; target++) {
+                char expected = letters[0];
+                for (char letter : letters) if (letter > target) { expected = letter; break; }
+                assertEquals(expected, test.nextGreatestLetter(letters, target));
+            }
+        }
+    }
+
+    @Test
+    public void testGiantDuplicatePrefixSkipsEveryEqualLetter() {
+        char[] letters = new char[10000];
+        java.util.Arrays.fill(letters, 'a');
+        letters[9999] = 'z';
+        assertEquals('z', test.nextGreatestLetter(letters, 'a'));
+        assertEquals('a', test.nextGreatestLetter(letters, 'z'));
+    }
+
+    @Test
+    public void testStrictSuccessorAcrossConsecutiveDuplicateRuns() {
+        assertEquals('d', test.nextGreatestLetter(new char[]{'b', 'b', 'c', 'c', 'd', 'd'}, 'c'));
+    }
 }

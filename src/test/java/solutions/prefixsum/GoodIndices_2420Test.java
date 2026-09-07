@@ -15,6 +15,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GoodIndices_2420Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 2, 7, 19, 42, 97, 211, 2026, 65537})
+    void seededArraysMatchDirectNeighborChecks(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int trial = 0; trial < 100; trial++) {
+            int size = 3 + random.nextInt(18);
+            int[] nums = random.ints(size, 1, 8).toArray();
+            int k = 1 + random.nextInt((size - 1) / 2);
+            java.util.List<Integer> expected = new java.util.ArrayList<>();
+            for (int i = k; i < size - k; i++) {
+                boolean good = true;
+                for (int j = i - k + 1; j < i; j++) good &= nums[j - 1] >= nums[j];
+                for (int j = i + 2; j <= i + k; j++) good &= nums[j - 1] <= nums[j];
+                if (good) expected.add(i);
+            }
+            assertEquals(expected, solver.goodIndices(nums, k), java.util.Arrays.toString(nums) + ", k=" + k);
+        }
+    }
+
+    @Test
+    void largePlateauReturnsEveryInteriorIndexInOrder() {
+        int[] nums = new int[100_000];
+        java.util.Arrays.fill(nums, 17);
+        assertEquals(java.util.stream.IntStream.range(111, nums.length - 111).boxed().toList(),
+                solver.goodIndices(nums, 111));
+    }
+
+
     private final GoodIndices_2420 solver = new GoodIndices_2420();
 
     @Test

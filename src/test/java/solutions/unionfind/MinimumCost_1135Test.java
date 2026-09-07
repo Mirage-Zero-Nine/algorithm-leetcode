@@ -6,6 +6,31 @@ import org.junit.jupiter.api.Test;
 
 public class MinimumCost_1135Test {
 
+    @Test
+    public void testEveryFourCityGraphAgainstExhaustiveSpanningTrees() {
+        int[][] possible = {{1, 2, 9}, {1, 3, 2}, {1, 4, 7}, {2, 3, 3}, {2, 4, 1}, {3, 4, 5}};
+        for (int available = 1; available < 64; available++) {
+            java.util.List<int[]> connections = new java.util.ArrayList<>();
+            for (int bit = 0; bit < 6; bit++)
+                if ((available & (1 << bit)) != 0) connections.add(possible[bit].clone());
+            int expected = Integer.MAX_VALUE;
+            for (int selected = available; selected > 0; selected = (selected - 1) & available) {
+                if (Integer.bitCount(selected) != 3) continue;
+                boolean[] reached = {false, true, false, false, false};
+                int cost = 0;
+                for (int i = 0; i < 6; i++) if ((selected & (1 << i)) != 0) cost += possible[i][2];
+                for (int pass = 0; pass < 4; pass++)
+                    for (int i = 0; i < 6; i++)
+                        if ((selected & (1 << i)) != 0 && (reached[possible[i][0]] || reached[possible[i][1]]))
+                            reached[possible[i][0]] = reached[possible[i][1]] = true;
+                if (reached[2] && reached[3] && reached[4]) expected = Math.min(expected, cost);
+            }
+            assertEquals(expected == Integer.MAX_VALUE ? -1 : expected,
+                    test.minimumCost(4, connections.toArray(new int[0][])), "graph " + available);
+        }
+    }
+
+
     private final MinimumCost_1135 test = new MinimumCost_1135();
 
     @Test

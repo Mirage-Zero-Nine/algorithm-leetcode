@@ -89,10 +89,10 @@ public class MinMeetingRooms_253 {
         @Override
         public int compareTo(Point p) {
             if (this.val != p.val) {
-                return this.val - p.val;
+                return Integer.compare(this.val, p.val);
             }
 
-            return this.isStart ? 1 : -1;       // end point should be put first
+            return Boolean.compare(this.isStart, p.isStart); // end point should be put first
         }
     }
 
@@ -115,25 +115,23 @@ public class MinMeetingRooms_253 {
     public int heap(int[][] intervals) {
 
         /* Corner case */
-        if (intervals.length < 2) {
-            return (intervals.length == 0) ? 0 : 1;
+        if (intervals == null || intervals.length < 2) {
+            return intervals == null ? 0 : intervals.length;
         }
 
         Arrays.sort(intervals, Comparator.comparingInt(i -> i[0]));     // sort based on intervals[i][0]
-        int count = 0;
+        int maxRooms = 0;
         PriorityQueue<Integer> q = new PriorityQueue<>();
 
-        for (int i = 0; i < intervals.length; i++) {
-            if (q.isEmpty() || intervals[i][0] < q.peek() || intervals[i][0] == intervals[i - 1][0]) {
-                q.offer(intervals[i][1]);
-                count++;
-            } else if (intervals[i][0] > q.peek()) {
+        for (int[] interval : intervals) {
+            while (!q.isEmpty() && q.peek() <= interval[0]) {
                 q.poll();
-                q.offer(intervals[i][1]);
             }
+            q.offer(interval[1]);
+            maxRooms = Math.max(maxRooms, q.size());
         }
 
-        return count;
+        return maxRooms;
     }
 
     /**

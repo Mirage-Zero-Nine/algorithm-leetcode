@@ -22,6 +22,49 @@ public class FindLadders_126Test {
     private final FindLadders_126 test = new FindLadders_126();
 
     @Test
+    public void testEveryBinaryThreeLetterDictionaryAgainstPathQueueOracle() {
+        String[] words = {"aab", "aba", "abb", "baa", "bab", "bba"};
+        for (int mask = 0; mask < 64; mask++) {
+            List<String> dictionary = new ArrayList<>(List.of("bbb"));
+            for (int bit = 0; bit < words.length; bit++)
+                if ((mask & (1 << bit)) != 0) dictionary.add(words[bit]);
+            java.util.Queue<List<String>> paths = new java.util.ArrayDeque<>();
+            paths.add(List.of("aaa"));
+            List<List<String>> expected = new ArrayList<>();
+            int shortest = Integer.MAX_VALUE;
+            while (!paths.isEmpty()) {
+                List<String> path = paths.remove();
+                if (path.size() > shortest) continue;
+                String last = path.get(path.size() - 1);
+                if (last.equals("bbb")) {
+                    shortest = path.size();
+                    expected.add(path);
+                    continue;
+                }
+                for (String candidate : dictionary) {
+                    if (!path.contains(candidate) && differsByExactlyOneCharacter(last, candidate)) {
+                        List<String> next = new ArrayList<>(path);
+                        next.add(candidate);
+                        paths.add(next);
+                    }
+                }
+            }
+            assertAllApproaches(expected, "aaa", "bbb", dictionary);
+        }
+    }
+
+    @Test
+    public void testFivePositionCubeReturnsAll120ShortestPaths() {
+        List<String> words = new ArrayList<>();
+        for (int mask = 1; mask < 32; mask++) {
+            StringBuilder word = new StringBuilder();
+            for (int bit = 0; bit < 5; bit++) word.append((mask & (1 << bit)) == 0 ? 'a' : 'b');
+            words.add(word.toString());
+        }
+        assertValidPathsForAllApproaches("aaaaa", "bbbbb", words, 120, 6);
+    }
+
+    @Test
     public void test() {
         List<String> list = Lists.newArrayList("hot", "dot", "dog", "lot", "log", "cog");
         List<List<String>> expected = Lists.newArrayList(

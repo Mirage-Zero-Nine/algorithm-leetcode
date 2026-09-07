@@ -6,6 +6,36 @@ import org.junit.jupiter.api.Test;
 
 public class MaxNumEdgesToRemove_1579Test {
 
+    @Test
+    public void testAllTypedThreeVertexGraphsAgainstExhaustiveEdgeSubsets() {
+        int[][] possible = new int[9][3];
+        int index = 0;
+        for (int type = 1; type <= 3; type++)
+            for (int from = 1; from <= 3; from++)
+                for (int to = from + 1; to <= 3; to++) possible[index++] = new int[]{type, from, to};
+        for (int available = 1; available < 512; available++) {
+            java.util.List<int[]> edges = new java.util.ArrayList<>();
+            for (int bit = 0; bit < 9; bit++)
+                if ((available & (1 << bit)) != 0) edges.add(possible[bit].clone());
+            int expected = -1;
+            for (int selected = available; selected > 0; selected = (selected - 1) & available) {
+                boolean bothConnected = true;
+                for (int person = 1; person <= 2; person++) {
+                    boolean[] reached = {false, true, false, false};
+                    for (int pass = 0; pass < 3; pass++)
+                        for (int i = 0; i < 9; i++)
+                            if ((selected & (1 << i)) != 0 && (possible[i][0] == person || possible[i][0] == 3)
+                                    && (reached[possible[i][1]] || reached[possible[i][2]]))
+                                reached[possible[i][1]] = reached[possible[i][2]] = true;
+                    bothConnected &= reached[2] && reached[3];
+                }
+                if (bothConnected) expected = Math.max(expected, edges.size() - Integer.bitCount(selected));
+            }
+            assertEquals(expected, test.maxNumEdgesToRemove(3, edges.toArray(new int[0][])), "graph " + available);
+        }
+    }
+
+
     private final MaxNumEdgesToRemove_1579 test = new MaxNumEdgesToRemove_1579();
 
     @Test

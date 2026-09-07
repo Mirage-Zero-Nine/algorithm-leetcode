@@ -12,6 +12,33 @@ import org.junit.jupiter.api.Test;
 
 public class SwapPairs_24Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5, 8, 15, 32, 100, 1000})
+    void swappingAndUndoingPreservesEveryNodeIncludingOddTail(int size) {
+        java.util.List<ListNode> originals = new java.util.ArrayList<>();
+        for (int i = 0; i < size; i++) originals.add(new ListNode(i % 7 - 3));
+        for (int i = 1; i < size; i++) originals.get(i - 1).next = originals.get(i);
+        java.util.List<ListNode> expected = new java.util.ArrayList<>(originals);
+        for (int i = 0; i + 1 < size; i += 2) java.util.Collections.swap(expected, i, i + 1);
+        ListNode result = test.swapPairs(originals.get(0));
+        ListNode current = result;
+        for (ListNode node : expected) {
+            org.junit.jupiter.api.Assertions.assertSame(node, current);
+            current = current.next;
+        }
+        org.junit.jupiter.api.Assertions.assertNull(current);
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+        expected = originals;
+        current = test.swapPairs(result);
+        for (ListNode node : expected) {
+            org.junit.jupiter.api.Assertions.assertSame(node, current);
+            current = current.next;
+        }
+        org.junit.jupiter.api.Assertions.assertNull(current);
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+    }
+
+
     private final SwapPairs_24 test = new SwapPairs_24();
 
     private ListNode build(int... vals) {

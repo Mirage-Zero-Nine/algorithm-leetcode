@@ -68,4 +68,32 @@ public class IsMajorityElement_1150Test {
     public void testNoMajorityOddLength() {
         assertFalse(test.isMajorityElement(new int[]{1, 2, 2, 3, 3}, 2));
     }
+@Test
+    public void testEverySmallMultiplicityAndPosition() {
+        for (int lower = 0; lower <= 12; lower++) for (int equal = 0; equal <= 12; equal++)
+            for (int upper = 0; upper <= 12; upper++) {
+                int n = lower + equal + upper;
+                if (n == 0) continue;
+                int[] values = new int[n];
+                java.util.Arrays.fill(values, 0, lower, 1);
+                java.util.Arrays.fill(values, lower, lower + equal, 2);
+                java.util.Arrays.fill(values, lower + equal, n, 3);
+                org.junit.jupiter.api.Assertions.assertEquals(equal > n / 2, test.isMajorityElement(values, 2));
+            }
+    }
+
+    @Test
+    public void testMaximumLengthAtStrictMajorityBoundary() {
+        int[] values = new int[1000];
+        java.util.Arrays.fill(values, 0, 500, 1);
+        java.util.Arrays.fill(values, 500, 1000, 1000000000);
+        assertFalse(test.isMajorityElement(values, 1000000000));
+        values[499] = 1000000000;
+        assertTrue(test.isMajorityElement(values, 1000000000));
+    }
+
+    @Test
+    public void testAbsentTargetInsideLargeGap() {
+        assertFalse(test.isMajorityElement(new int[]{1, 1, 1000000000, 1000000000}, 500000000));
+    }
 }

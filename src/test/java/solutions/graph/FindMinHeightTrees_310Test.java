@@ -17,6 +17,51 @@ import java.util.Set;
 
 public class FindMinHeightTrees_310Test {
 
+    @Test
+    public void testSeededTreesAgainstAllRootEccentricities() {
+        java.util.Random random = new java.util.Random(3102026L);
+        for (int n = 2; n <= 25; n++) {
+            for (int sample = 0; sample < 5; sample++) {
+                int[][] edges = new int[n - 1][2];
+                int[][] distance = new int[n][n];
+                for (int i = 0; i < n; i++) {
+                    java.util.Arrays.fill(distance[i], n + 1);
+                    distance[i][i] = 0;
+                }
+                for (int child = 1; child < n; child++) {
+                    int parent = random.nextInt(child);
+                    edges[child - 1] = new int[]{child, parent};
+                    distance[child][parent] = distance[parent][child] = 1;
+                }
+                for (int via = 0; via < n; via++)
+                    for (int from = 0; from < n; from++)
+                        for (int to = 0; to < n; to++)
+                            distance[from][to] = Math.min(distance[from][to], distance[from][via] + distance[via][to]);
+                java.util.Set<Integer> expected = new java.util.HashSet<>();
+                int minimum = n;
+                for (int root = 0; root < n; root++) {
+                    int height = java.util.Arrays.stream(distance[root]).max().orElseThrow();
+                    if (height < minimum) {
+                        minimum = height;
+                        expected.clear();
+                    }
+                    if (height == minimum) expected.add(root);
+                }
+                List<Integer> actual = test.findMinHeightTrees(n, edges);
+                assertEquals(expected.size(), actual.size());
+                assertEquals(expected, new java.util.HashSet<>(actual));
+            }
+        }
+    }
+
+    @Test
+    public void testHistoricalFixturesRequireEveryExpectedCenter() {
+        assertEquals(java.util.Set.of(3), new java.util.HashSet<>(test.findMinHeightTrees(9, test1)));
+        assertEquals(java.util.Set.of(2, 3), new java.util.HashSet<>(test.findMinHeightTrees(8, test2)));
+        assertEquals(java.util.Set.of(3, 4), new java.util.HashSet<>(test.findMinHeightTrees(6, test3)));
+    }
+
+
     private final FindMinHeightTrees_310 test = new FindMinHeightTrees_310();
 
     @Test

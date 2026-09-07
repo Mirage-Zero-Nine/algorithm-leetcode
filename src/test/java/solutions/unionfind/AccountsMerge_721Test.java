@@ -14,6 +14,41 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AccountsMerge_721Test {
 
+    @Test
+    void testLateBridgeMergesExistingComponentsAndPreservesSortedEmails() {
+        List<List<String>> input = accounts(List.of("Sam", "d@x.com", "c@x.com"),
+                List.of("Sam", "b@x.com", "a@x.com"), List.of("Sam", "c@x.com", "b@x.com"),
+                List.of("Sam", "separate@x.com"));
+        List<List<String>> result = solution.accountsMerge(input);
+        assertEquals(2, result.size());
+        assertEquals(Set.of(List.of("Sam", "a@x.com", "b@x.com", "c@x.com", "d@x.com"),
+                List.of("Sam", "separate@x.com")), new HashSet<>(result));
+    }
+
+    @Test
+    void testIdenticalNameOnlyAccountsRemainSeparate() {
+        List<List<String>> result = solution.accountsMerge(accounts(List.of("Sam"), List.of("Sam")));
+        assertEquals(List.of(List.of("Sam"), List.of("Sam")), result);
+    }
+
+    @Test
+    void testManyIndependentMergeGroupsKeepEveryAccountAndEmail() {
+        List<List<String>> input = new ArrayList<>();
+        Set<List<String>> expected = new HashSet<>();
+        for (int group = 0; group < 100; group++) {
+            String name = "User" + group;
+            String prefix = "g" + group;
+            input.add(new ArrayList<>(List.of(name, prefix + "z@x.com", prefix + "m@x.com")));
+            input.add(new ArrayList<>(List.of(name, prefix + "m@x.com", prefix + "a@x.com")));
+            expected.add(List.of(name, prefix + "a@x.com", prefix + "m@x.com", prefix + "z@x.com"));
+        }
+        Collections.shuffle(input, new Random(7212026L));
+        List<List<String>> result = solution.accountsMerge(input);
+        assertEquals(expected.size(), result.size());
+        assertEquals(expected, new HashSet<>(result));
+    }
+
+
     private final AccountsMerge_721 solution = new AccountsMerge_721();
 
     // Helper to build mutable list of lists (needed since solution may modify input)

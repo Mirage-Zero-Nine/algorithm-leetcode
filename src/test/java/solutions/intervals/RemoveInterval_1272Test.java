@@ -90,4 +90,31 @@ public class RemoveInterval_1272Test {
         // Should have intervals before 2000 and after 10000, plus partial overlaps
         assertTrue(res.size() > 0);
     }
+@Test
+    public void testRemovalTouchingEndpointsLeavesBothIntervals() {
+        assertEquals(List.of(List.of(0, 2), List.of(5, 8)),
+                solver.removeInterval(new int[][]{{0, 2}, {5, 8}}, new int[]{2, 5}));
+    }
+
+    @Test
+    public void testGiantRemovalChecksEverySurvivingInterval() {
+        int[][] intervals = new int[5000][2];
+        List<List<Integer>> expected = new java.util.ArrayList<>();
+        for (int i = 0; i < intervals.length; i++) {
+            intervals[i] = new int[]{4 * i, 4 * i + 2};
+            if (i < 500 || i >= 2500) expected.add(List.of(4 * i, 4 * i + 2));
+        }
+        assertEquals(expected, solver.removeInterval(intervals, new int[]{2000, 10000}));
+    }
+
+    @Test
+    public void testEveryRemovalFromSingleIntervalByUnitCoverage() {
+        for (int left = 0; left < 10; left++) for (int right = left + 1; right <= 10; right++) {
+            List<List<Integer>> expected = new java.util.ArrayList<>();
+            if (left > 2) expected.add(List.of(2, Math.min(left, 8)));
+            if (right < 8) expected.add(List.of(Math.max(right, 2), 8));
+            assertEquals(expected, solver.removeInterval(new int[][]{{2, 8}}, new int[]{left, right}),
+                    "remove=[" + left + "," + right + ")");
+        }
+    }
 }

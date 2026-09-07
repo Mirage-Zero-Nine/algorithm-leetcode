@@ -192,4 +192,31 @@ public class IntervalIntersection_986Test {
         result.sort((x, y) -> x[0] != y[0] ? x[0] - y[0] : x[1] - y[1]);
         return result.toArray(new int[0][]);
     }
+@Test
+    public void testEverySmallClosedIntervalPair() {
+        for (int a = -3; a <= 3; a++) for (int b = a; b <= 3; b++)
+            for (int c = -3; c <= 3; c++) for (int d = c; d <= 3; d++) {
+                int start = Math.max(a, c), end = Math.min(b, d);
+                int[][] expected = start <= end ? new int[][]{{start, end}} : new int[0][];
+                assertArrayEquals(expected,
+                        solver.intervalIntersection(new int[][]{{a, b}}, new int[][]{{c, d}}));
+            }
+    }
+
+    @Test
+    public void testEqualEndsAdvanceWithoutRepeatingAnIntersection() {
+        assertArrayEquals(new int[][]{{1, 3}, {8, 9}},
+                solver.intervalIntersection(new int[][]{{0, 3}, {7, 9}}, new int[][]{{1, 3}, {8, 9}}));
+    }
+
+    @Test
+    public void testGiantPointIntersectionsHaveExactLength() {
+        int[][] first = new int[10000][2], second = new int[10000][2], expected = new int[10000][2];
+        for (int i = 0; i < first.length; i++) {
+            first[i] = new int[]{i * 4, i * 4 + 2};
+            second[i] = new int[]{i * 4 + 2, i * 4 + 3};
+            expected[i] = new int[]{i * 4 + 2, i * 4 + 2};
+        }
+        assertArrayEquals(expected, solver.intervalIntersection(first, second));
+    }
 }

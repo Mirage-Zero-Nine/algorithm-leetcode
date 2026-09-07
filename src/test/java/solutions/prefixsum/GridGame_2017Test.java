@@ -13,6 +13,38 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GridGame_2017Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 2, 7, 19, 42, 97, 211, 2026, 65537})
+    void bothRobotPathsAreEnumeratedIndependently(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int trial = 0; trial < 60; trial++) {
+            int size = 1 + random.nextInt(8);
+            int[][] grid = {random.ints(size, 1, 101).toArray(), random.ints(size, 1, 101).toArray()};
+            long expected = Long.MAX_VALUE;
+            for (int first = 0; first < size; first++) {
+                long bestReply = 0;
+                for (int second = 0; second < size; second++) {
+                    long collected = 0;
+                    for (int col = 0; col < size; col++) {
+                        if (col <= second && col > first) collected += grid[0][col];
+                        if (col >= second && col < first) collected += grid[1][col];
+                    }
+                    bestReply = Math.max(bestReply, collected);
+                }
+                expected = Math.min(expected, bestReply);
+            }
+            assertEquals(expected, solver.gridGame(grid));
+        }
+    }
+
+    @Test
+    void maximumWidthUniformGridRequiresLongScore() {
+        int[][] grid = new int[2][50_000];
+        for (int[] row : grid) java.util.Arrays.fill(row, 100_000);
+        assertEquals(2_500_000_000L, solver.gridGame(grid));
+    }
+
+
     private final GridGame_2017 solver = new GridGame_2017();
 
     @Test

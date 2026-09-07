@@ -13,6 +13,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FindMaxLength_525Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12})
+    void allSmallBinaryArraysMatchDirectCounting(int size) {
+        for (int bits = 0; bits < (1 << size); bits++) {
+            int[] nums = new int[size];
+            for (int i = 0; i < size; i++) nums[i] = (bits >>> i) & 1;
+            int expected = 0;
+            for (int left = 0; left < size; left++) {
+                int ones = 0;
+                for (int right = left; right < size; right++) {
+                    ones += nums[right];
+                    if (2 * ones == right - left + 1) expected = Math.max(expected, right - left + 1);
+                }
+            }
+            assertEquals(expected, solver.findMaxLength(nums), "bits=" + bits);
+        }
+    }
+
+    @Test
+    void largeSeparateZeroAndOneBlocksBalanceAcrossBoundary() {
+        int[] nums = new int[100_000];
+        java.util.Arrays.fill(nums, 50_000, nums.length, 1);
+        assertEquals(nums.length, solver.findMaxLength(nums));
+    }
+
+
     private final FindMaxLength_525 solver = new FindMaxLength_525();
 
     @Test

@@ -71,4 +71,22 @@ public class CountHomogenous1759Test {
         int expected = (int)((100000L * 100001L / 2) % 1_000_000_007);
         assertEquals(expected, test.countHomogenous(sb.toString()));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "independent oracle seed={0}")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {7, 19, 43, 71, 101, 211, 509, 997, 2027, 4093, 8191, 16381})
+    public void testSeededCasesAgainstIndependentOracle(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int sample = 0; sample < 40; sample++) {
+
+            String s = random.ints(40, 'a', 'e').collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+            int expected = 0;
+            for (int left = 0; left < s.length(); left++)
+                for (int right = left; right < s.length(); right++) {
+                    boolean same = true;
+                    for (int i = left; i <= right; i++) same &= s.charAt(i) == s.charAt(left);
+                    if (same) expected++;
+                }
+            org.junit.jupiter.api.Assertions.assertEquals(expected, new CountHomogenous_1759().countHomogenous(s), s);
+        }
+    }
 }

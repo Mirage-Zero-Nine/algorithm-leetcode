@@ -127,4 +127,30 @@ public class SingleNumber_137Test {
         // -1 is all bits set in two's complement
         assertEquals(-1, solver.singleNumber(new int[]{0, 0, 0, -1}));
     }
+
+    @Test public void testActualGiantArrayOfTriplesAndOneUnique() {
+        int[] values = new int[30001];
+        for (int i = 0; i < 10000; i++)
+            values[i] = values[i + 10000] = values[i + 20000] = i;
+        values[30000] = Integer.MIN_VALUE;
+        assertEquals(Integer.MIN_VALUE, solver.singleNumber(values));
+    }
+
+    @Test public void testUniqueAtEveryPositionBetweenTriples() {
+        for (int position = 0; position < 10; position++) {
+            int[] values = new int[10];
+            int[] repeated = {Integer.MIN_VALUE, Integer.MAX_VALUE, 0};
+            for (int i = 0, next = 0; i < values.length; i++)
+                values[i] = i == position ? -1 : repeated[(next++) / 3];
+            assertEquals(-1, solver.singleNumber(values));
+        }
+    }
+
+    @Test public void testEachUniqueBitAndComplement() {
+        for (int bit = 0; bit < 32; bit++) {
+            int unique = 1 << bit;
+            assertEquals(unique, solver.singleNumber(new int[]{~unique, unique, ~unique, ~unique}));
+            assertEquals(~unique, solver.singleNumber(new int[]{unique, ~unique, unique, unique}));
+        }
+    }
 }

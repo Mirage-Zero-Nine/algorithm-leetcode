@@ -13,6 +13,47 @@ import org.junit.jupiter.api.Test;
 
 public class CopyRandomList_138Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 7, 16, 31, 100, 1000})
+    void copyPreservesEveryOriginalNextPointer(int size) {
+        Node[] originals = new Node[size];
+        for (int i = 0; i < size; i++) originals[i] = new Node(i % 3);
+        for (int i = 0; i + 1 < size; i++) originals[i].next = originals[i + 1];
+        for (int i = 0; i < size; i++) originals[i].random = originals[(i * 7) % size];
+
+        Node copy = test.copyRandomList(originals[0]);
+
+        for (int i = 0; i < size; i++) {
+            assertSame(i + 1 < size ? originals[i + 1] : null, originals[i].next,
+                    "Original next pointer changed at index " + i);
+            assertSame(originals[(i * 7) % size], originals[i].random);
+        }
+        assertNotSame(originals[0], copy);
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {2, 3, 5, 9, 32, 127, 1000})
+    void duplicateValuesDoNotConflateRandomTargets(int size) {
+        Node[] originals = new Node[size];
+        Node[] copies = new Node[size];
+        for (int i = 0; i < size; i++) originals[i] = new Node(7);
+        for (int i = 0; i + 1 < size; i++) originals[i].next = originals[i + 1];
+        for (int i = 0; i < size; i++) {
+            originals[i].random = i % 4 == 0 ? null : originals[(i + 1) % size];
+        }
+        Node current = test.copyRandomList(originals[0]);
+        for (int i = 0; i < size; i++) {
+            copies[i] = current;
+            assertEquals(7, current.val);
+            for (Node original : originals) assertNotSame(original, current);
+            current = current.next;
+        }
+        assertNull(current);
+        for (int i = 0; i < size; i++) {
+            assertSame(i % 4 == 0 ? null : copies[(i + 1) % size], copies[i].random);
+        }
+    }
+
     private final CopyRandomList_138 test = new CopyRandomList_138();
 
     @Test
