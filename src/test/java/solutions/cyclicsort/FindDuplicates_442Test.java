@@ -198,4 +198,51 @@ public class FindDuplicates_442Test {
         List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    public void testEveryValidSmallFrequencyDistribution() {
+        for (int n = 1; n <= 6; n++) {
+            int combinations = (int) Math.pow(n, n);
+            for (int encoded = 0; encoded < combinations; encoded++) {
+                int[] values = new int[n];
+                int[] frequency = new int[n + 1];
+                int remaining = encoded;
+                boolean valid = true;
+                for (int i = 0; i < n; i++) {
+                    values[i] = remaining % n + 1;
+                    remaining /= n;
+                    if (++frequency[values[i]] > 2) valid = false;
+                }
+                if (!valid) continue;
+                List<Integer> expected = new java.util.ArrayList<>();
+                for (int value = 1; value <= n; value++) {
+                    if (frequency[value] == 2) expected.add(value);
+                }
+                List<Integer> actual = solver.findDuplicates(values);
+                java.util.Collections.sort(actual);
+                assertEquals(expected, actual, "n=" + n + ", encoded=" + encoded);
+            }
+        }
+    }
+
+    @Test
+    public void testHighestValuesDuplicatedInReverseOrder() {
+        List<Integer> result = solver.findDuplicates(new int[]{8, 7, 6, 5, 8, 7, 6, 5});
+        java.util.Collections.sort(result);
+        assertEquals(List.of(5, 6, 7, 8), result);
+    }
+
+    @Test
+    public void testGiantSeparatedDuplicatePairsHaveExactMultiplicity() {
+        int[] values = new int[20000];
+        List<Integer> expected = new java.util.ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            values[i] = 10000 - i;
+            values[10000 + i] = i + 1;
+            expected.add(i + 1);
+        }
+        List<Integer> actual = solver.findDuplicates(values);
+        java.util.Collections.sort(actual);
+        assertEquals(expected, actual);
+    }
 }

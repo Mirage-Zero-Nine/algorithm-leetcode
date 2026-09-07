@@ -13,6 +13,26 @@ import org.junit.jupiter.api.Test;
 
 public class RotateRight_61Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5, 8, 15, 32, 100, 1000})
+    void rotationsIncludingMaximumKPreserveExactNodeSequence(int size) {
+        for (int k : new int[]{0, 1, size - 1, size, size + 1, Integer.MAX_VALUE}) {
+        java.util.List<ListNode> originals = new java.util.ArrayList<>();
+        for (int i = 0; i < size; i++) originals.add(new ListNode(i % 7 - 3));
+        for (int i = 1; i < size; i++) originals.get(i - 1).next = originals.get(i);
+        java.util.List<ListNode> expected = new java.util.ArrayList<>(originals);
+            java.util.Collections.rotate(expected, k % size);
+            ListNode current = test.rotateRight(originals.get(0), k);
+        for (ListNode node : expected) {
+            org.junit.jupiter.api.Assertions.assertSame(node, current);
+            current = current.next;
+        }
+        org.junit.jupiter.api.Assertions.assertNull(current);
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+        }
+    }
+
+
     private final RotateRight_61 test = new RotateRight_61();
 
     private ListNode build(int... vals) {

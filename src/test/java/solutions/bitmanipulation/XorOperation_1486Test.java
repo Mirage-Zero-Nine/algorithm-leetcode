@@ -98,4 +98,29 @@ public class XorOperation_1486Test {
         // just verify it completes and returns an int
         assertTrue(result >= 0 || result < 0);
     }
+
+    @Test public void testAllSmallLengthsAndStartsAgainstBitParity() {
+        for (int n = 1; n <= 50; n++)
+            for (int start = 0; start <= 100; start++) {
+                int expected = 0;
+                for (int bit = 0; bit < 16; bit++) {
+                    int count = 0;
+                    for (int i = 0; i < n; i++) count += ((start + 2 * i) >>> bit) & 1;
+                    if (count % 2 != 0) expected += 1 << bit;
+                }
+                assertEquals(expected, solver.xorOperation(n, start), "n=" + n + ", start=" + start);
+            }
+    }
+
+    @Test public void testMaximumLengthWithOddAndEvenStarts() {
+        assertEquals(0, solver.xorOperation(1000, 0));
+        assertEquals(0, solver.xorOperation(1000, 1));
+        assertEquals(0, solver.xorOperation(1000, 1000));
+    }
+
+    @Test public void testConsecutivePowerBoundaries() {
+        assertEquals(254, solver.xorOperation(2, 126));
+        assertEquals(510, solver.xorOperation(2, 254));
+        assertEquals(1022, solver.xorOperation(2, 510));
+    }
 }

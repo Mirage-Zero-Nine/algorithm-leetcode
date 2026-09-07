@@ -86,4 +86,29 @@ public class Search_704Test {
         int[] nums = {2, 4, 6, 8, 10};
         assertEquals(-1, test.search(nums, 1));
     }
+@Test
+    public void testEveryValueAndGapInGiantArray() {
+        int[] values = new int[20000];
+        for (int i = 0; i < values.length; i++) values[i] = 3 * i - 30000;
+        for (int i = 0; i < values.length; i++) {
+            assertEquals(i, test.search(values, values[i]));
+            assertEquals(-1, test.search(values, values[i] + 1));
+        }
+    }
+
+    @Test
+    public void testIntegerExtremesCanBeFoundWithoutArithmeticOverflow() {
+        int[] values = {Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE};
+        for (int i = 0; i < values.length; i++) assertEquals(i, test.search(values, values[i]));
+        assertEquals(-1, test.search(values, Integer.MAX_VALUE - 1));
+    }
+
+    @Test
+    public void testRepeatedLookupsLeaveInputUnchanged() {
+        int[] values = {-100, -4, 8, 19, 101};
+        int[] original = values.clone();
+        assertEquals(3, test.search(values, 19));
+        assertEquals(-1, test.search(values, 20));
+        org.junit.jupiter.api.Assertions.assertArrayEquals(original, values);
+    }
 }

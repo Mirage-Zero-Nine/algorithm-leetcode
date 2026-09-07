@@ -13,6 +13,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class WaysToSplit_1712Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {3, 4, 5, 6, 7, 8})
+    void exhaustiveNonnegativeArraysMatchEveryTwoCuts(int size) {
+        int combinations = (int) Math.pow(3, size);
+        for (int code = 0; code < combinations; code++) {
+            int[] nums = new int[size];
+            for (int i = 0, value = code; i < size; i++, value /= 3) nums[i] = value % 3;
+            int expected = 0;
+            for (int left = 1; left < size - 1; left++) for (int right = left + 1; right < size; right++) {
+                int a = java.util.Arrays.stream(nums, 0, left).sum();
+                int b = java.util.Arrays.stream(nums, left, right).sum();
+                int c = java.util.Arrays.stream(nums, right, size).sum();
+                if (a <= b && b <= c) expected++;
+            }
+            assertEquals(expected, solver.waysToSplit(nums), java.util.Arrays.toString(nums));
+        }
+    }
+
+    @Test
+    void maximumLengthZeroArrayChecksCombinatorialCountModulo() {
+        int n = 100_000;
+        long expected = (long) (n - 1) * (n - 2) / 2 % 1_000_000_007;
+        assertEquals(expected, solver.waysToSplit(new int[n]));
+    }
+
+
     private final WaysToSplit_1712 solver = new WaysToSplit_1712();
 
     @Test

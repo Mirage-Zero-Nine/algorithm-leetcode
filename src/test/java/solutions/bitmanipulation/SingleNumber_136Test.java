@@ -110,4 +110,28 @@ public class SingleNumber_136Test {
         int[] shuffledArr = shuffled.stream().mapToInt(Integer::intValue).toArray();
         assertEquals(expected, solver.singleNumber(shuffledArr));
     }
+
+    @Test public void testUniqueAtEveryPositionWithBoundaryPairs() {
+        int[] repeated = {Integer.MIN_VALUE, Integer.MAX_VALUE, 0, -1};
+        for (int position = 0; position < 9; position++) {
+            int[] values = new int[9];
+            for (int i = 0, next = 0; i < values.length; i++)
+                values[i] = i == position ? 12345 : repeated[(next++) / 2];
+            assertEquals(12345, solver.singleNumber(values));
+        }
+    }
+
+    @Test public void testEachBitCanBeTheUniqueValue() {
+        for (int bit = 0; bit < 32; bit++) {
+            int unique = 1 << bit;
+            assertEquals(unique, solver.singleNumber(new int[]{~unique, unique, ~unique}));
+        }
+    }
+
+    @Test public void testInterleavedPairsAtLargeSize() {
+        int[] values = new int[30001];
+        for (int i = 0; i < 15000; i++) values[i] = values[i + 15000] = i;
+        values[30000] = Integer.MIN_VALUE;
+        assertEquals(Integer.MIN_VALUE, solver.singleNumber(values));
+    }
 }

@@ -64,4 +64,35 @@ public class MissingElement_1060Test {
         }
         assertEquals(1001, test.missingElement(nums, 1));
     }
+@Test
+    public void testEverySmallUniqueSubsetAgainstMissingNumberEnumeration() {
+        for (int mask = 1; mask < 256; mask++) {
+            int[] values = new int[Integer.bitCount(mask)];
+            int index = 0;
+            for (int i = 0; i < 8; i++) if ((mask & (1 << i)) != 0) values[index++] = 10 + i;
+            for (int k = 1; k <= 12; k++) {
+                int missing = 0, candidate = values[0];
+                while (missing < k) {
+                    candidate++;
+                    boolean present = false;
+                    for (int value : values) if (value == candidate) present = true;
+                    if (!present) missing++;
+                }
+                assertEquals(candidate, test.missingElement(values, k));
+            }
+        }
+    }
+
+    @Test
+    public void testSingleValueStartsMissingCountImmediatelyAfterIt() {
+        assertEquals(1007, test.missingElement(new int[]{1000}, 7));
+    }
+
+    @Test
+    public void testGiantArithmeticGapsAtAndBeyondLastElement() {
+        int[] values = new int[10000];
+        for (int i = 0; i < values.length; i++) values[i] = 100 + 3 * i;
+        assertEquals(30096, test.missingElement(values, 19998));
+        assertEquals(30098, test.missingElement(values, 19999));
+    }
 }

@@ -9,6 +9,26 @@ import org.junit.jupiter.api.Test;
 
 public class ReverseList_206Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5, 8, 15, 32, 100, 1000})
+    void bothReversalMethodsPreserveEveryNodeAndValue(int size) {
+        for (boolean recursive : new boolean[]{false, true}) {
+        java.util.List<ListNode> originals = new java.util.ArrayList<>();
+        for (int i = 0; i < size; i++) originals.add(new ListNode(i % 7 - 3));
+        for (int i = 1; i < size; i++) originals.get(i - 1).next = originals.get(i);
+        java.util.List<ListNode> expected = new java.util.ArrayList<>(originals);
+            java.util.Collections.reverse(expected);
+            ListNode current = recursive ? test.recursion(originals.get(0)) : test.reverseList(originals.get(0));
+        for (ListNode node : expected) {
+            org.junit.jupiter.api.Assertions.assertSame(node, current);
+            current = current.next;
+        }
+        org.junit.jupiter.api.Assertions.assertNull(current);
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+        }
+    }
+
+
     private final ReverseList_206 test = new ReverseList_206();
 
     private ListNode build(int... vals) {

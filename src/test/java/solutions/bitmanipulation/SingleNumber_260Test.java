@@ -139,4 +139,27 @@ public class SingleNumber_260Test {
         int[] result = solver.singleNumber(nums);
         assertEquals(xorAll, result[0] ^ result[1]);
     }
+
+    @Test public void testUniquesDifferOnlyInTheSignBit() {
+        for (int value : new int[]{0, 1, 42, 0x55555555, Integer.MAX_VALUE}) {
+            int[] actual = solver.singleNumber(new int[]{value, value ^ Integer.MIN_VALUE, -7, -7});
+            assertArrayEquals(sorted(new int[]{value, value ^ Integer.MIN_VALUE}), sorted(actual));
+        }
+    }
+
+    @Test public void testEveryDistinguishingBit() {
+        for (int bit = 0; bit < 32; bit++) {
+            int other = 1 << bit;
+            assertArrayEquals(sorted(new int[]{0, other}),
+                    sorted(solver.singleNumber(new int[]{-1, other, 42, 0, -1, 42})));
+        }
+    }
+
+    @Test public void testInterleavedLargePairsWithOppositeBoundaryUniques() {
+        int[] values = new int[30000];
+        for (int i = 0; i < 14999; i++) values[i] = values[i + 14999] = i;
+        values[29998] = Integer.MIN_VALUE;
+        values[29999] = Integer.MAX_VALUE;
+        assertArrayEquals(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, sorted(solver.singleNumber(values)));
+    }
 }

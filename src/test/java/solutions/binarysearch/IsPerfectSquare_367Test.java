@@ -68,4 +68,27 @@ public class IsPerfectSquare_367Test {
             }
         }
     }
+@Test
+    public void testEveryLargeRepresentableSquareAndImmediateNeighbors() {
+        for (int root = 1001; root <= 46340; root++) {
+            int square = root * root;
+            assertTrue(test.isPerfectSquare(square), "root=" + root);
+            assertFalse(test.isPerfectSquare(square - 1), "below root=" + root);
+            assertFalse(test.isPerfectSquare(square + 1), "above root=" + root);
+        }
+    }
+
+    @Test
+    public void testSignedMultiplicationBoundary() {
+        assertFalse(test.isPerfectSquare(1073741823));
+        assertTrue(test.isPerfectSquare(1073741824));
+        assertFalse(test.isPerfectSquare(1073741825));
+    }
+
+    @Test
+    public void testLargestTwoDigitRootsAndTheirMidpoints() {
+        assertTrue(test.isPerfectSquare(9801));
+        assertFalse(test.isPerfectSquare(9900));
+        assertTrue(test.isPerfectSquare(10000));
+    }
 }

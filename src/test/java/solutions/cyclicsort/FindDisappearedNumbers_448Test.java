@@ -210,4 +210,28 @@ public class FindDisappearedNumbers_448Test {
         IntStream.rangeClosed(1, n).forEach(fullRange::add);
         assertEquals(fullRange, union);
     }
+@Test
+    public void testEveryMissingPositionWithOneReplacement() {
+        for (int n = 2; n <= 50; n++) {
+            for (int missing = 1; missing <= n; missing++) {
+                int[] values = java.util.stream.IntStream.rangeClosed(1, n).toArray();
+                values[missing - 1] = missing == n ? 1 : n;
+                assertEquals(List.of(missing), solver.findDisappearedNumbers(values));
+            }
+        }
+    }
+
+    @Test
+    public void testGiantUpperHalfRepeatedHasExactMissingRange() {
+        int[] values = new int[20000];
+        for (int i = 0; i < values.length; i++) values[i] = 10001 + i % 10000;
+        List<Integer> expected = java.util.stream.IntStream.rangeClosed(1, 10000).boxed().toList();
+        assertEquals(expected, solver.findDisappearedNumbers(values));
+    }
+
+    @Test
+    public void testInterleavedPairsAtRangeExtremes() {
+        assertEquals(List.of(2, 3, 6, 7),
+                solver.findDisappearedNumbers(new int[]{8, 1, 5, 4, 1, 8, 4, 5}));
+    }
 }

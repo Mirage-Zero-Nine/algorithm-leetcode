@@ -12,6 +12,41 @@ import org.junit.jupiter.api.Test;
 public class CriticalConnections_1192Test {
 
     @Test
+    public void testAllConnectedFourServerGraphsAgainstEdgeRemoval() {
+        int[][] possible = {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}};
+        CriticalConnections_1192 solution = new CriticalConnections_1192();
+        for (int mask = 0; mask < 64; mask++) {
+            List<List<Integer>> edges = new ArrayList<>();
+            for (int i = 0; i < possible.length; i++)
+                if ((mask & (1 << i)) != 0) edges.add(List.of(possible[i][0], possible[i][1]));
+            if (!allServersReachable(edges, -1)) continue;
+            Set<Set<Integer>> expected = new HashSet<>();
+            for (int omitted = 0; omitted < edges.size(); omitted++)
+                if (!allServersReachable(edges, omitted)) expected.add(new HashSet<>(edges.get(omitted)));
+            List<List<Integer>> actual = solution.criticalConnections(4, edges);
+            Set<Set<Integer>> normalized = new HashSet<>();
+            for (List<Integer> edge : actual) normalized.add(new HashSet<>(edge));
+            assertEquals(expected.size(), actual.size(), "graph " + mask);
+            assertEquals(expected, normalized, "graph " + mask);
+        }
+    }
+
+    private boolean allServersReachable(List<List<Integer>> edges, int omitted) {
+        boolean[] reached = new boolean[4];
+        reached[0] = true;
+        for (int pass = 0; pass < 4; pass++) {
+            for (int i = 0; i < edges.size(); i++) {
+                if (i == omitted) continue;
+                int a = edges.get(i).get(0), b = edges.get(i).get(1);
+                if (reached[a] || reached[b]) reached[a] = reached[b] = true;
+            }
+        }
+        for (boolean server : reached) if (!server) return false;
+        return true;
+    }
+
+
+    @Test
     public void testHappyCases() {
         CriticalConnections_1192 test = new CriticalConnections_1192();
         List<List<Integer>> result = test.criticalConnections(4, List.of(List.of(0, 1), List.of(1, 2), List.of(2, 0), List.of(1, 3)));

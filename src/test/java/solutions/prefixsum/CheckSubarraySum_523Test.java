@@ -13,6 +13,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class CheckSubarraySum_523Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 2, 7, 19, 42, 97, 211, 2026, 65537})
+    void bothMethodsMatchDirectSubarrayEnumeration(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int trial = 0; trial < 100; trial++) {
+            int[] nums = random.ints(1 + random.nextInt(12), 0, 21).toArray();
+            int k = random.nextInt(12);
+            boolean expected = false;
+            for (int left = 0; left < nums.length; left++) {
+                int sum = 0;
+                for (int right = left; right < nums.length; right++) {
+                    sum += nums[right];
+                    if (right > left && (k == 0 ? sum == 0 : sum % k == 0)) expected = true;
+                }
+            }
+            assertEquals(expected, solver.checkSubarraySum(nums.clone(), k), java.util.Arrays.toString(nums) + ", k=" + k);
+            assertEquals(expected, solver.checkSubarraySumByTraverseArray(nums.clone(), k));
+        }
+    }
+
+    @Test
+    void largeArrayDistinguishesWholeArrayFromUnreachableMultiple() {
+        int[] nums = new int[100_000];
+        java.util.Arrays.fill(nums, 1);
+        assertFalse(solver.checkSubarraySum(nums, 100_001));
+        assertTrue(solver.checkSubarraySum(nums, 100_000));
+    }
+
+
     private final CheckSubarraySum_523 solver = new CheckSubarraySum_523();
 
     // === checkSubarraySum tests ===

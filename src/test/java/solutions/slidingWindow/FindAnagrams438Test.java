@@ -69,4 +69,24 @@ public class FindAnagrams438Test {
         assertEquals(0, result.get(0));
         assertEquals(99998, result.get(result.size() - 1));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "independent oracle seed={0}")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {7, 19, 43, 71, 101, 211, 509, 997, 2027, 4093, 8191, 16381})
+    public void testSeededCasesAgainstIndependentOracle(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int sample = 0; sample < 40; sample++) {
+
+            String s = random.ints(30, 'a', 'e').collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+            String p = random.ints(1 + random.nextInt(6), 'a', 'e').collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+            char[] pattern = p.toCharArray();
+            java.util.Arrays.sort(pattern);
+            java.util.List<Integer> expected = new java.util.ArrayList<>();
+            for (int left = 0; left + p.length() <= s.length(); left++) {
+                char[] candidate = s.substring(left, left + p.length()).toCharArray();
+                java.util.Arrays.sort(candidate);
+                if (java.util.Arrays.equals(pattern, candidate)) expected.add(left);
+            }
+            org.junit.jupiter.api.Assertions.assertEquals(expected, new FindAnagrams_438().findAnagrams(s, p), s + ", p=" + p);
+        }
+    }
 }

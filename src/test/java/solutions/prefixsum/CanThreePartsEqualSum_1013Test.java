@@ -13,6 +13,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class CanThreePartsEqualSum_1013Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {3, 4, 5, 6, 7})
+    void exhaustiveSignedArraysMatchAllCutPairs(int size) {
+        int combinations = (int) Math.pow(3, size);
+        for (int code = 0; code < combinations; code++) {
+            int[] nums = new int[size];
+            for (int i = 0, value = code; i < size; i++, value /= 3) nums[i] = value % 3 - 1;
+            boolean expected = false;
+            for (int left = 1; left < size - 1; left++) {
+                for (int right = left + 1; right < size; right++) {
+                    int a = java.util.Arrays.stream(nums, 0, left).sum();
+                    int b = java.util.Arrays.stream(nums, left, right).sum();
+                    int c = java.util.Arrays.stream(nums, right, size).sum();
+                    expected |= a == b && b == c;
+                }
+            }
+            assertEquals(expected, solver.canThreePartsEqualSum(nums), java.util.Arrays.toString(nums));
+        }
+    }
+
+    @Test
+    void largeZeroArrayNeedsThreeNonemptyParts() {
+        int[] nums = new int[50_000];
+        assertTrue(solver.canThreePartsEqualSum(nums));
+        nums[nums.length - 1] = 1;
+        assertFalse(solver.canThreePartsEqualSum(nums));
+    }
+
+
     private final CanThreePartsEqualSum_1013 solver = new CanThreePartsEqualSum_1013();
 
     @Test

@@ -23,12 +23,27 @@ public class MissingNumber_1228 {
      */
     public int missingNumber(int[] arr) {
         int n = arr.length;
-        int diff = Math.min(Math.abs(arr[0] - arr[1]), Math.abs(arr[n - 1] - arr[n - 2]));
-        int tmp;
+        if (n < 2) {
+            return n == 0 ? 0 : arr[0];
+        }
+
+        if (n == 2) {
+            return (int) (((long) arr[0] + arr[1]) / 2);
+        }
+
+        long firstDifference = (long) arr[1] - arr[0];
+        long direction = Long.signum(firstDifference);
+        long diff = Math.min(Math.abs(firstDifference),
+                Math.abs((long) arr[n - 1] - arr[n - 2]));
+        if (diff == 0) {
+            return arr[0];
+        }
+
+        long step = direction * diff;
         for (int i = 1; i < n; i++) {
-            tmp = Math.abs(arr[i] - arr[i - 1]);
-            if (tmp > diff) {
-                return arr[i - 1] + ((i == n - 1) ? arr[1] - arr[0] : arr[i + 1] - arr[i]);
+            long currentDifference = (long) arr[i] - arr[i - 1];
+            if (Math.abs(currentDifference) > diff) {
+                return (int) (arr[i - 1] + step);
             }
         }
 

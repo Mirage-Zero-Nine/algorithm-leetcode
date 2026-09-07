@@ -101,4 +101,26 @@ public class HammingWeight_191Test {
     public void testEdgeValuesAgainstJdkOracle(int input) {
         assertEquals(Integer.bitCount(input), solver.hammingWeight(input));
     }
+
+    @Test public void testSeededUnsignedBitPatterns() {
+        java.util.Random random = new java.util.Random(1910906L);
+        for (int i = 0; i < 10000; i++) {
+            int value = random.nextInt();
+            assertEquals(Integer.bitCount(value), solver.hammingWeight(value));
+        }
+    }
+
+    @Test public void testEveryOneClearedBit() {
+        for (int bit = 0; bit < 32; bit++) assertEquals(31, solver.hammingWeight(~(1 << bit)));
+    }
+
+    @Test public void testAllContiguousBitRuns() {
+        for (int start = 0; start < 32; start++) {
+            int value = 0;
+            for (int end = start; end < 32; end++) {
+                value |= 1 << end;
+                assertEquals(end - start + 1, solver.hammingWeight(value));
+            }
+        }
+    }
 }

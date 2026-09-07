@@ -90,4 +90,41 @@ public class FindNumOfValidWords_1178Test {
             assertEquals(1000, count);
         }
     }
+
+    @Test public void testEveryRequiredPuzzleLetter() {
+        String[] words = {"aaa", "bbb", "ccc", "abc", "abcdefg", "xyz"};
+        assertEquals(java.util.List.of(3, 3, 3, 1, 1, 1, 1), solver.findNumOfValidWords(words,
+                new String[]{"abcdefg", "bcdefga", "cdefgab", "defgabc", "efgabcd", "fgabcde", "gabcdef"}));
+    }
+
+    @Test public void testSeededWordsAgainstCharacterMembershipOracle() {
+        java.util.Random random = new java.util.Random(11780906L);
+        for (int sample = 0; sample < 40; sample++) {
+            String[] words = new String[50];
+            for (int i = 0; i < words.length; i++) {
+                StringBuilder word = new StringBuilder();
+                for (int j = 0, length = 4 + random.nextInt(8); j < length; j++)
+                    word.append((char) ('a' + random.nextInt(10)));
+                words[i] = word.toString();
+            }
+            String[] puzzles = {"abcdefg", "bcdefgh", "cdefghi", "defghij", "jabcdef"};
+            java.util.List<Integer> expected = new java.util.ArrayList<>();
+            for (String puzzle : puzzles) {
+                int count = 0;
+                for (String word : words) {
+                    boolean valid = word.indexOf(puzzle.charAt(0)) >= 0;
+                    for (char letter : word.toCharArray()) valid &= puzzle.indexOf(letter) >= 0;
+                    if (valid) count++;
+                }
+                expected.add(count);
+            }
+            assertEquals(expected, solver.findNumOfValidWords(words, puzzles));
+        }
+    }
+
+    @Test public void testDuplicatesCountSeparatelyAndZIsIncluded() {
+        assertEquals(java.util.List.of(3, 0), solver.findNumOfValidWords(
+                new String[]{"zzzz", "zzzz", "zabc", "abcd"},
+                new String[]{"zabcdef", "yabcdef"}));
+    }
 }

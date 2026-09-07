@@ -144,4 +144,27 @@ public class Insert_57Test {
         int[][] expected = {{-200, 200}};
         assertArrayEquals(expected, solver.insert(intervals, new int[]{-200, 200}));
     }
+@Test
+    public void testGiantMiddleInsertionChecksEntireResult() {
+        int[][] intervals = new int[2000][2];
+        java.util.List<int[]> expected = new java.util.ArrayList<>();
+        for (int i = 0; i < intervals.length; i++) {
+            intervals[i] = new int[]{4 * i, 4 * i + 1};
+            if (i < 500 || i > 1500) expected.add(intervals[i].clone());
+            if (i == 500) expected.add(new int[]{2000, 6001});
+        }
+        assertArrayEquals(expected.toArray(new int[0][]), solver.insert(intervals, new int[]{2000, 6001}));
+    }
+
+    @Test
+    public void testPointInGapIsPreservedAsSeparateClosedInterval() {
+        assertArrayEquals(new int[][]{{0, 2}, {3, 3}, {4, 6}},
+                solver.insert(new int[][]{{0, 2}, {4, 6}}, new int[]{3, 3}));
+    }
+
+    @Test
+    public void testPointAtExistingEndpointDoesNotSplitInterval() {
+        assertArrayEquals(new int[][]{{0, 2}, {4, 6}},
+                solver.insert(new int[][]{{0, 2}, {4, 6}}, new int[]{4, 4}));
+    }
 }

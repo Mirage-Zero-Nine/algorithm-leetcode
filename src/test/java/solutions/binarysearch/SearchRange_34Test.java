@@ -63,4 +63,34 @@ public class SearchRange_34Test {
         }
         assertArrayEquals(new int[]{300, 699}, test.searchRange(arr, 2));
     }
+@Test
+    public void testEverySmallThreeValueMultiplicity() {
+        for (int negative = 0; negative <= 12; negative++) for (int zeros = 0; zeros <= 12; zeros++)
+            for (int positive = 0; positive <= 12; positive++) {
+                int[] values = new int[negative + zeros + positive];
+                java.util.Arrays.fill(values, 0, negative, -1);
+                java.util.Arrays.fill(values, negative + zeros, values.length, 1);
+                assertArrayEquals(zeros == 0 ? new int[]{-1, -1} : new int[]{negative, negative + zeros - 1},
+                        test.searchRange(values, 0));
+            }
+    }
+
+    @Test
+    public void testRepeatedIntegerExtremes() {
+        int[] values = {Integer.MIN_VALUE, Integer.MIN_VALUE, 0, Integer.MAX_VALUE, Integer.MAX_VALUE};
+        assertArrayEquals(new int[]{0, 1}, test.searchRange(values, Integer.MIN_VALUE));
+        assertArrayEquals(new int[]{3, 4}, test.searchRange(values, Integer.MAX_VALUE));
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(values, -1));
+    }
+
+    @Test
+    public void testGiantSingleRunBesideSingletons() {
+        int[] values = new int[100000];
+        java.util.Arrays.fill(values, 7);
+        values[0] = 6;
+        values[values.length - 1] = 8;
+        assertArrayEquals(new int[]{1, 99998}, test.searchRange(values, 7));
+        assertArrayEquals(new int[]{0, 0}, test.searchRange(values, 6));
+        assertArrayEquals(new int[]{99999, 99999}, test.searchRange(values, 8));
+    }
 }

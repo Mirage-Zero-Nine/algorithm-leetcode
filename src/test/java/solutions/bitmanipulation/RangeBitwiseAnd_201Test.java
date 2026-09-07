@@ -69,4 +69,32 @@ public class RangeBitwiseAnd_201Test {
         }
         return result;
     }
+
+    @Test public void testNarrowRangesNearIntegerMaximum() {
+        for (int width = 0; width <= 1024; width++) {
+            int left = Integer.MAX_VALUE - width;
+            int expected = Integer.MAX_VALUE;
+            for (long value = left; value <= Integer.MAX_VALUE; value++) expected &= (int) value;
+            assertEquals(expected, solver.rangeBitwiseAnd(left, Integer.MAX_VALUE));
+        }
+    }
+
+    @Test public void testEveryPowerOfTwoBoundary() {
+        for (int bit = 1; bit < 31; bit++) {
+            int power = 1 << bit;
+            assertEquals(0, solver.rangeBitwiseAnd(power - 1, power));
+            assertEquals(power, solver.rangeBitwiseAnd(power, power + power - 1));
+        }
+    }
+
+    @Test public void testSeededNarrowHighRanges() {
+        java.util.Random random = new java.util.Random(2010906L);
+        for (int sample = 0; sample < 1000; sample++) {
+            int left = random.nextInt(Integer.MAX_VALUE - 128);
+            int right = left + random.nextInt(128);
+            int expected = left;
+            for (int value = left + 1; value <= right; value++) expected &= value;
+            assertEquals(expected, solver.rangeBitwiseAnd(left, right));
+        }
+    }
 }

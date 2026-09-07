@@ -22,7 +22,7 @@ class MissingNumber_1228Test {
 
     @Test
     void testTwoElements() {
-        assertEquals(1, solution.missingNumber(new int[]{1, 5}));
+        assertEquals(3, solution.missingNumber(new int[]{1, 5}));
     }
 
     @Test
@@ -32,7 +32,7 @@ class MissingNumber_1228Test {
 
     @Test
     void testLargeGap() {
-        assertEquals(0, solution.missingNumber(new int[]{0, 20}));
+        assertEquals(10, solution.missingNumber(new int[]{0, 20}));
     }
 
     @Test
@@ -75,5 +75,30 @@ class MissingNumber_1228Test {
             arr[idx++] = i;
         }
         assertEquals(9, solution.missingNumber(arr));
+    }
+@Test
+    void testEveryRemovedInteriorTermAcrossIncreasingAndDecreasingProgressions() {
+        for (int step = -7; step <= 7; step++) for (int length = 4; length <= 30; length++)
+            for (int missing = 1; missing < length - 1; missing++) {
+                int[] values = new int[length - 1];
+                int index = 0;
+                for (int i = 0; i < length; i++) if (i != missing) values[index++] = 100 + step * i;
+                assertEquals(100 + step * missing, solution.missingNumber(values),
+                        "step=" + step + ", length=" + length + ", missing=" + missing);
+            }
+    }
+
+    @Test
+    void testTwoRemainingEndpointsDetermineTheRemovedMiddleTerm() {
+        // Original arithmetic progression [1, 3, 5], with its interior term removed.
+        assertEquals(3, solution.missingNumber(new int[]{1, 5}));
+    }
+
+    @Test
+    void testGiantDecreasingProgressionWithPenultimateTermMissing() {
+        int[] values = new int[9999];
+        int index = 0;
+        for (int i = 0; i < 10000; i++) if (i != 9998) values[index++] = 50000 - 3 * i;
+        assertEquals(20006, solution.missingNumber(values));
     }
 }

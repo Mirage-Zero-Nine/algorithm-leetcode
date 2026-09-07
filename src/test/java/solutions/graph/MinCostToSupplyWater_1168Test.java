@@ -6,6 +6,42 @@ import org.junit.jupiter.api.Test;
 
 public class MinCostToSupplyWater_1168Test {
 
+    @Test
+    public void testThreeHouseNetworksAgainstExhaustiveSpanningTrees() {
+        java.util.Random random = new java.util.Random(11682026L);
+        for (int sample = 0; sample < 100; sample++) {
+            int[] wells = {random.nextInt(20), random.nextInt(20), random.nextInt(20)};
+            int[][] pipes = {{1, 2, random.nextInt(20)}, {1, 3, random.nextInt(20)}, {2, 3, random.nextInt(20)}};
+            int[][] edges = {{0, 1, wells[0]}, {0, 2, wells[1]}, {0, 3, wells[2]}, pipes[0], pipes[1], pipes[2]};
+            int expected = Integer.MAX_VALUE;
+            for (int mask = 0; mask < 64; mask++) {
+                if (Integer.bitCount(mask) != 3) continue;
+                boolean[] reached = {true, false, false, false};
+                int cost = 0;
+                for (int i = 0; i < 6; i++) if ((mask & (1 << i)) != 0) cost += edges[i][2];
+                for (int pass = 0; pass < 4; pass++)
+                    for (int i = 0; i < 6; i++)
+                        if ((mask & (1 << i)) != 0 && (reached[edges[i][0]] || reached[edges[i][1]]))
+                            reached[edges[i][0]] = reached[edges[i][1]] = true;
+                if (reached[1] && reached[2] && reached[3]) expected = Math.min(expected, cost);
+            }
+            assertEquals(expected, test.minCostToSupplyWater(3, wells, pipes), "network " + sample);
+        }
+    }
+
+    @Test
+    public void testDisconnectedPipeComponentsNeedSeparateWells() {
+        assertEquals(12, test.minCostToSupplyWater(4, new int[]{9, 2, 7, 8},
+                new int[][]{{1, 2, 1}, {3, 4, 2}}));
+    }
+
+    @Test
+    public void testParallelPipesWithDifferentCosts() {
+        assertEquals(4, test.minCostToSupplyWater(2, new int[]{3, 100},
+                new int[][]{{1, 2, 50}, {2, 1, 1}, {1, 2, 20}}));
+    }
+
+
     private final MinCostToSupplyWater_1168 test = new MinCostToSupplyWater_1168();
 
     @Test

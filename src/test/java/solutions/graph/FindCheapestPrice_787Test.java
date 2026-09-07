@@ -12,6 +12,37 @@ import org.junit.jupiter.api.Test;
 
 public class FindCheapestPrice_787Test {
 
+    @Test
+    public void testSeededFlightsAgainstBoundedBellmanFord() {
+        java.util.Random random = new java.util.Random(7872026L);
+        for (int sample = 0; sample < 100; sample++) {
+            java.util.List<int[]> edges = new java.util.ArrayList<>();
+            for (int from = 0; from < 5; from++)
+                for (int to = 0; to < 5; to++)
+                    if (from != to && random.nextBoolean()) edges.add(new int[]{from, to, 1 + random.nextInt(100)});
+            int[][] flights = edges.toArray(new int[0][]);
+            int source = random.nextInt(5);
+            int destination = (source + 1 + random.nextInt(4)) % 5;
+            int[] cost = new int[5];
+            java.util.Arrays.fill(cost, 1000000);
+            cost[source] = 0;
+            for (int stops = 0; stops < 5; stops++) {
+                int[] next = cost.clone();
+                for (int[] edge : flights) next[edge[1]] = Math.min(next[edge[1]], cost[edge[0]] + edge[2]);
+                cost = next;
+                int expected = cost[destination] == 1000000 ? -1 : cost[destination];
+                assertBoth(5, flights, source, destination, stops, expected);
+            }
+        }
+    }
+
+    @Test
+    public void testMoreExpensiveArrivalWithFewerStopsRemainsUseful() {
+        assertBoth(5, new int[][]{{0, 1, 1}, {1, 2, 1}, {0, 2, 5}, {2, 3, 1}, {3, 4, 1}},
+                0, 4, 2, 7);
+    }
+
+
     private final FindCheapestPrice_787 test = new FindCheapestPrice_787();
 
     @Test

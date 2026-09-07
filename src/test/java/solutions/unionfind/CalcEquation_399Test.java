@@ -10,6 +10,40 @@ import org.junit.jupiter.api.Test;
 public class CalcEquation_399Test {
 
     @Test
+    public void testConsistentFractionalNetworksAgainstAssignedVariableValues() {
+        java.util.Random random = new java.util.Random(3992026L);
+        for (int sample = 0; sample < 50; sample++) {
+            double[] assignment = new double[6];
+            for (int i = 0; i < 6; i++) assignment[i] = 1 + random.nextInt(100);
+            List<List<String>> equations = new ArrayList<>();
+            double[] ratios = new double[5];
+            for (int i = 0; i < 5; i++) {
+                equations.add(List.of("v" + i, "v" + (i + 1)));
+                ratios[i] = assignment[i] / assignment[i + 1];
+            }
+            List<List<String>> queries = new ArrayList<>();
+            double[] expected = new double[36];
+            for (int i = 0; i < 6; i++)
+                for (int j = 0; j < 6; j++) {
+                    queries.add(List.of("v" + i, "v" + j));
+                    expected[i * 6 + j] = assignment[i] / assignment[j];
+                }
+            assertArrayEquals(expected, new CalcEquation_399().calcEquation(equations, ratios, queries), 1e-9);
+        }
+    }
+
+    @Test
+    public void testIndependentEquationSystemsUseIndependentInstances() {
+        CalcEquation_399 firstSystem = new CalcEquation_399();
+        firstSystem.calcEquation(List.of(List.of("a", "b")), new double[]{2}, List.of(List.of("a", "b")));
+
+        CalcEquation_399 secondSystem = new CalcEquation_399();
+        assertArrayEquals(new double[]{-1, 3}, secondSystem.calcEquation(List.of(List.of("x", "y")),
+                new double[]{3}, List.of(List.of("a", "b"), List.of("x", "y"))), 1e-9);
+    }
+
+
+    @Test
     public void testHappyCases() {
         CalcEquation_399 test = new CalcEquation_399();
         double[] result = test.calcEquation(

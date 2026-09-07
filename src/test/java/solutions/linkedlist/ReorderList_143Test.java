@@ -8,6 +8,28 @@ import org.junit.jupiter.api.Test;
 
 public class ReorderList_143Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5, 8, 15, 32, 100, 1000})
+    void reorderPreservesEveryNodeInAlternatingEndOrder(int size) {
+        java.util.List<ListNode> originals = new java.util.ArrayList<>();
+        for (int i = 0; i < size; i++) originals.add(new ListNode(i % 7 - 3));
+        for (int i = 1; i < size; i++) originals.get(i - 1).next = originals.get(i);
+        java.util.List<ListNode> expected = new java.util.ArrayList<>(originals);
+        expected.clear();
+        for (int i = 0; i < size; i++) {
+            expected.add(originals.get(i % 2 == 0 ? i / 2 : size - 1 - i / 2));
+        }
+        test.reorderList(originals.get(0));
+        ListNode current = originals.get(0);
+        for (ListNode node : expected) {
+            org.junit.jupiter.api.Assertions.assertSame(node, current);
+            current = current.next;
+        }
+        org.junit.jupiter.api.Assertions.assertNull(current);
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+    }
+
+
     private final ReorderList_143 test = new ReorderList_143();
 
     private ListNode build(int... vals) {

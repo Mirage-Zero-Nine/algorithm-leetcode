@@ -9,6 +9,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubarraySum_560Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 2, 7, 19, 42, 97, 211, 2026, 65537})
+    void signedArraysAndNegativeTargetsMatchDirectSums(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int trial = 0; trial < 100; trial++) {
+            int[] nums = random.ints(1 + random.nextInt(30), -3, 4).toArray();
+            int target = random.nextInt(13) - 6;
+            assertEquals(bruteForce(nums, target), solver.subarraySum(nums, target),
+                    java.util.Arrays.toString(nums) + ", target=" + target);
+        }
+    }
+
+    @Test
+    void maximumLengthZerosCountEveryNonemptySubarray() {
+        int size = 20_000;
+        assertEquals(size * (size + 1) / 2, solver.subarraySum(new int[size], 0));
+        assertEquals(0, solver.subarraySum(new int[size], 1));
+    }
+
+
     private final SubarraySum_560 solver = new SubarraySum_560();
 
     @Test

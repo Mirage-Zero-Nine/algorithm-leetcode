@@ -8,6 +8,27 @@ import org.junit.jupiter.api.Test;
 
 public class RemoveElements_203Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2, 3, 4, 5, 8, 15, 32, 100, 1000})
+    void removalMatchesFilteringAndPreservesRetainedNodes(int size) {
+        for (int target = -4; target <= 4; target++) {
+        java.util.List<ListNode> originals = new java.util.ArrayList<>();
+        for (int i = 0; i < size; i++) originals.add(new ListNode(i % 7 - 3));
+        for (int i = 1; i < size; i++) originals.get(i - 1).next = originals.get(i);
+        java.util.List<ListNode> expected = new java.util.ArrayList<>(originals);
+            final int value = target;
+            expected.removeIf(node -> node.val == value);
+            ListNode current = test.removeElements(originals.get(0), target);
+        for (ListNode node : expected) {
+            org.junit.jupiter.api.Assertions.assertSame(node, current);
+            current = current.next;
+        }
+        org.junit.jupiter.api.Assertions.assertNull(current);
+        for (int i = 0; i < size; i++) assertEquals(i % 7 - 3, originals.get(i).val);
+        }
+    }
+
+
     private final RemoveElements_203 test = new RemoveElements_203();
 
     private ListNode build(int... vals) {

@@ -16,6 +16,35 @@ public class CanFinish_207Test {
     private final CanFinish_207 test = new CanFinish_207();
 
     @Test
+    public void testAllFourCourseGraphsAgainstTransitiveClosure() {
+        for (int mask = 0; mask < (1 << 12); mask++) {
+            java.util.List<int[]> edges = new java.util.ArrayList<>();
+            boolean[][] reachable = new boolean[4][4];
+            int bit = 0;
+            for (int from = 0; from < 4; from++) {
+                for (int to = 0; to < 4; to++) {
+                    if (from != to && (mask & (1 << bit++)) != 0) {
+                        edges.add(new int[]{to, from});
+                        reachable[from][to] = true;
+                    }
+                }
+            }
+            for (int via = 0; via < 4; via++) {
+                for (int from = 0; from < 4; from++) {
+                    for (int to = 0; to < 4; to++) {
+                        reachable[from][to] |= reachable[from][via] && reachable[via][to];
+                    }
+                }
+            }
+            boolean expected = true;
+            for (int i = 0; i < 4; i++) expected &= !reachable[i][i];
+            int[][] prerequisites = edges.toArray(new int[0][]);
+            org.junit.jupiter.api.Assertions.assertEquals(expected, test.canFinish(4, prerequisites), "graph " + mask);
+            org.junit.jupiter.api.Assertions.assertEquals(expected, test.intArray(4, prerequisites), "matrix graph " + mask);
+        }
+    }
+
+    @Test
     public void test() {
         int[][] prerequisites = new int[][]{{1, 0}};
         assertTrue(test.canFinish(2, prerequisites));

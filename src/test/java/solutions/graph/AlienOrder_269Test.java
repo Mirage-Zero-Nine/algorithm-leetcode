@@ -11,6 +11,40 @@ import org.junit.jupiter.api.Test;
 
 public class AlienOrder_269Test {
 
+    @Test
+    public void testSingleWordAlphabetHasNoDuplicateLetters() {
+        String result = test.alienOrder(new String[]{"hello"});
+        assertEquals(4, result.length(), "an alphabet contains each distinct letter once");
+        assertEquals(Set.of('h', 'e', 'l', 'o'),
+                result.chars().mapToObj(value -> (char) value).collect(java.util.stream.Collectors.toSet()));
+    }
+
+    @Test
+    public void testPrefixExtensionStillParticipatesInNextComparison() {
+        String result = test.alienOrder(new String[]{"ab", "abc", "abb"});
+        assertEquals(3, result.length());
+        assertTrue(result.indexOf('c') < result.indexOf('b'), "abc before abb requires c before b");
+    }
+
+    @Test
+    public void testAllRotationsOfTotalAlphabetOrdering() {
+        String alphabet = "abcdefghijklmnopqrstuvwxyz";
+        for (int offset = 0; offset < 26; offset++) {
+            String expected = alphabet.substring(offset) + alphabet.substring(0, offset);
+            String[] words = expected.chars().mapToObj(value -> String.valueOf((char) value)).toArray(String[]::new);
+            assertEquals(expected, test.alienOrder(words));
+        }
+    }
+
+    @Test
+    public void testIndependentConstraintsAreBothRequired() {
+        String result = test.alienOrder(new String[]{"za", "zb", "ca", "cb"});
+        assertEquals(4, result.length());
+        assertTrue(result.indexOf('z') < result.indexOf('c'));
+        assertTrue(result.indexOf('a') < result.indexOf('b'));
+    }
+
+
     private final AlienOrder_269 test = new AlienOrder_269();
 
     @Test
@@ -101,10 +135,10 @@ public class AlienOrder_269Test {
 
     @Test
     public void testSingleWordReturnsWord() {
-        // Single word returns the word itself (all letters, any permutation valid)
+        // A single word contributes each distinct letter exactly once.
         assertEquals("abc", test.alienOrder(new String[]{"abc"}));
         assertEquals("z", test.alienOrder(new String[]{"z"}));
-        assertEquals("hello", test.alienOrder(new String[]{"hello"}));
+        assertEquals("ehlo", test.alienOrder(new String[]{"hello"}));
     }
 
     @Test

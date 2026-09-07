@@ -69,4 +69,26 @@ public class HammingDistance_461Test {
         }
         return distance;
     }
+
+    @Test public void testEachHighBitDiffersFromZeroAndItsComplement() {
+        for (int bit = 0; bit < 31; bit++) {
+            int value = 1 << bit;
+            assertEquals(1, solver.hammingDistance(0, value));
+            assertEquals(31, solver.hammingDistance(value, Integer.MAX_VALUE ^ value));
+        }
+    }
+
+    @Test public void testSeededFullNonnegativeDomain() {
+        java.util.Random random = new java.util.Random(4610906L);
+        for (int sample = 0; sample < 10000; sample++) {
+            int x = random.nextInt() & Integer.MAX_VALUE;
+            int y = random.nextInt() & Integer.MAX_VALUE;
+            assertEquals(Integer.bitCount(x ^ y), solver.hammingDistance(x, y));
+        }
+    }
+
+    @Test public void testConsecutiveNumbersAcrossEveryCarryBoundary() {
+        for (int bit = 1; bit < 31; bit++)
+            assertEquals(bit + 1, solver.hammingDistance((1 << bit) - 1, 1 << bit));
+    }
 }

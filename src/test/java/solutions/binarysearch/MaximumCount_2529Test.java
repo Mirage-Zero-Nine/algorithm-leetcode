@@ -90,4 +90,28 @@ public class MaximumCount_2529Test {
         }
         assertEquals(2000, test.maximumCount(nums));
     }
+@Test
+    public void testEverySmallSignDistribution() {
+        for (int negative = 0; negative <= 12; negative++) for (int zeros = 0; zeros <= 12; zeros++)
+            for (int positive = 0; positive <= 12; positive++) {
+                int[] values = new int[negative + zeros + positive];
+                java.util.Arrays.fill(values, 0, negative, -1);
+                java.util.Arrays.fill(values, negative + zeros, values.length, 1);
+                assertEquals(Math.max(negative, positive), test.maximumCount(values));
+            }
+    }
+
+    @Test
+    public void testIntegerExtremesCountOnlyTheirSigns() {
+        assertEquals(2, test.maximumCount(
+                new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE, 0, Integer.MAX_VALUE}));
+    }
+
+    @Test
+    public void testGiantZeroPlateauDoesNotContributeToEitherCount() {
+        int[] values = new int[100000];
+        java.util.Arrays.fill(values, 0, 7, -1);
+        java.util.Arrays.fill(values, 99989, 100000, 1);
+        assertEquals(11, test.maximumCount(values));
+    }
 }

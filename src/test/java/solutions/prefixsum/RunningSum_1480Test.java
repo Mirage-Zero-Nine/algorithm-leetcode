@@ -14,6 +14,30 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
  */
 public class RunningSum_1480Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 2, 7, 19, 42, 97, 211, 2026, 65537})
+    void independentRangeSumsMatchEveryOutputAndPreserveInput(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        int[] nums = random.ints(200, -1000, 1001).toArray();
+        int[] snapshot = nums.clone();
+        int[] expected = new int[nums.length];
+        for (int i = 0; i < nums.length; i++) expected[i] = java.util.Arrays.stream(nums, 0, i + 1).sum();
+        assertArrayEquals(expected, solver.runningSum(nums));
+        assertArrayEquals(snapshot, nums);
+    }
+
+    @Test
+    void largeAlternatingSignsHaveKnownEveryElementResult() {
+        int[] nums = new int[1000];
+        int[] expected = new int[1000];
+        for (int i = 0; i < nums.length; i++) {
+            nums[i] = i % 2 == 0 ? 1000 : -1000;
+            expected[i] = i % 2 == 0 ? 1000 : 0;
+        }
+        assertArrayEquals(expected, solver.runningSum(nums));
+    }
+
+
     private final RunningSum_1480 solver = new RunningSum_1480();
 
     @Test

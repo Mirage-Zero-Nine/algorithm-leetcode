@@ -107,4 +107,28 @@ public class FindSubstring_30Test {
         List<Integer> result = test.findSubstring(s, words);
         assertEquals(n - 1, result.size());
     }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "independent oracle seed={0}")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {7, 19, 43, 71, 101, 211, 509, 997, 2027, 4093, 8191, 16381})
+    public void testSeededCasesAgainstIndependentOracle(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int sample = 0; sample < 40; sample++) {
+
+            int wordLength = 1 + random.nextInt(3), count = 1 + random.nextInt(4);
+            String[] words = new String[count];
+            for (int i = 0; i < count; i++)
+                words[i] = random.ints(wordLength, 'a', 'd').collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+            String s = random.ints(30, 'a', 'd').collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+            java.util.List<String> wanted = new java.util.ArrayList<>(java.util.Arrays.asList(words));
+            java.util.Collections.sort(wanted);
+            java.util.List<Integer> expected = new java.util.ArrayList<>();
+            for (int left = 0; left + count * wordLength <= s.length(); left++) {
+                java.util.List<String> candidate = new java.util.ArrayList<>();
+                for (int i = 0; i < count; i++) candidate.add(s.substring(left + i * wordLength, left + (i + 1) * wordLength));
+                java.util.Collections.sort(candidate);
+                if (wanted.equals(candidate)) expected.add(left);
+            }
+            org.junit.jupiter.api.Assertions.assertEquals(expected, new FindSubstring_30().findSubstring(s, words));
+        }
+    }
 }

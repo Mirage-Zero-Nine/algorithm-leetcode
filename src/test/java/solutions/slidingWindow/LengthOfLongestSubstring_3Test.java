@@ -157,4 +157,25 @@ public class LengthOfLongestSubstring_3Test {
         }
         return max;
     }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "independent oracle seed={0}")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {7, 19, 43, 71, 101, 211, 509, 997, 2027, 4093, 8191, 16381})
+    public void testSeededCasesAgainstIndependentOracle(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int sample = 0; sample < 40; sample++) {
+
+            String s = random.ints(30, 32, 40).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+            int k = random.nextInt(9), expected = 0;
+            for (int left = 0; left < s.length(); left++) {
+                java.util.Set<Character> seen = new java.util.HashSet<>();
+                for (int right = left; right < s.length(); right++) {
+                    seen.add(s.charAt(right));
+                    if (seen.size() == right - left + 1) expected = Math.max(expected, right - left + 1);
+                }
+            }
+            org.junit.jupiter.api.Assertions.assertEquals(expected, new LengthOfLongestSubstring_3().lengthOfLongestSubstring(s));
+            
+
+        }
+    }
 }

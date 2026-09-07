@@ -81,4 +81,27 @@ public class GreyCode_89Test {
             assertEquals(1, Integer.bitCount(diff));
         }
     }
+
+    @Test public void testAllCodesInRangeAndCyclicAtLargerWidths() {
+        for (int bits : new int[]{6, 7, 8, 9, 11, 12, 14, 16}) {
+            java.util.List<Integer> codes = solver.grayCode(bits);
+            assertEquals(1 << bits, codes.size());
+            java.util.Set<Integer> seen = new java.util.HashSet<>(codes);
+            assertEquals(codes.size(), seen.size());
+            for (int code = 0; code < 1 << bits; code++)
+                org.junit.jupiter.api.Assertions.assertTrue(seen.contains(code), "missing=" + code);
+            assertGrayProperty(codes);
+            assertEquals(1, Integer.bitCount(codes.get(0) ^ codes.get(codes.size() - 1)));
+        }
+    }
+
+    @Test public void testSixBitCodeBeginsWithZero() {
+        assertEquals(0, solver.grayCode(6).get(0).intValue());
+    }
+
+    @Test public void testCallsDoNotShareReturnedList() {
+        java.util.List<Integer> codes = solver.grayCode(3);
+        codes.clear();
+        assertEquals(8, solver.grayCode(3).size());
+    }
 }

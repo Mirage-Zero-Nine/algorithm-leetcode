@@ -6,6 +6,41 @@ import org.junit.jupiter.api.Test;
 
 public class FindRedundantConnection_684Test {
 
+    @Test
+    public void testSeededUnicyclicGraphsAgainstRemovingEachEdge() {
+        java.util.Random random = new java.util.Random(6842026L);
+        for (int n = 3; n <= 25; n++) {
+            java.util.List<int[]> edges = new java.util.ArrayList<>();
+            boolean[][] existing = new boolean[n + 1][n + 1];
+            for (int child = 2; child <= n; child++) {
+                int parent = 1 + random.nextInt(child - 1);
+                edges.add(new int[]{parent, child});
+                existing[parent][child] = existing[child][parent] = true;
+            }
+            int a, b;
+            do {
+                a = 1 + random.nextInt(n);
+                b = 1 + random.nextInt(n);
+            } while (a == b || existing[a][b]);
+            edges.add(new int[]{Math.min(a, b), Math.max(a, b)});
+            java.util.Collections.shuffle(edges, random);
+            int[] expected = null;
+            for (int omitted = 0; omitted < n; omitted++) {
+                boolean[] reached = new boolean[n + 1];
+                reached[1] = true;
+                for (int pass = 0; pass < n; pass++)
+                    for (int i = 0; i < n; i++)
+                        if (i != omitted && (reached[edges.get(i)[0]] || reached[edges.get(i)[1]]))
+                            reached[edges.get(i)[0]] = reached[edges.get(i)[1]] = true;
+                boolean connected = true;
+                for (int vertex = 1; vertex <= n; vertex++) connected &= reached[vertex];
+                if (connected) expected = edges.get(omitted);
+            }
+            assertArrayEquals(expected, test.findRedundantConnection(edges.toArray(new int[0][])), "vertices " + n);
+        }
+    }
+
+
     private final FindRedundantConnection_684 test = new FindRedundantConnection_684();
 
     @Test

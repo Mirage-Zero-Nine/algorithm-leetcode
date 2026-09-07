@@ -91,4 +91,29 @@ public class SearchInsert_35Test {
         }
         return nums.length;
     }
+@Test
+    public void testIntegerExtremesAndInternalGaps() {
+        int[] values = {Integer.MIN_VALUE, -1, 1, Integer.MAX_VALUE};
+        int[] targets = {Integer.MIN_VALUE, Integer.MIN_VALUE + 1, -1, 0, 1, 2, Integer.MAX_VALUE};
+        int[] expected = {0, 1, 1, 2, 2, 3, 3};
+        for (int i = 0; i < targets.length; i++) assertEquals(expected[i], test.searchInsert(values, targets[i]));
+    }
+
+    @Test
+    public void testEveryInsertionGapInGiantSortedArray() {
+        int[] values = new int[20000];
+        for (int i = 0; i < values.length; i++) values[i] = 3 * i - 30000;
+        for (int i = 0; i < values.length; i++) {
+            assertEquals(i, test.searchInsert(values, values[i]));
+            assertEquals(i + 1, test.searchInsert(values, values[i] + 1));
+        }
+    }
+
+    @Test
+    public void testSearchDoesNotModifySortedInput() {
+        int[] values = {-19, -7, 4, 11, 40};
+        int[] original = values.clone();
+        assertEquals(2, test.searchInsert(values, -5));
+        org.junit.jupiter.api.Assertions.assertArrayEquals(original, values);
+    }
 }

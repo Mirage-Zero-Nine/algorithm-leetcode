@@ -84,4 +84,27 @@ public class BalancedString_1234Test {
         // n=10000, ave=2500. Q has 4000. Need to replace 1500 'Q's.
         assertEquals(1500, test.balancedString(sb.toString()));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "independent oracle seed={0}")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {7, 19, 43, 71, 101, 211, 509, 997, 2027, 4093, 8191, 16381})
+    public void testSeededCasesAgainstIndependentOracle(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int sample = 0; sample < 40; sample++) {
+
+            StringBuilder value = new StringBuilder();
+            for (int i = 0, n = 4 * (1 + random.nextInt(5)); i < n; i++) value.append("QWER".charAt(random.nextInt(4)));
+            String s = value.toString();
+            int expected = s.length();
+            for (int left = 0; left <= s.length(); left++)
+                for (int right = left; right <= s.length(); right++) {
+                    int[] outside = new int[4];
+                    for (int i = 0; i < s.length(); i++)
+                        if (i < left || i >= right) outside["QWER".indexOf(s.charAt(i))]++;
+                    boolean valid = true;
+                    for (int count : outside) valid &= count <= s.length() / 4;
+                    if (valid) expected = Math.min(expected, right - left);
+                }
+            org.junit.jupiter.api.Assertions.assertEquals(expected, new BalancedString_1234().balancedString(s), s);
+        }
+    }
 }

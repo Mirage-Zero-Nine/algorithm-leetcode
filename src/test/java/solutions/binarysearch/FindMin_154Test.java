@@ -73,4 +73,25 @@ public class FindMin_154Test {
         }
         assertEquals(0, test.findMin(rotated));
     }
+@Test
+    public void testAllRotationsAcrossSmallLengths() {
+        for (int n = 1; n <= 64; n++) for (int pivot = 0; pivot < n; pivot++) {
+            int[] values = new int[n];
+            for (int i = 0; i < n; i++) values[i] = ((i + pivot) % n) / 3 - 100;
+            assertEquals(-100, test.findMin(values), "length=" + n + ", pivot=" + pivot);
+        }
+    }
+
+    @Test
+    public void testRotationContainingIntegerExtremes() {
+        assertEquals(Integer.MIN_VALUE, test.findMin(
+                new int[]{0, 1, Integer.MAX_VALUE, Integer.MIN_VALUE, -1}));
+    }
+
+    @Test
+    public void testGiantRotationAtPenultimatePosition() {
+        int[] values = new int[100000];
+        for (int i = 0; i < values.length; i++) values[i] = ((i + 99998) % values.length) / 5 - 50000;
+        assertEquals(-50000, test.findMin(values));
+    }
 }

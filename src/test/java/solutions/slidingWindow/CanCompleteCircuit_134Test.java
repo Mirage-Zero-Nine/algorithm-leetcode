@@ -91,4 +91,31 @@ public class CanCompleteCircuit_134Test {
         // Start must be n-1.
         assertEquals(n - 1, test.canCompleteCircuit(gas, cost));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "independent oracle seed={0}")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {7, 19, 43, 71, 101, 211, 509, 997, 2027, 4093, 8191, 16381})
+    public void testSeededCasesAgainstIndependentOracle(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int sample = 0; sample < 40; sample++) {
+
+            int n = 1 + random.nextInt(12);
+            int[] gas = random.ints(n, 0, 8).toArray();
+            int[] cost = random.ints(n, 0, 8).toArray();
+            java.util.List<Integer> starts = new java.util.ArrayList<>();
+            for (int start = 0; start < n; start++) {
+                int tank = 0;
+                boolean valid = true;
+                for (int step = 0; step < n; step++) {
+                    int station = (start + step) % n;
+                    tank += gas[station] - cost[station];
+                    if (tank < 0) { valid = false; break; }
+                }
+                if (valid) starts.add(start);
+            }
+            // The documented contract guarantees a unique starting station when a solution exists.
+            if (starts.size() > 1) continue;
+            int expected = starts.isEmpty() ? -1 : starts.get(0);
+            org.junit.jupiter.api.Assertions.assertEquals(expected, new CanCompleteCircuit_134().canCompleteCircuit(gas, cost));
+        }
+    }
 }

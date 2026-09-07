@@ -83,4 +83,22 @@ public class DietPlanPerformance_1176Test {
         // k=1, lower=15, upper=20. score should be -n.
         assertEquals(-n, test.dietPlanPerformance(calories, 1, 15, 20));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "independent oracle seed={0}")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {7, 19, 43, 71, 101, 211, 509, 997, 2027, 4093, 8191, 16381})
+    public void testSeededCasesAgainstIndependentOracle(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int sample = 0; sample < 40; sample++) {
+
+            int[] calories = random.ints(1 + random.nextInt(30), 0, 30).toArray();
+            int k = 1 + random.nextInt(calories.length), lower = random.nextInt(100), upper = lower + random.nextInt(100);
+            int expected = 0;
+            for (int left = 0; left + k <= calories.length; left++) {
+                int total = 0;
+                for (int i = left; i < left + k; i++) total += calories[i];
+                expected += total < lower ? -1 : total > upper ? 1 : 0;
+            }
+            org.junit.jupiter.api.Assertions.assertEquals(expected, new DietPlanPerformance_1176().dietPlanPerformance(calories, k, lower, upper));
+        }
+    }
 }

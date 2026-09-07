@@ -10,6 +10,39 @@ public class CanConvert_1153Test {
     private final CanConvert_1153 test = new CanConvert_1153();
 
     @Test
+    public void testAllBinaryMappingsOfLengthFour() {
+        for (int source = 0; source < 16; source++) {
+            for (int target = 0; target < 16; target++) {
+                StringBuilder from = new StringBuilder();
+                StringBuilder to = new StringBuilder();
+                boolean consistent = true;
+                for (int i = 0; i < 4; i++) {
+                    from.append((char) ('a' + ((source >> i) & 1)));
+                    to.append((char) ('a' + ((target >> i) & 1)));
+                    for (int j = 0; j < i; j++) {
+                        if (from.charAt(i) == from.charAt(j) && to.charAt(i) != to.charAt(j)) {
+                            consistent = false;
+                        }
+                    }
+                }
+                org.junit.jupiter.api.Assertions.assertEquals(consistent,
+                        test.canConvert(from.toString(), to.toString()), from + " -> " + to);
+            }
+        }
+    }
+
+    @Test
+    public void testAllLettersCanMergeIntoOneTarget() {
+        assertTrue(test.canConvert("abcdefghijklmnopqrstuvwxyz", "z".repeat(26)));
+        assertTrue(test.canConvert("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz"));
+    }
+
+    @Test
+    public void testLateConflictAfterLongConsistentPrefix() {
+        assertFalse(test.canConvert("a".repeat(10000), "b".repeat(9999) + "c"));
+    }
+
+    @Test
     public void testHappyCases() {
         assertTrue(test.canConvert("aabcc", "ccdee"));
         assertFalse(test.canConvert("leetcode", "codeleet"));

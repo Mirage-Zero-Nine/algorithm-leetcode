@@ -131,4 +131,34 @@ public class MinMeetingRooms_253Test {
         assertEquals(0, solver.minMeetingRooms(new int[][]{}));
         assertEquals(0, solver.minMeetingRooms(null));
     }
+@Test
+    public void testHeapReusesRoomAtExactEndBeforeLaterOverlap() {
+        // The room released at 2 is immediately occupied until 5.
+        assertEquals(2, solver.heap(new int[][]{{0, 2}, {2, 5}, {3, 4}}));
+    }
+
+    @Test
+    public void testSweepAndTwoPointersAgainstDiscreteOccupancy() {
+        Random random = new Random(2532026L);
+        for (int trial = 0; trial < 100; trial++) {
+            int[][] meetings = new int[1 + random.nextInt(20)][2];
+            int[] occupancy = new int[30];
+            int expected = 0;
+            for (int[] meeting : meetings) {
+                meeting[0] = random.nextInt(29);
+                meeting[1] = meeting[0] + 1 + random.nextInt(30 - meeting[0]);
+                for (int t = meeting[0]; t < meeting[1]; t++) expected = Math.max(expected, ++occupancy[t]);
+            }
+            assertEquals(expected, solver.minMeetingRooms(meetings), "sweep trial=" + trial);
+            assertEquals(expected, solver.twoPointers(meetings), "two pointers trial=" + trial);
+        }
+    }
+
+    @Test
+    public void testGiantSynchronizedRoomTurnover() {
+        int[][] meetings = new int[6000][2];
+        for (int i = 0; i < meetings.length; i++) meetings[i] = new int[]{i / 3, i / 3 + 1};
+        assertEquals(3, solver.minMeetingRooms(meetings));
+        assertEquals(3, solver.twoPointers(meetings));
+    }
 }

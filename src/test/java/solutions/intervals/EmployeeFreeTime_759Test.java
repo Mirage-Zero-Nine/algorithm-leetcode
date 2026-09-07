@@ -112,4 +112,38 @@ public class EmployeeFreeTime_759Test {
         // Gaps between each pair: [i*4+1, i*4+2] and [i*4+3, (i+1)*4]
         assertTrue(res.size() > 0);
     }
+@Test
+    public void testGiantScheduleChecksEveryFiniteGap() {
+        List<Interval> first = new java.util.ArrayList<>();
+        List<Interval> second = new java.util.ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            first.add(new Interval(i * 6, i * 6 + 2));
+            second.add(new Interval(i * 6 + 3, i * 6 + 5));
+        }
+        List<Interval> actual = solver.employeeFreeTime(List.of(first, second));
+        assertEquals(1999, actual.size());
+        for (int i = 0; i < actual.size(); i++) {
+            int start = (i / 2) * 6 + (i % 2 == 0 ? 2 : 5);
+            assertEquals(start, actual.get(i).start);
+            assertEquals(start + 1, actual.get(i).end);
+        }
+    }
+
+    @Test
+    public void testOneEmployeeBridgesAllOtherGaps() {
+        assertTrue(solver.employeeFreeTime(List.of(
+                List.of(new Interval(1, 3), new Interval(8, 10)),
+                List.of(new Interval(2, 9)))).isEmpty());
+    }
+
+    @Test
+    public void testCoincidentEndsAndStartsDoNotCreateZeroLengthGap() {
+        List<Interval> actual = solver.employeeFreeTime(List.of(
+                List.of(new Interval(0, 2), new Interval(5, 7)),
+                List.of(new Interval(1, 2), new Interval(2, 4)),
+                List.of(new Interval(2, 4), new Interval(5, 8))));
+        assertEquals(1, actual.size());
+        assertEquals(4, actual.get(0).start);
+        assertEquals(5, actual.get(0).end);
+    }
 }

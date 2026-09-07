@@ -53,4 +53,27 @@ public class MajorityElement_169Test {
         for (int i = 501; i < 1001; i++) arr[i] = 7;
         assertEquals(42, solver.majorityElement(arr));
     }
+
+    @Test public void testExactMajoritiesAcrossSignedBoundaries() {
+        for (int majority : new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE, -1, 0, 1, 0x55555555}) {
+            int[] nums = {majority, ~majority, majority, ~majority, majority};
+            assertEquals(majority, solver.majorityElement(nums));
+        }
+    }
+
+    @Test public void testMajorityAtEveryPositionAmongMinorities() {
+        for (int minorityPosition = 0; minorityPosition < 9; minorityPosition++) {
+            int[] nums = new int[9];
+            java.util.Arrays.fill(nums, -73);
+            nums[minorityPosition] = 73;
+            assertEquals(-73, solver.majorityElement(nums));
+        }
+    }
+
+    @Test public void testLargeExactMajorityWithVaryingMinorityBits() {
+        int[] nums = new int[50001];
+        java.util.Arrays.fill(nums, 0, 25001, Integer.MIN_VALUE);
+        for (int i = 25001; i < nums.length; i++) nums[i] = i - 25001;
+        assertEquals(Integer.MIN_VALUE, solver.majorityElement(nums));
+    }
 }

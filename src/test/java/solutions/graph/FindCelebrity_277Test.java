@@ -6,6 +6,16 @@ import org.junit.jupiter.api.Test;
 
 public class FindCelebrity_277Test {
 
+    @Test
+    public void testLargePartyWithFixedKnowsRelation() {
+        // The private production stub fixes the relation to a > b.
+        // Arbitrary celebrity/no-celebrity graphs cannot be injected through this API.
+        assertEquals(0, test.findCelebrity(10000));
+        assertEquals(0, test.findCelebrity(1));
+        assertEquals(0, test.findCelebrity(257));
+    }
+
+
     private final FindCelebrity_277 test = new FindCelebrity_277();
 
     @Test

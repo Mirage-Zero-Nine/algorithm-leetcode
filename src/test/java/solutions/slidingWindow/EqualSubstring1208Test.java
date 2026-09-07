@@ -66,4 +66,24 @@ public class EqualSubstring1208Test {
         // each char costs 1, so with maxCost=5000 we get 5000
         assertEquals(5000, test.equalSubstring(s.toString(), t.toString(), 5000));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest(name = "independent oracle seed={0}")
+    @org.junit.jupiter.params.provider.ValueSource(ints = {7, 19, 43, 71, 101, 211, 509, 997, 2027, 4093, 8191, 16381})
+    public void testSeededCasesAgainstIndependentOracle(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int sample = 0; sample < 40; sample++) {
+
+            String s = random.ints(24, 'a', 'z' + 1).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+            String t = random.ints(24, 'a', 'z' + 1).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+            int budget = random.nextInt(100), expected = 0;
+            for (int left = 0; left < s.length(); left++) {
+                int cost = 0;
+                for (int right = left; right < s.length(); right++) {
+                    cost += Math.abs(s.charAt(right) - t.charAt(right));
+                    if (cost <= budget) expected = Math.max(expected, right - left + 1);
+                }
+            }
+            org.junit.jupiter.api.Assertions.assertEquals(expected, new EqualSubstring_1208().equalSubstring(s, t, budget));
+        }
+    }
 }

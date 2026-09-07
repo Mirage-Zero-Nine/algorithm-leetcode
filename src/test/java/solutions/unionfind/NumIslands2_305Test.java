@@ -16,6 +16,49 @@ import java.util.List;
  */
 
 public class NumIslands2_305Test {
+
+    @Test
+    public void testSeededLandAdditionsAgainstFreshFloodFillAfterEveryStep() {
+        java.util.Random random = new java.util.Random(3052026L);
+        for (int sample = 0; sample < 50; sample++) {
+            int[][] positions = new int[40][2];
+            boolean[][] land = new boolean[5][5];
+            java.util.List<Integer> expected = new java.util.ArrayList<>();
+            for (int step = 0; step < positions.length; step++) {
+                positions[step] = new int[]{random.nextInt(5), random.nextInt(5)};
+                land[positions[step][0]][positions[step][1]] = true;
+                boolean[][] seen = new boolean[5][5];
+                int count = 0;
+                for (int row = 0; row < 5; row++)
+                    for (int column = 0; column < 5; column++) {
+                        if (!land[row][column] || seen[row][column]) continue;
+                        count++;
+                        java.util.Queue<int[]> queue = new java.util.ArrayDeque<>();
+                        queue.add(new int[]{row, column});
+                        seen[row][column] = true;
+                        while (!queue.isEmpty()) {
+                            int[] cell = queue.remove();
+                            for (int[] direction : new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}) {
+                                int r = cell[0] + direction[0], c = cell[1] + direction[1];
+                                if (r >= 0 && r < 5 && c >= 0 && c < 5 && land[r][c] && !seen[r][c]) {
+                                    seen[r][c] = true;
+                                    queue.add(new int[]{r, c});
+                                }
+                            }
+                        }
+                    }
+                expected.add(count);
+            }
+            assertEquals(expected, test.numIslands2(5, 5, positions), "sequence " + sample);
+        }
+    }
+
+    @Test
+    public void testCenterMergesFourSeparateIslandsExactlyOnce() {
+        assertEquals(List.of(1, 2, 3, 4, 1, 1), test.numIslands2(3, 3,
+                new int[][]{{0, 1}, {1, 0}, {1, 2}, {2, 1}, {1, 1}, {1, 1}}));
+    }
+
     private NumIslands2_305 test;
 
     @BeforeEach

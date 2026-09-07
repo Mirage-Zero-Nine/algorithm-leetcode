@@ -116,4 +116,25 @@ public class CountBits_338Test {
             assertEquals(k, result[(1 << k) - 1], "(2^" + k + ")-1 should have " + k + " bits");
         }
     }
+
+    @Test public void testFullLargeOutputAgainstBinaryStringOracle() {
+        int[] actual = solver.countBits(100000);
+        for (int i = 0; i < actual.length; i++) {
+            long expected = Integer.toBinaryString(i).chars().filter(c -> c == '1').count();
+            assertEquals(expected, actual[i], "value=" + i);
+        }
+    }
+
+    @Test public void testIndependentResultArrays() {
+        int[] first = solver.countBits(31);
+        first[31] = -1;
+        assertEquals(5, solver.countBits(31)[31]);
+    }
+
+    @Test public void testPrefixIsPreservedAcrossIncreasingRequests() {
+        int[] large = solver.countBits(65536);
+        for (int n : new int[]{6, 17, 32, 255, 4095, 32768}) {
+            assertArrayEquals(java.util.Arrays.copyOf(large, n + 1), solver.countBits(n));
+        }
+    }
 }

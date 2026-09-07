@@ -13,6 +13,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class SumOfBeauties_2012Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 2, 7, 19, 42, 97, 211, 2026, 65537})
+    void eachBeautyScoreMatchesAllLeftAndRightComparisons(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int trial = 0; trial < 100; trial++) {
+            int[] nums = random.ints(3 + random.nextInt(28), 1, 21).toArray();
+            int expected = 0;
+            for (int i = 1; i + 1 < nums.length; i++) {
+                boolean global = true;
+                for (int j = 0; j < i; j++) global &= nums[j] < nums[i];
+                for (int j = i + 1; j < nums.length; j++) global &= nums[i] < nums[j];
+                if (global) expected += 2;
+                else if (nums[i - 1] < nums[i] && nums[i] < nums[i + 1]) expected++;
+            }
+            assertEquals(expected, solver.sumOfBeauties(nums));
+        }
+    }
+
+    @Test
+    void largeEqualPlateauScoresZeroDespiteNondecreasingOrder() {
+        int[] nums = new int[100_000];
+        java.util.Arrays.fill(nums, 10);
+        assertEquals(0, solver.sumOfBeauties(nums));
+    }
+
+
     private final SumOfBeauties_2012 solver = new SumOfBeauties_2012();
 
     @Test

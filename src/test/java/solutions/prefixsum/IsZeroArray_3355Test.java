@@ -13,6 +13,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class IsZeroArray_3355Test {
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = {0, 1, 2, 7, 19, 42, 97, 211, 2026, 65537})
+    void queryCoverageMatchesExplicitLegalDecrements(int seed) {
+        java.util.Random random = new java.util.Random(seed);
+        for (int trial = 0; trial < 100; trial++) {
+            int size = 1 + random.nextInt(15);
+            int[] nums = random.ints(size, 0, 5).toArray();
+            int[] remaining = nums.clone();
+            int[][] queries = new int[1 + random.nextInt(20)][2];
+            for (int[] query : queries) {
+                query[0] = random.nextInt(size);
+                query[1] = query[0] + random.nextInt(size - query[0]);
+                for (int i = query[0]; i <= query[1]; i++) remaining[i] = Math.max(0, remaining[i] - 1);
+            }
+            assertEquals(java.util.Arrays.stream(remaining).allMatch(value -> value == 0),
+                    solver.isZeroArray(nums, queries));
+        }
+    }
+
+    @Test
+    void largeOverlappingRangesDistinguishUncoveredEndpoint() {
+        int[] nums = new int[100_000];
+        java.util.Arrays.fill(nums, 2);
+        assertTrue(solver.isZeroArray(nums.clone(), new int[][]{{0, 99_999}, {0, 99_999}}));
+        assertFalse(solver.isZeroArray(nums.clone(), new int[][]{{0, 99_999}, {0, 99_998}}));
+    }
+
+
     private final IsZeroArray_3355 solver = new IsZeroArray_3355();
 
     @Test

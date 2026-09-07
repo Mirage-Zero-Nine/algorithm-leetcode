@@ -68,4 +68,41 @@ public class Search_81Test {
         }
         assertTrue(test.search(nums, 3));
     }
+@Test
+    public void testRandomRotatedMultisetsAgainstLinearSearch() {
+        java.util.Random random = new java.util.Random(812026L);
+        for (int trial = 0; trial < 200; trial++) {
+            int[] sorted = new int[1 + random.nextInt(80)];
+            for (int i = 0; i < sorted.length; i++) sorted[i] = random.nextInt(21) - 10;
+            java.util.Arrays.sort(sorted);
+            int pivot = random.nextInt(sorted.length);
+            int[] values = new int[sorted.length];
+            for (int i = 0; i < values.length; i++) values[i] = sorted[(i + pivot) % sorted.length];
+            for (int target = -11; target <= 11; target++) {
+                boolean expected = false;
+                for (int value : values) if (value == target) expected = true;
+                org.junit.jupiter.api.Assertions.assertEquals(expected, test.search(values, target));
+            }
+        }
+    }
+
+    @Test
+    public void testUniqueMinimumAtEveryPositionAmongDuplicates() {
+        for (int position = 0; position < 257; position++) {
+            int[] values = new int[257];
+            java.util.Arrays.fill(values, 9);
+            values[position] = -7;
+            assertTrue(test.search(values, -7));
+            assertFalse(test.search(values, -6));
+        }
+    }
+
+    @Test
+    public void testGiantDuplicateArrayWithSingleMaximum() {
+        int[] values = new int[100000];
+        java.util.Arrays.fill(values, -1);
+        values[80001] = Integer.MAX_VALUE;
+        assertTrue(test.search(values, Integer.MAX_VALUE));
+        assertFalse(test.search(values, Integer.MIN_VALUE));
+    }
 }
