@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author BorisMirage
@@ -27,11 +26,10 @@ public class LengthOfLongestSubstring_3Test {
         assertEquals(3, test.lengthOfLongestSubstring("dvdf"));
         assertEquals(2, test.lengthOfLongestSubstring("cdd"));
         assertEquals(4, test.lengthOfLongestSubstring("abcd"));
-        assertEquals(0, test.lengthOfLongestSubstring(""));
     }
 
     @Test
-    public void testInvalid() {
+    public void testNullAndEmptyInput() {
         assertEquals(0, test.lengthOfLongestSubstring(""));
         assertEquals(0, test.lengthOfLongestSubstring(null));
     }
@@ -74,7 +72,7 @@ public class LengthOfLongestSubstring_3Test {
     @Test
     public void testGiantCase() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 2000; i++) {
+        for (int i = 0; i < 50_000; i++) {
             sb.append((char) ('a' + (i % 26)));
         }
         assertEquals(26, test.lengthOfLongestSubstring(sb.toString()));
@@ -119,25 +117,9 @@ public class LengthOfLongestSubstring_3Test {
         }
         String s = sb.toString();
 
-        // brute-force reference on first 500 chars for cross-check
-        String sub = s.substring(0, 500);
-        int expected = bruteForce(sub);
-        assertEquals(expected, test.lengthOfLongestSubstring(sub));
-
-        // full string: just verify properties
-        int result = test.lengthOfLongestSubstring(s);
-        assertTrue(result >= 1);
-        assertTrue(result <= s.length());
-    }
-
-    @Test
-    public void testPropertyResultBounds() {
-        String[] inputs = {"a", "ab", "abc", "abcabcbb", "bbbbb", "pwwkew", "dvdf"};
-        for (String s : inputs) {
-            int result = test.lengthOfLongestSubstring(s);
-            assertTrue(result >= 1, "result >= 1 for non-empty string: " + s);
-            assertTrue(result <= s.length(), "result <= s.length() for: " + s);
-        }
+        // The quadratic set-based oracle remains small because each candidate
+        // range stops at its first repeated character.
+        assertEquals(bruteForce(s), test.lengthOfLongestSubstring(s));
     }
 
     @Test
@@ -165,17 +147,7 @@ public class LengthOfLongestSubstring_3Test {
         for (int sample = 0; sample < 40; sample++) {
 
             String s = random.ints(30, 32, 40).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
-            int k = random.nextInt(9), expected = 0;
-            for (int left = 0; left < s.length(); left++) {
-                java.util.Set<Character> seen = new java.util.HashSet<>();
-                for (int right = left; right < s.length(); right++) {
-                    seen.add(s.charAt(right));
-                    if (seen.size() == right - left + 1) expected = Math.max(expected, right - left + 1);
-                }
-            }
-            org.junit.jupiter.api.Assertions.assertEquals(expected, new LengthOfLongestSubstring_3().lengthOfLongestSubstring(s));
-            
-
+            org.junit.jupiter.api.Assertions.assertEquals(bruteForce(s), new LengthOfLongestSubstring_3().lengthOfLongestSubstring(s));
         }
     }
 }
