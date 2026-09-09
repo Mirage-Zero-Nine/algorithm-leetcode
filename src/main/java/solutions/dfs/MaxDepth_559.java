@@ -1,9 +1,9 @@
 package solutions.dfs;
 
+import library.tree.narytree.Node;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
-
-import library.tree.narytree.Node;
 
 /**
  * Given the root of an n-ary tree, returns its maximum depth.

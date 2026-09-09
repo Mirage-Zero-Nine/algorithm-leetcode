@@ -2,7 +2,6 @@ package solutions.twopointers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,7 +25,7 @@ public class FourSum_18 {
      */
     public List<List<Integer>> fourSum(int[] nums, int target) {
 
-        List<List<Integer>> out = new LinkedList<>();
+        List<List<Integer>> out = new ArrayList<>();
 
         /* Corner case */
         if (nums.length < 4) {
@@ -52,7 +51,7 @@ public class FourSum_18 {
                                 rightIndex--;
                             } else {
 
-                                List<Integer> findList = new LinkedList<>();
+                                List<Integer> findList = new ArrayList<>();
                                 findList.add(nums[i]);
                                 findList.add(nums[j]);
                                 findList.add(nums[leftIndex]);

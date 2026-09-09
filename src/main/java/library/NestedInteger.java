@@ -1,7 +1,7 @@
 package library;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Nested integer class.
