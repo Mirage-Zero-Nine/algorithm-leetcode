@@ -47,12 +47,11 @@ public class LongestConsecutive_128 {
 
             /*
              * If n - 1 exists, it must be the right end of the sequence on the left:
-             * otherwise n would already be present inside that sequence. The same reasoning
-             * applies to n + 1 and the sequence on the right. Therefore these two lookups
-             * return the exact lengths that n needs to join.
+             * otherwise n would already be present inside that sequence.
+             * The same reasoning applies to n + 1 and the sequence on the right.
+             * Therefore, these two lookups return the exact lengths that n needs to join.
              */
-            int left = map.getOrDefault(n - 1, 0);
-            int right = map.getOrDefault(n + 1, 0);
+            int left = map.getOrDefault(n - 1, 0), right = map.getOrDefault(n + 1, 0);
             int length = left + right + 1;
 
             max = Math.max(max, length);

@@ -1,6 +1,7 @@
 package solutions.twopointers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
@@ -18,9 +19,14 @@ public class MaxArea_11Test {
     }
 
     @Test
-    public void testNegativeAndEdgeCases() {
+    public void testNullInputReturnsZero() {
         assertEquals(0, test.maxArea(null));
+    }
+
+    @Test
+    public void testInputLengthLessThanTwoReturnsZero() {
         assertEquals(0, test.maxArea(new int[]{}));
+        assertEquals(0, test.maxArea(new int[]{9}));
     }
 
     @Test
@@ -75,6 +81,18 @@ public class MaxArea_11Test {
     @Test
     public void testAllZeros() {
         assertEquals(0, test.maxArea(new int[]{0, 0, 0, 0, 0}));
+    }
+
+    @Test
+    public void testZeroAtOneBoundary() {
+        assertEquals(0, test.maxArea(new int[]{0, 8}));
+        assertEquals(0, test.maxArea(new int[]{8, 0}));
+    }
+
+    @Test
+    public void testZerosBetweenUsefulLines() {
+        assertEquals(9, test.maxArea(new int[]{4, 0, 0, 3}));
+        assertEquals(4, test.maxArea(new int[]{1, 0, 2, 0, 3}));
     }
 
     @Test
@@ -146,5 +164,35 @@ public class MaxArea_11Test {
         java.util.Arrays.fill(heights, 7);
         // max area = 7 * 99 = 693
         assertEquals(693, test.maxArea(heights));
+    }
+
+    @Test
+    public void testDuplicateHeightsAtDifferentWidths() {
+        assertEquals(16, test.maxArea(new int[]{4, 1, 4, 1, 4}));
+        assertEquals(15, test.maxArea(new int[]{5, 5, 1, 5}));
+    }
+
+    @Test
+    public void testBestPairIsInterior() {
+        assertEquals(28, test.maxArea(new int[]{1, 7, 8, 9, 8, 7, 1}));
+        assertEquals(30, test.maxArea(new int[]{2, 10, 1, 1, 10, 2}));
+    }
+
+    @Test
+    public void testInputIsNotMutated() {
+        int[] heights = {3, 1, 5, 2, 4};
+        int[] original = heights.clone();
+
+        assertEquals(12, test.maxArea(heights));
+        assertArrayEquals(original, heights);
+    }
+
+    @Test
+    public void testMaximumContractSizedValues() {
+        int[] heights = new int[100_000];
+        java.util.Arrays.fill(heights, 10_000);
+
+        // The two outermost lines have both the greatest possible height and width.
+        assertEquals(999_990_000, test.maxArea(heights));
     }
 }
