@@ -15,30 +15,35 @@ package solutions.twopointers;
 
 public class MaxArea_11 {
     /**
-     * Two pointers.
-     * The size of area is depend on smaller value in array.
-     * Therefore, use two pointers, one at left, one at right.
-     * Each time move the pointer that has smaller value to toward center and compare value.
+     * Returns the largest area of water that can be enclosed by two lines.
      *
-     * @param height given array
-     * @return maximum area
+     * <p>When the pointers are at {@code left} and {@code right}, the current candidate is
+     * {@code min(height[left], height[right]) * (right - left)}.  Advancing the shorter pointer
+     * preserves every possibility that could improve the area: advancing the taller pointer would
+     * retain or lower the limiting height while shrinking the width.  The pointers meet after
+     * considering all potentially optimal pairs.</p>
+     *
+     * @param height non-negative line heights, normally containing at least two elements
+     * @return the maximum enclosed area, or {@code 0} for {@code null} or fewer than two heights
+     * @implNote Runs in {@code O(n)} time and uses {@code O(1)} auxiliary space.  The input array
+     * is read only and is not modified.
      */
     public int maxArea(int[] height) {
-
-        /* Corner case */
-        if (height == null || height.length < 1) {
+        // corner case
+        if (height == null || height.length < 2) {
             return 0;
         }
 
         int max = 0, left = 0, right = height.length - 1;
-
         while (left < right) {
-            max = Math.max(max, Math.min(height[left], height[right]) * (right - left));
+            max = Math.max(Math.min(height[left], height[right]) * (right - left), max);
 
-            if (height[left] > height[right]) {     // area size is depend on smaller one
-                right--;                            // if left larger than right, move right
+            // The shorter line limits this pair.  Moving the taller line only loses width while
+            // leaving the limiting height no higher, so an optimum cannot require that move.
+            if (height[left] <= height[right]) {
+                left++;
             } else {
-                left++;                             // otherwise, move left
+                right--;
             }
         }
 
