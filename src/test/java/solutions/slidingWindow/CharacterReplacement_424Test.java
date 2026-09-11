@@ -110,6 +110,31 @@ public class CharacterReplacement_424Test {
         assertEquals(26, test.characterReplacement("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 25));
     }
 
+    /** Covers exact replacement budgets, ties for the dominant character, and
+     * windows whose best repeated character changes as the scan advances. */
+    @org.junit.jupiter.params.ParameterizedTest(name = "{0} with k={1} -> {2}")
+    @org.junit.jupiter.params.provider.CsvSource({
+            "AAAA, 0, 4",
+            "ABCD, 1, 2",
+            "ABCD, 2, 3",
+            "ABCD, 3, 4",
+            "BAAAB, 1, 4",
+            "AABCC, 1, 3",
+            "ABBBAC, 1, 4",
+            "ABBBAC, 2, 5",
+            "ZZZZZZ, 0, 6",
+            "AZBYCXDWEV, 0, 1",
+            "ABCDEF, 1, 2",
+            "ABCDEF, 5, 6",
+            "AAABBB, 2, 5",
+            "ABABAB, 3, 6",
+            "ABBAAC, 1, 3",
+            "QWERTY, 2, 3"
+    })
+    public void testRepresentativeWindows(String input, int replacements, int expected) {
+        assertEquals(expected, test.characterReplacement(input, replacements));
+    }
+
     @Test
     public void testLargeRandomCrossCheckBruteForce() {
         Random rand = new Random(42L);
@@ -185,7 +210,7 @@ public class CharacterReplacement_424Test {
             int k = random.nextInt(10), expected = 0;
             for (int left = 0; left < s.length(); left++)
                 for (int right = left + 1; right <= s.length(); right++)
-                    for (char letter = 'A'; letter <= 'D'; letter++) {
+                    for (char letter = 'A'; letter <= 'E'; letter++) {
                         int changes = 0;
                         for (int i = left; i < right; i++) if (s.charAt(i) != letter) changes++;
                         if (changes <= k) expected = Math.max(expected, right - left);

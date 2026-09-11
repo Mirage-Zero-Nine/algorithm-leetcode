@@ -12,47 +12,41 @@ package solutions.slidingwindow;
 
 public class CharacterReplacement_424 {
     /**
-     * Sliding window.
-     * The window can only extend its size when the count of the new char exceeds the historical max count.
-     * Therefore, count each char's appearance during the traverse.
-     * Only consider if the max count exceeds the historical max count.
+     * Finds the longest substring that can be made uniform with at most
+     * {@code k} replacements.
      *
-     * @param s given string
-     * @param k limit of replacing operations
-     * @return longest substring containing all repeating letters
+     * <p>For each right endpoint, the window's most frequent character is the
+     * optimal character to keep. Consequently, the remaining characters are
+     * exactly the replacements required. When that number exceeds {@code k},
+     * moving the left endpoint restores feasibility. The stored maximum
+     * frequency is allowed to be historical: it can only make the temporary
+     * window bound looser, never cause a returned length that cannot be
+     * achieved, because a stale maximum is replaced only when the window grows
+     * to that length.
+     *
+     * @param s uppercase English-letter string to inspect
+     * @param k maximum number of replacements allowed
+     * @return the maximum feasible substring length, or {@code 0} for an empty
+     *         string
+     * @implNote Runs in {@code O(s.length())} time and uses {@code O(1)}
+     *          auxiliary space (26 counters). The input string is not changed.
      */
     public int characterReplacement(String s, int k) {
-
-        /* Corner case */
-        if (s.isEmpty()) {
-            return 0;
-        }
-        if (k > s.length()) {       // directly replace all char in string
-            return s.length();
-        }
-
-        int[] count = new int[26];      // store char appearance
-        int max = 0, window = 0, start = 0;
-
+        int mostCommonChar = 0, output = 0, left = 0;
+        int[] charCount = new int[26];
         for (int i = 0; i < s.length(); i++) {
-
-            /*
-             * During traverse, the max possible window is the most occurred char + k.
-             * k is the largest number of possible replacement. And the char count is under current window size.
-             * The initially window size is 1. To extend the window size, there are two conditions:
-             * 1. There are replacement operations left for different char.
-             * 2. Find a new char that is either the current most occurred char, or new max count.
-             * If window size is larger than max possible size (max char + k), then the window size should be narrowed.
-             * When narrowing the window size, reduce char count that will be excluded from window . */
-            max = Math.max(max, ++count[s.charAt(i) - 'A']);    // resize window if new max count found
-            while (i - start + 1 > k + max) {                   // narrow window
-                count[s.charAt(start++) - 'A']--;               // remove char that is excluded from window
+            mostCommonChar = Math.max(mostCommonChar, ++charCount[s.charAt(i) - 'A']);
+            // The window can be uniformized by retaining its most common
+            // character; every other character consumes one replacement.
+            while (i - left + 1 > k + mostCommonChar) {
+                // Discard the oldest character until the replacement budget is
+                // sufficient again. The right endpoint never moves backward.
+                charCount[s.charAt(left++) - 'A']--;
             }
-
-            window = Math.max(window, i - start + 1);           // find max window size
+            // Every feasible window ending at i is represented by the current
+            // left endpoint, so retain the largest one seen so far.
+            output = Math.max(output, i - left + 1);
         }
-
-        return window;
+        return output;
     }
-
 }
