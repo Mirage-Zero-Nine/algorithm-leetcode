@@ -1,11 +1,18 @@
 package solutions.slidingwindow;
 
+import java.util.stream.IntStream;
+
 /**
- * Given a string S and a string T.
- * Find the minimum window in S which will contain all the characters in T in complexity O(n).
- * Note:
- * 1. If there is no such window in S that covers all characters in T, return the empty string "".
- * 2. If there is such window, it is guaranteed that there will always be only one unique minimum window in S.
+ * Solves LeetCode 76, Minimum Window Substring.
+ *
+ * <p>Given strings {@code s} and {@code t}, returns the shortest contiguous substring of {@code s}
+ * containing every character in {@code t} with at least the same multiplicity.  If no such substring
+ * exists, or either input is empty (or {@code null}), the empty string is returned.  The problem's
+ * input consists of English letters, so the fixed counter array is sufficient.</p>
+ *
+ * <p>The implementation uses a two-pointer sliding window.  The right pointer expands the window
+ * until it satisfies {@code t}; the left pointer then removes unnecessary characters and records
+ * each valid candidate.  Each pointer only moves forward, giving linear time.</p>
  *
  * @author BorisMirage
  * Time: 2019/06/18 11:25
@@ -14,46 +21,62 @@ package solutions.slidingwindow;
 
 public class MinWindow_76 {
     /**
-     * Sliding window to find minimum window size.
-     * Try to find the minimum window by shrinking the window when all character in S which contains all character in T.
+     * Finds the shortest substring of {@code s} that covers the character multiset in {@code t}.
      *
-     * @param s first string
-     * @param t second string
-     * @return minimum window in S which will contain all the characters in T
-     * @see LengthOfLongestSubstring_3
-     * @see MinimumSumSubarray
+     * <p>{@code count[c]} is the number of occurrences of {@code c} still needed by the current
+     * window.  It may become negative when the window contains extra copies.  {@code restChars}
+     * counts the total number of required occurrences still missing, including duplicates.</p>
+     *
+     * <p>When the right edge sees a character with a positive remaining count, that occurrence
+     * fulfills a requirement.  Once no occurrences remain missing, moving the left edge proves
+     * minimality for this right edge: every removed surplus character keeps the window valid, and
+     * the first removed required occurrence makes it invalid.  The best valid candidate seen over
+     * all right edges is therefore the global minimum.</p>
+     *
+     * @param s source string to search
+     * @param t required character multiset
+     * @return the shortest covering substring, or {@code ""} when none exists
+     * @implNote Runs in {@code O(s.length() + t.length())} time and uses {@code O(1)} auxiliary
+     *     space for the fixed English-letter alphabet.
      */
     public String minWindow(String s, String t) {
-
-        /* Corner case */
-        if (s.isEmpty() || t.isEmpty()) {
+        // Empty inputs cannot contain a non-empty requirement; null is treated the same way.
+        if (s == null || s.isEmpty() || t == null || t.isEmpty()) {
             return "";
         }
 
-        int m = s.length(), n = t.length(), start = 0, window = Integer.MAX_VALUE, rest = n, minStart = 0;
+        int minWindow = Integer.MAX_VALUE, restChars = t.length(), windowStart = 0, minWindowStart = 0;
         int[] count = new int[256];
 
-        for (int i = 0; i < n; i++) {
-            count[t.charAt(i) - 'A']++;
-        }
+        IntStream.range(0, t.length()).forEach(n -> count[t.charAt(n) - 'A']++);
 
-        for (int i = 0; i < m; i++) {
-            if (count[s.charAt(i) - 'A']-- > 0) { // find a char in t, one less to be found
-                rest--;
+        for (int i = 0; i < s.length(); i++) {
+            // Post-decrement tests the old count: only an occurrence that was still needed
+            // reduces restChars. Extra occurrences make count negative and are harmless.
+            if (count[s.charAt(i) - 'A']-- > 0) {
+                restChars--;
             }
-            while (rest == 0) { // all chars were found, try to shrink the window
-                if (count[s.charAt(start++) - 'A']++ == 0) { // current char in t, stop shrinking and record window size
-                    rest++;
+
+            // restChars == 0 is the invariant that the current [windowStart, i] covers t.
+            // Remove from the left while preserving that invariant as long as possible.
+            while (restChars == 0) {
+                // Post-increment tests the old count: zero means this occurrence was the last
+                // required copy, so removing it creates a deficit and ends this shrink phase.
+                if (count[s.charAt(windowStart) - 'A']++ == 0) {
+                    restChars++;
+                }
+                // The candidate was valid when this loop began and still includes windowStart.
+                // The count/rest update models removing that character; if it was required, this
+                // is the last valid candidate for this right edge.
+                if (i - windowStart + 1 < minWindow) {
+                    minWindow = i - windowStart + 1;
+                    minWindowStart = windowStart;
                 }
 
-                if (i - start + 1 < window) {
-                    window = i - start + 1;
-                    minStart = start;
-                }
+                windowStart++;
             }
         }
 
-        return (window == Integer.MAX_VALUE) ? "" : s.substring(minStart - 1, minStart + window);
+        return minWindow == Integer.MAX_VALUE ? "" : s.substring(minWindowStart, minWindowStart + minWindow);
     }
-
 }
