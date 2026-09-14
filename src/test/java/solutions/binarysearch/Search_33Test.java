@@ -91,6 +91,25 @@ public class Search_33Test {
     }
 
     @Test
+    public void testTargetsAtSortedHalfBoundaries() {
+        int[] nums = {6, 7, 8, 1, 2, 3, 4, 5};
+        assertEquals(0, test.search(nums, 6));
+        assertEquals(2, test.search(nums, 8));
+        assertEquals(3, test.search(nums, 1));
+        assertEquals(7, test.search(nums, 5));
+    }
+
+    @Test
+    public void testCallsDoNotShareSearchStateOrMutateInput() {
+        int[] nums = {5, 6, 7, 0, 1, 2, 3, 4};
+        int[] original = nums.clone();
+        assertEquals(6, test.search(nums, 3));
+        assertEquals(3, test.search(nums, 0));
+        assertEquals(-1, test.search(nums, 8));
+        assertEquals(java.util.Arrays.toString(original), java.util.Arrays.toString(nums));
+    }
+
+    @Test
     public void testGiantCase() {
         int n = 2000;
         int[] nums = new int[n];
@@ -100,7 +119,7 @@ public class Search_33Test {
         }
         assertEquals(123, test.search(nums, (123 + pivot) % n));
     }
-@Test
+    @Test
     public void testEveryRotationOfIntegerBoundaryValues() {
         int[] sorted = {Integer.MIN_VALUE, -100, -1, 0, 1, 100, Integer.MAX_VALUE};
         for (int pivot = 0; pivot < sorted.length; pivot++) {

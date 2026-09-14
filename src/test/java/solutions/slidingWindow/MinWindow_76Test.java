@@ -158,7 +158,8 @@ public class MinWindow_76Test {
 
     @Test
     public void testTDuplicatesScatteredInS() {
-        assertEquals("adobecodebanc", solution.minWindow("adobecodebanc", "aabc"));
+        // The second 'a' is at index 10, so the shortest valid window ends there.
+        assertEquals("adobecodeba", solution.minWindow("adobecodebanc", "aabc"));
     }
 
     private boolean containsAll(String window, String t) {
