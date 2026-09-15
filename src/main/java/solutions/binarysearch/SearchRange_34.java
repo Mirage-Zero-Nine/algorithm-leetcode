@@ -1,6 +1,5 @@
 package solutions.binarysearch;
 
-
 /**
  * Given an array of int sorted in ascending order, find the starting and ending position of a given target value.
  * Your algorithm's runtime complexity must be in the order of O(log n).
@@ -13,68 +12,75 @@ package solutions.binarysearch;
 
 public class SearchRange_34 {
     /**
-     * Two rounds of binary search.
-     * First round find the lower bound of target, and second bound find upper bound of target.
-     * Note that in second round, since the "/" operation is rounded to the lowest integer, add 1 to find the upper bound.
+     * Returns the inclusive range occupied by {@code target}.
      *
-     * @param nums   input int array
-     * @param target target int
-     * @return starting and ending position, return [-1, -1] if target is not found
+     * <p>Each boundary search keeps a closed interval containing the answer. The
+     * first search discards values strictly smaller than the target; the second
+     * discards values strictly greater than it. Once the interval has one index,
+     * the final equality check distinguishes a missing target from a found one.</p>
+     *
+     * @param nums   sorted array to search; {@code null} and empty arrays have no range
+     * @param target value whose first and last positions should be returned
+     * @return {@code [firstIndex, lastIndex]}, or {@code [-1, -1]} if absent
      */
     public int[] searchRange(int[] nums, int target) {
-        int[] out = new int[]{-1, -1};
-        if (nums.length == 0) {
-            return out;
+        // corner case
+        if (nums == null || nums.length == 0) {
+            return new int[]{-1, -1};
         }
 
-        out[0] = findStart(nums, target);
-        out[1] = findEnd(nums, target);
-
-        return out;
+        return new int[]{findBeginning(nums, target), findEnding(nums, target)};
     }
 
     /**
-     * Find the beginning position of the range by implementing the binary search.
+     * Finds the leftmost index whose value is at least {@code target}.
      *
-     * @param nums   given array
-     * @param target target number
-     * @return starting position of the given target value
+     * <p>If the midpoint is too small, no index at or before it can be the first
+     * target, so {@code left} advances past the midpoint. Otherwise the midpoint
+     * remains a possible first occurrence and {@code right} moves to it. Thus the
+     * interval always contains the first target, when one exists.</p>
+     *
+     * @return the first target index, or {@code -1} when the converged value differs
      */
-    private int findStart(int[] nums, int target) {
+    private int findBeginning(int[] nums, int target) {
         int left = 0, right = nums.length - 1;
         while (left < right) {
             int mid = left + (right - left) / 2;
-            if (nums[mid] < target) { // nums[mid] < target: go right, since nums[mid] was excluded
+            if (target > nums[mid]) {
                 left = mid + 1;
-            } else { // otherwise, go left with mid as right boundary, since it could be the starting position
+            } else {
                 right = mid;
             }
         }
-
         return nums[left] == target ? left : -1;
     }
 
     /**
-     * Find the ending position of the range by implementing the binary search.
-     * Note that when calculating mid, add one to the normal method since "/" will always round it to the smaller value.
-     * Therefore, need to add 1 to the mid.
+     * Finds the rightmost index whose value is at most {@code target}.
      *
-     * @param nums   given array
-     * @param target target number
-     * @return ending position of the given target value
+     * <p>If the midpoint is too large, no index at or after it can be the last
+     * target, so {@code right} moves before it. Otherwise the midpoint remains a
+     * possible last occurrence and {@code left} moves to it.</p>
+     *
+     * <p>The midpoint is deliberately right-biased. With a two-element interval,
+     * ordinary floor division would produce {@code mid == left}; the update
+     * {@code left = mid} would then make no progress and could loop forever. Adding
+     * one guarantees {@code mid > left} whenever {@code left < right}, so every
+     * iteration shrinks the closed interval.</p>
+     *
+     * @return the last target index, or {@code -1} when the converged value differs
      */
-    private int findEnd(int[] nums, int target) {
+    private int findEnding(int[] nums, int target) {
         int left = 0, right = nums.length - 1;
         while (left < right) {
-            int mid = left + (right - left) / 2 + 1; // / 2 is rounded to the lowest integer, move to the next right
-            if (nums[mid] > target) {
+            // Right bias is required because the successful branch sets left = mid.
+            int mid = left + (right - left) / 2 + 1;
+            if (target < nums[mid]) {
                 right = mid - 1;
             } else {
                 left = mid;
             }
         }
-
-        return nums[left] == target ? left : -1;
+        return nums[right] == target ? right : -1;
     }
-
 }
