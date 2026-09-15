@@ -36,6 +36,38 @@ public class SearchRange_34Test {
     }
 
     @Test
+    public void testTargetAbsentBeforeAndAfterArray() {
+        int[] values = {4, 6, 8, 10};
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(values, 1));
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(values, 12));
+    }
+
+    @Test
+    public void testTargetAbsentBetweenDistinctValues() {
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(new int[]{-5, -2, 0, 4, 9}, 3));
+    }
+
+    @Test
+    public void testRunsAtBothArrayBoundaries() {
+        int[] values = {2, 2, 2, 3, 4, 4, 4};
+        assertArrayEquals(new int[]{0, 2}, test.searchRange(values, 2));
+        assertArrayEquals(new int[]{6, 6}, test.searchRange(values, 4));
+    }
+
+    @Test
+    public void testTargetWithOneOccurrenceAmongDuplicates() {
+        assertArrayEquals(new int[]{4, 4}, test.searchRange(new int[]{1, 1, 2, 2, 5, 7, 7, 9}, 5));
+    }
+
+    @Test
+    public void testNegativeValuesAndZero() {
+        int[] values = {-9, -9, -4, -1, -1, 0, 3, 3};
+        assertArrayEquals(new int[]{0, 1}, test.searchRange(values, -9));
+        assertArrayEquals(new int[]{3, 4}, test.searchRange(values, -1));
+        assertArrayEquals(new int[]{5, 5}, test.searchRange(values, 0));
+    }
+
+    @Test
     public void testAllElementsAreTarget() {
         assertArrayEquals(new int[]{0, 4}, test.searchRange(new int[]{6, 6, 6, 6, 6}, 6));
     }
@@ -63,7 +95,7 @@ public class SearchRange_34Test {
         }
         assertArrayEquals(new int[]{300, 699}, test.searchRange(arr, 2));
     }
-@Test
+    @Test
     public void testEverySmallThreeValueMultiplicity() {
         for (int negative = 0; negative <= 12; negative++) for (int zeros = 0; zeros <= 12; zeros++)
             for (int positive = 0; positive <= 12; positive++) {
