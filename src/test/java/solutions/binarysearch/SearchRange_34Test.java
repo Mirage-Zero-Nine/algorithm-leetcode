@@ -51,7 +51,7 @@ public class SearchRange_34Test {
     public void testRunsAtBothArrayBoundaries() {
         int[] values = {2, 2, 2, 3, 4, 4, 4};
         assertArrayEquals(new int[]{0, 2}, test.searchRange(values, 2));
-        assertArrayEquals(new int[]{6, 6}, test.searchRange(values, 4));
+        assertArrayEquals(new int[]{4, 6}, test.searchRange(values, 4));
     }
 
     @Test
