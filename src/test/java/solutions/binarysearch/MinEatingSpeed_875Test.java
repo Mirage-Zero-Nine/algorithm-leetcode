@@ -17,6 +17,7 @@ public class MinEatingSpeed_875Test {
     @Test
     public void testEdgeCases() {
         assertEquals(1, test.minEatingSpeed(new int[]{1}, 1));
+        assertEquals(1, test.minEatingSpeed(new int[]{1, 1}, 2));
         assertEquals(3, test.minEatingSpeed(new int[]{3}, 1));
     }
 
@@ -63,5 +64,24 @@ public class MinEatingSpeed_875Test {
     @Test
     public void testAnotherBoundaryCase() {
         assertEquals(4, test.minEatingSpeed(new int[]{8, 8, 8}, 6));
+    }
+
+    @Test
+    public void testDuplicatePilesWithExactDeadline() {
+        assertEquals(5, test.minEatingSpeed(new int[]{5, 5, 5, 5}, 4));
+    }
+
+    @Test
+    public void testCandidateBelowAnswerWouldMissDeadline() {
+        // At speed 3 these piles require 2 + 2 + 3 = 7 hours, so speed 4 is minimal for h = 6.
+        assertEquals(4, test.minEatingSpeed(new int[]{4, 5, 7}, 6));
+    }
+
+    @Test
+    public void testMaximumConstraintCase() {
+        int[] piles = new int[10_000];
+        java.util.Arrays.fill(piles, 1_000_000_000);
+
+        assertEquals(10_000, test.minEatingSpeed(piles, 1_000_000_000));
     }
 }
