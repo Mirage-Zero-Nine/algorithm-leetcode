@@ -12,35 +12,44 @@ import library.listnode.ListNode;
 
 public class RemoveNthFromEnd_19 {
     /**
-     * Two pointers.
-     * First point points at the nth node from the beginning of the list, while second pointer points at head.
-     * This will create a gap with size of n.
-     * Then move both pointers to the end of list.
-     * When reaches the end of list, the second point points at the n-th node from the end of list.
+     * Removes the requested node using a fixed-size gap between two pointers.
      *
-     * @param head head node
-     * @param n    n-th node from the end of list to be removed
-     * @return modified list
+     * <p>After {@code fast} advances {@code n} nodes ahead of {@code slow}, moving both
+     * pointers until {@code fast} reaches the tail leaves {@code slow} immediately before
+     * the n-th node from the end. Bypassing {@code slow.next} removes that node; the dummy
+     * predecessor also makes removing the original head the same operation as any other
+     * removal. The input list's links are mutated, but no new list nodes are created apart
+     * from the temporary dummy node. The method runs in {@code O(L)} time and uses
+     * {@code O(1)} auxiliary space, where {@code L} is the number of input nodes.</p>
+     *
+     * @param head head of the non-empty list to modify
+     * @param n    one-based position from the end of the node to remove
+     * @return the head of the modified list, or the next node when the original head was removed
      */
-
     public ListNode removeNthFromEnd(ListNode head, int n) {
 
-        ListNode dummy = new ListNode(0);       // pseudo head
-        ListNode slow = dummy, fast = dummy;
-        dummy.next = head;
-
-        while (n-- != 0) {
-            fast = fast.next;     // create a gap that has length of n
+        // corner case
+        if (head == null) {
+            return null;
         }
 
-        while (fast.next != null) {        // after the gap is created, move both pointers to the end of list
+        ListNode tmp = new ListNode(0);
+        tmp.next = head;
+        ListNode fast = tmp, slow = tmp;
+
+        // Establish an n-node gap; this ensures slow becomes the target's predecessor.
+        while (n-- > 0) {
+            fast = fast.next;
+        }
+
+        // Preserve the gap while fast advances to the tail's last node.
+        while (fast.next != null) {
             fast = fast.next;
             slow = slow.next;
         }
 
-        slow.next = slow.next.next;     // when fast reaches the end, slow pointer is at n-th from the end of list
-
-        return dummy.next;
+        // The temporary predecessor makes this link change valid even when slow is tmp itself.
+        slow.next = slow.next.next;
+        return tmp.next;
     }
 }
-
