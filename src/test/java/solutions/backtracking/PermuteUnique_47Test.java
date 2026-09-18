@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -166,6 +167,44 @@ class PermuteUnique_47Test {
     }
 
     @Test
+    void testMaximumLengthWithMixedMultiplicityAndBothValueBoundaries() {
+        // 8!/(3! * 3! * 2!) = 560. This exercises several equal-value
+        // branches together with the full allowed value range boundaries.
+        assertPermutationResult(new int[]{10, -10, 0, 10, -10, 10, 0, -10});
+    }
+
+    @Test
+    void testMaximumLengthAllSameValue() {
+        // The largest valid input can still have exactly one distinct result.
+        assertPermutationResult(new int[]{0, 0, 0, 0, 0, 0, 0, 0});
+    }
+
+    @Test
+    void testSortsInputInPlaceAsDocumented() {
+        int[] input = {3, -1, 2, -1, 0};
+
+        solution.permuteUnique(input);
+
+        assertArrayEquals(new int[]{-1, -1, 0, 2, 3}, input);
+    }
+
+    @Test
+    void testRepeatedCallsDoNotLeakResultsOrVisitedState() {
+        int[] first = {2, 1, 1};
+        int[] second = {0, 0, -1};
+
+        Set<List<Integer>> firstExpected = independentUniquePermutations(first);
+        Set<List<Integer>> secondExpected = independentUniquePermutations(second);
+
+        List<List<Integer>> firstActual = solution.permuteUnique(first);
+        List<List<Integer>> secondActual = solution.permuteUnique(second);
+        assertEquals(firstExpected, new HashSet<>(firstActual));
+        assertEquals(secondExpected, new HashSet<>(secondActual));
+        assertEquals(firstExpected.size(), firstActual.size());
+        assertEquals(secondExpected.size(), secondActual.size());
+    }
+
+    @Test
     void testNullInput() {
         assertTrue(solution.permuteUnique(null).isEmpty());
     }
@@ -178,9 +217,10 @@ class PermuteUnique_47Test {
     private void assertAllArraysOfLength(int[] domain, int[] input, int index) {
         if (index == input.length) {
             Set<List<Integer>> expected = independentUniquePermutations(input);
-            Set<List<Integer>> actual = new HashSet<>(solution.permuteUnique(input.clone()));
+            List<List<Integer>> actualList = solution.permuteUnique(input.clone());
+            Set<List<Integer>> actual = new HashSet<>(actualList);
             assertEquals(expected, actual, "Unexpected permutations for " + Arrays.toString(input));
-            assertEquals(expected.size(), actual.size(),
+            assertEquals(expected.size(), actualList.size(),
                     "Duplicate permutations for " + Arrays.toString(input));
             return;
         }

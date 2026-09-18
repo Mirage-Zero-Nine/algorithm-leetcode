@@ -1,135 +1,238 @@
 package solutions.bfs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
 
+/** Contract and regression tests for {@link FindClosestLeaf_742}. */
 public class FindClosestLeaf_742Test {
 
     @Test
-    public void testHappyCases() {
-        // Tree: 1->2->3, k=1, closest leaf is 3
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.left.left = new TreeNode(3);
-        assertEquals(3, new FindClosestLeaf_742().findClosestLeaf(root, 1));
+    void officialShapeAndSmallBoundaryCases() {
+        List<Case> cases = List.of(
+                new Case("single node", new Integer[]{1}, 1),
+                new Case("two nodes left", new Integer[]{1, 2}, 1),
+                new Case("two nodes right", new Integer[]{1, null, 2}, 1),
+                new Case("historical three-node chain", new Integer[]{1, 2, null, 3}, 1),
+                new Case("root has two leaves", new Integer[]{1, 2, 3}, 1),
+                new Case("target is left leaf", new Integer[]{1, 2, 3}, 2),
+                new Case("target is right leaf", new Integer[]{1, 2, 3}, 3),
+                new Case("historical four-node root target", new Integer[]{1, 2, 3, 4}, 1),
+                new Case("historical four-node internal target", new Integer[]{1, 2, null, 3, 4}, 2),
+                new Case("target has two equally close leaves", new Integer[]{1, 2, 3, 4, 5}, 2),
+                new Case("official example shape", new Integer[]{1, 3, 2}, 1),
+                new Case("target leaf in deep left branch", new Integer[]{1, 2, 3, 4, 5, null, null}, 4),
+                new Case("target internal with descendant leaf", new Integer[]{1, 2, 3, 4, null, null, 6}, 2),
+                new Case("historical target two with leaf four", new Integer[]{1, 2, 3, 4}, 2),
+                new Case("historical deep parent path", new Integer[]{1, 2, 3, 4, null, null, null, 5}, 4),
+                new Case("descendant leaf is closest", new Integer[]{1, 2, 3, 4, null, null, 6, 5}, 4),
+                new Case("another descendant leaf is closest", new Integer[]{1, 2, 3, 4, null, null, 6, 5}, 2),
+                new Case("right-heavy sparse tree", new Integer[]{1, null, 2, null, 3, 4}, 3),
+                new Case("left-heavy sparse tree", new Integer[]{1, 2, null, 3, null, 4}, 2),
+                new Case("complete tree target root", new Integer[]{10, 5, 15, 3, 7, 12, 20}, 10),
+                new Case("complete tree target internal", new Integer[]{10, 5, 15, 3, 7, 12, 20}, 5),
+                new Case("complete tree target deep leaf", new Integer[]{10, 5, 15, 3, 7, 12, 20}, 3),
+                new Case("uneven branch tie", new Integer[]{8, 4, 12, 2, 6, null, 14, 1, null, 5, 7}, 4),
+                new Case("descendant leaf beats distant ancestor", new Integer[]{8, 4, 12, 2, 6, null, 14, 1}, 2),
+                new Case("target near far-right leaf", new Integer[]{8, 4, 12, 2, 6, null, 14, 1}, 12),
+                new Case("sparse mixed branches", new Integer[]{20, 10, 30, null, 15, 25, null, null, 17}, 15),
+                new Case("target is only leaf", new Integer[]{9, 4, null, 2}, 2),
+                new Case("zig-zag branch", new Integer[]{1, 2, null, null, 3, null, 4}, 2),
+                new Case("tie among three leaves", new Integer[]{1, 2, 3, 4, 5, 6, 7}, 1));
+
+        for (Case testCase : cases) {
+            assertValidAnswer(testCase.name(), testCase.tree(), testCase.target());
+        }
     }
 
     @Test
-    public void testNegativeAndEdgeCases() {
-        // Single node tree
-        assertEquals(1, new FindClosestLeaf_742().findClosestLeaf(new TreeNode(1), 1));
+    void targetedTreesExerciseBothDirectionsAndTieHandling() {
+        assertValidAnswer("deep target with descendant", new Integer[]{50, 20, 80, 10, 30, 70, 90, 5, null, null, 35}, 20);
+        assertValidAnswer("descendant is closer than ancestor", new Integer[]{50, 20, 80, 10, 30, 70, 90, 5, null, null, 35}, 10);
+        assertValidAnswer("right descendant is closest", new Integer[]{50, 20, 80, 10, 30, 70, 90, null, 15}, 10);
+        assertValidAnswer("left descendant is closest", new Integer[]{50, 20, 80, 10, 30, 70, 90, 65}, 70);
+        assertValidAnswer("ancestor-side leaf beats deep descendant", new Integer[]{1, 2, 3, 4, null, null, null, 5, null, 6, null, 7}, 2);
+        assertValidAnswer("ancestor and descendant leaves tie", new Integer[]{1, 2, 3, 4, null, null, null, 5, null, 6, null, 7}, 4);
+        assertValidAnswer("two leaves at equal distance", new Integer[]{50, 20, 80, 10, 30, 70, 90}, 50);
+        assertValidAnswer("target is leaf among complete tree", new Integer[]{50, 20, 80, 10, 30, 70, 90}, 90);
+        assertValidAnswer("one-sided internal target", new Integer[]{50, 20, null, 10, null, 5}, 20);
+        assertValidAnswer("alternating sparse path", new Integer[]{50, 20, null, null, 30, null, 40}, 20);
     }
 
     @Test
-    public void testLargeCase() {
-        //     1
-        //    / \
-        //   2   3
-        //  /
-        // 4
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4);
-        // k=2, closest leaf is 4 (distance 1) or 3 (distance 2)
-        assertEquals(4, new FindClosestLeaf_742().findClosestLeaf(root, 2));
+    void nullRootIsTheDocumentedImplementationGuard() {
+        assertEquals(-1, new FindClosestLeaf_742().findClosestLeaf(null, 123));
     }
 
     @Test
-    public void testTargetIsLeaf() {
+    void maximumSizedSkewedTreeAndRepeatedCalls() {
         TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        // k=2, node 2 is itself a leaf
-        assertEquals(2, new FindClosestLeaf_742().findClosestLeaf(root, 2));
-    }
-
-    @Test
-    public void testTargetIsRoot() {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        // k=1, closest leaves are 2 and 3 (both distance 1)
-        assertEquals(2, new FindClosestLeaf_742().findClosestLeaf(root, 1));
-    }
-
-    @Test
-    public void testClosestLeafViaParent() {
-        //       1
-        //      / \
-        //     2   3
-        //    /
-        //   4
-        //  /
-        // 5
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4);
-        root.left.left.left = new TreeNode(5);
-        // k=4, closest leaf is 5 (distance 1), or 3 via parent (distance 3)
-        assertEquals(5, new FindClosestLeaf_742().findClosestLeaf(root, 4));
-    }
-
-    @Test
-    public void testClosestLeafGoingUp() {
-        //     1
-        //    / \
-        //   2   3
-        //  /
-        // 4
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4);
-        // k=1, closest leaf is 3 (distance 1)
-        assertEquals(3, new FindClosestLeaf_742().findClosestLeaf(root, 1));
-    }
-
-    @Test
-    public void testTwoNodesLeftChild() {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        // k=1, closest leaf is 2
-        assertEquals(2, new FindClosestLeaf_742().findClosestLeaf(root, 1));
-    }
-
-    @Test
-    public void testTwoNodesRightChild() {
-        TreeNode root = new TreeNode(1);
-        root.right = new TreeNode(2);
-        // k=1, closest leaf is 2
-        assertEquals(2, new FindClosestLeaf_742().findClosestLeaf(root, 1));
-    }
-
-    @Test
-    public void testDeepTargetWithNearbyLeaf() {
-        //       1
-        //      /
-        //     2
-        //    / \
-        //   3   4
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.left.left = new TreeNode(3);
-        root.left.right = new TreeNode(4);
-        // k=2, closest leaves are 3 and 4 (both distance 1)
-        assertEquals(3, new FindClosestLeaf_742().findClosestLeaf(root, 2));
-    }
-
-    @Test
-    public void testGiantTree() {
-        // Build a left-skewed tree of 100 nodes, target is root
-        TreeNode root = new TreeNode(1);
-        root.right = new TreeNode(2); // leaf at distance 1
         TreeNode current = root;
-        for (int i = 3; i <= 100; i++) {
-            current.left = new TreeNode(i);
+        for (int value = 2; value <= 1000; value++) {
+            current.left = new TreeNode(value);
             current = current.left;
         }
-        // k=1, closest leaf is 2 (distance 1 via right child)
-        assertEquals(2, new FindClosestLeaf_742().findClosestLeaf(root, 1));
+        assertEquals(1000, new FindClosestLeaf_742().findClosestLeaf(root, 500));
+        assertEquals(1000, new FindClosestLeaf_742().findClosestLeaf(root, 1));
+
+        TreeNode historical = new TreeNode(1);
+        historical.right = new TreeNode(2);
+        current = historical;
+        for (int value = 3; value <= 100; value++) {
+            current.left = new TreeNode(value);
+            current = current.left;
+        }
+        assertEquals(2, new FindClosestLeaf_742().findClosestLeaf(historical, 1));
+
+        // Reusing one solver across A-B-A catches accidental state retained between calls.
+        FindClosestLeaf_742 solver = new FindClosestLeaf_742();
+        TreeNode first = tree(new Integer[]{100, 40, 160, 20, 60, 140, 180});
+        TreeNode second = tree(new Integer[]{200, 100, 300, 50, 150, 250, 350});
+        assertTrue(oracle(first, 40).leaves().contains(solver.findClosestLeaf(first, 40)));
+        assertTrue(oracle(second, 200).leaves().contains(solver.findClosestLeaf(second, 200)));
+        assertTrue(oracle(first, 40).leaves().contains(solver.findClosestLeaf(first, 40)));
     }
+
+    private static void assertValidAnswer(String name, Integer[] encoding, int target) {
+        TreeNode root = tree(encoding);
+        Expected expected = oracle(root, target);
+        int actual = new FindClosestLeaf_742().findClosestLeaf(root, target);
+        assertTrue(expected.leaves().contains(actual),
+                () -> name + ": returned " + actual + ", expected one of minimum-distance leaves " + expected.leaves());
+        assertEquals(expected.distance(), distanceToLeaf(root, target, actual), name);
+    }
+
+    /** Builds a compact breadth-first encoding and rejects non-null orphan entries. */
+    private static TreeNode tree(Integer[] values) {
+        if (values.length == 0 || values[0] == null) {
+            return null;
+        }
+        TreeNode root = new TreeNode(values[0]);
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.add(root);
+        int index = 1;
+        while (!queue.isEmpty() && index < values.length) {
+            TreeNode parent = queue.remove();
+            if (index < values.length && values[index] != null) {
+                parent.left = new TreeNode(values[index]);
+                queue.add(parent.left);
+            }
+            index++;
+            if (index < values.length && values[index] != null) {
+                parent.right = new TreeNode(values[index]);
+                queue.add(parent.right);
+            }
+            index++;
+        }
+        while (index < values.length) {
+            assertTrue(values[index] == null, "tree encoding contains an unreachable non-null node");
+            index++;
+        }
+        return root;
+    }
+
+    /** Independent undirected-tree oracle: graph distance from target to every leaf. */
+    private static Expected oracle(TreeNode root, int target) {
+        Map<TreeNode, TreeNode> parent = new HashMap<>();
+        Queue<TreeNode> discover = new ArrayDeque<>();
+        discover.add(root);
+        TreeNode targetNode = null;
+        while (!discover.isEmpty()) {
+            TreeNode node = discover.remove();
+            if (node.val == target) {
+                targetNode = node;
+            }
+            if (node.left != null) {
+                parent.put(node.left, node);
+                discover.add(node.left);
+            }
+            if (node.right != null) {
+                parent.put(node.right, node);
+                discover.add(node.right);
+            }
+        }
+        assertTrue(targetNode != null, "target must be a member of the tree");
+        Queue<TreeNode> breadth = new ArrayDeque<>();
+        Map<TreeNode, Integer> distances = new HashMap<>();
+        breadth.add(targetNode);
+        distances.put(targetNode, 0);
+        int minimum = Integer.MAX_VALUE;
+        Set<Integer> leaves = new HashSet<>();
+        while (!breadth.isEmpty()) {
+            TreeNode node = breadth.remove();
+            int distance = distances.get(node);
+            if (distance > minimum) {
+                continue;
+            }
+            if (node.left == null && node.right == null) {
+                minimum = distance;
+                leaves.add(node.val);
+            }
+            List<TreeNode> neighbors = new ArrayList<>(3);
+            if (node.left != null) neighbors.add(node.left);
+            if (node.right != null) neighbors.add(node.right);
+            if (parent.containsKey(node)) neighbors.add(parent.get(node));
+            for (TreeNode neighbor : neighbors) {
+                if (!distances.containsKey(neighbor)) {
+                    distances.put(neighbor, distance + 1);
+                    breadth.add(neighbor);
+                }
+            }
+        }
+        return new Expected(minimum, leaves);
+    }
+
+    /** Computes the actual graph distance to the returned value, without the oracle's minimum pruning. */
+    private static int distanceToLeaf(TreeNode root, int target, int leaf) {
+        Map<TreeNode, TreeNode> parent = new HashMap<>();
+        Queue<TreeNode> discover = new ArrayDeque<>();
+        discover.add(root);
+        TreeNode targetNode = null;
+        while (!discover.isEmpty()) {
+            TreeNode node = discover.remove();
+            if (node.val == target) targetNode = node;
+            if (node.left != null) {
+                parent.put(node.left, node);
+                discover.add(node.left);
+            }
+            if (node.right != null) {
+                parent.put(node.right, node);
+                discover.add(node.right);
+            }
+        }
+        Queue<TreeNode> breadth = new ArrayDeque<>();
+        Map<TreeNode, Integer> distance = new HashMap<>();
+        breadth.add(targetNode);
+        distance.put(targetNode, 0);
+        while (!breadth.isEmpty()) {
+            TreeNode node = breadth.remove();
+            int d = distance.get(node);
+            if (node.val == leaf && node.left == null && node.right == null) return d;
+            List<TreeNode> neighbors = new ArrayList<>(3);
+            if (node.left != null) neighbors.add(node.left);
+            if (node.right != null) neighbors.add(node.right);
+            if (parent.containsKey(node)) neighbors.add(parent.get(node));
+            for (TreeNode neighbor : neighbors) {
+                if (!distance.containsKey(neighbor)) {
+                    distance.put(neighbor, d + 1);
+                    breadth.add(neighbor);
+                }
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    private record Case(String name, Integer[] tree, int target) {}
+
+    private record Expected(int distance, Set<Integer> leaves) {}
 }

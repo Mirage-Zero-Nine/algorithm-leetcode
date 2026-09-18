@@ -2,7 +2,6 @@ package solutions.backtracking;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -23,14 +22,13 @@ public class SubsetsWithDup_90 {
      * @return list that contains all subsets
      */
     public List<List<Integer>> subsetsWithDup(int[] nums) {
-        List<List<Integer>> out = new LinkedList<>();
 
-        if (nums == null || nums.length < 2) {
-            return out;
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
         }
 
         Arrays.sort(nums);
-        out.add(new LinkedList<>());
+        List<List<Integer>> out = new ArrayList<>(List.of());
 
         int n = nums.length, start, size = 0;
 
@@ -39,7 +37,7 @@ public class SubsetsWithDup_90 {
             size = out.size();
 
             for (int j = start; j < size; j++) {
-                List<Integer> tmp = new LinkedList<>(out.get(j));
+                List<Integer> tmp = new ArrayList<>(out.get(j));
                 tmp.add(nums[i]);
                 out.add(tmp);
             }
@@ -55,7 +53,7 @@ public class SubsetsWithDup_90 {
      * @return list that contains all subsets
      */
     public List<List<Integer>> backtracking(int[] nums) {
-        List<List<Integer>> out = new LinkedList<>();
+        List<List<Integer>> out = new ArrayList<>();
         Arrays.sort(nums);
         backtracking(out, new ArrayList<>(), nums, 0);
         return out;
@@ -73,7 +71,6 @@ public class SubsetsWithDup_90 {
     private void backtracking(List<List<Integer>> out, List<Integer> temp, int[] nums, int start) {
         out.add(new ArrayList<>(temp));
         for (int i = start; i < nums.length; i++) {
-
             if (i == start || nums[i] != nums[i - 1]) {     // avoid duplicate subsets
                 temp.add(nums[i]);
                 backtracking(out, temp, nums, i + 1);
@@ -81,5 +78,4 @@ public class SubsetsWithDup_90 {
             }
         }
     }
-
 }

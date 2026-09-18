@@ -8,7 +8,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SolveNQueens_51Test {
@@ -114,6 +113,42 @@ class SolveNQueens_51Test {
     }
 
     @Test
+    void testEveryBoardHasExactlyNQueensN9() {
+        for (List<String> board : solution.solveNQueens(9)) {
+            long queens = board.stream()
+                    .flatMapToInt(String::chars)
+                    .filter(c -> c == 'Q')
+                    .count();
+            assertEquals(9, queens);
+        }
+    }
+
+    @Test
+    void testNoDuplicateBoardsN9() {
+        List<List<String>> result = solution.solveNQueens(9);
+        assertEquals(result.size(), new HashSet<>(result).size());
+    }
+
+    @Test
+    void testIndependentPermutationOracleN4() {
+        assertEquals(oracleSolutions(4), new HashSet<>(solution.solveNQueens(4)));
+    }
+
+    @Test
+    void testIndependentPermutationOracleN8() {
+        assertEquals(oracleSolutions(8), new HashSet<>(solution.solveNQueens(8)));
+    }
+
+    @Test
+    void testRepeatedCallsReturnFreshIndependentResults() {
+        List<List<String>> first = solution.solveNQueens(4);
+        List<List<String>> second = solution.solveNQueens(4);
+        assertEquals(new HashSet<>(first), new HashSet<>(second));
+        assertFalse(first == second);
+        assertFalse(first.get(0) == second.get(0));
+    }
+
+    @Test
     void testBoardContainsOnlyQAndDot() {
         List<List<String>> result = solution.solveNQueens(6);
         for (List<String> board : result) {
@@ -169,6 +204,36 @@ class SolveNQueens_51Test {
         }
     }
 
+    @Test
+    void testEveryBoardSatisfiesFullContractN1ThroughN9() {
+        int[] expectedCounts = {1, 0, 0, 2, 10, 4, 40, 92, 352};
+        for (int n = 1; n <= 9; n++) {
+            List<List<String>> result = solution.solveNQueens(n);
+            assertEquals(expectedCounts[n - 1], result.size(), "Mismatch for n=" + n);
+            assertEquals(result.size(), new HashSet<>(result).size(),
+                    "Duplicate board for n=" + n);
+            for (List<String> board : result) {
+                assertEquals(n, board.size(), "Wrong row count for n=" + n);
+                for (String row : board) {
+                    assertNotNull(row);
+                    assertEquals(n, row.length(), "Wrong row length for n=" + n);
+                    assertTrue(row.matches("[Q.]+"));
+                    assertEquals(1, row.chars().filter(c -> c == 'Q').count());
+                }
+                for (int column = 0; column < n; column++) {
+                    int queens = 0;
+                    for (String row : board) {
+                        if (row.charAt(column) == 'Q') {
+                            queens++;
+                        }
+                    }
+                    assertEquals(1, queens, "Wrong queen count in column " + column + " for n=" + n);
+                }
+                assertNoQueensAttack(board);
+            }
+        }
+    }
+
     private void assertNoQueensAttack(List<String> board) {
         int n = board.size();
         List<int[]> queens = new ArrayList<>();
@@ -184,6 +249,48 @@ class SolveNQueens_51Test {
                 assertFalse(r1 == r2, "Same row conflict");
                 assertFalse(c1 == c2, "Same column conflict");
                 assertFalse(Math.abs(r1 - r2) == Math.abs(c1 - c2), "Diagonal conflict");
+            }
+        }
+    }
+
+    /** Independent reference for small boards: enumerate every row permutation and filter diagonals. */
+    private Set<List<String>> oracleSolutions(int n) {
+        Set<List<String>> solutions = new HashSet<>();
+        int[] rowsByColumn = new int[n];
+        boolean[] usedRows = new boolean[n];
+        enumeratePermutations(0, rowsByColumn, usedRows, solutions);
+        return solutions;
+    }
+
+    private void enumeratePermutations(int column, int[] rowsByColumn,
+                                       boolean[] usedRows, Set<List<String>> solutions) {
+        if (column == rowsByColumn.length) {
+            for (int left = 0; left < rowsByColumn.length; left++) {
+                for (int right = left + 1; right < rowsByColumn.length; right++) {
+                    if (Math.abs(rowsByColumn[left] - rowsByColumn[right]) == right - left) {
+                        return;
+                    }
+                }
+            }
+            List<String> board = new ArrayList<>();
+            for (int row = 0; row < rowsByColumn.length; row++) {
+                StringBuilder line = new StringBuilder(".".repeat(rowsByColumn.length));
+                for (int columnIndex = 0; columnIndex < rowsByColumn.length; columnIndex++) {
+                    if (rowsByColumn[columnIndex] == row) {
+                        line.setCharAt(columnIndex, 'Q');
+                    }
+                }
+                board.add(line.toString());
+            }
+            solutions.add(board);
+            return;
+        }
+        for (int row = 0; row < rowsByColumn.length; row++) {
+            if (!usedRows[row]) {
+                usedRows[row] = true;
+                rowsByColumn[column] = row;
+                enumeratePermutations(column + 1, rowsByColumn, usedRows, solutions);
+                usedRows[row] = false;
             }
         }
     }

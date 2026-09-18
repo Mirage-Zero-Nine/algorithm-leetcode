@@ -8,9 +8,6 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Partition_131Test {
@@ -42,8 +39,7 @@ class Partition_131Test {
 
     @Test
     void testLonger() {
-        List<List<String>> result = solution.partition("aabb");
-        assertTrue(result.size() >= 4);
+        assertMatchesIndependentOracle("aabb");
     }
 
     @Test
@@ -78,15 +74,15 @@ class Partition_131Test {
 
     @Test
     void testSixChars() {
-        List<List<String>> result = solution.partition("abcabc");
-        assertTrue(result.size() >= 1);
+        assertMatchesIndependentOracle("abcabc");
     }
 
     @Test
     void testGiantInput() {
         // "aaaaaaaaaa" (10 a's) - many palindrome partitions
         List<List<String>> result = solution.partition("aaaaaaaaaa");
-        assertTrue(result.size() > 50);
+        assertEquals(512, result.size());
+        assertMatchesIndependentOracle("aaaaaaaaaa");
     }
 
     @Test
@@ -166,23 +162,95 @@ class Partition_131Test {
     @Test
     void testLargerString12Chars() {
         Random rng = new Random(42L);
-        StringBuilder sb = new StringBuilder();
+        StringBuilder input = new StringBuilder();
         for (int i = 0; i < 12; i++) {
-            sb.append((char) ('a' + rng.nextInt(4))); // small alphabet for more palindromes
+            input.append((char) ('a' + rng.nextInt(4)));
         }
-        String input = sb.toString();
+        assertMatchesIndependentOracle(input.toString());
+    }
+
+    @Test
+    void testSingleCharacterAlphabetCases() {
+        assertMatchesIndependentOracle("z");
+        assertMatchesIndependentOracle("zz");
+    }
+
+    @Test
+    void testNoMultiCharacterPalindromes() {
+        assertMatchesIndependentOracle("abcd");
+        assertMatchesIndependentOracle("abcdefg");
+    }
+
+    @Test
+    void testOddAndEvenPalindromes() {
+        assertMatchesIndependentOracle("abba");
+        assertMatchesIndependentOracle("abccba");
+        assertMatchesIndependentOracle("racecar");
+        assertMatchesIndependentOracle("abacaba");
+    }
+
+    @Test
+    void testAlternatingCharacters() {
+        assertMatchesIndependentOracle("abab");
+        assertMatchesIndependentOracle("ababab");
+        assertMatchesIndependentOracle("abababab");
+    }
+
+    @Test
+    void testRepeatedBlocks() {
+        assertMatchesIndependentOracle("aabaa");
+        assertMatchesIndependentOracle("aabbaa");
+        assertMatchesIndependentOracle("aabbaaab");
+    }
+
+    @Test
+    void testMixedLowercaseAlphabetCharacters() {
+        assertMatchesIndependentOracle("aabbcc");
+        assertMatchesIndependentOracle("abacabad");
+        assertMatchesIndependentOracle("cabac");
+    }
+
+    @Test
+    void testExhaustiveBinaryStringsThroughLengthSeven() {
+        for (int length = 1; length <= 7; length++) {
+            int inputs = 1 << length;
+            for (int value = 0; value < inputs; value++) {
+                StringBuilder input = new StringBuilder(length);
+                for (int bit = length - 1; bit >= 0; bit--) {
+                    input.append(((value >>> bit) & 1) == 0 ? 'a' : 'b');
+                }
+                assertMatchesIndependentOracle(input.toString());
+            }
+        }
+    }
+
+    @Test
+    void testMaximumLengthAllSameString() {
+        String input = "aaaaaaaaaaaaaaaa";
         List<List<String>> result = solution.partition(input);
-
-        // Property 1: every part is a palindrome
-        // Property 2: concatenation gives original
+        assertEquals(1 << (input.length() - 1), result.size());
         assertAllPartitionsValid(input, result);
+        assertEquals(independentOracle(input), new HashSet<>(result));
+    }
 
-        // Property 3: results are unique
-        Set<List<String>> unique = new HashSet<>(result);
-        assertEquals(result.size(), unique.size(), "All partitions should be unique for: " + input);
+    @Test
+    void testMaximumLengthMixedString() {
+        assertMatchesIndependentOracle("abcdefghijklmnop");
+    }
 
-        // Should produce at least one partition (all single chars)
-        assertTrue(result.size() >= 1);
+    @Test
+    void testRepeatedInvocationDoesNotLeakState() {
+        assertMatchesIndependentOracle("aab");
+        assertMatchesIndependentOracle("abba");
+        assertMatchesIndependentOracle("abc");
+        assertMatchesIndependentOracle("aab");
+    }
+
+    @Test
+    void testResultListsAreIndependentSnapshots() {
+        List<List<String>> result = solution.partition("aaa");
+        result.get(0).clear();
+        assertEquals(independentOracle("aaa"), new HashSet<>(solution.partition("aaa")));
     }
 
     private void assertAllPartitionsValid(String original, List<List<String>> partitions) {
@@ -195,5 +263,51 @@ class Partition_131Test {
                         part + " should be a palindrome");
             }
         }
+    }
+
+    private void assertMatchesIndependentOracle(String input) {
+        List<List<String>> result = solution.partition(input);
+        assertAllPartitionsValid(input, result);
+        Set<List<String>> actual = new HashSet<>(result);
+        assertEquals(result.size(), actual.size(), "Partitions must be unique for: " + input);
+        assertEquals(independentOracle(input), actual, "Unexpected partitions for: " + input);
+    }
+
+    /**
+     * Enumerates every possible cut mask independently of the recursive solution. A set bit
+     * after character i ends one part; masks whose parts are all palindromes are the oracle.
+     */
+    private Set<List<String>> independentOracle(String input) {
+        Set<List<String>> expected = new HashSet<>();
+        if (input.isEmpty()) {
+            expected.add(List.of());
+            return expected;
+        }
+        int cutCount = input.length() - 1;
+        int masks = 1 << cutCount;
+        for (int mask = 0; mask < masks; mask++) {
+            List<String> partition = new java.util.ArrayList<>();
+            int start = 0;
+            boolean valid = true;
+            for (int end = 0; end < input.length(); end++) {
+                if (end == input.length() - 1 || ((mask >>> end) & 1) != 0) {
+                    String part = input.substring(start, end + 1);
+                    if (!isPalindrome(part)) {
+                        valid = false;
+                        break;
+                    }
+                    partition.add(part);
+                    start = end + 1;
+                }
+            }
+            if (valid) {
+                expected.add(partition);
+            }
+        }
+        return expected;
+    }
+
+    private boolean isPalindrome(String value) {
+        return value.contentEquals(new StringBuilder(value).reverse());
     }
 }

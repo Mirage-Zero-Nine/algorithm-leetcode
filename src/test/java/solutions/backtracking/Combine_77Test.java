@@ -105,6 +105,38 @@ public class Combine_77Test {
     }
 
     @Test
+    public void testDocumentedNegativeAndZeroInputs() {
+        // The implementation explicitly treats k <= 0 as having no output;
+        // these inputs are outside LeetCode's contract but are documented by
+        // the solution's guard clauses.
+        assertEquals(List.of(), test.combine(5, -1));
+        assertEquals(List.of(), test.combineMath(5, -1));
+        assertEquals(List.of(), test.combine(-1, 1));
+        assertEquals(List.of(), test.combineMath(-1, 1));
+        assertEquals(List.of(), test.combine(0, 0));
+        assertEquals(List.of(), test.combineMath(0, 0));
+        assertEquals(List.of(), test.combine(-3, -2));
+        assertEquals(List.of(), test.combineMath(-3, -2));
+    }
+
+    /**
+     * Compares both implementations with an independently generated bitmask
+     * oracle.  The oracle does not recurse, so it can catch a shared mistake
+     * in the two production approaches for small ranges.
+     */
+    @ParameterizedTest(name = "bitmask oracle n={0}, k={1}")
+    @MethodSource("smallBitmaskInputs")
+    public void testSmallInputsAgainstIndependentBitmaskOracle(int n, int k) {
+        Set<List<Integer>> expected = bitmaskOracle(n, k);
+        List<List<Integer>> backtrackingResult = test.combine(n, k);
+        List<List<Integer>> recurrenceResult = test.combineMath(n, k);
+        assertValidCombinations(n, k, backtrackingResult);
+        assertValidCombinations(n, k, recurrenceResult);
+        assertEquals(expected, canonicalize(backtrackingResult));
+        assertEquals(expected, canonicalize(recurrenceResult));
+    }
+
+    @Test
     public void testGiantCase() {
         // C(20, 10) = 184756
         List<List<Integer>> result = test.combine(20, 10);
@@ -159,6 +191,31 @@ public class Combine_77Test {
                 .boxed()
                 .flatMap(n -> IntStream.rangeClosed(1, n)
                         .mapToObj(k -> Arguments.of(n, k)));
+    }
+
+    private static Stream<Arguments> smallBitmaskInputs() {
+        return IntStream.rangeClosed(1, 8)
+                .boxed()
+                .flatMap(n -> IntStream.rangeClosed(1, n)
+                        .mapToObj(k -> Arguments.of(n, k)));
+    }
+
+    private static Set<List<Integer>> bitmaskOracle(int n, int k) {
+        Set<List<Integer>> combinations = new HashSet<>();
+        for (int mask = 0; mask < (1 << n); mask++) {
+            if (Integer.bitCount(mask) != k) {
+                continue;
+            }
+
+            int selectedMask = mask;
+            List<Integer> combination = IntStream.range(0, n)
+                    .filter(index -> (selectedMask & (1 << index)) != 0)
+                    .map(index -> index + 1)
+                    .boxed()
+                    .toList();
+            combinations.add(combination);
+        }
+        return combinations;
     }
 
     private static void assertValidCombinations(int n, int k, List<List<Integer>> actual) {
