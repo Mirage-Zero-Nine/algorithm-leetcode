@@ -22,28 +22,28 @@ public class SubsetsWithDup_90 {
      * @return list that contains all subsets
      */
     public List<List<Integer>> subsetsWithDup(int[] nums) {
-
+        // corner case
         if (nums == null || nums.length == 0) {
             return new ArrayList<>();
         }
 
         Arrays.sort(nums);
-        List<List<Integer>> out = new ArrayList<>(List.of());
+        List<List<Integer>> output = new ArrayList<>(List.of(new ArrayList<>()));
 
         int n = nums.length, start, size = 0;
 
         for (int i = 0; i < n; i++) {
             start = (i == 0 || nums[i] != nums[i - 1]) ? 0 : size;      // avoid duplicated elements
-            size = out.size();
+            size = output.size();
 
             for (int j = start; j < size; j++) {
-                List<Integer> tmp = new ArrayList<>(out.get(j));
+                List<Integer> tmp = new ArrayList<>(output.get(j));
                 tmp.add(nums[i]);
-                out.add(tmp);
+                output.add(tmp);
             }
         }
 
-        return out;
+        return output;
     }
 
     /**
