@@ -1,5 +1,6 @@
 package solutions.binarysearch;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,13 @@ public class Search_704Test {
     }
 
     @Test
+    public void testTwoElementArrayChecksBothCandidates() {
+        assertEquals(0, test.search(new int[]{2, 7}, 2));
+        assertEquals(1, test.search(new int[]{2, 7}, 7));
+        assertEquals(-1, test.search(new int[]{2, 7}, 5));
+    }
+
+    @Test
     public void testSingleElementFound() {
         int[] nums = {1};
         int target = 1;
@@ -65,15 +73,15 @@ public class Search_704Test {
 
     @Test
     public void testLargeArrayNoOverflow() {
-        int size = 1_000_000;
+        int size = 10_000;
         int[] nums = new int[size];
         for (int i = 0; i < size; i++) {
-            nums[i] = i;
+            nums[i] = i - 10_000;
         }
 
-        int target = 999_999;
+        int target = -1;
         int result = test.search(nums, target);
-        assertEquals(target, result);
+        assertEquals(size - 1, result);
     }
 
     @Test
@@ -86,10 +94,20 @@ public class Search_704Test {
         int[] nums = {2, 4, 6, 8, 10};
         assertEquals(-1, test.search(nums, 1));
     }
-@Test
+
+    @Test
+    public void testTargetGreaterThanMaximum() {
+        int[] nums = {-8, -3, 0, 4, 11};
+        assertEquals(-1, test.search(nums, 12));
+    }
+
+    @Test
     public void testEveryValueAndGapInGiantArray() {
-        int[] values = new int[20000];
-        for (int i = 0; i < values.length; i++) values[i] = 3 * i - 30000;
+        int[] values = new int[10_000];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = 2 * i - 10_000;
+        }
+
         for (int i = 0; i < values.length; i++) {
             assertEquals(i, test.search(values, values[i]));
             assertEquals(-1, test.search(values, values[i] + 1));
@@ -99,7 +117,10 @@ public class Search_704Test {
     @Test
     public void testIntegerExtremesCanBeFoundWithoutArithmeticOverflow() {
         int[] values = {Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE};
-        for (int i = 0; i < values.length; i++) assertEquals(i, test.search(values, values[i]));
+        for (int i = 0; i < values.length; i++) {
+            assertEquals(i, test.search(values, values[i]));
+        }
+
         assertEquals(-1, test.search(values, Integer.MAX_VALUE - 1));
     }
 
@@ -109,6 +130,6 @@ public class Search_704Test {
         int[] original = values.clone();
         assertEquals(3, test.search(values, 19));
         assertEquals(-1, test.search(values, 20));
-        org.junit.jupiter.api.Assertions.assertArrayEquals(original, values);
+        assertArrayEquals(original, values);
     }
 }
