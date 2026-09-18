@@ -5,10 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GenerateParenthesis_22Test {
@@ -106,9 +104,9 @@ class GenerateParenthesis_22Test {
 
     @Test
     void testGiantCase() {
-        // Catalan number C(10) = 16796
-        List<String> result = solution.generateParenthesis(10);
-        assertEquals(16796, result.size());
+        // n=8 is the largest input in the LeetCode contract (Catalan number C(8) = 1430).
+        List<String> result = solution.generateParenthesis(8);
+        assertEquals(1430, result.size());
     }
 
     @Test
@@ -176,5 +174,74 @@ class GenerateParenthesis_22Test {
                 assertEquals(')', s.charAt(s.length() - 1), "Must end with ')': " + s);
             }
         }
+    }
+
+    @Test
+    void testExhaustiveIndependentOracleForEverySupportedN() {
+        // Enumerate every 2n-character parenthesis string independently, then retain only
+        // strings with exactly n opens and a non-negative prefix balance. This checks both
+        // completeness and soundness without relying on the implementation's recursion.
+        for (int n = 1; n <= 8; n++) {
+            Set<String> expected = bruteForceWellFormedParentheses(n);
+            List<String> actual = solution.generateParenthesis(n);
+            assertEquals(expected, new HashSet<>(actual), "Mismatch for n=" + n);
+            assertEquals(expected.size(), actual.size(), "Duplicate result for n=" + n);
+        }
+    }
+
+    @Test
+    void testNegativeNUsesTheSolutionClassEmptyResultGuard() {
+        // LeetCode excludes negative n, but this implementation's recursion guards produce
+        // an empty result; preserve and verify that defined extension behavior.
+        assertTrue(solution.generateParenthesis(-1).isEmpty());
+    }
+
+    @Test
+    void testRepeatedCallsDoNotShareMutableState() {
+        List<String> first = solution.generateParenthesis(3);
+        first.clear();
+        assertEquals(Set.of("()"), new HashSet<>(solution.generateParenthesis(1)));
+        assertEquals(5, solution.generateParenthesis(3).size());
+    }
+
+    @Test
+    void testEverySupportedResultHasExactlyNOfEachCharacter() {
+        for (int n = 1; n <= 8; n++) {
+            for (String value : solution.generateParenthesis(n)) {
+                assertEquals(n, value.chars().filter(c -> c == '(').count());
+                assertEquals(n, value.chars().filter(c -> c == ')').count());
+            }
+        }
+    }
+
+    private Set<String> bruteForceWellFormedParentheses(int pairs) {
+        int length = pairs * 2;
+        Set<String> valid = new HashSet<>();
+        for (int mask = 0; mask < (1 << length); mask++) {
+            int opens = Integer.bitCount(mask);
+            if (opens != pairs) {
+                continue;
+            }
+            StringBuilder candidate = new StringBuilder(length);
+            int balance = 0;
+            boolean wellFormedPrefix = true;
+            for (int index = 0; index < length; index++) {
+                if ((mask & (1 << index)) != 0) {
+                    candidate.append('(');
+                    balance++;
+                } else {
+                    candidate.append(')');
+                    balance--;
+                }
+                if (balance < 0) {
+                    wellFormedPrefix = false;
+                    break;
+                }
+            }
+            if (wellFormedPrefix && balance == 0) {
+                valid.add(candidate.toString());
+            }
+        }
+        return valid;
     }
 }

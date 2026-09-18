@@ -90,8 +90,98 @@ class Permute_46Test {
     }
 
     @Test
-    void returnsEmptyListForNullAndEmptyInput() {
+    void handlesMinimumValue() {
+        assertEquals(List.of(List.of(-10)), solution.permute(new int[]{-10}));
+    }
+
+    @Test
+    void handlesMaximumValue() {
+        assertEquals(List.of(List.of(10)), solution.permute(new int[]{10}));
+    }
+
+    @Test
+    void handlesTwoDistinctValues() {
+        assertPermutationResult(new int[]{0, 1});
+    }
+
+    @Test
+    void handlesTwoNegativeValues() {
+        assertPermutationResult(new int[]{-10, -9});
+    }
+
+    @Test
+    void handlesNegativeAndPositiveValues() {
+        assertPermutationResult(new int[]{-10, 10});
+    }
+
+    @Test
+    void handlesZeroBetweenNegativeAndPositiveValues() {
+        assertPermutationResult(new int[]{-1, 0, 1});
+    }
+
+    @Test
+    void handlesAlreadySortedInput() {
+        assertPermutationResult(new int[]{-3, -2, -1, 0});
+    }
+
+    @Test
+    void handlesReverseSortedInput() {
+        assertPermutationResult(new int[]{4, 3, 2, 1});
+    }
+
+    @Test
+    void handlesUnsortedInput() {
+        assertPermutationResult(new int[]{7, -2, 5, 0});
+    }
+
+    @Test
+    void handlesAllNegativeInput() {
+        assertPermutationResult(new int[]{-10, -5, -1});
+    }
+
+    @Test
+    void handlesAllPositiveInput() {
+        assertPermutationResult(new int[]{1, 5, 10});
+    }
+
+    @Test
+    void handlesFiveValues() {
+        assertPermutationResult(new int[]{-10, -1, 0, 3, 10});
+    }
+
+    @Test
+    void handlesDifferentSixValueOrdering() {
+        assertPermutationResult(new int[]{6, -6, 0, 10, -10, 1});
+    }
+
+    @Test
+    void returnsFreshResultsForRepeatedCalls() {
+        int[] input = {-2, 0, 2};
+
+        List<List<Integer>> first = solution.permute(input);
+        List<List<Integer>> second = solution.permute(input);
+
+        assertEquals(new HashSet<>(first), new HashSet<>(second));
+        assertEquals(first.size(), second.size());
+        assertTrue(first != second, "each invocation should return a fresh outer list");
+    }
+
+    @Test
+    void doesNotReuseMutablePermutationListsBetweenInvocations() {
+        List<List<Integer>> first = solution.permute(new int[]{1, 2});
+        first.get(0).set(0, 99);
+
+        assertEquals(Set.of(List.of(1, 2), List.of(2, 1)),
+                new HashSet<>(solution.permute(new int[]{1, 2})));
+    }
+
+    @Test
+    void returnsEmptyListForNullInput() {
         assertTrue(solution.permute(null).isEmpty());
+    }
+
+    @Test
+    void returnsEmptyListForEmptyInput() {
         assertTrue(solution.permute(new int[]{}).isEmpty());
     }
 

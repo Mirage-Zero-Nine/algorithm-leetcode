@@ -25,6 +25,7 @@ public class GetMaximumGold_1219 {
      * @return maximum amount of gold can be collected
      */
     public int getMaximumGold(int[][] grid) {
+        max = 0;
         boolean[][] isVisited = new boolean[grid.length][grid[0].length];
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
@@ -57,7 +58,7 @@ public class GetMaximumGold_1219 {
 
             if (xx >= 0 && xx < grid.length && yy >= 0 && yy < grid[0].length && !isVisited[xx][yy] && grid[xx][yy] != 0) {
                 isVisited[xx][yy] = true;
-                backtracking(xx, yy, grid, isVisited, sum + grid[x][y]);
+                backtracking(xx, yy, grid, isVisited, sum + grid[xx][yy]);
                 isVisited[xx][yy] = false;
             }
         }

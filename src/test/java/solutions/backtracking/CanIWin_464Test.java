@@ -1,73 +1,210 @@
 package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CanIWin_464Test {
-    private final CanIWin_464 solution = new CanIWin_464();
+
+    private static void assertCanWin(int maxChoosableInteger, int desiredTotal, boolean expected) {
+        // The online judge invokes a solution for one game. A fresh object keeps
+        // memoized positions from a different game from affecting this case.
+        assertEquals(expected, new CanIWin_464().canIWin(maxChoosableInteger, desiredTotal),
+                () -> "max=" + maxChoosableInteger + ", target=" + desiredTotal);
+    }
+
+    /** Independent minimax oracle used only for exhaustive small games. */
+    private static boolean oracle(int max, int desiredTotal) {
+        int sum = max * (max + 1) / 2;
+        if (desiredTotal <= max) {
+            return true;
+        }
+        if (sum < desiredTotal) {
+            return false;
+        }
+        return oracleTurn(max, desiredTotal, 0, new HashMap<>());
+    }
+
+    private static boolean oracleTurn(int max, int remaining, int chosenMask,
+                                      Map<Long, Boolean> memo) {
+        if (remaining <= 0) {
+            return false;
+        }
+        long key = (((long) chosenMask) << 32) | remaining;
+        Boolean saved = memo.get(key);
+        if (saved != null) {
+            return saved;
+        }
+        for (int choice = 1; choice <= max; choice++) {
+            int bit = 1 << choice;
+            if ((chosenMask & bit) == 0
+                    && !oracleTurn(max, remaining - choice, chosenMask | bit, memo)) {
+                memo.put(key, true);
+                return true;
+            }
+        }
+        memo.put(key, false);
+        return false;
+    }
 
     @Test
     void testCannotWin() {
-        assertFalse(solution.canIWin(10, 11));
+        assertCanWin(10, 11, false);
     }
 
     @Test
     void testCanWin() {
-        assertTrue(solution.canIWin(10, 0));
+        assertCanWin(10, 0, true);
     }
 
     @Test
     void testSmallNumbers() {
-        assertFalse(solution.canIWin(10, 40));
+        assertCanWin(10, 40, false);
     }
 
     @Test
     void testImmediateWin() {
-        assertTrue(solution.canIWin(5, 5));
+        assertCanWin(5, 5, true);
     }
 
     @Test
     void testLargeTotal() {
-        assertFalse(solution.canIWin(5, 50));
+        assertCanWin(5, 50, false);
     }
 
     @Test
     void testDesiredTotalZero() {
-        assertTrue(solution.canIWin(3, 0));
+        assertCanWin(3, 0, true);
     }
 
     @Test
     void testDesiredTotalOne() {
-        assertTrue(solution.canIWin(10, 1));
+        assertCanWin(10, 1, true);
     }
 
     @Test
     void testMaxChoosable20() {
-        assertFalse(new CanIWin_464().canIWin(20, 210));
+        assertCanWin(20, 210, false);
     }
 
     @Test
     void testCannotReachTotal() {
         // sum of 1..4 = 10, so total 11 is unreachable
-        assertFalse(new CanIWin_464().canIWin(4, 11));
+        assertCanWin(4, 11, false);
     }
 
     @Test
     void testFirstPlayerWinsMax4Total6() {
-        assertTrue(new CanIWin_464().canIWin(4, 6));
+        assertCanWin(4, 6, true);
     }
 
     @Test
     void testGiantCase() {
-        // maxChoosable=20, desiredTotal=150 - sum of 1..20 = 210 > 150
-        CanIWin_464 s = new CanIWin_464();
-        // just verify it completes without timeout
-        boolean result = s.canIWin(20, 150);
-        // result is deterministic; just assert it's boolean
-        assertTrue(result || !result);
+        assertCanWin(20, 150, false);
+    }
+
+    @Test
+    void smallestChooserCannotReachTwo() {
+        assertCanWin(1, 2, false);
+    }
+
+    @Test
+    void twoChooserCanTakeTargetTwo() {
+        assertCanWin(2, 2, true);
+    }
+
+    @Test
+    void twoChooserLosesTargetThree() {
+        assertCanWin(2, 3, false);
+    }
+
+    @Test
+    void twoChooserLosesUnreachableTargetFour() {
+        assertCanWin(2, 4, false);
+    }
+
+    @Test
+    void threeChooserWinsTargetSix() {
+        assertCanWin(3, 6, true);
+    }
+
+    @Test
+    void threeChooserLosesAfterAllNumbersAreAvailable() {
+        assertCanWin(3, 7, false);
+    }
+
+    @Test
+    void fourChooserLosesTargetFive() {
+        assertCanWin(4, 5, false);
+    }
+
+    @Test
+    void fourChooserLosesTargetTen() {
+        assertCanWin(4, 10, false);
+    }
+
+    @Test
+    void fiveChooserWinsTargetFifteen() {
+        assertCanWin(5, 15, true);
+    }
+
+    @Test
+    void sixChooserLosesTargetSeven() {
+        assertCanWin(6, 7, false);
+    }
+
+    @Test
+    void sixChooserWinsTargetTwelve() {
+        assertCanWin(6, 12, true);
+    }
+
+    @Test
+    void tenChooserWinsTargetTwelve() {
+        assertCanWin(10, 12, true);
+    }
+
+    @Test
+    void tenChooserLosesWhenTargetExceedsTotalSum() {
+        assertCanWin(10, 56, false);
+    }
+
+    @Test
+    void maximumChooserWinsImmediateMaximumTarget() {
+        assertCanWin(20, 20, true);
+    }
+
+    @Test
+    void maximumChooserLosesTargetTwentyOne() {
+        assertCanWin(20, 21, false);
+    }
+
+    @Test
+    void maximumChooserWinsTargetFifty() {
+        assertCanWin(20, 50, true);
+    }
+
+    @Test
+    void maximumChooserLosesJustBelowExactSum() {
+        assertCanWin(20, 209, false);
+    }
+
+    @Test
+    void maximumChooserLosesBeyondSumOfAllNumbers() {
+        assertCanWin(20, 300, false);
+    }
+
+    @Test
+    void exhaustiveSmallGamesMatchIndependentMinimaxOracle() {
+        // This covers every target through (and just beyond) the reachable sum
+        // for max values 1..8, including every no-move and no-win outcome.
+        for (int max = 1; max <= 8; max++) {
+            int sum = max * (max + 1) / 2;
+            for (int target = 0; target <= sum + 2; target++) {
+                assertCanWin(max, target, oracle(max, target));
+            }
+        }
     }
 }

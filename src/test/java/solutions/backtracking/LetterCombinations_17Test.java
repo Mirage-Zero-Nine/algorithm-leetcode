@@ -2,14 +2,12 @@ package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LetterCombinations_17Test {
@@ -159,12 +157,79 @@ class LetterCombinations_17Test {
     }
 
     @Test
-    void testNullInput() {
-        // Verify behavior with null - implementation may throw NPE
-        try {
-            solution.letterCombinations(null);
-        } catch (NullPointerException e) {
-            // expected
+    void testIndependentOracleAcrossRepresentativeInputs() {
+        String[] inputs = {
+                "2", "3", "7", "9", "22", "27", "72", "79", "89", "99",
+                "234", "279", "777", "789", "923", "2345", "5678", "7272",
+                "7939", "9999"
+        };
+        for (String digits : inputs) {
+            assertMatchesOracle(digits);
         }
+    }
+
+    @Test
+    void testExhaustiveValidInputsThroughLengthThree() {
+        // This independently checks every 2-9 input of lengths 1, 2, and 3 (584 cases).
+        for (int length = 1; length <= 3; length++) {
+            assertAllDigitStrings("", length);
+        }
+    }
+
+    @Test
+    void testMaximumFourDigitInputsWithFourLetterMappings() {
+        assertMatchesOracle("7777");
+        assertMatchesOracle("9999");
+        assertMatchesOracle("7979");
+        assertMatchesOracle("9797");
+    }
+
+    @Test
+    void testInvalidDigitsReturnNoCombinations() {
+        assertEquals(List.of(), new LetterCombinations_17().letterCombinations("0"));
+        assertEquals(List.of(), new LetterCombinations_17().letterCombinations("1"));
+        assertEquals(List.of(), new LetterCombinations_17().letterCombinations("201"));
+        assertEquals(List.of(), new LetterCombinations_17().letterCombinations("912"));
+    }
+
+    private void assertAllDigitStrings(String prefix, int remainingLength) {
+        if (remainingLength == 0) {
+            assertMatchesOracle(prefix);
+            return;
+        }
+        for (char digit = '2'; digit <= '9'; digit++) {
+            assertAllDigitStrings(prefix + digit, remainingLength - 1);
+        }
+    }
+
+    /**
+     * Builds the expected Cartesian product iteratively instead of sharing the solution's
+     * recursive traversal, then checks both set equality and absence of duplicate outputs.
+     */
+    private void assertMatchesOracle(String digits) {
+        List<String> expected = oracle(digits);
+        List<String> actual = new LetterCombinations_17().letterCombinations(digits);
+
+        assertEquals(expected.size(), actual.size(), "wrong count for " + digits);
+        assertEquals(new HashSet<>(expected), new HashSet<>(actual), "wrong combinations for " + digits);
+        assertEquals(actual.size(), new HashSet<>(actual).size(), "duplicate combination for " + digits);
+    }
+
+    private List<String> oracle(String digits) {
+        Map<Character, String> mapping = Map.of(
+                '2', "abc", '3', "def", '4', "ghi", '5', "jkl",
+                '6', "mno", '7', "pqrs", '8', "tuv", '9', "wxyz");
+        List<String> combinations = new ArrayList<>();
+        combinations.add("");
+        for (char digit : digits.toCharArray()) {
+            List<String> next = new ArrayList<>();
+            for (String prefix : combinations) {
+                for (char letter : mapping.get(digit).toCharArray()) {
+                    next.add(prefix + letter);
+                }
+            }
+            combinations = next;
+        }
+        return combinations;
     }
 }

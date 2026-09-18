@@ -36,23 +36,30 @@ public class DepthSumInverse_364 {
             return 0;
         }
 
-        int sum = 0, previousSum = 0;
+        int sum = 0, previousSum = 0, answer = 0;
 
         while (!nestedList.isEmpty()) {
             List<NestedInteger> nextLayer = new LinkedList<>();     // collect next layer's node
+            boolean levelHasInteger = false;
 
             for (NestedInteger l : nestedList) {
                 if (l.isInteger()) {        // if current nested integer has value
                     previousSum += l.getInteger();
+                    levelHasInteger = true;
                 } else {                    // otherwise, collect next layer
                     nextLayer.addAll(l.getList());
                 }
             }
 
+            // Empty-only levels still increase the weight of integers already seen, but
+            // they do not define the deepest integer level. A zero-valued integer counts.
             sum += previousSum;
+            if (levelHasInteger) {
+                answer = sum;
+            }
             nestedList = (nextLayer);
         }
 
-        return sum;
+        return answer;
     }
 }

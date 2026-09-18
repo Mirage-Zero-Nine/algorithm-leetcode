@@ -2,12 +2,12 @@ package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RestoreIpAddresses_93Test {
@@ -15,102 +15,203 @@ class RestoreIpAddresses_93Test {
 
     @Test
     void testBasic() {
-        List<String> result = solution.restoreIpAddresses("25525511135");
-        assertEquals(2, result.size());
+        assertExactly("25525511135", "255.255.11.135", "255.255.111.35");
     }
 
     @Test
     void testAllZeros() {
-        List<String> result = solution.restoreIpAddresses("0000");
-        assertEquals(1, result.size());
+        assertExactly("0000", "0.0.0.0");
     }
 
     @Test
     void testNoSolution() {
-        List<String> result = solution.restoreIpAddresses("1111");
-        assertTrue(result.size() >= 1);
+        assertExactly("256256256256");
     }
 
     @Test
     void testLongString() {
-        List<String> result = solution.restoreIpAddresses("101023");
-        assertTrue(result.size() >= 5);
+        assertExactly("101023", "1.0.10.23", "1.0.102.3", "10.1.0.23", "10.10.2.3", "101.0.2.3");
     }
 
     @Test
     void testShortString() {
-        List<String> result = solution.restoreIpAddresses("123");
-        assertEquals(0, result.size());
+        assertExactly("123");
+    }
+
+    @Test
+    void testOneDigitInputCannotFormFourParts() {
+        assertExactly("0");
+    }
+
+    @Test
+    void testTwoDigitInputCannotFormFourParts() {
+        assertExactly("00");
     }
 
     @Test
     void testTooLong() {
-        List<String> result = solution.restoreIpAddresses("1234567890123");
-        assertEquals(0, result.size());
+        assertExactly("1234567890123");
     }
 
     @Test
     void testAllOnes() {
-        List<String> result = solution.restoreIpAddresses("1111");
-        assertEquals(1, result.size());
-        assertTrue(result.contains("1.1.1.1"));
+        assertExactly("1111", "1.1.1.1");
     }
 
     @Test
     void testLeadingZeros() {
-        List<String> result = solution.restoreIpAddresses("010010");
-        // No segment should have leading zeros except "0" itself
-        for (String ip : result) {
-            String[] parts = ip.split("\\.");
-            for (String part : parts) {
-                if (part.length() > 1) {
-                    assertFalse(part.startsWith("0"), "Leading zero in: " + ip);
-                }
-            }
-        }
+        assertExactly("010010", "0.10.0.10", "0.100.1.0");
     }
 
     @Test
     void testAllNines() {
-        List<String> result = solution.restoreIpAddresses("255255255255");
-        assertTrue(result.contains("255.255.255.255"));
+        assertExactly("255255255255", "255.255.255.255");
     }
 
     @Test
     void testFourDigits() {
-        List<String> result = solution.restoreIpAddresses("2552");
-        // possible: 2.5.5.2
-        assertTrue(result.size() >= 1);
+        assertExactly("2552", "2.5.5.2");
     }
 
     @Test
     void testTwelveDigits() {
-        List<String> result = solution.restoreIpAddresses("111111111111");
-        // 111.111.111.111
-        assertTrue(result.contains("111.111.111.111"));
+        assertExactly("111111111111", "111.111.111.111");
     }
 
     @Test
     void testGiantAllValidSegments() {
-        // Test with many different 4-12 length strings
-        int totalResults = 0;
         for (int i = 1000; i <= 1050; i++) {
-            List<String> result = solution.restoreIpAddresses(String.valueOf(i));
-            totalResults += result.size();
+            assertMatchesIndependentOracle(String.valueOf(i));
         }
-        assertTrue(totalResults > 0);
     }
 
     @Test
     void testResultsAreValidIps() {
-        List<String> result = solution.restoreIpAddresses("25525511135");
-        for (String ip : result) {
-            String[] parts = ip.split("\\.");
-            assertEquals(4, parts.length);
-            for (String part : parts) {
-                int val = Integer.parseInt(part);
-                assertTrue(val >= 0 && val <= 255);
+        assertMatchesIndependentOracle("25525511135");
+    }
+
+    @Test
+    void testFourDigitMinimumValue() {
+        assertExactly("0001", "0.0.0.1");
+    }
+
+    @Test
+    void testFourDigitMaximumBoundary() {
+        assertExactly("9999", "9.9.9.9");
+    }
+
+    @Test
+    void testRepeatedZeroAndOneSegments() {
+        assertMatchesIndependentOracle("100100100100");
+    }
+
+    @Test
+    void testUpperOctetBoundary() {
+        assertMatchesIndependentOracle("2552552550");
+    }
+
+    @Test
+    void testTypicalAddressSpectrum() {
+        assertMatchesIndependentOracle("19216811");
+    }
+
+    @Test
+    void testMultipleThreeDigitSplits() {
+        assertMatchesIndependentOracle("123123123123");
+    }
+
+    @Test
+    void testZerosBetweenNonzeroDigits() {
+        assertMatchesIndependentOracle("10203040");
+    }
+
+    @Test
+    void testLeadingZeroCandidatesAreRejected() {
+        assertMatchesIndependentOracle("001001");
+    }
+
+    @Test
+    void testNoValidSplitAtMaximumUsefulLength() {
+        assertExactly("999999999999");
+    }
+
+    @Test
+    void testMaximumInputLengthHasNoAddress() {
+        assertExactly("12345678901234567890");
+    }
+
+    @Test
+    void testExhaustiveBinaryDigitsAtShortLengths() {
+        for (int length = 4; length <= 7; length++) {
+            int count = 1 << length;
+            for (int value = 0; value < count; value++) {
+                StringBuilder input = new StringBuilder(length);
+                for (int bit = length - 1; bit >= 0; bit--) {
+                    input.append((value & (1 << bit)) == 0 ? '0' : '1');
+                }
+                assertMatchesIndependentOracle(input.toString());
             }
         }
+    }
+
+    @Test
+    void testDeterministicMixedDigits() {
+        String[] inputs = {"172162541", "11011110", "111222333", "200200200200", "250250250250"};
+        for (String input : inputs) {
+            assertMatchesIndependentOracle(input);
+        }
+    }
+
+    private void assertExactly(String input, String... expected) {
+        List<String> actual = solution.restoreIpAddresses(input);
+        Set<String> expectedSet = Set.of(expected);
+        assertEquals(expectedSet, new HashSet<>(actual), input);
+        assertEquals(expectedSet.size(), actual.size(), "duplicate output for " + input);
+    }
+
+    private void assertMatchesIndependentOracle(String input) {
+        List<String> actual = solution.restoreIpAddresses(input);
+        Set<String> expected = independentTripleCutOracle(input);
+        assertEquals(expected, new HashSet<>(actual), input);
+        assertEquals(expected.size(), actual.size(), "duplicate output for " + input);
+        for (String address : actual) {
+            String[] parts = address.split("\\.", -1);
+            assertEquals(4, parts.length);
+            for (String part : parts) {
+                assertFalse(part.length() > 1 && part.charAt(0) == '0');
+                assertTrue(Integer.parseInt(part) <= 255);
+            }
+        }
+    }
+
+    /** Enumerates every possible placement of the three dots independently of the production loops. */
+    private Set<String> independentTripleCutOracle(String input) {
+        Set<String> expected = new HashSet<>();
+        for (int first = 1; first < input.length(); first++) {
+            for (int second = first + 1; second < input.length(); second++) {
+                for (int third = second + 1; third < input.length(); third++) {
+                    String[] parts = {
+                            input.substring(0, first), input.substring(first, second),
+                            input.substring(second, third), input.substring(third)
+                    };
+                    if (validPart(parts[0]) && validPart(parts[1])
+                            && validPart(parts[2]) && validPart(parts[3])) {
+                        expected.add(String.join(".", parts));
+                    }
+                }
+            }
+        }
+        return expected;
+    }
+
+    private boolean validPart(String part) {
+        if (part.isEmpty() || (part.length() > 1 && part.charAt(0) == '0') || part.length() > 3) {
+            return false;
+        }
+        int value = 0;
+        for (int index = 0; index < part.length(); index++) {
+            value = value * 10 + part.charAt(index) - '0';
+        }
+        return value <= 255;
     }
 }
