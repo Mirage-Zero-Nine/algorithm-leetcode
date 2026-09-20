@@ -60,6 +60,13 @@ public class FindSubstring30Test {
     }
 
     @Test
+    public void testReusableInstanceDoesNotRetainPreviousDictionary() {
+        FindSubstring_30 solution = new FindSubstring_30();
+        assertEquals(List.of(0), solution.findSubstring("foobar", new String[]{"foo", "bar"}));
+        assertEquals(List.of(), solution.findSubstring("foobar", new String[]{"foo", "baz"}));
+    }
+
+    @Test
     public void testGiantCase() {
         String s = "ab".repeat(5000);
         List<Integer> result = new FindSubstring_30().findSubstring(s, new String[]{"ab", "ab"});

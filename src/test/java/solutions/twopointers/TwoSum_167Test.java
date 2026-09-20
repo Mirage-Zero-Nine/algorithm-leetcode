@@ -4,6 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 public class TwoSum_167Test {
 
@@ -72,5 +77,39 @@ public class TwoSum_167Test {
         }
         // first=0, last=1998, target=1998 -> indices 1 and 1000
         assertArrayEquals(new int[]{1, 1000}, test.twoSum(numbers, 1998));
+    }
+
+    @ParameterizedTest(name = "sorted two-sum case {index}")
+    @MethodSource("additionalCases")
+    public void testAdditionalContractCases(int[] numbers, int target, int[] expected) {
+        int[] original = numbers.clone();
+
+        if (expected == null) {
+            assertNull(test.twoSum(numbers, target));
+        } else {
+            assertArrayEquals(expected, test.twoSum(numbers, target));
+        }
+        // The two-pointer implementation should only inspect the sorted input.
+        assertArrayEquals(original, numbers);
+    }
+
+    private static Stream<Arguments> additionalCases() {
+        return Stream.of(
+                Arguments.of(new int[]{-1000, -999}, -1999, new int[]{1, 2}),
+                Arguments.of(new int[]{998, 999, 1000}, 1998, new int[]{1, 3}),
+                Arguments.of(new int[]{-8, -4, -1, 0, 3, 7}, -1, new int[]{1, 6}),
+                Arguments.of(new int[]{-10, -5, 0, 5, 10}, 0, new int[]{1, 5}),
+                Arguments.of(new int[]{1, 1, 1, 2, 2}, 3, new int[]{1, 5}),
+                Arguments.of(new int[]{-5, -5, -2, -2, 0}, -7, new int[]{1, 4}),
+                Arguments.of(new int[]{-3, -1, 2, 4, 8}, 7, new int[]{2, 5}),
+                Arguments.of(new int[]{0, 1, 2, 3, 4, 5}, 5, new int[]{1, 6}),
+                Arguments.of(new int[]{-6, -4, -2, 0, 2, 4, 6}, 2, new int[]{2, 7}),
+                Arguments.of(new int[]{-9, -3, 1, 4, 9}, 100, null),
+                Arguments.of(new int[]{-9, -3, 1, 4, 9}, -20, null),
+                Arguments.of(new int[]{2, 4}, 7, null),
+                Arguments.of(new int[]{-2, 0, 0, 2}, 0, new int[]{1, 4}),
+                Arguments.of(new int[]{-1000, -1, 1, 1000}, 0, new int[]{1, 4}),
+                Arguments.of(new int[]{1, 2, 3, 4, 5, 6, 7, 8}, 9, new int[]{1, 8})
+        );
     }
 }

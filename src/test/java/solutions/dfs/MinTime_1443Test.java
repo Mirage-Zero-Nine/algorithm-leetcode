@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MinTime_1443Test {
 
@@ -69,5 +71,22 @@ public class MinTime_1443Test {
         }
         // 49 apples, each needs 2 steps
         assertEquals(98, new MinTime_1443().minTime(n, edges, hasApple));
+    }
+
+    @Test
+    public void testRepeatedCallsResetTime() {
+        MinTime_1443 solution = new MinTime_1443();
+        assertEquals(2, solution.minTime(2, new int[][]{{0, 1}}, List.of(false, true)));
+        assertEquals(0, solution.minTime(1, new int[][]{}, List.of(false)));
+    }
+
+    @ParameterizedTest(name = "apple chain nodes {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testSingleAppleAtChainLeaf(int nodes) {
+        int[][] edges = new int[Math.max(0, nodes - 1)][2];
+        for (int i = 0; i < nodes - 1; i++) { edges[i][0] = i; edges[i][1] = i + 1; }
+        java.util.List<Boolean> apples = new java.util.ArrayList<>();
+        for (int i = 0; i < nodes; i++) apples.add(i == nodes - 1);
+        assertEquals(Math.max(0, 2 * (nodes - 1)), new MinTime_1443().minTime(nodes, edges, apples));
     }
 }

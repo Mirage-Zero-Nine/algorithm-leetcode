@@ -68,4 +68,14 @@ class MaxCoins_1561Test {
         for (int i = n / 3; i < n; i += 2) expected += (i + 1);
         assertEquals((int) expected, solution.maxCoins(piles));
     }
+    @Test void testAdditionalSmall() { assertEquals(2, solution.maxCoins(new int[]{1, 2, 3})); }
+    @Test void testAdditionalSix() { assertEquals(8, solution.maxCoins(new int[]{1, 2, 3, 4, 5, 6})); }
+    @Test void testAdditionalEight() { assertEquals(15, solution.maxCoins(new int[]{1, 2, 3, 4, 5, 6, 7, 8})); }
+    @Test void testAdditionalTwelve() { assertEquals(32, solution.maxCoins(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12})); }
+    @Test void testAdditionalDuplicates() { assertEquals(4, solution.maxCoins(new int[]{2, 2, 2, 2, 2, 2})); }
+    @Test void testAdditionalHigh() { assertEquals(100, solution.maxCoins(new int[]{100, 100, 100})); }
+    @Test void testAdditionalMixed() { assertEquals(14, solution.maxCoins(new int[]{1, 3, 5, 7, 9, 11})); }
+    @Test void testAdditionalDescendingSmall() { assertEquals(8, solution.maxCoins(new int[]{6, 5, 4, 3, 2, 1})); }
+    @Test void testAdditionalZeros() { assertEquals(0, solution.maxCoins(new int[]{0, 0, 0})); }
+    @Test void testAdditionalFourteen() { assertEquals(45, solution.maxCoins(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14})); }
 }

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class LCADeepestLeaves_1123Test {
 
@@ -97,5 +99,17 @@ public class LCADeepestLeaves_1123Test {
         }
         // All leaves at same depth -> LCA is root
         assertEquals(1, new LCADeepestLeaves_1123().lcaDeepestLeaves(nodes[1]).val);
+    }
+
+    @ParameterizedTest(name = "deepest leaf depth {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testSingleBranchDepths(int depth) {
+        TreeNode root = new TreeNode(0);
+        TreeNode current = root;
+        for (int i = 1; i < depth; i++) {
+            current.left = new TreeNode(i);
+            current = current.left;
+        }
+        assertEquals(depth - 1, new LCADeepestLeaves_1123().lcaDeepestLeaves(root).val);
     }
 }

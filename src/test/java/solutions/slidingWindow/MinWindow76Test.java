@@ -68,4 +68,10 @@ public class MinWindow76Test {
         String result = test.minWindow(sb.toString(), "ABC");
         assertEquals("ABC", result);
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"a,a,a", "ab,b,b", "abc,c,c", "abc,ac,abc", "ADOBECODEBANC,AB,BA", "a,aa,''", "xyz,z,z", "a,b,''", "aa,a,a", "cab,ab,ab"})
+    void additionalBoundaryCases(String source, String target, String expected) {
+        assertEquals(expected, test.minWindow(source, target));
+    }
 }

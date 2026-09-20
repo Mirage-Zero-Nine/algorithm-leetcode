@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MinMutation_433Test {
@@ -196,6 +197,67 @@ class MinMutation_433Test {
     @Test
     void testOneCharacterDifferenceNotInBank() {
         assertEquals(-1, solution.minMutation("AACCGGTT", "AACCGGTA", new String[]{"AACCGGTC"}));
+    }
+
+    @Test
+    void testEveryPositionAndEveryAlternateNucleotideCanMutate() {
+        String start = "AAAAAAAA";
+        for (int position = 0; position < start.length(); position++) {
+            for (char nucleotide : new char[]{'C', 'G', 'T'}) {
+                char[] end = start.toCharArray();
+                end[position] = nucleotide;
+                assertEquals(1, solution.minMutation(start, new String(end), new String[]{new String(end)}),
+                        "position=" + position + ", nucleotide=" + nucleotide);
+            }
+        }
+    }
+
+    @Test
+    void testMixedEightMutationChainUsesEveryPosition() {
+        String start = "ACGTACGT";
+        String end = "TGCATGCA";
+        String[] bank = {
+                "TCGTACGT", "TGGTACGT", "TGCTACGT", "TGCAACGT",
+                "TGCATCGT", "TGCATGGT", "TGCATGCT", "TGCATGCA"
+        };
+        assertEquals(8, solution.minMutation(start, end, bank));
+    }
+
+    @Test
+    void testEndPresentButNoIntermediateMutationIsUnreachable() {
+        assertEquals(-1, solution.minMutation("AAAAAAAA", "CCAAAAAA", new String[]{"CCAAAAAA"}));
+    }
+
+    @Test
+    void testTargetAtEndOfMaximumSizeBank() {
+        String[] bank = {
+                "CCCCCCCC", "GGGGGGGG", "TTTTTTTT", "ACAAAAAA", "AGAAAAAA",
+                "ATAAAAAA", "AAACAAAA", "AAAAGAAA", "AAAAACAA", "AAAAAAAT"
+        };
+        assertEquals(1, solution.minMutation("AAAAAAAA", "AAAAAAAT", bank));
+    }
+
+    @Test
+    void testBankInputIsNotMutated() {
+        String[] bank = {"AACCGGTA", "AACCGCTA", "AAACGGTA"};
+        String[] before = bank.clone();
+        assertEquals(2, solution.minMutation("AACCGGTT", "AAACGGTA", bank));
+        assertArrayEquals(before, bank);
+    }
+
+    @Test
+    void testSameInstanceCanSolveIndependentGraphs() {
+        assertEquals(1, solution.minMutation("AACCGGTT", "AACCGGTA", new String[]{"AACCGGTA"}));
+        assertEquals(-1, solution.minMutation("AACCGGTT", "AAACGGTA", new String[]{"AACCGGTA"}));
+        assertEquals(8, solution.minMutation("AAAAAAAA", "CCCCCCCC", new String[]{
+                "CAAAAAAA", "CCAAAAAA", "CCCAAAAA", "CCCCAAAA", "CCCCCAAA",
+                "CCCCCCAA", "CCCCCCCA", "CCCCCCCC"}));
+    }
+
+    @Test
+    void testStartInBankDoesNotChangeShortestPath() {
+        assertEquals(2, solution.minMutation("AACCGGTT", "AAACGGTA", new String[]{
+                "AACCGGTT", "AACCGGTA", "AAACGGTA"}));
     }
 
     @Test

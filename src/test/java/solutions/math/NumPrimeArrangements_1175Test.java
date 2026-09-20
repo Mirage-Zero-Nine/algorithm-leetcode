@@ -64,4 +64,54 @@ public class NumPrimeArrangements_1175Test {
         assertEquals(1, test.countPrimes(2));
         assertEquals(1, test.countPrimes(3));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, test.numPrimeArrangements(1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(1, test.numPrimeArrangements(2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(2, test.numPrimeArrangements(3));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(4, test.numPrimeArrangements(4));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(12, test.numPrimeArrangements(5));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(36, test.numPrimeArrangements(6));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(144, test.numPrimeArrangements(7));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(576, test.numPrimeArrangements(8));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(2880, test.numPrimeArrangements(9));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(17280, test.numPrimeArrangements(10));
+    }
 }

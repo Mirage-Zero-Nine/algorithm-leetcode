@@ -17,26 +17,26 @@ package solutions.twopointers;
 
 public class FindDuplicate_287 {
     /**
-     * Index mapping. Mark nums[nums[i]] to negative.
-     * If meet any nums[i] that is negative, then the duplicated # is found.
+     * Treat each value as the next pointer in a functional graph. Floyd's
+     * tortoise-and-hare cycle detection finds the duplicate without changing
+     * the read-only input array.
      *
      * @param nums given array
      * @return duplicate number in array
      */
     public int findDuplicate(int[] nums) {
 
-        int n = nums.length;
-
-        for (int i = 0; i < n; i++) {
-            int index = Math.abs(nums[i]) - 1;      // find position of index that should be marked to negative
-
-            if (nums[index] < 0) {
-                return Math.abs(nums[i]);
-            }
-
-            nums[index] = -Math.abs(nums[index]);
+        int slow = nums[0];
+        int fast = nums[nums[0]];
+        while (slow != fast) {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
         }
-
-        return -1;
+        slow = 0;
+        while (slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return slow;
     }
 }

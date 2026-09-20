@@ -53,4 +53,14 @@ public class MinRemoveToMakeValid_1249Test {
         String input = sb.toString();
         assertEquals(input, solver.minRemoveToMakeValid(input));
     }
+    @Test public void testLeadingClose() { assertEquals("((a))",solver.minRemoveToMakeValid(")((a))")); }
+    @Test public void testInterleavedInvalid() { assertEquals("a(b)c",solver.minRemoveToMakeValid("a))(b)(c")); }
+    @Test public void testEmptyParens() { assertEquals("()",solver.minRemoveToMakeValid("()")); }
+    @Test public void testSingleLetter() { assertEquals("a",solver.minRemoveToMakeValid("a")); }
+    @Test public void testSingleOpenInput() { assertEquals("",solver.minRemoveToMakeValid("(")); }
+    @Test public void testSingleCloseInput() { assertEquals("",solver.minRemoveToMakeValid(")")); }
+    @Test public void testMultipleGroups() { assertEquals("(a)(b)(c)",solver.minRemoveToMakeValid("(a)(b)(c)")); }
+    @Test public void testNestedWithInvalidTail() { assertEquals("((x))",solver.minRemoveToMakeValid("((x)))")); }
+    @Test public void testRepeatedInvocation() { assertEquals("a",solver.minRemoveToMakeValid("a)")); assertEquals("(b)",solver.minRemoveToMakeValid("(b)")); }
+    @Test public void testLettersPreserved() { assertEquals("a(b)c",solver.minRemoveToMakeValid("a(b)c)")); }
 }

@@ -99,4 +99,14 @@ public class FindLeastNumOfUniqueInts_1481Test {
         int[] arr = {1, 1, 1, 2, 2, 3};
         assertEquals(2, solver.findLeastNumOfUniqueInts(arr, 2));
     }
+    @Test void extra01() { assertEquals(0, solver.findLeastNumOfUniqueInts(new int[]{1,2},2)); }
+    @Test void extra02() { assertEquals(2, solver.findLeastNumOfUniqueInts(new int[]{1,2},0)); }
+    @Test void extra03() { assertEquals(1, solver.findLeastNumOfUniqueInts(new int[]{1,1,2,3},2)); }
+    @Test void extra04() { assertEquals(2, solver.findLeastNumOfUniqueInts(new int[]{1,1,2,2,3},1)); }
+    @Test void extra05() { assertEquals(1, solver.findLeastNumOfUniqueInts(new int[]{1,1,1,2},3)); }
+    @Test void extra06() { assertEquals(0, solver.findLeastNumOfUniqueInts(new int[]{1,2,3},3)); }
+    @Test void extra07() { assertEquals(3, solver.findLeastNumOfUniqueInts(new int[]{1,2,3},0)); }
+    @Test void extra08() { assertEquals(1, solver.findLeastNumOfUniqueInts(new int[]{4,4,4,5,6},2)); }
+    @Test void extra09() { assertEquals(2, solver.findLeastNumOfUniqueInts(new int[]{1,2,2,3,3},1)); }
+    @Test void extra10() { assertEquals(1, solver.findLeastNumOfUniqueInts(new int[]{9},0)); }
 }

@@ -21,6 +21,13 @@ class FindShortestWay_499Test {
     }
 
     @Test
+    void testOfficialThirdExample() {
+        assertResult(new int[][]{{0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 1, 0},
+                        {0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 1}},
+                new int[]{0, 4}, new int[]{3, 5}, "dldr");
+    }
+
+    @Test
     void testNoPath() {
         assertResult(new int[][]{{0, 0, 0, 0, 0}, {1, 1, 0, 0, 1}, {0, 0, 0, 0, 0},
                 {0, 1, 0, 0, 1}, {0, 1, 0, 0, 0}}, new int[]{4, 3}, new int[]{3, 0}, "impossible");
@@ -116,8 +123,30 @@ class FindShortestWay_499Test {
     }
 
     @Test
+    void testRectangularMazeWithForcedMultipleTurns() {
+        int[][] maze = {{1, 1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 1, 0, 0, 0, 1},
+                {1, 0, 1, 1, 0, 1, 0, 1}, {1, 0, 0, 0, 0, 1, 0, 1},
+                {1, 1, 1, 1, 1, 1, 0, 1}};
+        assertResult(maze, new int[]{1, 1}, new int[]{4, 6}, "drurd");
+    }
+
+    @Test
     void testAdjacentHole() {
         assertResult(new int[][]{{1, 1, 1}, {1, 0, 0}, {1, 1, 1}}, new int[]{1, 1}, new int[]{1, 2}, "r");
+    }
+
+    @Test
+    void testHoleInterceptedBeforeWall() {
+        int[][] maze = {{1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 0, 0, 0, 1},
+                {1, 1, 1, 1, 1, 1, 1}};
+        assertResult(maze, new int[]{1, 1}, new int[]{1, 3}, "r");
+    }
+
+    @Test
+    void testHoleBehindWallIsNotReached() {
+        int[][] maze = {{1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 1, 0, 0, 1},
+                {1, 1, 1, 1, 1, 1, 1}};
+        assertResult(maze, new int[]{1, 1}, new int[]{1, 5}, "impossible");
     }
 
     @Test
@@ -147,6 +176,45 @@ class FindShortestWay_499Test {
     void testMaximumDocumentedMazeSize() {
         int[][] maze = new int[30][30];
         assertEquals("dr", solution.findShortestWay(maze, new int[]{0, 0}, new int[]{29, 29}));
+    }
+
+    @Test
+    void testMaximumCurrentOfficialMazeDimensions() {
+        int[][] maze = new int[100][100];
+        for (int row = 0; row < maze.length; row++) {
+            maze[row][0] = 1;
+            maze[row][maze[row].length - 1] = 1;
+        }
+        for (int column = 0; column < maze[0].length; column++) {
+            maze[0][column] = 1;
+            maze[maze.length - 1][column] = 1;
+        }
+        assertEquals("dr", solution.findShortestWay(maze, new int[]{1, 1}, new int[]{98, 98}));
+    }
+
+    @Test
+    void testSingleRowCorridorWithWalls() {
+        assertResult(new int[][]{{1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 0, 0, 0, 1},
+                        {1, 1, 1, 1, 1, 1, 1}},
+                new int[]{1, 5}, new int[]{1, 1}, "l");
+    }
+
+    @Test
+    void testInputArraysAndMazeAreNotMutated() {
+        int[][] maze = {{1, 1, 1, 1, 1}, {1, 0, 0, 0, 1}, {1, 0, 1, 0, 1},
+                {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}};
+        int[][] originalMaze = copy(maze);
+        int[] ball = {1, 1};
+        int[] hole = {3, 3};
+        int[] originalBall = ball.clone();
+        int[] originalHole = hole.clone();
+
+        assertEquals("dr", solution.findShortestWay(maze, ball, hole));
+        org.junit.jupiter.api.Assertions.assertArrayEquals(originalBall, ball);
+        org.junit.jupiter.api.Assertions.assertArrayEquals(originalHole, hole);
+        for (int row = 0; row < maze.length; row++) {
+            org.junit.jupiter.api.Assertions.assertArrayEquals(originalMaze[row], maze[row]);
+        }
     }
 
     @Test

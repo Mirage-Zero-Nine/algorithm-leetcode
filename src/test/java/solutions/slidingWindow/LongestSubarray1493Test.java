@@ -63,4 +63,11 @@ public class LongestSubarray1493Test {
         arr[5000] = 0;
         assertEquals(9999, test.longestSubarray(arr));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"10,1", "01,1", "101,2", "11,1", "111,2", "000,0", "10101,2", "1101,3", "1110,3", "010,1"})
+    void additionalBoundaryCases(String values, int expected) {
+        int[] nums = values.chars().map(c -> c - '0').toArray();
+        assertEquals(expected, test.longestSubarray(nums));
+    }
 }

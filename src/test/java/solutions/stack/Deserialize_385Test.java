@@ -87,4 +87,14 @@ public class Deserialize_385Test {
         assertEquals(1, result.getList().get(0).getInteger());
         assertEquals(100, result.getList().get(99).getInteger());
     }
+    @Test public void testEmptyList() { assertEquals(0, test.deserialize("[]").getList().size()); }
+    @Test public void testNestedNegative() { assertEquals(-2, test.deserialize("[[-2]]").getList().get(0).getList().get(0).getInteger()); }
+    @Test public void testMixedNested() { NestedInteger n=test.deserialize("[1,[2,3],4]"); assertEquals(3,n.getList().size()); assertEquals(2,n.getList().get(1).getList().size()); }
+    @Test public void testNegativeZero() { assertEquals(0,test.deserialize("-0").getInteger()); }
+    @Test public void testLargeInteger() { assertEquals(Integer.MAX_VALUE,test.deserialize("2147483647").getInteger()); }
+    @Test public void testDeepEmpty() { assertEquals(1,test.deserialize("[[[]]]").getList().get(0).getList().size()); }
+    @Test public void testTrailingNestedList() { NestedInteger n=test.deserialize("[1,[2]]"); assertEquals(2,n.getList().get(1).getList().get(0).getInteger()); }
+    @Test public void testRepeatedInvocation() { assertEquals(1,test.deserialize("1").getInteger()); assertEquals(2,test.deserialize("2").getInteger()); }
+    @Test public void testManyValues() { NestedInteger n=test.deserialize("[1,2,3,4,5]"); assertEquals(5,n.getList().size()); }
+    @Test public void testNestedEmptyAndValue() { NestedInteger n=test.deserialize("[[],0]"); assertEquals(2,n.getList().size()); }
 }

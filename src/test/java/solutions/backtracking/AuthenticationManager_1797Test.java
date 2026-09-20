@@ -302,6 +302,83 @@ class AuthenticationManager_1797Test {
         assertEquals(0, manager.countUnexpiredTokens(53));
     }
 
+    @Test
+    void testTokenIdLengthBoundariesAndMinimumCurrentTime() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(2);
+        manager.generate("a", 1);
+        manager.generate("abcde", 2);
+
+        assertEquals(1, manager.countUnexpiredTokens(3));
+        assertEquals(0, manager.countUnexpiredTokens(4));
+    }
+
+    @Test
+    void testMaximumCurrentTimeWithSmallTtl() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(2);
+        manager.generate("abcde", 99_999_998);
+
+        assertEquals(1, manager.countUnexpiredTokens(99_999_999));
+        assertEquals(0, manager.countUnexpiredTokens(100_000_000));
+    }
+
+    @Test
+    void testLongIdlePeriodExpiresAllBeforeNewGeneration() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(5);
+        manager.generate("old", 1);
+        assertEquals(0, manager.countUnexpiredTokens(1_000));
+
+        manager.generate("new", 1_001);
+        assertEquals(1, manager.countUnexpiredTokens(1_005));
+        assertEquals(0, manager.countUnexpiredTokens(1_006));
+    }
+
+    @Test
+    void testRenewedEntriesRemainCorrectlyOrderedForEviction() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(5);
+        manager.generate("a", 1); // expires at 6
+        manager.generate("b", 2); // expires at 7
+        manager.generate("c", 3); // expires at 8
+        manager.renew("a", 4);     // expires at 9; moves a behind c
+        manager.renew("b", 5);     // expires at 10; moves b behind a
+
+        assertEquals(3, manager.countUnexpiredTokens(7));
+        assertEquals(2, manager.countUnexpiredTokens(8));
+        assertEquals(1, manager.countUnexpiredTokens(9));
+        assertEquals(0, manager.countUnexpiredTokens(10));
+    }
+
+    @Test
+    void testExpiredRenewalDoesNotAffectOtherLiveTokens() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(4);
+        manager.generate("expired", 1); // expires at 5
+        manager.generate("live", 2);    // expires at 6
+        assertEquals(2, manager.countUnexpiredTokens(3));
+        manager.renew("expired", 5);    // expires before this action; ignored
+
+        assertEquals(0, manager.countUnexpiredTokens(6));
+    }
+
+    @Test
+    void testUnknownRenewalDoesNotCreateOrExtendAnythingAfterCleanup() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(3);
+        manager.generate("live", 1); // expires at 4
+        manager.renew("missing", 2);
+        assertEquals(1, manager.countUnexpiredTokens(3));
+
+        manager.renew("missing", 4);
+        assertEquals(0, manager.countUnexpiredTokens(5));
+    }
+
+    @Test
+    void testIndependentManagersDoNotShareTokenState() {
+        AuthenticationManager_1797 first = new AuthenticationManager_1797(5);
+        AuthenticationManager_1797 second = new AuthenticationManager_1797(5);
+        first.generate("sameid", 1);
+
+        assertEquals(1, first.countUnexpiredTokens(2));
+        assertEquals(0, second.countUnexpiredTokens(2));
+    }
+
     private static String tokenFor(int number) {
         StringBuilder token = new StringBuilder();
         do {

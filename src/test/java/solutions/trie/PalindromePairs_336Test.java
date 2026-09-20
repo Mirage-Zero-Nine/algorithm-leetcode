@@ -79,4 +79,60 @@ public class PalindromePairs_336Test {
         assertTrue(result.contains(List.of(1, 0)));
         assertEquals(2, result.size());
     }
+
+    private void assertPairs(String[] words, List<List<Integer>> expected) {
+        List<List<Integer>> actual = solver.palindromePairs(words);
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected.stream().map(List::copyOf).collect(java.util.stream.Collectors.toSet()),
+            actual.stream().map(List::copyOf).collect(java.util.stream.Collectors.toSet()));
+    }
+
+    @Test public void testOfficialExampleWithSplitPalindrome() {
+        assertPairs(new String[]{"abcd", "dcba", "lls", "s", "sssll"},
+            List.of(List.of(0, 1), List.of(1, 0), List.of(3, 2), List.of(2, 4)));
+    }
+
+    @Test public void testOfficialBatTabExample() {
+        assertPairs(new String[]{"bat", "tab", "cat"}, List.of(List.of(0, 1), List.of(1, 0)));
+    }
+
+    @Test public void testNoPairsWhenOnlyNonPalindromicConcatenations() {
+        assertPairs(new String[]{"abc", "def", "ghi"}, List.of());
+    }
+
+    @Test public void testEmptyWordWithMultiplePalindromes() {
+        assertPairs(new String[]{"", "a", "aa", "b"},
+            List.of(List.of(0, 1), List.of(1, 0), List.of(0, 2), List.of(2, 0),
+                List.of(0, 3), List.of(3, 0), List.of(1, 2), List.of(2, 1)));
+    }
+
+    @Test public void testOddAndEvenSplitPalindromes() {
+        assertPairs(new String[]{"a", "bc", "cb"}, List.of(List.of(1, 2), List.of(2, 1)));
+    }
+
+    @Test public void testPrefixPalindromeRemainder() {
+        assertPairs(new String[]{"abcd", "cba"}, List.of(List.of(0, 1)));
+    }
+
+    @Test public void testSuffixPalindromeRemainder() {
+        assertPairs(new String[]{"abc", "cba"}, List.of(List.of(0, 1), List.of(1, 0)));
+    }
+
+    @Test public void testSingleCharactersDoNotSelfPair() {
+        assertPairs(new String[]{"a", "b", "c", "d"}, List.of());
+    }
+
+    @Test public void testLongWordsAndSharedPrefixes() {
+        assertPairs(new String[]{"race", "ecar", "car", "rac"}, List.of(
+            List.of(0, 1), List.of(0, 2), List.of(1, 0), List.of(2, 3), List.of(3, 1), List.of(3, 2)));
+    }
+
+    @Test public void testInputOrderDoesNotChangePairSemantics() {
+        assertPairs(new String[]{"tab", "cat", "bat"}, List.of(List.of(0, 2), List.of(2, 0)));
+    }
+
+    @Test public void testRepeatedCallsDoNotRetainTrieState() {
+        assertPairs(new String[]{"ab", "ba"}, List.of(List.of(0, 1), List.of(1, 0)));
+        assertPairs(new String[]{"abc", "def"}, List.of());
+    }
 }

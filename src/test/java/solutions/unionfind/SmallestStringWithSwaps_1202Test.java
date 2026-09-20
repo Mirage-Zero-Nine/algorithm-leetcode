@@ -3,10 +3,14 @@ package solutions.unionfind;
 import com.google.common.collect.Lists;
 import lombok.Builder;
 import lombok.Value;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -100,8 +104,8 @@ public class SmallestStringWithSwaps_1202Test {
     public void testGiantCaseFullyConnectedGraph() {
         String base = "zyxwvutsrqponmlkjihgfedcba";
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 20; i++) {
-            sb.append(base);
+        while (sb.length() < 1_000) {
+            sb.append(base, 0, Math.min(base.length(), 1_000 - sb.length()));
         }
         String input = sb.toString();
 
@@ -116,33 +120,69 @@ public class SmallestStringWithSwaps_1202Test {
         assertEquals(expected, test.smallestStringWithSwaps(input, pairs));
     }
 
+    @ParameterizedTest(name = "case {index}: {0} -> {3}")
+    @MethodSource("additionalCases")
+    public void testAdditionalSwapComponents(String input, List<List<Integer>> pairs,
+                                             String expected, String description) {
+        assertEquals(expected, test.smallestStringWithSwaps(input, pairs), description);
+    }
+
+    /**
+     * These cases independently exercise component-local sorting: a character can move only
+     * within its connected component, while every connected component can be rearranged freely.
+     */
+    private static Stream<Arguments> additionalCases() {
+        return Stream.of(
+                Arguments.of("ba", pairs(new int[][]{{0, 1}}), "ab", "single swap"),
+                Arguments.of("ab", pairs(new int[][]{{0, 1}}), "ab", "already sorted component"),
+                Arguments.of("cba", pairs(new int[][]{{0, 2}}), "abc", "two endpoints leave middle fixed"),
+                Arguments.of("dcba", pairs(new int[][]{{0, 3}}), "acbd", "isolated indices retain their characters"),
+                Arguments.of("dcba", pairs(new int[][]{{0, 1}, {1, 2}}), "bcda", "partial chain component"),
+                Arguments.of("dcba", pairs(new int[][]{{0, 1}, {1, 2}, {2, 3}}), "abcd", "chain connects all indices"),
+                Arguments.of("zxyabc", pairs(new int[][]{{0, 1}, {3, 4}}), "xzyabc", "two components with isolated indices"),
+                Arguments.of("bbacaa", pairs(new int[][]{{0, 3}, {1, 3}, {1, 3}}), "bbacaa", "duplicate edges and repeated characters"),
+                Arguments.of("jihgfedcba", pairs(new int[][]{{0, 9}, {1, 8}, {2, 7}, {3, 6}, {4, 5}}), "abcdefghij", "nested pairs form one component"),
+                Arguments.of("aabbcc", pairs(new int[][]{{0, 2}, {2, 4}}), "aabbcc", "component values already ordered"),
+                Arguments.of("fedcba", pairs(new int[][]{{0, 1}, {2, 3}}), "efcdba", "independent pair order is local"),
+                Arguments.of("qwerty", pairs(new int[][]{{1, 2}, {2, 3}, {4, 5}}), "qerwty", "overlapping chain and separate pair"),
+                Arguments.of("zyxwv", pairs(new int[][]{{0, 0}, {4, 4}}), "zyxwv", "self-swaps do not connect components"),
+                Arguments.of("cabdef", pairs(new int[][]{{0, 1}, {1, 2}, {3, 4}, {4, 5}}), "abcdef", "two independently sortable chains"),
+                Arguments.of("bca", pairs(new int[][]{{0, 1}, {0, 1}, {1, 2}}), "abc", "repeated connectivity declarations")
+        );
+    }
+
+    private static List<List<Integer>> pairs(int[][] edges) {
+        List<List<Integer>> result = Lists.newArrayList();
+        for (int[] edge : edges) {
+            result.add(Lists.newArrayList(edge[0], edge[1]));
+        }
+        return result;
+    }
+
     private List<solutions.unionfind.SmallestStringWithSwaps_1202Test.Data> generateTestData() {
         return Lists.newArrayList(
-                Data.builder()
-                        .inputString("dcab")
-                        .inputList(Lists.newArrayList(
+                new Data(
+                        "dcab",
+                        Lists.newArrayList(
                                 Lists.newArrayList(0, 3),
                                 Lists.newArrayList(1, 2)
-                        ))
-                        .expected("bacd")
-                        .build(),
-                Data.builder()
-                        .inputString("dcab")
-                        .inputList(Lists.newArrayList(
+                        ),
+                        "bacd"),
+                new Data(
+                        "dcab",
+                        Lists.newArrayList(
                                 Lists.newArrayList(0, 3),
                                 Lists.newArrayList(1, 2),
                                 Lists.newArrayList(0, 2)
-                        ))
-                        .expected("abcd")
-                        .build(),
-                Data.builder()
-                        .inputString("cba")
-                        .inputList(Lists.newArrayList(
+                        ),
+                        "abcd"),
+                new Data(
+                        "cba",
+                        Lists.newArrayList(
                                 Lists.newArrayList(0, 1),
                                 Lists.newArrayList(1, 2)
-                        ))
-                        .expected("abc")
-                        .build()
+                        ),
+                        "abc")
         );
     }
 

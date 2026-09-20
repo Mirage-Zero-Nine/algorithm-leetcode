@@ -73,4 +73,15 @@ public class IsHappy_202Test {
         assertTrue(test.isHappy(100));
         assertTrue(test.isHappy(1000));
     }
+
+    @Test public void testHappy7() { assertTrue(test.isHappy(7)); }
+    @Test public void testHappy13() { assertTrue(test.isHappy(13)); }
+    @Test public void testHappy31() { assertTrue(test.isHappy(31)); }
+    @Test public void testUnhappy6() { assertFalse(test.isHappy(6)); }
+    @Test public void testUnhappy12() { assertFalse(test.isHappy(12)); }
+    @Test public void testUnhappy14() { assertFalse(test.isHappy(14)); }
+    @Test public void testLargePowerOfTen() { assertTrue(test.isHappy(10000000)); }
+    @Test public void testLargeUnhappy() { assertFalse(test.isHappy(9999999)); }
+    @Test public void testRepeatedCalls() { assertTrue(test.isHappy(19)); assertFalse(test.isHappy(2)); }
+    @Test public void testNegativeInput() { assertFalse(test.isHappy(-19)); }
 }

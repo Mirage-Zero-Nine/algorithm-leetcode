@@ -1,6 +1,8 @@
 package solutions.prefixsum;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -137,7 +139,19 @@ public class WaysToSplit_1712Test {
         for (int i = 0; i < 10000; i++) {
             nums[i] = 1;
         }
-        int result = solver.waysToSplit(nums);
-        assertTrue(result > 0);
+        long expected = 0;
+        for (int left = 1; left <= nums.length - 2; left++) {
+            expected += Math.max(0, (nums.length - left) / 2 - left + 1);
+        }
+        assertEquals(expected % 1_000_000_007, solver.waysToSplit(nums));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"'1,1,1,1',1", "'1,0,1,0,1',4", "'0,1,0,1',2", "'2,1,1,2',1", "'1,3,2,1,4',2"})
+    void additionalBoundaryDistributions(String encoded, int expected) {
+        String[] values = encoded.split(",");
+        int[] numbers = new int[values.length];
+        for (int i = 0; i < values.length; i++) numbers[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, solver.waysToSplit(numbers));
     }
 }

@@ -50,7 +50,12 @@ public class WallsAndGates_286 {
             for (int m = 0; m < 4; m++) {
                 int xx = tmp[0] + directions[m];
                 int yy = tmp[1] + directions[m + 4];
-                if (xx >= 0 && xx < row && yy >= 0 && yy < col && rooms[xx][yy] != -1 && (rooms[xx][yy] == Integer.MAX_VALUE || rooms[xx][yy] >= rooms[tmp[0]][tmp[1]] + 1)) {
+                // A room is enqueued only on its first discovery.  Multi-source BFS
+                // processes cells in nondecreasing distance order, so that first
+                // discovery is already its nearest-gate distance; allowing equal
+                // or larger relaxations would re-enqueue rooms exponentially.
+                if (xx >= 0 && xx < row && yy >= 0 && yy < col
+                        && rooms[xx][yy] == Integer.MAX_VALUE) {
                     rooms[xx][yy] = rooms[tmp[0]][tmp[1]] + 1;
                     q.add(new int[]{xx, yy});
                 }

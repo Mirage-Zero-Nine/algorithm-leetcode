@@ -74,4 +74,14 @@ public class GetFolderNames_1487Test {
         }
         assertArrayEquals(expected, test.getFolderNames(input));
     }
+    @Test void extra01() { assertArrayEquals(new String[]{"x","x(1)"}, test.getFolderNames(new String[]{"x","x"})); }
+    @Test void extra02() { assertArrayEquals(new String[]{"a","b"}, test.getFolderNames(new String[]{"a","b"})); }
+    @Test void extra03() { assertArrayEquals(new String[]{"a","a(1)","a(2)","a(3)"}, test.getFolderNames(new String[]{"a","a","a","a"})); }
+    @Test void extra04() { assertArrayEquals(new String[]{"z"}, test.getFolderNames(new String[]{"z"})); }
+    @Test void extra05() { assertArrayEquals(new String[]{"","(1)"}, test.getFolderNames(new String[]{"",""})); }
+    @Test void extra06() { assertArrayEquals(new String[]{"foo","foo(1)","foo(2)"}, test.getFolderNames(new String[]{"foo","foo(1)","foo"})); }
+    @Test void extra07() { assertArrayEquals(new String[]{"a(1)","a(1)(1)"}, test.getFolderNames(new String[]{"a(1)","a(1)"})); }
+    @Test void extra08() { assertArrayEquals(new String[]{"p","p(1)","p(2)"}, test.getFolderNames(new String[]{"p","p","p"})); }
+    @Test void extra09() { assertArrayEquals(new String[]{"a","b","a(1)","b(1)"}, test.getFolderNames(new String[]{"a","b","a","b"})); }
+    @Test void extra10() { assertArrayEquals(new String[]{"q","q(1)","q(2)","q(3)"}, test.getFolderNames(new String[]{"q","q","q","q"})); }
 }

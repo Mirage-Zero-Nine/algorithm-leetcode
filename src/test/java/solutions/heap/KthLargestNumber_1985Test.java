@@ -71,4 +71,15 @@ class KthLargestNumber_1985Test {
         assertEquals("999", solution.kthLargestNumber(nums, 1));
         assertEquals("0", solution.kthLargestNumber(nums, 1000));
     }
+
+    @Test void testQuickSelectLast() { assertEquals("1", solution.kthLargestNumberQuickSelect(new String[]{"1", "2", "3"}, 3)); }
+    @Test void testQuickSelectDuplicates() { assertEquals("5", solution.kthLargestNumberQuickSelect(new String[]{"5", "5", "4", "3"}, 2)); }
+    @Test void testLeadingLengthOrdering() { assertEquals("100", solution.kthLargestNumber(new String[]{"9", "10", "99", "100"}, 1)); }
+    @Test void testZeroDuplicates() { assertEquals("0", solution.kthLargestNumber(new String[]{"0", "0"}, 1)); }
+    @Test void testEqualLengthLexicographic() { assertEquals("987654321", solution.kthLargestNumber(new String[]{"123456789", "987654321", "555555555"}, 1)); }
+    @Test void testBothMethodsSameCases() { String[] nums = {"100000000000000000000", "2", "99999999999999999999", "10"}; assertEquals(solution.kthLargestNumber(nums.clone(), 2), solution.kthLargestNumberQuickSelect(nums.clone(), 2)); }
+    @Test void testKthMiddleLarge() { assertEquals("50000000000000000000", solution.kthLargestNumber(new String[]{"1", "50000000000000000000", "99999999999999999999"}, 2)); }
+    @Test void testUnsortedInput() { assertEquals("7", solution.kthLargestNumberQuickSelect(new String[]{"7", "1", "9", "3"}, 2)); }
+    @Test void testRepeatedInvocation() { solution.kthLargestNumber(new String[]{"1", "2"}, 1); assertEquals("4", solution.kthLargestNumber(new String[]{"4"}, 1)); }
+    @Test void testTenDigitBoundary() { assertEquals("1000000000", solution.kthLargestNumber(new String[]{"999999999", "1000000000"}, 1)); }
 }

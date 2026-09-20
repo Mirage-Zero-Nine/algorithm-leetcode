@@ -78,4 +78,14 @@ public class ReconstructQueue_406Test {
         int[][] result = solver.reconstructQueue(people);
         assertEquals(n, result.length);
     }
+    @Test public void testAdditionalPair() { assertArrayEquals(new int[][]{{4, 0}, {5, 0}}, solver.reconstructQueue(new int[][]{{5, 0}, {4, 0}})); }
+    @Test public void testAdditionalSame() { assertArrayEquals(new int[][]{{6, 0}, {6, 1}}, solver.reconstructQueue(new int[][]{{6, 1}, {6, 0}})); }
+    @Test public void testAdditionalThree() { assertArrayEquals(new int[][]{{5, 0}, {6, 0}, {7, 0}}, solver.reconstructQueue(new int[][]{{7, 0}, {5, 0}, {6, 0}})); }
+    @Test public void testAdditionalK() { assertArrayEquals(new int[][]{{4, 0}, {5, 0}, {5, 1}}, solver.reconstructQueue(new int[][]{{5, 0}, {5, 1}, {4, 0}})); }
+    @Test public void testAdditionalFour() { int[][] p={{7,0},{6,1},{5,2},{4,3}}; assertEquals(4, solver.reconstructQueue(p).length); }
+    @Test public void testAdditionalMixed() { int[][] p={{6,0},{6,1},{5,0}}; assertEquals(3, solver.reconstructQueue(p).length); }
+    @Test public void testAdditionalDescendingK() { int[][] p={{9,0},{8,0},{7,0},{6,0}}; assertEquals(4, solver.reconstructQueue(p).length); }
+    @Test public void testAdditionalSingleK() { assertArrayEquals(new int[][]{{5, 0}}, solver.reconstructQueue(new int[][]{{5, 0}})); }
+    @Test public void testAdditionalEqualHeight() { int[][] p={{3,2},{3,0},{3,1}}; assertEquals(3, solver.reconstructQueue(p).length); }
+    @Test public void testAdditionalFive() { int[][] p={{10,0},{9,1},{8,2},{7,3},{6,4}}; assertEquals(5, solver.reconstructQueue(p).length); }
 }

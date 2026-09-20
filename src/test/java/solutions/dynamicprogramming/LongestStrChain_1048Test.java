@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class LongestStrChain_1048Test {
 
@@ -72,5 +74,11 @@ public class LongestStrChain_1048Test {
             words[i] = sb.toString();
         }
         assertEquals(16, test.longestStrChain(words));
+    }
+
+    @ParameterizedTest(name = "word chain {0}")
+    @CsvSource({"'a;ab;abc',3", "'a;at;ate;late',4", "'x;xy;xyz;wxyz',4", "'ab;ac;ad',1", "'cat;at;bat;bet;belt',2", "'a;ba;bca;bdca',4", "'red;read;ready',3", "'i;in;inn;into',3", "'do;dog;dogs;do gs',4", "'one;ones;stone',2"})
+    public void testAdditionalPredecessorChains(String encoded, int expected) {
+        assertEquals(expected, test.longestStrChain(encoded.split(";")));
     }
 }

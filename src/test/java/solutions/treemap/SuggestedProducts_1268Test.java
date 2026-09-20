@@ -108,4 +108,70 @@ public class SuggestedProducts_1268Test {
             assertEquals(3, r.size());
         }
     }
+
+    @Test
+    public void testThreeLimitAndLexicographicOrderAtEveryPrefix() {
+        assertEquals(List.of(List.of("aa", "aab", "aac"), List.of("aa", "aab", "aac")),
+            test.suggestedProducts(new String[]{"aac", "aad", "aa", "aab"}, "aa"));
+    }
+
+    @Test
+    public void testNoMatchAfterSeveralMatchingPrefixes() {
+        assertEquals(List.of(List.of("abcd", "abef"), List.of("abcd", "abef"), List.of("abcd"), List.of()),
+            test.suggestedProducts(new String[]{"abcd", "abef"}, "abcz"));
+    }
+
+    @Test
+    public void testProductsAlreadySorted() {
+        assertEquals(List.of(List.of("alpha", "alpine"), List.of("alpha", "alpine")),
+            test.suggestedProducts(new String[]{"alpha", "alpine", "beta"}, "al"));
+    }
+
+    @Test
+    public void testProductsReverseSorted() {
+        assertEquals(List.of(List.of("aa", "ab", "ac")),
+            test.suggestedProducts(new String[]{"ac", "ab", "aa"}, "a"));
+    }
+
+    @Test
+    public void testSearchWordLongerThanAnyProduct() {
+        assertEquals(List.of(List.of("a"), List.of()),
+            test.suggestedProducts(new String[]{"a", "b"}, "ab"));
+    }
+
+    @Test
+    public void testPrefixBoundaryDoesNotIncludeNeighborWords() {
+        assertEquals(List.of(
+                List.of("app", "apple", "apply"), List.of("app", "apple", "apply"),
+                List.of("app", "apple", "apply"), List.of("apple", "apply")),
+            test.suggestedProducts(new String[]{"app", "apple", "apply", "banana"}, "appl"));
+    }
+
+    @Test
+    public void testMaximumSearchWordLengthShape() {
+        String[] products = {"a", "aa", "aaa"};
+        List<List<String>> result = test.suggestedProducts(products, "a".repeat(10));
+        assertEquals(10, result.size());
+        assertEquals(List.of("a", "aa", "aaa"), result.get(0));
+        assertEquals(List.of("aa", "aaa"), result.get(1));
+        assertEquals(List.of("aaa"), result.get(2));
+        for (int i = 3; i < result.size(); i++) assertEquals(List.of(), result.get(i));
+    }
+
+    @Test
+    public void testExactlyThreeMatchingProducts() {
+        assertEquals(List.of(List.of("cat", "cater", "cattle")),
+            test.suggestedProducts(new String[]{"cattle", "cat", "cater"}, "c"));
+    }
+
+    @Test
+    public void testNoMatchAtFinalCharacter() {
+        assertEquals(List.of(List.of("dog", "dot"), List.of("dog", "dot"), List.of("dog"), List.of()),
+            test.suggestedProducts(new String[]{"dog", "dot"}, "dogs"));
+    }
+
+    @Test
+    public void testSearchWordEmptyWithProducts() {
+        assertEquals(List.of(), test.suggestedProducts(new String[]{"a", "b"}, ""));
+    }
 }

@@ -62,4 +62,15 @@ public class CanTransform_777Test {
         String end = "X".repeat(1000) + "R" + "L";
         assertTrue(test.canTransform(start, end));
     }
+
+    @Test public void testOnlyXs() { assertTrue(test.canTransform("XXX", "XXX")); }
+    @Test public void testRCannotCrossL() { assertFalse(test.canTransform("RL", "LR")); }
+    @Test public void testLCanMoveLeftAcrossXs() { assertTrue(test.canTransform("XXL", "LXX")); }
+    @Test public void testRCanMoveRightAcrossXs() { assertTrue(test.canTransform("RXX", "XXR")); }
+    @Test public void testOrderChanges() { assertFalse(test.canTransform("LRX", "XRL")); }
+    @Test public void testDifferentNonXSymbols() { assertFalse(test.canTransform("L", "R")); }
+    @Test public void testLengthsDifferEmpty() { assertFalse(test.canTransform("", "X")); }
+    @Test public void testNoMovesNeeded() { assertTrue(test.canTransform("RXLX", "RXLX")); }
+    @Test public void testMultipleLegalMoves() { assertFalse(test.canTransform("RXXLXXL", "XXRXXLL")); }
+    @Test public void testRMovingLeftRejected() { assertFalse(test.canTransform("XR", "RX")); }
 }

@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class SumRootToLeaf_1022Test {
 
@@ -88,5 +90,17 @@ public class SumRootToLeaf_1022Test {
         root.left.left = new TreeNode(0); root.left.right = new TreeNode(1);
         root.right.left = new TreeNode(0); root.right.right = new TreeNode(1);
         assertEquals(22, test.sumRootToLeaf(root));
+    }
+
+    @ParameterizedTest(name = "binary chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testAllOneChainValues(int length) {
+        TreeNode root = new TreeNode(1);
+        TreeNode current = root;
+        for (int i = 1; i < length; i++) {
+            current.right = new TreeNode(1);
+            current = current.right;
+        }
+        assertEquals((1 << length) - 1, test.sumRootToLeaf(root));
     }
 }

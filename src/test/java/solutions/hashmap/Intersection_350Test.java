@@ -105,4 +105,14 @@ public class Intersection_350Test {
         int[] result = solver.intersect(new int[]{-1, 0, 1}, new int[]{0, 1, 2});
         assertArrayEquals(new int[]{0, 1}, result);
     }
+    @Test void extra01() { assertArrayEquals(new int[]{}, solver.intersect(new int[]{}, new int[]{1})); }
+    @Test void extra02() { assertArrayEquals(new int[]{1}, solver.intersect(new int[]{1}, new int[]{1})); }
+    @Test void extra03() { assertArrayEquals(new int[]{2,2}, solver.intersect(new int[]{2,2,2}, new int[]{2,2})); }
+    @Test void extra04() { assertArrayEquals(new int[]{}, solver.intersect(new int[]{1,2}, new int[]{3,4})); }
+    @Test void extra05() { assertArrayEquals(new int[]{-1}, solver.intersect(new int[]{-1,-1}, new int[]{-1})); }
+    @Test void extra06() { assertArrayEquals(new int[]{1,2,3}, solver.intersect(new int[]{1,2,3}, new int[]{3,2,1})); }
+    @Test void extra07() { assertArrayEquals(new int[]{0,0}, solver.intersect(new int[]{0,0}, new int[]{0,0,0})); }
+    @Test void extra08() { assertArrayEquals(new int[]{6,7}, solver.intersect(new int[]{5,6,7}, new int[]{6,7,8})); }
+    @Test void extra09() { assertArrayEquals(new int[]{4,4}, solver.intersect(new int[]{4,4,4}, new int[]{4,4})); }
+    @Test void extra10() { assertArrayEquals(new int[]{9}, solver.intersect(new int[]{9,9}, new int[]{9})); }
 }

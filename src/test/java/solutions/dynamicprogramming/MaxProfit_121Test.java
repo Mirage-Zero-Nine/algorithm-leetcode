@@ -135,4 +135,18 @@ public class MaxProfit_121Test {
             assertEquals(test.maxProfit(prices), test.maxProfitStandardDP(prices));
         }
     }
+
+    @Test
+    public void testValleyImmediatelyBeforeFinalPrice() {
+        int[] prices = {9, 7, 5, 3, 1, 8};
+        assertEquals(7, test.maxProfit(prices));
+        assertEquals(7, test.maxProfitStandardDP(prices));
+    }
+
+    @Test
+    public void testRepeatedEqualValleys() {
+        int[] prices = {5, 2, 2, 4, 2, 6};
+        assertEquals(4, test.maxProfit(prices));
+        assertEquals(4, test.maxProfitStandardDP(prices));
+    }
 }

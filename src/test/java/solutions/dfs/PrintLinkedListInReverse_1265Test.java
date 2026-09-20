@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import library.ImmutableListNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class PrintLinkedListInReverse_1265Test {
 
@@ -113,5 +115,15 @@ public class PrintLinkedListInReverse_1265Test {
         List<Integer> printed = new ArrayList<>();
         test.printLinkedListInReverse(build(printed, vals));
         assertEquals(expected, printed);
+    }
+
+    @ParameterizedTest(name = "reverse list length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testEverySmallListLength(int length) {
+        List<Integer> printed = new ArrayList<>();
+        int[] values = new int[length];
+        for (int i = 0; i < length; i++) values[i] = i - 5;
+        test.printLinkedListInReverse(build(printed, values));
+        for (int i = 0; i < length; i++) assertEquals(values[length - 1 - i], printed.get(i));
     }
 }

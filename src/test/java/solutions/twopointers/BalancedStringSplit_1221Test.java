@@ -64,4 +64,15 @@ public class BalancedStringSplit_1221Test {
     public void testGiantRepeated() {
         assertEquals(500, test.balancedStringSplit("RL".repeat(500)));
     }
+
+    @Test public void testSingleNestedPair() { assertEquals(1, test.balancedStringSplit("LR")); }
+    @Test public void testNestedReversePair() { assertEquals(2, test.balancedStringSplit("RLLR")); }
+    @Test public void testThreeIndependentPairs() { assertEquals(3, test.balancedStringSplit("LRLRLR")); }
+    @Test public void testDeepNesting() { assertEquals(1, test.balancedStringSplit("LLLRRR")); }
+    @Test public void testTwoNestedSegments() { assertEquals(2, test.balancedStringSplit("LLRRLR")); }
+    @Test public void testBalancedPrefixAndSuffix() { assertEquals(2, test.balancedStringSplit("RLRRLL")); }
+    @Test public void testLongNestedSegment() { assertEquals(1, test.balancedStringSplit("L".repeat(100) + "R".repeat(100))); }
+    @Test public void testManyNestedSegments() { assertEquals(25, test.balancedStringSplit("LLRR".repeat(25))); }
+    @Test public void testUnbalancedInputWithIgnoredCharacter() { assertEquals(2, test.balancedStringSplit("LRZ")); }
+    @Test public void testRepeatedReuse() { assertEquals(2, test.balancedStringSplit("RRLLLR")); }
 }

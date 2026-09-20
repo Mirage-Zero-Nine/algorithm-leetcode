@@ -63,6 +63,7 @@ public class PathSum_437 {
      * @return number of path that sum equals given int
      */
     public int pathSumWithHashMap(TreeNode root, int sum) {
+        count = 0;
         Map<Long, Integer> prefixSumCount = new HashMap<>(); // map to store path count under each prefix sum
         prefixSumCount.put(0L, 1);
         dfs(root, 0, sum, prefixSumCount);

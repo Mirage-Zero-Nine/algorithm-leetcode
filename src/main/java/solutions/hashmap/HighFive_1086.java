@@ -3,6 +3,7 @@ package solutions.hashmap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Given a list of scores of different students, return the average score of each student's top five scores in the order of each student's id.
@@ -37,8 +38,11 @@ public class HighFive_1086 {
         }
 
         int[][] out = new int[m.size()][2];
+        List<Integer> ids = new ArrayList<>(m.keySet());
+        Collections.sort(ids);
 
-        for (Integer key : m.keySet()) {
+        for (int outputIndex = 0; outputIndex < ids.size(); outputIndex++) {
+            Integer key = ids.get(outputIndex);
             int ave = 0;
 
             ArrayList<Integer> l = m.get(key);
@@ -49,8 +53,8 @@ public class HighFive_1086 {
             }
             ave = ave / 5;
 
-            out[key - 1][0] = key;
-            out[key - 1][1] = ave;
+            out[outputIndex][0] = key;
+            out[outputIndex][1] = ave;
         }
         return out;
     }

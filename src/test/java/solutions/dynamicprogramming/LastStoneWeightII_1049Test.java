@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class LastStoneWeightII_1049Test {
 
@@ -68,5 +70,13 @@ public class LastStoneWeightII_1049Test {
         }
         // sum = 465, half = 232, best subset sum = 232 or 233 -> result = 465 - 2*232 = 1
         assertEquals(1, test.lastStoneWeightII(stones));
+    }
+
+    @ParameterizedTest(name = "stones {0}")
+    @CsvSource({"'2,2,2',2", "'1,2,4',1", "'2,3,7',2", "'5,6,7',4", "'1,1,1,1,1',1", "'3,3,3,3,3,3',0", "'8,1,2,3',2", "'10,9,8,7',0", "'4,6,10,12',0", "'1,4,9,16,25',3"})
+    public void testAdditionalPartitionCases(String encoded, int expected) {
+        String[] values = encoded.split(","); int[] stones = new int[values.length];
+        for (int i = 0; i < values.length; i++) stones[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, test.lastStoneWeightII(stones));
     }
 }

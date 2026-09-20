@@ -25,28 +25,31 @@ public class CompareVersion_165 {
      * @return version1 > version2 return 1; version1 < version2 return -1; otherwise return 0.
      */
     public int compareVersion(String version1, String version2) {
+        int p1 = 0, p2 = 0;
+        while (p1 < version1.length() || p2 < version2.length()) {
+            int end1 = p1;
+            while (end1 < version1.length() && version1.charAt(end1) != '.') end1++;
+            int end2 = p2;
+            while (end2 < version2.length() && version2.charAt(end2) != '.') end2++;
 
-        int p1 = 0, p2 = 0, l1 = version1.length(), l2 = version2.length(), current1, current2;
+            // Revision fields may be much larger than an int. Compare their
+            // canonical lengths and then their digits lexicographically.
+            int first1 = p1;
+            while (first1 < end1 && version1.charAt(first1) == '0') first1++;
+            int first2 = p2;
+            while (first2 < end2 && version2.charAt(first2) == '0') first2++;
+            int length1 = end1 - first1;
+            int length2 = end2 - first2;
+            if (length1 != length2) return length1 < length2 ? -1 : 1;
+            for (int i = 0; i < length1; i++) {
+                char digit1 = version1.charAt(first1 + i);
+                char digit2 = version2.charAt(first2 + i);
+                if (digit1 != digit2) return digit1 < digit2 ? -1 : 1;
+            }
 
-        while (p1 < l1 || p2 < l2) {
-            current1 = 0;
-            current2 = 0;
-
-            while (p1 < l1 && Character.isDigit(version1.charAt(p1))) {
-                current1 = current1 * 10 + version1.charAt(p1++) - 48;
-            }
-            p1++;
-            while (p2 < l2 && Character.isDigit(version2.charAt(p2))) {
-                current2 = current2 * 10 + version2.charAt(p2++) - 48;
-            }
-            p2++;
-            if (current1 < current2) {
-                return -1;
-            } else if (current1 > current2) {
-                return 1;
-            }
+            p1 = end1 < version1.length() ? end1 + 1 : end1;
+            p2 = end2 < version2.length() ? end2 + 1 : end2;
         }
-
         return 0;
     }
 

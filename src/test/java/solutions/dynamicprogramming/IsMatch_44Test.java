@@ -1,6 +1,7 @@
 package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -142,5 +143,20 @@ public class IsMatch_44Test {
         String s = "a".repeat(1000);
         String p = "a*a*a*a*a*a*a*a*a*a*b";
         assertFalse(test.isMatch(s, p));
+    }
+
+    @Test
+    public void testDfsAndGreedyImplementationsOnSharedContractCases() {
+        String[][] cases = {
+                {"aa", "*", "true"}, {"cb", "?a", "false"},
+                {"", "**", "true"}, {"abc", "a*c", "true"},
+                {"abc", "a*d", "false"}, {"ab", "?*", "true"},
+                {"", "?", "false"}, {"abcdef", "*", "true"}
+        };
+        for (String[] c : cases) {
+            boolean expected = Boolean.parseBoolean(c[2]);
+            assertEquals(expected, test.dfsImplementation(c[0], c[1]));
+            assertEquals(expected, test.isMatchGreedy(c[0], c[1]));
+        }
     }
 }

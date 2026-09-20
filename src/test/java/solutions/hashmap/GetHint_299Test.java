@@ -97,4 +97,14 @@ public class GetHint_299Test {
         // Result: "0A4B"
         assertEquals("0A4B", solver.getHint("1122", "2211"));
     }
+    @Test void extra01() { assertEquals("1A0B", solver.getHint("1", "1")); }
+    @Test void extra02() { assertEquals("0A0B", solver.getHint("1", "0")); }
+    @Test void extra03() { assertEquals("0A4B", solver.getHint("1234", "4321")); }
+    @Test void extra04() { assertEquals("0A4B", solver.getHint("1122", "2211")); }
+    @Test void extra05() { assertEquals("1A1B", solver.getHint("1123", "0111")); }
+    @Test void extra06() { assertEquals("0A0B", solver.getHint("0000", "1111")); }
+    @Test void extra07() { assertEquals("4A0B", solver.getHint("0000", "0000")); }
+    @Test void extra08() { assertEquals("0A4B", solver.getHint("1122", "2211")); }
+    @Test void extra09() { assertEquals("1A3B", solver.getHint("1807", "7810")); }
+    @Test void extra10() { assertEquals("1A2B", solver.getHint("1123", "1211")); }
 }

@@ -67,4 +67,14 @@ public class HIndex_274Test {
         // With citations 1..1000, h-index should be 500 (500 papers with >= 500 citations)
         assertEquals(500, test.hIndex(citations));
     }
+    @Test void extra01() { assertEquals(0, test.hIndex(new int[]{})); }
+    @Test void extra02() { assertEquals(1, test.hIndex(new int[]{100})); }
+    @Test void extra03() { assertEquals(2, test.hIndex(new int[]{0, 2, 2})); }
+    @Test void extra04() { assertEquals(2, test.hIndex(new int[]{1, 2, 100})); }
+    @Test void extra05() { assertEquals(3, test.hIndex(new int[]{3, 3, 3, 0})); }
+    @Test void extra06() { assertEquals(4, test.hIndex(new int[]{4, 4, 4, 4})); }
+    @Test void extra07() { assertEquals(2, test.hIndex(new int[]{6, 5, 1, 0})); }
+    @Test void extra08() { assertEquals(4, test.hIndex(new int[]{10, 8, 5, 4, 3})); }
+    @Test void extra09() { assertEquals(1, test.hIndex(new int[]{1, 1, 1, 1, 1})); }
+    @Test void extra10() { assertEquals(0, test.hIndex(new int[]{0, 0, 0, 0})); }
 }

@@ -12,7 +12,7 @@ import library.tree.binarytree.TreeNode;
 
 public class MaximumAverageSubtree_1120 {
 
-    private double max = 0;
+    private double max = Double.NEGATIVE_INFINITY;
 
     /**
      * DFS.
@@ -22,6 +22,7 @@ public class MaximumAverageSubtree_1120 {
      * @return maximum average value of any subtree of that tree
      */
     public double maximumAverageSubtree(TreeNode root) {
+        max = Double.NEGATIVE_INFINITY;
         if (root == null) {
             return 0.0;
         }

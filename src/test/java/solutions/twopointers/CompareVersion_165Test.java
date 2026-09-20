@@ -69,4 +69,21 @@ public class CompareVersion_165Test {
         assertEquals(1, test.compareVersion("100.200.300", "100.200.299"));
         assertEquals(-1, test.compareVersion("99.99.99", "100.0.0"));
     }
+
+    @Test
+    public void testRevisionFieldsBeyondIntegerRange() {
+        assertEquals(1, test.compareVersion("1.999999999999999999999999999999", "1.2"));
+        assertEquals(-1, test.compareVersion("1.100000000000000000000000000001", "1.100000000000000000000000000002"));
+        assertEquals(0, test.compareVersion("1." + "0".repeat(500), "1"));
+    }
+
+    @Test public void testLeadingZerosAtDifferentDepths() { assertEquals(0, test.compareVersion("1.0.0.0", "1")); }
+    @Test public void testFirstRevisionDominates() { assertEquals(-1, test.compareVersion("2.9.9", "10")); }
+    @Test public void testLaterRevisionDominates() { assertEquals(1, test.compareVersion("1.0.0.1", "1.0")); }
+    @Test public void testZeroRevisionAgainstZeros() { assertEquals(0, test.compareVersion("0.0", "0")); }
+    @Test public void testTwoDigitComparison() { assertEquals(1, test.compareVersion("1.10", "1.9.9")); }
+    @Test public void testManyTrailingZeros() { assertEquals(0, test.compareVersion("3." + "0.".repeat(30) + "0", "3")); }
+    @Test public void testLongerCanonicalFieldWins() { assertEquals(-1, test.compareVersion("1.000000000000000000001", "1.2")); }
+    @Test public void testEqualLongFields() { assertEquals(0, test.compareVersion("000123.004", "123.4.0")); }
+    @Test public void testTrailingNonzeroField() { assertEquals(-1, test.compareVersion("8.0.0.09", "8.0.0.10")); }
 }

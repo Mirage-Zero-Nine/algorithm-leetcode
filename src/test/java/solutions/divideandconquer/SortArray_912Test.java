@@ -189,4 +189,16 @@ public class SortArray_912Test {
         assertArrayEquals(new int[]{-100, -50, -1, 0, 1, 50, 100},
                 test.mergeSort(new int[]{100, -1, 50, 0, -50, 1, -100}));
     }
+
+    @Test public void testSingleZero() {
+        assertArrayEquals(new int[]{0}, test.sortArray(new int[]{0}));
+        assertArrayEquals(new int[]{0}, test.mergeSort(new int[]{0}));
+    }
+
+    @Test public void testTwoDifferentExtremes() {
+        assertArrayEquals(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE},
+                test.sortArray(new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE}));
+        assertArrayEquals(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE},
+                test.mergeSort(new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE}));
+    }
 }

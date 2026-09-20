@@ -147,4 +147,7 @@ public class MergeTwoSortedLists_21Test {
     public void testDuplicatesAcrossBoundaries() {
         assertEquals("1,2,2,3,3,4,", toStr(test.mergeTwoLists(build(1, 2, 3), build(2, 3, 4))));
     }
+
+    @Test public void testBothSingleEqual() { assertEquals("2,2,",toStr(test.mergeTwoLists(build(2),build(2)))); }
+    @Test public void testNegativeLists() { assertEquals("-3,-2,-1,0,",toStr(test.mergeTwoLists(build(-3,-1),build(-2,0)))); }
 }

@@ -215,4 +215,11 @@ public class MaxPathSum_124Test {
         }
         return nodes[0];
     }
+
+    @Test
+    public void testRepeatedCallsResetMaximum() {
+        MaxPathSum_124 solution = new MaxPathSum_124();
+        assertEquals(6, solution.maxPathSum(new TreeNode(6)));
+        assertEquals(-2, solution.maxPathSum(new TreeNode(-2)));
+    }
 }

@@ -72,4 +72,54 @@ public class Divide_29Test {
         assertEquals(Integer.MAX_VALUE / 7, test.divide(Integer.MAX_VALUE, 7));
         assertEquals(Integer.MAX_VALUE / 100, test.divide(Integer.MAX_VALUE, 100));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0, test.divide(0, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(1, test.divide(1, 1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(-1, test.divide(-1, 1));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(-1, test.divide(1, -1));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(-2, test.divide(-7, 3));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(-2, test.divide(7, -3));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(-2147483648, test.divide(-2147483648, 1));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(2147483647, test.divide(-2147483648, -1));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(2147483647, test.divide(2147483647, 1));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(14, test.divide(100, 7));
+    }
 }

@@ -12,6 +12,11 @@ public class ReverseBits_190Test {
         assertEquals(964176192, solver.reverseBits(43261596));
     }
 
+    @Test public void testOfficialSecondExample() {
+        // 01111111111111111111111111111100 -> 00111111111111111111111111111110
+        assertEquals(1073741822, solver.reverseBits(2147483644));
+    }
+
     @Test public void testZero() {
         assertEquals(0, solver.reverseBits(0));
     }
@@ -41,6 +46,12 @@ public class ReverseBits_190Test {
         assertEquals(1, solver.reverseBits(0x80000000));
     }
 
+    @Test public void testSignBitAndAdjacentHighBits() {
+        assertEquals(Integer.reverse(0xC0000000), solver.reverseBits(0xC0000000));
+        assertEquals(Integer.reverse(0xE0000000), solver.reverseBits(0xE0000000));
+        assertEquals(Integer.reverse(0xFFFFFFFC), solver.reverseBits(0xFFFFFFFC));
+    }
+
     @Test public void testAlternatingBits() {
         // 0xAAAAAAAA -> reversed = 0x55555555
         assertEquals(0x55555555, solver.reverseBits(0xAAAAAAAA));
@@ -59,6 +70,40 @@ public class ReverseBits_190Test {
     @Test public void testLargePositive() {
         // 0x0000FFFF -> reversed = 0xFFFF0000
         assertEquals(0xFFFF0000, solver.reverseBits(0x0000FFFF));
+    }
+
+    @Test public void testOfficialEvenInputBoundaries() {
+        assertEquals(Integer.reverse(2), solver.reverseBits(2));
+        assertEquals(Integer.reverse(0x7FFFFFFE), solver.reverseBits(0x7FFFFFFE));
+        assertEquals(Integer.reverse(0x40000000), solver.reverseBits(0x40000000));
+    }
+
+    @Test public void testByteAndNibbleBoundaries() {
+        assertEquals(0xFF000000, solver.reverseBits(0x000000FF));
+        assertEquals(0x00FF0000, solver.reverseBits(0x0000FF00));
+        assertEquals(0xF0F0F0F0, solver.reverseBits(0x0F0F0F0F));
+        assertEquals(0x0F0F0F0F, solver.reverseBits(0xF0F0F0F0));
+    }
+
+    @Test public void testSparseMultiBitPatterns() {
+        int[] values = {0x00010001, 0x01000001, 0x10000008, 0x40000004, 0x80000081};
+        for (int value : values) {
+            assertEquals(Integer.reverse(value), solver.reverseBits(value));
+        }
+    }
+
+    @Test public void testDenseMultiBitPatterns() {
+        int[] values = {0x0000FFF0, 0x0FFFFFFF, 0x33333333, 0x66666666, 0x7FFFFFFF};
+        for (int value : values) {
+            assertEquals(Integer.reverse(value), solver.reverseBits(value));
+        }
+    }
+
+    @Test public void testNegativeUnsignedPatterns() {
+        int[] values = {Integer.MIN_VALUE, -3, -0x100, 0x80000001, 0xF000000F};
+        for (int value : values) {
+            assertEquals(Integer.reverse(value), solver.reverseBits(value));
+        }
     }
 
     @Test public void testEverySingleSetBitAndClearedBit() {
@@ -81,5 +126,31 @@ public class ReverseBits_190Test {
             assertEquals(Integer.reverse(value), solver.reverseBits(value));
             assertEquals(Integer.reverse(value << 16), solver.reverseBits(value << 16));
         }
+    }
+
+    @Test public void testInvolutionForStructuredValues() {
+        int[] values = {
+                0, 1, 2, 3, 0x0000FFFF, 0x00FF00FF, 0x3333CCCC,
+                0x55555555, 0xAAAAAAAA, 0x7FFFFFFF, Integer.MIN_VALUE, -1
+        };
+        for (int value : values) {
+            assertEquals(value, solver.reverseBits(solver.reverseBits(value)));
+        }
+    }
+
+    @Test public void testInvolutionForSeededValues() {
+        java.util.Random random = new java.util.Random(190190L);
+        for (int sample = 0; sample < 1000; sample++) {
+            int value = random.nextInt();
+            assertEquals(value, solver.reverseBits(solver.reverseBits(value)));
+        }
+    }
+
+    @Test public void testRepeatedCallsRemainIndependent() {
+        int first = solver.reverseBits(0x01234567);
+        assertEquals(Integer.reverse(0x89ABCDEF), solver.reverseBits(0x89ABCDEF));
+        assertEquals(Integer.reverse(0x01234567), first);
+        assertEquals(Integer.reverse(0), solver.reverseBits(0));
+        assertEquals(Integer.reverse(Integer.MIN_VALUE), solver.reverseBits(Integer.MIN_VALUE));
     }
 }

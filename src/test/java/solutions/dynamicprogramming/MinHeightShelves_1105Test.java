@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class MinHeightShelves_1105Test {
 
@@ -73,5 +75,13 @@ public class MinHeightShelves_1105Test {
         }
         // All books width 1, height 1, shelf width 10 -> 10 shelves of height 1 each = 10
         assertEquals(10, test.minHeightShelves(books, 10));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"'1:2;1:3',3","'2:4;2:5',5","'1:5;1:1;1:4',5","'3:3;2:2;1:4',4","'2:6;2:6;2:6',6","'1:2;2:5;1:3',5","'3:7;1:2',7","'1:4;1:4;1:4;1:4',4","'2:3;3:5;1:2',5","'1:10;1:1;1:1',10"})
+    public void testAdditionalShelfPacking(String encoded, int expected) {
+        String[] rows = encoded.split(";"); int[][] books = new int[rows.length][2];
+        for (int i = 0; i < rows.length; i++) { String[] values = rows[i].split(":"); books[i][0] = Integer.parseInt(values[0]); books[i][1] = Integer.parseInt(values[1]); }
+        assertEquals(expected, test.minHeightShelves(books, 10));
     }
 }

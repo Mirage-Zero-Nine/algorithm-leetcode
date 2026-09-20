@@ -27,7 +27,7 @@ public class ParseTernary_439 {
      * @return result of the expression
      */
     public String parseTernary(String expression) {
-        if (expression.length() < 6) {
+        if (expression.length() < 5) {
             return "";
         }
 

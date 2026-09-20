@@ -214,4 +214,13 @@ public class SumOfLeftLeaves_404Test {
         }
         assertEquals(100, new SumOfLeftLeaves_404().sumOfLeftLeaves(root));
     }
+
+    @Test
+    public void testRepeatedCallsResetSum() {
+        SumOfLeftLeaves_404 solution = new SumOfLeftLeaves_404();
+        TreeNode first = new TreeNode(1);
+        first.left = new TreeNode(2);
+        assertEquals(2, solution.sumOfLeftLeaves(first));
+        assertEquals(0, solution.sumOfLeftLeaves(new TreeNode(3)));
+    }
 }

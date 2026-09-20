@@ -69,4 +69,49 @@ class MinimumDeletions_2091Test {
         // remove from left: 100000, remove from right: 100000, remove both sides: 1 + 1 = 2
         assertEquals(2, solution.minimumDeletions(nums));
     }
+    @Test
+    public void testAdditional1() {
+        assertEquals(2, solution.minimumDeletions(new int[]{2,3}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(2, solution.minimumDeletions(new int[]{1,2}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(2, solution.minimumDeletions(new int[]{2,1}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(2, solution.minimumDeletions(new int[]{1,2,3}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(2, solution.minimumDeletions(new int[]{3,2,1}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(5, solution.minimumDeletions(new int[]{2,10,7,5,4,1,8,6}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(2, solution.minimumDeletions(new int[]{0,100}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(2, solution.minimumDeletions(new int[]{5,1,2,3,4}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(2, solution.minimumDeletions(new int[]{1,2,3,4,5}));
+    }
+
 }

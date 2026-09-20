@@ -78,4 +78,13 @@ public class MaximalRectangle_85Test {
                 matrix[i][j] = '1';
         assertEquals(10000, solver.maximalRectangle(matrix));
     }
+    @Test public void testSingleRowAllOnes() { assertEquals(4,solver.maximalRectangle(new char[][]{{'1','1','1','1'}})); }
+    @Test public void testSingleColumnWithGap() { assertEquals(2,solver.maximalRectangle(new char[][]{{'1'},{'1'},{'0'},{'1'}})); }
+    @Test public void testCheckerboard() { assertEquals(1,solver.maximalRectangle(new char[][]{{'1','0'},{'0','1'}})); }
+    @Test public void testTallNarrowBlock() { assertEquals(6,solver.maximalRectangle(new char[][]{{'1','1'},{'1','1'},{'1','1'}})); }
+    @Test public void testBottomRectangle() { assertEquals(4,solver.maximalRectangle(new char[][]{{'0','0','0'},{'1','1','0'},{'1','1','1'}})); }
+    @Test public void testAlternatingRows() { assertEquals(3,solver.maximalRectangle(new char[][]{{'1','1','1'},{'0','1','0'},{'1','1','1'}})); }
+    @Test public void testZeroSeparator() { assertEquals(3,solver.maximalRectangle(new char[][]{{'1','1','1','0','1','1'}})); }
+    @Test public void testSingleOneInMatrix() { assertEquals(1,solver.maximalRectangle(new char[][]{{'0','0'},{'0','1'}})); }
+    @Test public void testRepeatedCall() { solver.maximalRectangle(new char[][]{{'1'}}); assertEquals(2,solver.maximalRectangle(new char[][]{{'1','1'}})); }
 }

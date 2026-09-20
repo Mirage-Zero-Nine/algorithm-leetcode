@@ -199,4 +199,7 @@ public class RemoveNthFromEnd_19Test {
         }
         return values.stream().mapToInt(Integer::intValue).toArray();
     }
+
+    @Test public void testRemoveOnlyNode() { assertRemoved(new int[]{},1,9); }
+    @Test public void testRemoveFirstOfTwo() { assertRemoved(new int[]{2},2,1,2); }
 }

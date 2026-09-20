@@ -1,6 +1,8 @@
 package solutions.dynamicprogramming;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -69,5 +71,13 @@ class MaxProduct_152Test {
         }
         nums[500] = 2;
         assertEquals(2, solution.maxProduct(nums));
+    }
+
+    @ParameterizedTest(name = "product array {0}")
+    @CsvSource({"'1,2,3',6", "'-1,-2',2", "'-1,0,-2',0", "'2,-5,-2',20", "'-2,0,3,-4',3", "'0,0,0',0", "'3,-1,4,-1,2',24", "'-3,-2,-1,0',6", "'1,-2,3,-4,5',120", "'-1,2,-3,4,-5',120"})
+    void testAdditionalSignAndZeroPatterns(String encoded, int expected) {
+        String[] values = encoded.split(","); int[] nums = new int[values.length];
+        for (int i = 0; i < values.length; i++) nums[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, solution.maxProduct(nums));
     }
 }

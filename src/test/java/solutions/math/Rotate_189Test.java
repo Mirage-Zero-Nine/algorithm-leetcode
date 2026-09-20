@@ -86,4 +86,54 @@ public class Rotate_189Test {
         assertEquals(999, arr[299]);
         assertEquals(0, arr[300]);
     }
+
+    @Test
+    public void testAdditional1() {
+        int[] a = new int[]{1}; test.rotate(a, 0); assertArrayEquals(new int[]{1}, a);
+    }
+
+    @Test
+    public void testAdditional2() {
+        int[] a = new int[]{1,2}; test.rotate(a, 1); assertArrayEquals(new int[]{2,1}, a);
+    }
+
+    @Test
+    public void testAdditional3() {
+        int[] a = new int[]{1,2,3}; test.rotate(a, 1); assertArrayEquals(new int[]{3,1,2}, a);
+    }
+
+    @Test
+    public void testAdditional4() {
+        int[] a = new int[]{1,2,3}; test.rotate(a, 2); assertArrayEquals(new int[]{2,3,1}, a);
+    }
+
+    @Test
+    public void testAdditional5() {
+        int[] a = new int[]{1,2,3,4}; test.rotate(a, 4); assertArrayEquals(new int[]{1,2,3,4}, a);
+    }
+
+    @Test
+    public void testAdditional6() {
+        int[] a = new int[]{1,2,3,4}; test.rotate(a, 5); assertArrayEquals(new int[]{4,1,2,3}, a);
+    }
+
+    @Test
+    public void testAdditional7() {
+        int[] a = new int[]{-1,-2,-3}; test.rotate(a, 1); assertArrayEquals(new int[]{-3,-1,-2}, a);
+    }
+
+    @Test
+    public void testAdditional8() {
+        int[] a = new int[]{0,0,1,0}; test.rotate(a, 2); assertArrayEquals(new int[]{1,0,0,0}, a);
+    }
+
+    @Test
+    public void testAdditional9() {
+        int[] a = new int[]{1,2,3,4,5}; test.rotate(a, 3); assertArrayEquals(new int[]{3,4,5,1,2}, a);
+    }
+
+    @Test
+    public void testAdditional10() {
+        int[] a = new int[]{1,2,3,4,5}; test.rotate(a, 6); assertArrayEquals(new int[]{5,1,2,3,4}, a);
+    }
 }

@@ -95,4 +95,14 @@ public class ArrayChange_2295Test {
         assertArrayEquals(new int[]{100, 200},
             test.arrayChange(new int[]{1, 2}, new int[][]{{1, 100}, {2, 200}}));
     }
+    @Test void extra01() { assertArrayEquals(new int[]{9,2}, test.arrayChange(new int[]{1,2}, new int[][]{{1,9}})); }
+    @Test void extra02() { assertArrayEquals(new int[]{1,8}, test.arrayChange(new int[]{1,2}, new int[][]{{2,8}})); }
+    @Test void extra03() { assertArrayEquals(new int[]{3,4}, test.arrayChange(new int[]{1,2}, new int[][]{{1,3},{2,4}})); }
+    @Test void extra04() { assertArrayEquals(new int[]{5}, test.arrayChange(new int[]{1}, new int[][]{{1,5}})); }
+    @Test void extra05() { assertArrayEquals(new int[]{1,2,3}, test.arrayChange(new int[]{1,2,3}, new int[][]{})); }
+    @Test void extra06() { assertArrayEquals(new int[]{7,8}, test.arrayChange(new int[]{1,2}, new int[][]{{1,7},{2,8}})); }
+    @Test void extra07() { assertArrayEquals(new int[]{3,2}, test.arrayChange(new int[]{1,2}, new int[][]{{1,3}})); }
+    @Test void extra08() { assertArrayEquals(new int[]{4,2}, test.arrayChange(new int[]{1,2}, new int[][]{{1,4}})); }
+    @Test void extra09() { assertArrayEquals(new int[]{100,3,4}, test.arrayChange(new int[]{1,3,4}, new int[][]{{1,100}})); }
+    @Test void extra10() { assertArrayEquals(new int[]{6,5,4}, test.arrayChange(new int[]{1,2,3}, new int[][]{{1,6},{2,5},{3,4}})); }
 }

@@ -39,22 +39,27 @@ public class BalanceBST_1382 {
     }
 
     /**
-     * Inorder traversal to flatten the BST.
+     * Iterative inorder traversal to flatten the BST. The explicit stack keeps
+     * a valid but maximally skewed 10,000-node input from exhausting the Java
+     * call stack.
      *
      * @param sorted output list
      * @param root   current node of tree
      * @param count  count total nodes in tree
      */
     private void inorder(List<Integer> sorted, TreeNode root, int[] count) {
-
-        if (root == null) {
-            return;
+        List<TreeNode> stack = new ArrayList<>();
+        TreeNode current = root;
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {
+                stack.add(current);
+                current = current.left;
+            }
+            current = stack.remove(stack.size() - 1);
+            sorted.add(current.val);
+            count[0]++;
+            current = current.right;
         }
-
-        inorder(sorted, root.left, count);
-        sorted.add(root.val);
-        count[0]++;
-        inorder(sorted, root.right, count);
     }
 
     /**

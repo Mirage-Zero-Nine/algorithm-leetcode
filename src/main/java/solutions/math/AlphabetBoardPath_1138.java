@@ -35,22 +35,22 @@ public class AlphabetBoardPath_1138 {
             int x1 = cur % 5, y1 = cur / 5;
             if (y1 < y0) {
                 for (int j = 0; j < (y0 - y1); j++) {
-                    out.append("L");
+                    out.append("U");
                 }
             }
             if (x1 < x0) {
                 for (int j = 0; j < (x0 - x1); j++) {
-                    out.append("U");
+                    out.append("L");
                 }
             }
             if (x1 > x0) {
                 for (int j = 0; j < (x1 - x0); j++) {
-                    out.append("D");
+                    out.append("R");
                 }
             }
             if (y1 > y0) {
                 for (int j = 0; j < (y1 - y0); j++) {
-                    out.append("R");
+                    out.append("D");
                 }
             }
             x0 = x1;

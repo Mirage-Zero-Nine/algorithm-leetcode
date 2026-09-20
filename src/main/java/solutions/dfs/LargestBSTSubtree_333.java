@@ -22,6 +22,7 @@ public class LargestBSTSubtree_333 {
      * @return size of largest sub BST
      */
     public int largestBSTSubtree(TreeNode root) {
+        max = 0;
         if (root == null) {
             return 0;
         }

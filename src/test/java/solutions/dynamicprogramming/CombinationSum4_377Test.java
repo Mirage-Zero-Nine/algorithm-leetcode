@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class CombinationSum4_377Test {
 
@@ -100,5 +102,13 @@ public class CombinationSum4_377Test {
             }
         }
         return count;
+    }
+
+    @ParameterizedTest(name = "combination target {1}")
+    @CsvSource({"'1',2,1", "'2',4,1", "'1;2',5,8", "'2;3',7,3", "'1;3',6,6", "'1;4',8,7", "'2;4;6',8,7", "'3;5;7',10,3", "'1;2;5',6,15", "'4;5',9,2"})
+    public void testAdditionalOrderedCombinationCases(String encoded, int target, int expected) {
+        String[] values = encoded.split(";"); int[] nums = new int[values.length];
+        for (int i = 0; i < values.length; i++) nums[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, test.combinationSum4(nums, target));
     }
 }

@@ -183,4 +183,16 @@ public class IsNStraightHand_846Test {
         }
         assertFalse(solver.isNStraightHand(hand, 5));
     }
+
+    @Test
+    public void testTreeMapApproach() {
+        assertTrue(solver.treeMap(new int[]{1, 2, 3, 6, 2, 3, 4, 7, 8}, 3));
+        assertFalse(solver.treeMap(new int[]{1, 2, 3, 4, 5}, 4));
+        assertTrue(solver.treeMap(new int[]{1, 2, 3, 3, 4, 5}, 3));
+        assertFalse(solver.treeMap(new int[]{1, 2, 4, 5, 6, 7}, 3));
+        assertTrue(solver.treeMap(new int[]{9, 3, 7, 1, 100}, 1));
+        assertTrue(solver.treeMap(new int[]{-3, -2, -1, 0, 1, 2}, 3));
+        assertFalse(solver.treeMap(new int[]{-3, -2, 0, 1, 2, 3}, 3));
+        assertTrue(solver.treeMap(new int[]{}, 1));
+    }
 }

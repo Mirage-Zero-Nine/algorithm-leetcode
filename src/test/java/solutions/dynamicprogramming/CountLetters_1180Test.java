@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class CountLetters_1180Test {
 
@@ -64,5 +66,21 @@ public class CountLetters_1180Test {
         // 1000 'a' chars -> sum 1+2+...+1000 = 500500
         String s = "a".repeat(1000);
         assertEquals(500500, test.countLetters(s));
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctCases() {
+        return Stream.of(
+                DynamicTest.dynamicTest("single z", () -> assertEquals(1, test.countLetters("z"))),
+                DynamicTest.dynamicTest("two equal", () -> assertEquals(3, test.countLetters("zz"))),
+                DynamicTest.dynamicTest("three groups", () -> assertEquals(10, test.countLetters("abbccc"))),
+                DynamicTest.dynamicTest("alternating length six", () -> assertEquals(6, test.countLetters("ababab"))),
+                DynamicTest.dynamicTest("one long final run", () -> assertEquals(16, test.countLetters("abbbbb"))),
+                DynamicTest.dynamicTest("one long initial run", () -> assertEquals(16, test.countLetters("aaaaab"))),
+                DynamicTest.dynamicTest("two runs of four", () -> assertEquals(20, test.countLetters("aaaabbbb"))),
+                DynamicTest.dynamicTest("distinct alphabet", () -> assertEquals(26, test.countLetters("abcdefghijklmnopqrstuvwxyz"))),
+                DynamicTest.dynamicTest("mixed groups", () -> assertEquals(13, test.countLetters("aabcccdd"))),
+                DynamicTest.dynamicTest("late alphabet letters", () -> assertEquals(3, test.countLetters("xyz"))),
+                DynamicTest.dynamicTest("run split at end", () -> assertEquals(7, test.countLetters("xxxy"))));
     }
 }

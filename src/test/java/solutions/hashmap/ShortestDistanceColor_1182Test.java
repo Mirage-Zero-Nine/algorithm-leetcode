@@ -88,4 +88,15 @@ public class ShortestDistanceColor_1182Test {
             assertEquals(0, r);
         }
     }
+
+    @Test public void testQueryAtFirstIndex() { assertEquals(List.of(0,2), test.shortestDistanceColor(new int[]{1,2,3}, new int[][]{{0,1},{0,3}})); }
+    @Test public void testQueryAtLastIndex() { assertEquals(List.of(0,2), test.shortestDistanceColor(new int[]{1,2,3}, new int[][]{{2,3},{2,1}})); }
+    @Test public void testNearestTie() { assertEquals(List.of(2), test.shortestDistanceColor(new int[]{1,2,2,3,1}, new int[][]{{2,1}})); }
+    @Test public void testRepeatedQueriesPreserveOrder() { assertEquals(List.of(1,1,0), test.shortestDistanceColor(new int[]{1,2,3,1}, new int[][]{{2,1},{2,1},{3,1}})); }
+    @Test public void testAllThreeColorsPresentOnce() { assertEquals(List.of(0,1,2), test.shortestDistanceColor(new int[]{1,2,3}, new int[][]{{0,1},{0,2},{0,3}})); }
+    @Test public void testLongRunOfOneColor() { assertEquals(List.of(0,0), test.shortestDistanceColor(new int[]{2,2,2,2,2}, new int[][]{{0,2},{4,2}})); }
+    @Test public void testAbsentColorDoesNotAffectOthers() { assertEquals(List.of(-1,1), test.shortestDistanceColor(new int[]{1,1,3}, new int[][]{{1,2},{1,3}})); }
+    @Test public void testQueriesAtBothSidesOfTarget() { assertEquals(List.of(2,2), test.shortestDistanceColor(new int[]{1,3,2,3,1}, new int[][]{{0,2},{4,2}})); }
+    @Test public void testSingleColorSingleQuery() { assertEquals(List.of(0), test.shortestDistanceColor(new int[]{3}, new int[][]{{0,3}})); }
+    @Test public void testManyQueries() { int[][] q = new int[30][2]; for (int i=0;i<q.length;i++) q[i]=new int[]{i%5,1}; assertEquals(30, test.shortestDistanceColor(new int[]{1,2,3,1,2}, q).size()); }
 }

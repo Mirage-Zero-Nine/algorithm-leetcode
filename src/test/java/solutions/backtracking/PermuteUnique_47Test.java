@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PermuteUnique_47Test {
@@ -202,6 +203,60 @@ class PermuteUnique_47Test {
         assertEquals(secondExpected, new HashSet<>(secondActual));
         assertEquals(firstExpected.size(), firstActual.size());
         assertEquals(secondExpected.size(), secondActual.size());
+    }
+
+    @Test
+    void testReturnedPermutationRowsAreIndependentSnapshots() {
+        List<List<Integer>> actual = solution.permuteUnique(new int[]{1, 1, 2});
+        List<List<Integer>> snapshot = new ArrayList<>();
+        for (List<Integer> row : actual) {
+            snapshot.add(new ArrayList<>(row));
+        }
+
+        for (int i = 0; i < actual.size(); i++) {
+            for (int j = i + 1; j < actual.size(); j++) {
+                assertNotSame(actual.get(i), actual.get(j), "each permutation must be a separate list");
+            }
+        }
+
+        actual.get(0).set(0, 99);
+        for (int i = 1; i < actual.size(); i++) {
+            assertEquals(snapshot.get(i), actual.get(i), "mutating one row must not alter another");
+        }
+    }
+
+    @Test
+    void testMutatingOuterResultDoesNotAffectSubsequentInvocation() {
+        List<List<Integer>> first = solution.permuteUnique(new int[]{1, 1, 2});
+        first.clear();
+
+        List<List<Integer>> second = solution.permuteUnique(new int[]{1, 1, 2});
+        assertEquals(Set.of(List.of(1, 1, 2), List.of(1, 2, 1), List.of(2, 1, 1)),
+                new HashSet<>(second));
+    }
+
+    @Test
+    void testNullAndEmptyResultsAreFreshMutableLists() {
+        List<List<Integer>> empty = solution.permuteUnique(new int[]{});
+        empty.add(List.of(7));
+        assertTrue(solution.permuteUnique(new int[]{}).isEmpty());
+
+        List<List<Integer>> nullInput = solution.permuteUnique(null);
+        nullInput.add(List.of(8));
+        assertTrue(solution.permuteUnique(null).isEmpty());
+    }
+
+    @Test
+    void testIntegerBoundaryValuesOutsideLeetCodeRange() {
+        // The implementation documents int values without narrowing their range.
+        assertPermutationResult(new int[]{Integer.MIN_VALUE, 0, Integer.MAX_VALUE, 0});
+    }
+
+    @Test
+    void testOneDuplicateAtMaximumLength() {
+        // 8! / 2! = 20,160 distinct results; this is the largest duplicate case
+        // while retaining seven otherwise independent branches.
+        assertPermutationResult(new int[]{-10, -10, -7, 0, 4, 8, 9, 10});
     }
 
     @Test

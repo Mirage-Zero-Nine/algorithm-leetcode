@@ -82,4 +82,34 @@ public class ConstructMaximumBinaryTree_654Test {
         TreeNode root = solver.constructMaximumBinaryTree(nums);
         assertEquals(999, root.val);
     }
+
+    @Test public void testAdditionalContractsAndBothImplementations() {
+        int[][] cases = {{-3, -1, -2}, {-5, -4, -3, -2, -1}, {1, -1, 0},
+                {9, 1, 8, 2}, {-2, 4, -1, 3}, {7, 6, 5, 4, 3, 2, 1},
+                {1, 7, 2, 6, 3, 5}, {-10, -20, -30, -5}};
+        for (int[] nums : cases) {
+            assertSameTree(solver.constructMaximumBinaryTree(nums), solver.useStack(nums));
+        }
+        assertNull(solver.constructMaximumBinaryTree(new int[]{}));
+        assertNull(solver.useStack(new int[]{}));
+    }
+
+    private void assertSameTree(TreeNode expected, TreeNode actual) {
+        if (expected == null || actual == null) {
+            assertEquals(expected, actual);
+            return;
+        }
+        assertEquals(expected.val, actual.val);
+        assertSameTree(expected.left, actual.left);
+        assertSameTree(expected.right, actual.right);
+    }
+
+    @Test public void testNegativeValues() { assertSameTree(solver.constructMaximumBinaryTree(new int[]{-4,-1,-3}),solver.useStack(new int[]{-4,-1,-3})); }
+    @Test public void testRootMiddle() { TreeNode n=solver.constructMaximumBinaryTree(new int[]{1,5,2}); assertEquals(5,n.val); assertEquals(1,n.left.val); assertEquals(2,n.right.val); }
+    @Test public void testRootLast() { TreeNode n=solver.useStack(new int[]{1,2,3}); assertEquals(3,n.val); assertEquals(2,n.left.val); }
+    @Test public void testRootFirst() { TreeNode n=solver.useStack(new int[]{3,2,1}); assertEquals(3,n.val); assertEquals(2,n.right.val); }
+    @Test public void testMixedNegatives() { assertSameTree(solver.constructMaximumBinaryTree(new int[]{-2,4,-1,3}),solver.useStack(new int[]{-2,4,-1,3})); }
+    @Test public void testAlternatingPeaks() { assertSameTree(solver.constructMaximumBinaryTree(new int[]{2,1,4,3,5}),solver.useStack(new int[]{2,1,4,3,5})); }
+    @Test public void testTwoNegative() { TreeNode n=solver.constructMaximumBinaryTree(new int[]{-2,-5}); assertEquals(-2,n.val); assertEquals(-5,n.right.val); }
+    @Test public void testRepeatedCall() { solver.constructMaximumBinaryTree(new int[]{1}); assertSameTree(solver.constructMaximumBinaryTree(new int[]{2,1}),solver.useStack(new int[]{2,1})); }
 }

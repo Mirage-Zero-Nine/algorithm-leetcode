@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MinDepth_111Test {
 
@@ -100,5 +102,17 @@ public class MinDepth_111Test {
         }
         root.right = new TreeNode(99); // short branch at depth 2
         assertEquals(2, test.minDepth(root));
+    }
+
+    @ParameterizedTest(name = "single-branch depth {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testSingleBranchDepths(int depth) {
+        TreeNode root = new TreeNode(0);
+        TreeNode current = root;
+        for (int i = 1; i < depth; i++) {
+            current.right = new TreeNode(i);
+            current = current.right;
+        }
+        assertEquals(depth, test.minDepth(root));
     }
 }

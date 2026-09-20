@@ -63,4 +63,54 @@ public class MaximumNumberOfOnes_1183Test {
     public void testSquareMatrixEqualsSideLength() {
         assertEquals(2, test.maximumNumberOfOnes(2, 2, 2, 2));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, test.maximumNumberOfOnes(1, 1, 1, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(4, test.maximumNumberOfOnes(2, 2, 1, 1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(1, test.maximumNumberOfOnes(2, 2, 2, 1));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(4, test.maximumNumberOfOnes(3, 3, 2, 1));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(6, test.maximumNumberOfOnes(3, 3, 2, 2));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(4, test.maximumNumberOfOnes(4, 4, 2, 1));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(8, test.maximumNumberOfOnes(4, 4, 2, 2));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(6, test.maximumNumberOfOnes(5, 3, 2, 1));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(16, test.maximumNumberOfOnes(6, 6, 3, 4));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(500, test.maximumNumberOfOnes(100, 100, 10, 5));
+    }
 }

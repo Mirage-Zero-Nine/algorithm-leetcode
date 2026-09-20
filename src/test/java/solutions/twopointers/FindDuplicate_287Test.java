@@ -150,16 +150,13 @@ public class FindDuplicate_287Test {
 
     @Test
     public void testInputUnchangedAfterCall() {
-        // LeetCode constraint: do not modify the array
-        // Note: current impl does modify, so we verify the result is correct
-        // and document this as a known deviation. We test a fresh copy.
+        // LeetCode constraint: do not modify the read-only input array.
         int[] nums = {1, 3, 4, 2, 2};
         int[] original = nums.clone();
         int result = new FindDuplicate_287().findDuplicate(nums);
         assertEquals(2, result);
-        // The current implementation modifies the array (negation marking).
-        // This test documents that behavior. If impl is updated to be non-mutating,
-        // uncomment the assertion below:
-        // assertArrayEquals(original, nums, "Input array was modified");
+        assertArrayEquals(original, nums, "Input array was modified");
     }
+
+    @Test public void testDuplicateValueTwoInShuffledArray() { assertEquals(2, solver.findDuplicate(new int[]{4,2,1,3,2})); }
 }

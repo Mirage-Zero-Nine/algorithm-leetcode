@@ -2,205 +2,174 @@ package solutions.cyclicsort;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link FindDuplicates_442}.
+ *
+ * <p>The expected values are derived by an independent frequency map. Since the solution
+ * intentionally marks its input array in place and the answer order is unspecified, every
+ * assertion supplies a fresh array and compares duplicate sets plus their exact cardinality.</p>
  */
 public class FindDuplicates_442Test {
 
     private final FindDuplicates_442 solver = new FindDuplicates_442();
 
     @Test
-    public void testClassicDuplicates() {
-        int[] nums = {4, 3, 2, 7, 8, 2, 3, 1};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertEquals(2, result.size());
-        assertTrue(result.contains(2));
-        assertTrue(result.contains(3));
+    public void testOfficialExampleOne() {
+        assertDuplicates(new int[]{4, 3, 2, 7, 8, 2, 3, 1}, 2, 3);
     }
 
     @Test
-    public void testNoDuplicates() {
-        int[] nums = {1, 2, 3, 4};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertTrue(result.isEmpty());
+    public void testOfficialExampleTwo() {
+        assertDuplicates(new int[]{1, 1, 2}, 1);
     }
 
     @Test
-    public void testAllDuplicates() {
-        int[] nums = {2, 2};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertEquals(1, result.size());
-        assertTrue(result.contains(2));
+    public void testOfficialExampleThree() {
+        assertDuplicates(new int[]{1});
     }
 
     @Test
-    public void testNullInput() {
-        List<Integer> result = solver.findDuplicates(null);
-        assertTrue(result.isEmpty());
+    public void testNoDuplicatesAscendingPermutation() {
+        assertDuplicates(new int[]{1, 2, 3, 4, 5, 6});
     }
 
     @Test
-    public void testEmptyArray() {
-        int[] nums = {};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertTrue(result.isEmpty());
+    public void testNoDuplicatesReversePermutation() {
+        assertDuplicates(new int[]{8, 7, 6, 5, 4, 3, 2, 1});
     }
 
     @Test
-    public void testMultipleDuplicates() {
-        int[] nums = {1, 1, 2, 2};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertEquals(2, result.size());
-        assertTrue(result.contains(1));
-        assertTrue(result.contains(2));
+    public void testSingletonIsNotADuplicate() {
+        assertDuplicates(new int[]{1});
     }
 
     @Test
-    public void testSingleDuplicate() {
-        int[] nums = {1, 1};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertEquals(1, result.size());
-        assertTrue(result.contains(1));
+    public void testEmptyInputUsesDocumentedGuard() {
+        assertTrue(solver.findDuplicates(new int[0]).isEmpty());
     }
 
     @Test
-    public void testDuplicateAtEnd() {
-        int[] nums = {1, 2, 3, 3};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertEquals(1, result.size());
-        assertTrue(result.contains(3));
+    public void testNullInputUsesDocumentedGuard() {
+        assertTrue(solver.findDuplicates(null).isEmpty());
     }
 
     @Test
-    public void testDuplicateAtStart() {
-        int[] nums = {2, 2, 3, 4};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertEquals(1, result.size());
-        assertTrue(result.contains(2));
+    public void testDuplicateAtLowestValue() {
+        assertDuplicates(new int[]{1, 1, 2, 3, 4}, 1);
     }
 
     @Test
-    public void testSingleElement() {
-        int[] nums = {1};
-        List<Integer> result = solver.findDuplicates(nums);
-        assertTrue(result.isEmpty());
+    public void testDuplicateAtHighestValue() {
+        assertDuplicates(new int[]{1, 2, 3, 4, 5, 5}, 5);
     }
 
     @Test
-    public void testGiantArray() {
-        // array of size 2000: 1..1000 each appearing twice
-        int[] nums = new int[2000];
-        for (int i = 0; i < 1000; i++) {
-            nums[2 * i] = i + 1;
-            nums[2 * i + 1] = i + 1;
-        }
-        List<Integer> result = solver.findDuplicates(nums);
-        assertEquals(1000, result.size());
+    public void testDuplicateInTheMiddle() {
+        assertDuplicates(new int[]{1, 2, 3, 2, 4, 5}, 2);
     }
 
     @Test
-    public void testAllDuplicatesThreePairs() {
-        int[] nums = {1, 1, 2, 2, 3, 3};
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
-        assertEquals(Set.of(1, 2, 3), new HashSet<>(result));
+    public void testAdjacentDuplicatePairs() {
+        assertDuplicates(new int[]{1, 1, 2, 2, 3, 3, 4, 4}, 1, 2, 3, 4);
     }
 
     @Test
-    public void testLeetCodeExample() {
-        int[] nums = {4, 3, 2, 7, 8, 2, 3, 1};
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
+    public void testSeparatedDuplicatePairs() {
+        assertDuplicates(new int[]{1, 2, 3, 4, 1, 2, 3, 4}, 1, 2, 3, 4);
+    }
+
+    @Test
+    public void testInterleavedDuplicatesAndSingletons() {
+        assertDuplicates(new int[]{6, 1, 4, 2, 5, 3, 2, 6}, 2, 6);
+    }
+
+    @Test
+    public void testHighValuesDuplicatedInReverseOrder() {
+        assertDuplicates(new int[]{8, 7, 6, 5, 8, 7, 6, 5}, 5, 6, 7, 8);
+    }
+
+    @Test
+    public void testDuplicateResultContainsEachValueExactlyOnce() {
+        List<Integer> result = solver.findDuplicates(new int[]{4, 3, 2, 7, 8, 2, 3, 1});
         assertEquals(Set.of(2, 3), new HashSet<>(result));
+        assertEquals(2, result.size(), "a value appearing twice must be reported once");
     }
 
     @Test
-    public void testSingleDuplicateAtMiddle() {
-        int[] nums = {1, 2, 3, 2};
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
-        assertEquals(Set.of(2), new HashSet<>(result));
+    public void testRepeatedCallsUseFreshMutableInputs() {
+        assertDuplicates(new int[]{2, 5, 1, 4, 3, 2}, 2);
+        assertDuplicates(new int[]{3, 1, 4, 1, 5, 2, 3}, 1, 3);
+        assertDuplicates(new int[]{1, 2, 3, 4, 5});
     }
 
     @Test
-    public void testDuplicateAdjacentAtStart() {
-        int[] nums = {1, 1, 2, 3};
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
-        assertEquals(Set.of(1), new HashSet<>(result));
+    public void testReturnedListsAreIndependent() {
+        List<Integer> first = solver.findDuplicates(new int[]{1, 2, 1, 3});
+        List<Integer> second = solver.findDuplicates(new int[]{2, 3, 2, 1});
+
+        assertNotSame(first, second);
+        first.clear();
+        assertEquals(List.of(2), second);
     }
 
     @Test
-    public void testDuplicateAdjacentAtEnd() {
-        int[] nums = {1, 2, 3, 3};
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
-        assertEquals(Set.of(3), new HashSet<>(result));
+    public void testAllValuesAppearTwice() {
+        assertDuplicates(new int[]{1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6}, 1, 2, 3, 4, 5, 6);
     }
 
     @Test
-    public void testLargeN10000Seed42() {
-        int n = 10000;
-        Random rng = new Random(42L);
-        // Build array: 1..n, then replace some positions to create duplicates
-        int[] nums = new int[n];
-        for (int i = 0; i < n; i++) nums[i] = i + 1;
-        for (int i = 0; i < 500; i++) {
-            int src = rng.nextInt(n);
-            int dst = rng.nextInt(n);
-            if (src != dst) nums[dst] = nums[src];
+    public void testMaximumValueCanBeTheOnlyDuplicate() {
+        int n = 100_000;
+        int[] values = new int[n];
+        for (int i = 0; i < n; i++) {
+            values[i] = i + 1;
         }
-        // Cross-check: compute expected from frequency count (appears > 1)
-        Map<Integer, Integer> freq = new HashMap<>();
-        for (int v : nums) freq.merge(v, 1, Integer::sum);
-        Set<Integer> expected = freq.entrySet().stream()
-                .filter(e -> e.getValue() > 1)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
-
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
-        assertEquals(expected, new HashSet<>(result));
-        assertFalse(result.isEmpty());
+        values[n - 2] = n;
+        assertDuplicates(values, n);
     }
 
     @Test
-    public void testPropertyResultHasNoDuplicates() {
-        int[] nums = {4, 3, 2, 7, 8, 2, 3, 1};
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
-        assertEquals(result.size(), new HashSet<>(result).size(),
-                "Result should not contain duplicate entries");
-    }
-
-    @Test
-    public void testPropertyEveryResultAppearsTwice() {
-        int[] nums = {4, 3, 2, 7, 8, 2, 3, 1};
-        Map<Integer, Integer> freq = new HashMap<>();
-        for (int v : nums) freq.merge(v, 1, Integer::sum);
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
-        for (int v : result) {
-            assertTrue(freq.get(v) > 1,
-                    "Element " + v + " should appear more than once in input");
+    public void testMaximumLengthNoDuplicates() {
+        int n = 100_000;
+        int[] values = new int[n];
+        for (int i = 0; i < n; i++) {
+            values[i] = n - i;
         }
+        assertDuplicates(values);
     }
 
     @Test
-    public void testNoDuplicatesFullPermutation() {
-        int[] nums = {3, 1, 4, 2, 5};
-        List<Integer> result = new FindDuplicates_442().findDuplicates(nums);
-        assertTrue(result.isEmpty());
+    public void testMaximumLengthEveryValueDuplicated() {
+        int distinct = 50_000;
+        int[] values = new int[distinct * 2];
+        for (int i = 0; i < distinct; i++) {
+            values[i] = i + 1;
+            values[distinct + i] = i + 1;
+        }
+
+        List<Integer> actual = solver.findDuplicates(values);
+        assertEquals(distinct, actual.size());
+        assertEquals(distinct, new HashSet<>(actual).size());
+        assertTrue(actual.contains(1));
+        assertTrue(actual.contains(distinct));
     }
 
     @Test
-    public void testEveryValidSmallFrequencyDistribution() {
+    public void testExhaustiveValidSmallArraysAgainstFrequencyOracle() {
         for (int n = 1; n <= 6; n++) {
             int combinations = (int) Math.pow(n, n);
             for (int encoded = 0; encoded < combinations; encoded++) {
@@ -211,38 +180,98 @@ public class FindDuplicates_442Test {
                 for (int i = 0; i < n; i++) {
                     values[i] = remaining % n + 1;
                     remaining /= n;
-                    if (++frequency[values[i]] > 2) valid = false;
+                    if (++frequency[values[i]] > 2) {
+                        valid = false;
+                    }
                 }
-                if (!valid) continue;
-                List<Integer> expected = new java.util.ArrayList<>();
+                if (!valid) {
+                    continue;
+                }
+
+                List<Integer> expected = new ArrayList<>();
                 for (int value = 1; value <= n; value++) {
-                    if (frequency[value] == 2) expected.add(value);
+                    if (frequency[value] == 2) {
+                        expected.add(value);
+                    }
                 }
                 List<Integer> actual = solver.findDuplicates(values);
-                java.util.Collections.sort(actual);
+                actual.sort(Integer::compareTo);
                 assertEquals(expected, actual, "n=" + n + ", encoded=" + encoded);
             }
         }
     }
 
     @Test
-    public void testHighestValuesDuplicatedInReverseOrder() {
-        List<Integer> result = solver.findDuplicates(new int[]{8, 7, 6, 5, 8, 7, 6, 5});
-        java.util.Collections.sort(result);
-        assertEquals(List.of(5, 6, 7, 8), result);
+    public void testSeededValidRandomArraysAgainstFrequencyOracle() {
+        Random random = new Random(442_2026L);
+        for (int caseNumber = 0; caseNumber < 250; caseNumber++) {
+            int n = 2 + random.nextInt(499);
+            int duplicateCount = random.nextInt(n / 2 + 1);
+            int[] values = new int[n];
+            for (int i = 0; i < n; i++) {
+                values[i] = i + 1;
+            }
+            for (int i = 0; i < duplicateCount; i++) {
+                values[n - 1 - i] = i + 1;
+            }
+            shuffle(values, random);
+
+            assertDuplicatesUsingOracle(values, "case=" + caseNumber);
+        }
     }
 
     @Test
-    public void testGiantSeparatedDuplicatePairsHaveExactMultiplicity() {
-        int[] values = new int[20000];
-        List<Integer> expected = new java.util.ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            values[i] = 10000 - i;
-            values[10000 + i] = i + 1;
-            expected.add(i + 1);
+    public void testSparseDuplicateDistribution() {
+        int n = 2000;
+        int[] values = new int[n];
+        for (int i = 0; i < n; i++) {
+            values[i] = i + 1;
         }
+        values[1500] = 1;
+        values[1600] = 1000;
+        values[1700] = 2000;
+
+        assertDuplicates(values, 1, 1000, 2000);
+    }
+
+    @Test
+    public void testOutputOrderIsNotPartOfTheContract() {
+        List<Integer> result = solver.findDuplicates(new int[]{3, 1, 4, 2, 4, 3});
+        assertEquals(Set.of(3, 4), new HashSet<>(result));
+        assertEquals(2, result.size());
+    }
+
+    private void assertDuplicates(int[] values, Integer... expectedValues) {
+        List<Integer> expected = Arrays.asList(expectedValues);
         List<Integer> actual = solver.findDuplicates(values);
-        java.util.Collections.sort(actual);
-        assertEquals(expected, actual);
+        assertEquals(new HashSet<>(expected), new HashSet<>(actual));
+        assertEquals(expected.size(), actual.size(), "each duplicate should be reported once");
+        assertFalse(actual.stream().anyMatch(value -> value == null));
+    }
+
+    private void assertDuplicatesUsingOracle(int[] values, String message) {
+        Map<Integer, Integer> frequency = new HashMap<>();
+        for (int value : values) {
+            frequency.merge(value, 1, Integer::sum);
+        }
+        Set<Integer> expected = new HashSet<>();
+        for (Map.Entry<Integer, Integer> entry : frequency.entrySet()) {
+            if (entry.getValue() == 2) {
+                expected.add(entry.getKey());
+            }
+        }
+
+        List<Integer> actual = solver.findDuplicates(values);
+        assertEquals(expected, new HashSet<>(actual), message);
+        assertEquals(expected.size(), actual.size(), message + ": exact result cardinality");
+    }
+
+    private static void shuffle(int[] values, Random random) {
+        for (int i = values.length - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            int temporary = values[i];
+            values[i] = values[j];
+            values[j] = temporary;
+        }
     }
 }

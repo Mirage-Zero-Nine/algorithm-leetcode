@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -160,6 +161,74 @@ class RestoreIpAddresses_93Test {
         for (String input : inputs) {
             assertMatchesIndependentOracle(input);
         }
+    }
+
+    @Test
+    void testOctetBoundariesAndNearBoundaries() {
+        String[] inputs = {
+                "0000255255", "0255255255", "2550000255", "254254254254",
+                "099255001255", "100200300400", "255255255256", "256255255255"
+        };
+        for (String input : inputs) {
+            assertMatchesIndependentOracle(input);
+        }
+    }
+
+    @Test
+    void testEmptyInputUsesImplementationDefinedEmptyResult() {
+        assertEquals(List.of(), solution.restoreIpAddresses(""));
+    }
+
+    @Test
+    void testRepeatedCallsAndReturnedListIsolation() {
+        Set<String> expected = Set.of("255.255.11.135", "255.255.111.35");
+        List<String> first = solution.restoreIpAddresses("25525511135");
+        assertEquals(expected, new HashSet<>(first));
+        first.clear();
+        first.add("not.an.ip");
+
+        List<String> second = solution.restoreIpAddresses("25525511135");
+        assertEquals(expected, new HashSet<>(second));
+        assertEquals(expected.size(), second.size());
+        second.clear();
+        assertEquals(expected, new HashSet<>(solution.restoreIpAddresses("25525511135")));
+    }
+
+    @Test
+    void testSeededRandomDigitInputsAgainstIndependentOracle() {
+        Random random = new Random(93_2026L);
+        for (int trial = 0; trial < 200; trial++) {
+            int length = 4 + random.nextInt(9);
+            StringBuilder input = new StringBuilder(length);
+            for (int index = 0; index < length; index++) {
+                input.append((char) ('0' + random.nextInt(10)));
+            }
+            assertMatchesIndependentOracle(input.toString());
+        }
+    }
+
+    @Test
+    void testExhaustiveTernaryDigitInputs() {
+        for (int length = 4; length <= 8; length++) {
+            int count = 1;
+            for (int index = 0; index < length; index++) {
+                count *= 3;
+            }
+            for (int value = 0; value < count; value++) {
+                int remainder = value;
+                StringBuilder input = new StringBuilder(length);
+                for (int index = 0; index < length; index++) {
+                    input.append((char) ('0' + remainder % 3));
+                    remainder /= 3;
+                }
+                assertMatchesIndependentOracle(input.toString());
+            }
+        }
+    }
+
+    @Test
+    void testOfficialMaximumLengthAdversarialInput() {
+        assertExactly("99999999999999999999");
     }
 
     private void assertExactly(String input, String... expected) {

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CountBits_338Test {
     private final CountBits_338 solver = new CountBits_338();
@@ -123,6 +125,67 @@ public class CountBits_338Test {
             long expected = Integer.toBinaryString(i).chars().filter(c -> c == '1').count();
             assertEquals(expected, actual[i], "value=" + i);
         }
+    }
+
+    @Test public void testExhaustiveSmallRangeAgainstIndependentOracle() {
+        int[] actual = solver.countBits(2048);
+        for (int i = 0; i <= 2048; i++) {
+            assertEquals(Integer.bitCount(i), actual[i], "value=" + i);
+        }
+    }
+
+    @Test public void testValuesAroundEveryPowerOfTwo() {
+        int[] actual = solver.countBits(100000);
+        for (int power = 0; power <= 16; power++) {
+            int value = 1 << power;
+            assertEquals(1, actual[value], "power of two=" + value);
+            if (value > 1) {
+                assertEquals(power, actual[value - 1], "predecessor of=" + value);
+            }
+            if (value < 100000) {
+                assertEquals(Integer.bitCount(value + 1), actual[value + 1], "successor of=" + value);
+            }
+        }
+    }
+
+    @Test public void testMaximumInputTailAgainstIndependentOracle() {
+        int[] actual = solver.countBits(99999);
+        assertEquals(100000, actual.length);
+        for (int i = 99990; i <= 99999; i++) {
+            assertEquals(Integer.bitCount(i), actual[i], "value=" + i);
+        }
+    }
+
+    @Test public void testEveryMaximumOutputEntryIsAValidBitCount() {
+        int[] actual = solver.countBits(100000);
+        for (int i = 0; i < actual.length; i++) {
+            assertEquals(Integer.bitCount(i), actual[i], "value=" + i);
+            assertTrue(actual[i] >= 0 && actual[i] <= 16, "invalid bit count at " + i);
+        }
+    }
+
+    @Test public void testZeroAndSmallResultsAreFreshArrays() {
+        int[] firstZero = solver.countBits(0);
+        int[] secondZero = solver.countBits(0);
+        assertNotSame(firstZero, secondZero);
+        firstZero[0] = 99;
+        assertArrayEquals(new int[]{0}, secondZero);
+
+        int[] first = solver.countBits(3);
+        int[] second = solver.countBits(3);
+        assertNotSame(first, second);
+        first[2] = -1;
+        assertArrayEquals(new int[]{0, 1, 1, 2}, second);
+    }
+
+    @Test public void testDifferentSizesDoNotShareReturnedStorage() {
+        int[] shorter = solver.countBits(8);
+        int[] longer = solver.countBits(16);
+        assertNotSame(shorter, longer);
+        shorter[8] = -1;
+        assertEquals(1, longer[8]);
+        assertArrayEquals(new int[]{0, 1, 1, 2, 1, 2, 2, 3, 1},
+                java.util.Arrays.copyOf(longer, 9));
     }
 
     @Test public void testIndependentResultArrays() {

@@ -2,6 +2,11 @@ package solutions.dfs;
 
 import library.tree.binarytree.TreeNode;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 /**
  * Given a binary tree, return the tilt of the whole tree.
  * The tilt of a tree node is defined as the absolute difference between the sum of all left subtree node values and the sum of all right subtree node values.
@@ -17,31 +22,43 @@ public class FindTilt_563 {
     private int sum = 0;
 
     /**
-     * DFS to find sum of sub tree. Use a global variable to count sum.
+     * Computes subtree sums in postorder using explicit stacks. The iterative
+     * traversal avoids overflowing the call stack on the 10,000-node skewed
+     * trees allowed by the problem.
      *
      * @param root root node
      * @return tilt of the whole tree
      */
     public int findTilt(TreeNode root) {
-        dfs(root);
+        sum = 0;
 
-        return sum;
-    }
-
-    /**
-     * DFS.
-     *
-     * @param root root node
-     * @return sum of root and child
-     */
-    private int dfs(TreeNode root) {
         if (root == null) {
-            return 0;
+            return sum;
         }
 
-        int left = dfs(root.left);
-        int right = dfs(root.right);
-        sum = sum + Math.abs(left - right);
-        return left + right + root.val;
+        Deque<TreeNode> pending = new ArrayDeque<>();
+        Deque<TreeNode> postorder = new ArrayDeque<>();
+        Map<TreeNode, Integer> subtreeSums = new IdentityHashMap<>();
+        pending.push(root);
+        while (!pending.isEmpty()) {
+            TreeNode current = pending.pop();
+            postorder.push(current);
+            if (current.left != null) {
+                pending.push(current.left);
+            }
+            if (current.right != null) {
+                pending.push(current.right);
+            }
+        }
+
+        while (!postorder.isEmpty()) {
+            TreeNode current = postorder.pop();
+            int left = current.left == null ? 0 : subtreeSums.get(current.left);
+            int right = current.right == null ? 0 : subtreeSums.get(current.right);
+            sum += Math.abs(left - right);
+            subtreeSums.put(current, left + right + current.val);
+        }
+
+        return sum;
     }
 }

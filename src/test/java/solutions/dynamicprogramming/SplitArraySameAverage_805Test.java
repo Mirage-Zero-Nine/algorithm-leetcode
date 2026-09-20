@@ -1,9 +1,12 @@
 package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class SplitArraySameAverage_805Test {
 
@@ -72,5 +75,13 @@ public class SplitArraySameAverage_805Test {
         int[] arr = new int[30];
         java.util.Arrays.fill(arr, 7);
         assertTrue(test.splitArraySameAverage(arr));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"'1,1',true","'1,2',false","'2,2,2',true","'1,2,3,4',true","'1,2,4,8',false","'3,3,6,6',true","'1,3,5,7,9,11',true","'1,2,5,10',false","'4,6,8,10',true","'2,4,7,9,12,14',true"})
+    public void testAdditionalAveragePartitions(String encoded, boolean expected) {
+        String[] values = encoded.split(","); int[] nums = new int[values.length];
+        for (int i = 0; i < values.length; i++) nums[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, test.splitArraySameAverage(nums));
     }
 }

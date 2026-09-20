@@ -77,4 +77,14 @@ public class PourWater_755Test {
         // Original sum + 50 drops
         assertEquals(348, sum);
     }
+
+    @Test public void testNoWaterDoesNotChangeInput() { assertArrayEquals(new int[]{3, 1, 3}, test.pourWater(new int[]{3, 1, 3}, 0, 1)); }
+    @Test public void testSingleColumnManyDrops() { assertArrayEquals(new int[]{5}, test.pourWater(new int[]{1}, 4, 0)); }
+    @Test public void testFlatTerrainLeftPriority() { assertArrayEquals(new int[]{2, 2, 2}, test.pourWater(new int[]{1, 1, 1}, 3, 1)); }
+    @Test public void testLeftBasinBeforeRight() { assertArrayEquals(new int[]{2, 2, 2, 2, 1}, test.pourWater(new int[]{2, 1, 1, 1, 1}, 3, 2)); }
+    @Test public void testBlockedBothSides() { assertArrayEquals(new int[]{4, 4, 4}, test.pourWater(new int[]{4, 2, 4}, 2, 1)); }
+    @Test public void testWaterVolumeConserved() { int[] h = {2, 1, 1, 2}; int before = 6; int[] r = test.pourWater(h, 5, 1); int after = 0; for (int x : r) after += x; assertEquals(before + 5, after); }
+    @Test public void testValleyAtRight() { assertArrayEquals(new int[]{3, 3, 3, 3}, test.pourWater(new int[]{3, 3, 1, 1}, 4, 2)); }
+    @Test public void testDropAtLeftEdgeWithSlope() { assertArrayEquals(new int[]{2, 2, 2, 2}, test.pourWater(new int[]{1, 1, 1, 1}, 4, 0)); }
+    @Test public void testRepeatedInvocation() { test.pourWater(new int[]{1}, 1, 0); assertArrayEquals(new int[]{2, 2, 2}, test.pourWater(new int[]{1, 1, 1}, 3, 1)); }
 }

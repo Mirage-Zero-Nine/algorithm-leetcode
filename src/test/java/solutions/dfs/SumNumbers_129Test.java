@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class SumNumbers_129Test {
 
@@ -108,5 +110,15 @@ public class SumNumbers_129Test {
             node.right = buildCompleteTree(levels - 1, digit);
         }
         return node;
+    }
+
+    @ParameterizedTest(name = "one-chain digits length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+    public void sumNumbersHandlesRepeatedOneDigits(int length) {
+        TreeNode root = new TreeNode(1); TreeNode current = root;
+        for (int i = 1; i < length; i++) { current.left = new TreeNode(1); current = current.left; }
+        int expected = 0;
+        for (int i = 0; i < length; i++) expected = expected * 10 + 1;
+        assertEquals(expected, solution.sumNumbers(root));
     }
 }

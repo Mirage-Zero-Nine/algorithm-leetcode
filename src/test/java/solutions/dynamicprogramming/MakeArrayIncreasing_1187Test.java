@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class MakeArrayIncreasing_1187Test {
 
@@ -64,5 +66,20 @@ public class MakeArrayIncreasing_1187Test {
         assertEquals(11, test.makeArrayIncreasing(
                 new int[]{23, 10, 9, 12, 3, 14, 21, 16, 7, 10, 17, 12},
                 new int[]{6, 5, 0, 15, 2, 17, 4, 11, 6, 5, 8, 15, 10, 1, 20, 11, 14, 13, 8}));
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctCases() {
+        return Stream.of(
+                DynamicTest.dynamicTest("already increasing", () -> assertEquals(0, test.makeArrayIncreasing(new int[]{1, 2, 3}, new int[]{0}))),
+                DynamicTest.dynamicTest("one replacement", () -> assertEquals(1, test.makeArrayIncreasing(new int[]{3, 2}, new int[]{1, 4}))),
+                DynamicTest.dynamicTest("replace first", () -> assertEquals(0, test.makeArrayIncreasing(new int[]{5, 6}, new int[]{1}))),
+                DynamicTest.dynamicTest("replace last", () -> assertEquals(0, test.makeArrayIncreasing(new int[]{1, 5}, new int[]{2, 3}))),
+                DynamicTest.dynamicTest("duplicate replacement values", () -> assertEquals(1, test.makeArrayIncreasing(new int[]{1, 3, 2}, new int[]{2, 2, 4}))),
+                DynamicTest.dynamicTest("strict descending impossible", () -> assertEquals(-1, test.makeArrayIncreasing(new int[]{4, 3, 2}, new int[]{1}))),
+                DynamicTest.dynamicTest("negative values", () -> assertEquals(0, test.makeArrayIncreasing(new int[]{-3, -2, -1}, new int[]{0}))),
+                DynamicTest.dynamicTest("two replacements", () -> assertEquals(2, test.makeArrayIncreasing(new int[]{5, 1, 4}, new int[]{2, 3}))),
+                DynamicTest.dynamicTest("replacement chosen below successor", () -> assertEquals(1, test.makeArrayIncreasing(new int[]{1, 10, 5}, new int[]{2, 3, 4}))),
+                DynamicTest.dynamicTest("single array", () -> assertEquals(0, test.makeArrayIncreasing(new int[]{2}, new int[]{1}))));
     }
 }

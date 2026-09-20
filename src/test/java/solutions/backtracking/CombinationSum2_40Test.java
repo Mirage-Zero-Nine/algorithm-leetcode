@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CombinationSum2_40Test {
     private final CombinationSum2_40 solution = new CombinationSum2_40();
@@ -133,6 +133,35 @@ class CombinationSum2_40Test {
     }
 
     @Test
+    void maximumCandidateValueCanBeAnExactSolution() {
+        assertExact(new int[]{50, 1, 2, 49}, 50,
+                new int[][]{{1, 49}, {50}});
+    }
+
+    @Test
+    void maximumTargetWithOnlyLargeCandidatesHasNoSolution() {
+        assertExact(new int[]{31, 32, 40, 50}, 30, new int[][]{});
+    }
+
+    @Test
+    void negativeTargetReturnsNoCombinationOutsideLeetCodeDomain() {
+        // The problem requires a positive target; the implementation's lower-bound guard
+        // also defines the behavior for this out-of-contract input.
+        assertExact(new int[]{1, 2, 3}, -1, new int[][]{});
+    }
+
+    @Test
+    void exactTargetCanRequireEveryAvailableDuplicate() {
+        assertExact(new int[]{2, 2, 2, 3, 7}, 9,
+                new int[][]{{2, 2, 2, 3}, {2, 7}});
+    }
+
+    @Test
+    void duplicateValueCannotBeChosenMoreOftenThanItOccurs() {
+        assertExact(new int[]{1, 1, 4}, 3, new int[][]{});
+    }
+
+    @Test
     void maximumTargetWithManyCandidatesHasExactResults() {
         int[] candidates = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         assertEquals(subsetOracle(candidates, 30), resultSet(candidates, 30));
@@ -143,6 +172,44 @@ class CombinationSum2_40Test {
         int[] candidates = new int[100];
         Arrays.fill(candidates, 1);
         assertExact(candidates, 30, new int[][]{ones(30)});
+    }
+
+    @Test
+    void maximumSizeInputWithMaximumValuesStillPrunesLargeBranches() {
+        int[] candidates = new int[100];
+        Arrays.fill(candidates, 0, 30, 1);
+        Arrays.fill(candidates, 30, candidates.length, 50);
+        assertExact(candidates, 30, new int[][]{ones(30)});
+    }
+
+    @Test
+    void sortingInputDoesNotChangeItsCombinationSet() {
+        int[] candidates = {8, 1, 7, 2, 6, 3, 5, 4};
+        assertEquals(subsetOracle(candidates, 9), resultSet(candidates, 9));
+    }
+
+    @Test
+    void implementationSortsTheCallerArrayBeforeBacktracking() {
+        int[] candidates = {4, 1, 3, 2};
+        solution.combinationSum2(candidates, 5);
+        assertArrayEquals(new int[]{1, 2, 3, 4}, candidates);
+    }
+
+    @Test
+    void repeatedCallsOnOneSolutionInstanceAreIndependent() {
+        assertExact(new int[]{3, 1, 2}, 3, new int[][]{{1, 2}, {3}});
+        assertExact(new int[]{5, 5, 1}, 5, new int[][]{{5}});
+        assertExact(new int[]{2, 2, 2}, 4, new int[][]{{2, 2}});
+    }
+
+    @Test
+    void returnedResultsAreFreshForEachInvocation() {
+        List<List<Integer>> first = solution.combinationSum2(new int[]{1, 2, 3}, 3);
+        assertEquals(2, first.size());
+        first.get(0).clear();
+        first.clear();
+
+        assertExact(new int[]{1, 2, 3}, 3, new int[][]{{1, 2}, {3}});
     }
 
     @Test

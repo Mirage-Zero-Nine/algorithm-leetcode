@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class IsValidSerialization_331Test {
 
@@ -94,5 +96,23 @@ public class IsValidSerialization_331Test {
         buildPerfectTree(sb, depth - 1);
         sb.append(",");
         buildPerfectTree(sb, depth - 1);
+    }
+    @Test public void testAllApproachesAgreeOnCases() {
+        assertAll("#", true); assertAll("1,#,#", true); assertAll("1,2,#,#,3,#,#", true);
+        assertAll("1,#,2,#,#", true); assertAll("1,2,3,#,#,#,#", true);
+        assertAll("1,#,#,2", false); assertAll("1,#", false); assertAll("1,2,#", false);
+        assertAll("1,#,#,#", false); assertAll("9,3,4,#,#,1,#,#,2,#,6,#,#", true);
+        assertAll("9,#,#,1", false); assertAll("1,2,#,#,3,#", false);
+    }
+    private void assertAll(String input, boolean expected) {
+        assertTrue(test.isValidSerialization(input) == expected, input);
+        assertTrue(test.stack(input) == expected, input);
+        assertTrue(test.degree(input) == expected, input);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"'7,2,#,#,3,#,#',true", "'7,2,#,#,3,#',false", "'7,#,2,#,#',true", "'7,#,2,#',false", "'#,1',false", "'1,2,3,#,#,4,#,#,5,#,#',true", "'1,2,#,#,#,3',false", "'1,#,#,2,#,#',false"})
+    void allImplementationsHandleAdditionalShapes(String input, boolean expected) {
+        assertAll(input, expected);
     }
 }

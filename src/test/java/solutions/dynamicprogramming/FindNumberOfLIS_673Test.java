@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class FindNumberOfLIS_673Test {
 
@@ -66,5 +68,21 @@ public class FindNumberOfLIS_673Test {
         }
         // Strictly increasing -> only 1 LIS
         assertEquals(1, test.findNumberOfLIS(arr));
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctArrays() {
+        return Stream.of(
+                DynamicTest.dynamicTest("empty again", () -> assertEquals(0, test.findNumberOfLIS(new int[]{}))),
+                DynamicTest.dynamicTest("two increasing", () -> assertEquals(1, test.findNumberOfLIS(new int[]{-2, -1}))),
+                DynamicTest.dynamicTest("two decreasing", () -> assertEquals(2, test.findNumberOfLIS(new int[]{-1, -2}))),
+                DynamicTest.dynamicTest("peak", () -> assertEquals(2, test.findNumberOfLIS(new int[]{1, 3, 2}))),
+                DynamicTest.dynamicTest("two peaks", () -> assertEquals(2, test.findNumberOfLIS(new int[]{1, 3, 2, 4}))),
+                DynamicTest.dynamicTest("duplicate starts", () -> assertEquals(2, test.findNumberOfLIS(new int[]{1, 1, 2}))),
+                DynamicTest.dynamicTest("duplicate endings", () -> assertEquals(2, test.findNumberOfLIS(new int[]{1, 2, 2}))),
+                DynamicTest.dynamicTest("two length-three paths", () -> assertEquals(3, test.findNumberOfLIS(new int[]{1, 2, 1, 2, 3}))),
+                DynamicTest.dynamicTest("negative chain", () -> assertEquals(1, test.findNumberOfLIS(new int[]{-5, -4, -3, -2}))),
+                DynamicTest.dynamicTest("all equal four", () -> assertEquals(4, test.findNumberOfLIS(new int[]{9, 9, 9, 9}))),
+                DynamicTest.dynamicTest("interleaved", () -> assertEquals(4, test.findNumberOfLIS(new int[]{1, 2, 3, 1, 2, 3, 4}))));
     }
 }

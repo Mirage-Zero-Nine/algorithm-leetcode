@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class MinCostTickets_983Test {
 
@@ -130,5 +132,13 @@ public class MinCostTickets_983Test {
             next++;
         }
         return next;
+    }
+
+    @ParameterizedTest(name = "travel days {0}")
+    @CsvSource({"'1',2", "'1;2',4", "'1;3;5',6", "'2;4;6;8',7", "'1;8;15',6", "'10;11;12',6", "'1;7;14;21',8", "'50;51;52;53',7", "'100;200;300',6", "'1;2;30;31',8"})
+    public void testAdditionalSparseTravelPatterns(String encodedDays, int expected) {
+        String[] values = encodedDays.split(";"); int[] days = new int[values.length];
+        for (int i = 0; i < values.length; i++) days[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, test.minCostTickets(days, new int[]{2, 7, 15}));
     }
 }

@@ -219,4 +219,69 @@ public class Construct_427Test {
         assertTrue(root.bottomRight.isLeaf);
         assertFalse(root.bottomRight.val);
     }
+    @Test public void testConstruct_2x2_singleOneEachQuadrant() {
+        Construct_427.Node root = test.construct(new int[][]{{1, 0}, {0, 0}});
+        assertFalse(root.isLeaf);
+        assertTrue(root.topLeft.val);
+        assertFalse(root.topRight.val);
+        assertFalse(root.bottomLeft.val);
+        assertFalse(root.bottomRight.val);
+    }
+
+    @Test public void testConstruct_8x8_checkerboardLeaves() {
+        int[][] grid = new int[8][8];
+        for (int r = 0; r < 8; r++) for (int c = 0; c < 8; c++) grid[r][c] = (r + c) & 1;
+        Construct_427.Node root = test.construct(grid);
+        assertFalse(root.isLeaf);
+        assertFalse(root.topLeft.isLeaf);
+        assertFalse(root.topRight.isLeaf);
+    }
+
+    @Test public void testConstruct_nestedUniformQuadrantsMerge() {
+        int[][] grid = {{1, 1, 0, 0}, {1, 1, 0, 0}, {0, 0, 1, 1}, {0, 0, 1, 1}};
+        Construct_427.Node root = test.construct(grid);
+        assertFalse(root.isLeaf);
+        assertTrue(root.topLeft.isLeaf);
+        assertTrue(root.bottomRight.isLeaf);
+        assertTrue(root.topLeft.val);
+        assertTrue(root.bottomRight.val);
+    }
+
+    @Test public void testConstruct_8x8_allZeros() {
+        Construct_427.Node root = test.construct(new int[8][8]);
+        assertTrue(root.isLeaf);
+        assertFalse(root.val);
+    }
+
+    @Test public void testConstruct_8x8_allOnes() {
+        int[][] grid = new int[8][8];
+        for (int[] row : grid) java.util.Arrays.fill(row, 1);
+        Construct_427.Node root = test.construct(grid);
+        assertTrue(root.isLeaf);
+        assertTrue(root.val);
+    }
+
+    @Test public void testConstruct_internalNodesHaveFourChildren() {
+        Construct_427.Node root = test.construct(new int[][]{{0, 1}, {1, 0}});
+        assertNotNull(root.topLeft);
+        assertNotNull(root.topRight);
+        assertNotNull(root.bottomLeft);
+        assertNotNull(root.bottomRight);
+    }
+
+    @Test public void testConstruct_leafNodesHaveNoChildren() {
+        Construct_427.Node root = test.construct(new int[][]{{1, 1}, {1, 1}});
+        assertNull(root.topLeft);
+        assertNull(root.topRight);
+        assertNull(root.bottomLeft);
+        assertNull(root.bottomRight);
+    }
+
+    @Test public void testConstruct_repeatedCallsDoNotShareNodes() {
+        Construct_427.Node first = test.construct(new int[][]{{1}});
+        Construct_427.Node second = test.construct(new int[][]{{0}});
+        assertTrue(first != second);
+        assertTrue(first.val);
+        assertFalse(second.val);
+    }
 }

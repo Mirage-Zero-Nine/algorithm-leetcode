@@ -124,6 +124,12 @@ public class TopKFrequent_347Test {
         assertBothApproachesReturnEmpty(new int[]{1, 1}, 3);
     }
 
+    @Test void handlesNegativeAndBoundaryValues() { assertBothApproachesReturn(new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0}, 2, Set.of(Integer.MIN_VALUE, 0)); }
+    @Test void handlesAllUniqueValues() { assertBothApproachesProduceTopK(new int[]{-3, -2, -1, 0, 1, 2}, 3); }
+    @Test void handlesKEqualDistinctCount() { assertBothApproachesReturn(new int[]{4, 4, 5, 5, 5, 6}, 3, Set.of(4, 5, 6)); }
+    @Test void handlesRepeatedCalls() { assertBothApproachesReturn(new int[]{1, 1, 2}, 1, Set.of(1)); assertBothApproachesReturn(new int[]{8, 9, 9}, 1, Set.of(9)); }
+    @Test void handlesLargeDistinctInput() { int[] nums = new int[2000]; for (int i = 0; i < nums.length; i++) nums[i] = i % 100; assertBothApproachesReturn(new int[]{1, 1, 2, 2, 3, 3}, 3, Set.of(1, 2, 3)); assertEquals(100, distinctValueCount(nums)); }
+
     private void assertBothApproachesReturn(int[] nums, int k, Set<Integer> expected) {
         int[] heapResult = solver.topKFrequent(nums, k);
         int[] bucketResult = solver.topKFrequentBucketSort(nums, k);

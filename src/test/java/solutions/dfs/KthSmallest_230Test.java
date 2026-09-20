@@ -2,6 +2,8 @@ package solutions.dfs;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -95,5 +97,17 @@ public class KthSmallest_230Test {
         root.right = new TreeNode(5);
         // k=3 on a 2-node tree
         assertEquals(-1, solver.kthSmallest(null, 5));
+    }
+
+    @ParameterizedTest(name = "k={0} in ten-node chain")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testEveryValidRank(int k) {
+        TreeNode root = new TreeNode(1);
+        TreeNode current = root;
+        for (int i = 2; i <= 10; i++) {
+            current.right = new TreeNode(i);
+            current = current.right;
+        }
+        assertEquals(k, solver.kthSmallest(root, k));
     }
 }

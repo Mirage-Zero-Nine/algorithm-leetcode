@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class MaxProductPath_1594Test {
 
@@ -65,5 +67,21 @@ public class MaxProductPath_1594Test {
             for (int j = 0; j < n; j++)
                 grid[i][j] = 1;
         assertEquals(1, test.maxProductPath(grid));
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctGrids() {
+        return Stream.of(
+                DynamicTest.dynamicTest("single negative", () -> assertEquals(-1, test.maxProductPath(new int[][]{{-2}}))),
+                DynamicTest.dynamicTest("single positive", () -> assertEquals(3, test.maxProductPath(new int[][]{{3}}))),
+                DynamicTest.dynamicTest("one row three", () -> assertEquals(6, test.maxProductPath(new int[][]{{1, 2, 3}}))),
+                DynamicTest.dynamicTest("one column two", () -> assertEquals(-1, test.maxProductPath(new int[][]{{-1}, {2}}))),
+                DynamicTest.dynamicTest("positive two by two", () -> assertEquals(6, test.maxProductPath(new int[][]{{1, 2}, {2, 3}}))),
+                DynamicTest.dynamicTest("negative path beats zero", () -> assertEquals(18, test.maxProductPath(new int[][]{{-1, -2}, {-3, 6}}))),
+                DynamicTest.dynamicTest("zero alternative", () -> assertEquals(0, test.maxProductPath(new int[][]{{0, -1}, {-1, 0}}))),
+                DynamicTest.dynamicTest("all ones", () -> assertEquals(1, test.maxProductPath(new int[][]{{1, 1}, {1, 1}}))),
+                DynamicTest.dynamicTest("mixed three by three", () -> assertEquals(48, test.maxProductPath(new int[][]{{1, -2, 1}, {2, 3, -1}, {1, 2, 4}}))),
+                DynamicTest.dynamicTest("large positive", () -> assertEquals(1000000, test.maxProductPath(new int[][]{{1000, 1000}}))),
+                DynamicTest.dynamicTest("unreachable negative", () -> assertEquals(-1, test.maxProductPath(new int[][]{{-1, -1}, {-1, -1}}))));
     }
 }

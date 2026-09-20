@@ -51,4 +51,14 @@ public class MinimumMoves_2027Test {
         String s = "X".repeat(3000);
         assertEquals(1000, solver.minimumMoves(s));
     }
+    @Test public void testAdditionalXX() { assertEquals(0, solver.minimumMoves("XX")); }
+    @Test public void testAdditionalXXXX() { assertEquals(2, solver.minimumMoves("XXXX")); }
+    @Test public void testAdditionalXO() { assertEquals(0, solver.minimumMoves("XO")); }
+    @Test public void testAdditionalOX() { assertEquals(0, solver.minimumMoves("OX")); }
+    @Test public void testAdditionalXXOXX() { assertEquals(2, solver.minimumMoves("XXOXX")); }
+    @Test public void testAdditionalSeparated() { assertEquals(1, solver.minimumMoves("XOX")); }
+    @Test public void testAdditionalLongO() { assertEquals(0, solver.minimumMoves("OOOOOOOO")); }
+    @Test public void testAdditionalEnds() { assertEquals(1, solver.minimumMoves("XOO")); }
+    @Test public void testAdditionalMiddle() { assertEquals(1, solver.minimumMoves("OXXO")); }
+    @Test public void testAdditionalSix() { assertEquals(2, solver.minimumMoves("XXOXXO")); }
 }

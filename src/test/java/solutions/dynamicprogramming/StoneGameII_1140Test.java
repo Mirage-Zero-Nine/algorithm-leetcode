@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class StoneGameII_1140Test {
 
@@ -62,5 +64,13 @@ public class StoneGameII_1140Test {
     @Test
     public void testFourPiles() {
         assertEquals(5, test.stoneGameII(new int[]{1, 2, 3, 4}));
+    }
+
+    @ParameterizedTest(name = "two-pile game {0}")
+    @CsvSource({"'1,1',2", "'1,2',3", "'2,5',7", "'4,1',5", "'7,3',10", "'10,10',20", "'1,100',101", "'8,2',10", "'6,9',15", "'12,4',16"})
+    public void testAdditionalTwoPileTotals(String encoded, int expected) {
+        String[] values = encoded.split(",");
+        int[] piles = {Integer.parseInt(values[0]), Integer.parseInt(values[1])};
+        assertEquals(expected, test.stoneGameII(piles));
     }
 }

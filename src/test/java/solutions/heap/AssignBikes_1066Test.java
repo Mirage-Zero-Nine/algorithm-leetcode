@@ -91,4 +91,14 @@ public class AssignBikes_1066Test {
             new int[][]{{1, 1}, {1, 1}}
         ));
     }
+
+    @Test public void testSingleWorkerFartherChoice() { assertEquals(2, test.assignBikes(new int[][]{{0, 0}}, new int[][]{{2, 0}, {0, 3}, {9, 9}})); }
+    @Test public void testThreeWorkersExtraBikes() { assertEquals(3, test.assignBikes(new int[][]{{0, 0}, {10, 0}, {20, 0}}, new int[][]{{0, 1}, {10, 1}, {20, 1}, {99, 99}})); }
+    @Test public void testNegativeCoordinates() { assertEquals(2, test.assignBikes(new int[][]{{-5, -5}, {5, 5}}, new int[][]{{-4, -5}, {4, 5}})); }
+    @Test public void testUpperCoordinateBound() { assertEquals(1, test.assignBikes(new int[][]{{999, 999}}, new int[][]{{999, 998}, {0, 0}})); }
+    @Test public void testDistinctOptimalAssignment() { assertEquals(2, test.assignBikes(new int[][]{{0, 0}, {100, 100}}, new int[][]{{1, 0}, {99, 100}, {500, 500}})); }
+    @Test public void testAllEqualDistances() { assertEquals(4, test.assignBikes(new int[][]{{0, 0}, {2, 2}}, new int[][]{{1, 1}, {1, 1}, {9, 9}})); }
+    @Test public void testFourWorkersFourBikes() { assertEquals(4, test.assignBikes(new int[][]{{0, 0}, {10, 0}, {20, 0}, {30, 0}}, new int[][]{{0, 1}, {10, 1}, {20, 1}, {30, 1}})); }
+    @Test public void testRepeatedInvocation() { test.assignBikes(new int[][]{{0, 0}}, new int[][]{{1, 0}}); assertEquals(0, test.assignBikes(new int[][]{{7, 7}}, new int[][]{{7, 7}})); }
+    @Test public void testOrderIndependentOptimalCost() { assertEquals(2, test.assignBikes(new int[][]{{10, 10}, {0, 0}, {5, 5}}, new int[][]{{5, 5}, {11, 10}, {0, 1}})); }
 }

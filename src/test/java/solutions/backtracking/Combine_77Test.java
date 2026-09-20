@@ -186,6 +186,96 @@ public class Combine_77Test {
         assertTrue(mathResult.get(1).stream().noneMatch(value -> value == 99));
     }
 
+    @Test
+    public void testMaximumNMinimumKEnumeratesEverySingleton() {
+        Set<List<Integer>> expected = IntStream.rangeClosed(1, 20)
+                .mapToObj(List::of)
+                .collect(java.util.stream.Collectors.toSet());
+
+        assertEquals(expected, canonicalize(test.combine(20, 1)));
+        assertEquals(expected, canonicalize(test.combineMath(20, 1)));
+    }
+
+    @Test
+    public void testMaximumNMaximumKHasExactlyOneCombination() {
+        Set<List<Integer>> expected = Set.of(IntStream.rangeClosed(1, 20).boxed().toList());
+
+        assertEquals(expected, canonicalize(test.combine(20, 20)));
+        assertEquals(expected, canonicalize(test.combineMath(20, 20)));
+    }
+
+    @Test
+    public void testMaximumNAndNearMaximumKEnumeratesEachMissingValue() {
+        Set<List<Integer>> expected = new HashSet<>();
+        for (int omitted = 1; omitted <= 20; omitted++) {
+            int omittedValue = omitted;
+            expected.add(IntStream.rangeClosed(1, 20)
+                    .filter(value -> value != omittedValue)
+                    .boxed()
+                    .toList());
+        }
+
+        assertEquals(expected, canonicalize(test.combine(20, 19)));
+        assertEquals(expected, canonicalize(test.combineMath(20, 19)));
+    }
+
+    @Test
+    public void testExplicitMiddleRangeOracleIsCompleteAndOrderIndependent() {
+        Set<List<Integer>> expected = new HashSet<>();
+        for (int first = 1; first <= 6; first++) {
+            for (int second = first + 1; second <= 6; second++) {
+                for (int third = second + 1; third <= 6; third++) {
+                    expected.add(List.of(first, second, third));
+                }
+            }
+        }
+
+        assertEquals(expected, canonicalize(test.combine(6, 3)));
+        assertEquals(expected, canonicalize(test.combineMath(6, 3)));
+    }
+
+    @Test
+    public void testRepeatedCallsOnTheSameInstanceDoNotLeakState() {
+        assertEquals(Set.of(List.of(1, 2), List.of(1, 3), List.of(1, 4),
+                        List.of(2, 3), List.of(2, 4), List.of(3, 4)),
+                canonicalize(test.combine(4, 2)));
+        assertEquals(List.of(List.of(1, 2, 3)), test.combine(3, 3));
+        assertEquals(Set.of(List.of(1), List.of(2)), canonicalize(test.combineMath(2, 1)));
+        assertEquals(List.of(List.of(1)), test.combineMath(1, 1));
+    }
+
+    @Test
+    public void testEachInvocationReturnsASeparateOuterResultContainer() {
+        List<List<Integer>> firstBacktracking = test.combine(5, 2);
+        List<List<Integer>> secondBacktracking = test.combine(5, 2);
+        List<List<Integer>> firstRecurrence = test.combineMath(5, 2);
+        List<List<Integer>> secondRecurrence = test.combineMath(5, 2);
+
+        assertNotSame(firstBacktracking, secondBacktracking);
+        assertNotSame(firstRecurrence, secondRecurrence);
+        firstBacktracking.clear();
+        firstRecurrence.clear();
+        assertEquals(10, secondBacktracking.size());
+        assertEquals(10, secondRecurrence.size());
+    }
+
+    @Test
+    public void testComplementaryKValuesHaveEqualBinomialCardinality() {
+        List<List<Integer>> chooseTwoBacktracking = test.combine(9, 2);
+        List<List<Integer>> chooseSevenBacktracking = test.combine(9, 7);
+        List<List<Integer>> chooseTwoRecurrence = test.combineMath(9, 2);
+        List<List<Integer>> chooseSevenRecurrence = test.combineMath(9, 7);
+
+        assertEquals(36, chooseTwoBacktracking.size());
+        assertEquals(36, chooseSevenBacktracking.size());
+        assertEquals(36, chooseTwoRecurrence.size());
+        assertEquals(36, chooseSevenRecurrence.size());
+        assertValidCombinations(9, 2, chooseTwoBacktracking);
+        assertValidCombinations(9, 7, chooseSevenBacktracking);
+        assertValidCombinations(9, 2, chooseTwoRecurrence);
+        assertValidCombinations(9, 7, chooseSevenRecurrence);
+    }
+
     private static Stream<Arguments> allLeetCodeInputs() {
         return IntStream.rangeClosed(1, 20)
                 .boxed()

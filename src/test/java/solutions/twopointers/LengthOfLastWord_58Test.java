@@ -60,4 +60,14 @@ public class LengthOfLastWord_58Test {
         String word = "a".repeat(10000);
         assertEquals(10000, test.lengthOfLastWord("hello " + word));
     }
+    @Test public void testAnotherSingleWord() { assertEquals(5, test.lengthOfLastWord("hello")); }
+    @Test public void testLeadingSpacesShortWord() { assertEquals(3, test.lengthOfLastWord("   cat")); }
+    @Test public void testManyTrailingSpaces() { assertEquals(4, test.lengthOfLastWord("word     ")); }
+    @Test public void testMultipleInternalSpaces() { assertEquals(3, test.lengthOfLastWord("one  two   cat")); }
+    @Test public void testOneCharacter() { assertEquals(1, test.lengthOfLastWord("x")); }
+    @Test public void testAllSpaces() { assertEquals(0, test.lengthOfLastWord("     ")); }
+    @Test public void testPunctuationWord() { assertEquals(4, test.lengthOfLastWord("hi !wow")); }
+    @Test public void testNumericWord() { assertEquals(6, test.lengthOfLastWord("id 123456")); }
+    @Test public void testAlternatingSpaces() { assertEquals(1, test.lengthOfLastWord("a b c")); }
+    @Test public void testLongLastWord() { assertEquals(1000, test.lengthOfLastWord("prefix " + "z".repeat(1000))); }
 }

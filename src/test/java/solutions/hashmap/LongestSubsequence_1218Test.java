@@ -63,4 +63,14 @@ class LongestSubsequence_1218Test {
         for (int i = 0; i < n; i++) arr[i] = i;
         assertEquals(n, solution.longestSubsequence(arr, 1));
     }
+    @Test void extra01() { assertEquals(1, solution.longestSubsequence(new int[]{5},1)); }
+    @Test void extra02() { assertEquals(3, solution.longestSubsequence(new int[]{1,2,3},1)); }
+    @Test void extra03() { assertEquals(4, solution.longestSubsequence(new int[]{1,3,5,7},2)); }
+    @Test void extra04() { assertEquals(3, solution.longestSubsequence(new int[]{3,3,3},0)); }
+    @Test void extra05() { assertEquals(1, solution.longestSubsequence(new int[]{1,2,3},10)); }
+    @Test void extra06() { assertEquals(4, solution.longestSubsequence(new int[]{7,5,3,1},-2)); }
+    @Test void extra07() { assertEquals(2, solution.longestSubsequence(new int[]{1,2,1,2},1)); }
+    @Test void extra08() { assertEquals(5, solution.longestSubsequence(new int[]{0,1,2,3,4},1)); }
+    @Test void extra09() { assertEquals(3, solution.longestSubsequence(new int[]{10,8,6},-2)); }
+    @Test void extra10() { assertEquals(1, solution.longestSubsequence(new int[]{100},-100)); }
 }

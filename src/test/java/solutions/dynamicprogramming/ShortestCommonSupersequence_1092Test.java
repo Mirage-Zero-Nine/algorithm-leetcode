@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class ShortestCommonSupersequence_1092Test {
 
@@ -82,5 +84,14 @@ public class ShortestCommonSupersequence_1092Test {
             if (str.charAt(i) == sub.charAt(j)) j++;
         }
         return j == sub.length();
+    }
+
+    @ParameterizedTest(name = "SCS {0} and {1}")
+    @CsvSource({"a,b,2", "ab,ac,3", "aa,aa,2", "abc,ab,3", "aba,bab,4", "geek,eke,5", "aaaa,aa,4", "xyz,xzy,4", "cab,abac,5", "abca,bcaa,5"})
+    public void testAdditionalLengthAndSubsequenceCases(String first, String second, int expectedLength) {
+        String result = test.shortestCommonSupersequence(first, second);
+        assertEquals(expectedLength, result.length());
+        assertTrue(isSubsequence(first, result));
+        assertTrue(isSubsequence(second, result));
     }
 }

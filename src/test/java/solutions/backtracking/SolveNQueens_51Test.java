@@ -140,12 +140,31 @@ class SolveNQueens_51Test {
     }
 
     @Test
+    void testIndependentPermutationOracleN6() {
+        // Six columns have only 6! candidate row permutations, so this remains
+        // an independent, exhaustive check without making the test itself slow.
+        assertEquals(oracleSolutions(6), new HashSet<>(solution.solveNQueens(6)));
+    }
+
+    @Test
     void testRepeatedCallsReturnFreshIndependentResults() {
         List<List<String>> first = solution.solveNQueens(4);
         List<List<String>> second = solution.solveNQueens(4);
         assertEquals(new HashSet<>(first), new HashSet<>(second));
         assertFalse(first == second);
         assertFalse(first.get(0) == second.get(0));
+    }
+
+    @Test
+    void testMutatingReturnedResultsDoesNotAffectFutureCalls() {
+        Set<List<String>> expected = new HashSet<>(solution.solveNQueens(4));
+        List<List<String>> returned = solution.solveNQueens(4);
+        returned.get(0).set(0, "....");
+        returned.remove(1);
+
+        List<List<String>> fresh = solution.solveNQueens(4);
+        assertEquals(expected, new HashSet<>(fresh));
+        assertEquals(2, fresh.size());
     }
 
     @Test

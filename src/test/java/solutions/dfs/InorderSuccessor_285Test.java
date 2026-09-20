@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class InorderSuccessor_285Test {
 
@@ -98,5 +100,21 @@ public class InorderSuccessor_285Test {
         assertEquals(20, test.inorderSuccessor(root, n10.right.right).val);
         // Successor of 15 should be 18
         assertEquals(18, test.inorderSuccessor(root, n10.right).val);
+    }
+
+    @ParameterizedTest(name = "successor in right chain at {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testEveryPositionInRightSkewedTree(int value) {
+        TreeNode root = new TreeNode(1);
+        TreeNode target = root;
+        for (int i = 2; i <= 10; i++) {
+            target.right = new TreeNode(i);
+            target = target.right;
+        }
+        target = root;
+        for (int i = 1; i < value; i++) target = target.right;
+        TreeNode successor = test.inorderSuccessor(root, target);
+        if (value == 10) assertNull(successor);
+        else assertEquals(value + 1, successor.val);
     }
 }

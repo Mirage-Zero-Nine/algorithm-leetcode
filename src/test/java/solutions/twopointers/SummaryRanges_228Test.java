@@ -69,4 +69,15 @@ public class SummaryRanges_228Test {
     public void testNegativeNumbers() {
         assertEquals(List.of("-5->-3", "0", "2->3"), test.summaryRanges(new int[]{-5, -4, -3, 0, 2, 3}));
     }
+
+    @Test public void testTwoNegativeConsecutive() { assertEquals(List.of("-2->-1"),test.summaryRanges(new int[]{-2,-1})); }
+    @Test public void testSingleZero() { assertEquals(List.of("0"),test.summaryRanges(new int[]{0})); }
+    @Test public void testAlternatingGaps() { assertEquals(List.of("1","3","5"),test.summaryRanges(new int[]{1,3,5})); }
+    @Test public void testTwoRanges() { assertEquals(List.of("1->3","5->6"),test.summaryRanges(new int[]{1,2,3,5,6})); }
+    @Test public void testNegativeToPositive() { assertEquals(List.of("-2->2"),test.summaryRanges(new int[]{-2,-1,0,1,2})); }
+    @Test public void testLargeValues() { assertEquals(List.of("2147483646->2147483647"),test.summaryRanges(new int[]{2147483646,2147483647})); }
+    @Test public void testMinValues() { assertEquals(List.of("-2147483648","-2147483646"),test.summaryRanges(new int[]{Integer.MIN_VALUE,Integer.MIN_VALUE+2})); }
+    @Test public void testThreeSingletons() { assertEquals(List.of("-3","0","3"),test.summaryRanges(new int[]{-3,0,3})); }
+    @Test public void testRangeThenSingleton() { assertEquals(List.of("0->2","4"),test.summaryRanges(new int[]{0,1,2,4})); }
+    @Test public void testSingletonThenRange() { assertEquals(List.of("0","2->4"),test.summaryRanges(new int[]{0,2,3,4})); }
 }

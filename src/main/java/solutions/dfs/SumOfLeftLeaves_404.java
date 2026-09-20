@@ -21,7 +21,7 @@ public class SumOfLeftLeaves_404 {
      * @return sum of all left leaves
      */
     public int sumOfLeftLeaves(TreeNode root) {
-
+        sum = 0;
         dfs(root);
         return sum;
     }

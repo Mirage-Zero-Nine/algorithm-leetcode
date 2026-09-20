@@ -68,4 +68,15 @@ public class NumEquivDominoPairs_1128Test {
         // C(1000, 2) = 499500
         assertEquals(499500, test.numEquivDominoPairs(dominoes));
     }
+
+    @Test public void testEmptyInput() { assertEquals(0, test.numEquivDominoPairs(new int[][]{})); }
+    @Test public void testRotationWithDifferentOrder() { assertEquals(1, test.numEquivDominoPairs(new int[][]{{6,9},{9,6}})); }
+    @Test public void testThreeDistinctTypes() { assertEquals(3, test.numEquivDominoPairs(new int[][]{{1,2},{2,1},{3,4},{4,3},{5,6},{6,5}})); }
+    @Test public void testUnevenGroups() { assertEquals(4, test.numEquivDominoPairs(new int[][]{{1,2},{2,1},{1,2},{3,4},{4,3},{5,6}})); }
+    @Test public void testOnePairAndOneTripleWithSingletons() { assertEquals(4, test.numEquivDominoPairs(new int[][]{{1,1},{1,1},{2,3},{3,2},{2,3},{4,5},{6,7}})); }
+    @Test public void testSameValuesDoNotCollideWithOtherKeys() { assertEquals(1, test.numEquivDominoPairs(new int[][]{{1,1},{1,2},{2,1}})); }
+    @Test public void testMaximumFaceValues() { assertEquals(1, test.numEquivDominoPairs(new int[][]{{9,8},{8,9}})); }
+    @Test public void testFiveGroupsOfTwo() { assertEquals(5, test.numEquivDominoPairs(new int[][]{{1,2},{2,1},{2,3},{3,2},{3,4},{4,3},{4,5},{5,4},{5,6},{6,5}})); }
+    @Test public void testGroupOfSix() { assertEquals(15, test.numEquivDominoPairs(new int[][]{{1,2},{2,1},{1,2},{2,1},{1,2},{2,1}})); }
+    @Test public void testSingletonGroupsOnly() { assertEquals(0, test.numEquivDominoPairs(new int[][]{{1,1},{1,2},{2,3},{3,4}})); }
 }

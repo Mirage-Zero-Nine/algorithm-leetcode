@@ -94,4 +94,14 @@ public class MaxNumEdgesToRemove_1579Test {
         }
         assertEquals(0, test.maxNumEdgesToRemove(n, edges));
     }
+
+    @Test public void testThreeUsersAllSharedEdges() { assertEquals(0, test.maxNumEdgesToRemove(3, new int[][]{{3, 1, 2}, {3, 2, 3}})); }
+    @Test public void testSharedEdgeBridgesBothNetworks() { assertEquals(2, test.maxNumEdgesToRemove(3, new int[][]{{3, 1, 2}, {1, 2, 3}, {2, 1, 3}, {3, 1, 3}})); }
+    @Test public void testOnlyAliceEdgesFails() { assertEquals(-1, test.maxNumEdgesToRemove(2, new int[][]{{1, 1, 2}})); }
+    @Test public void testOnlyBobEdgesFails() { assertEquals(-1, test.maxNumEdgesToRemove(2, new int[][]{{2, 1, 2}})); }
+    @Test public void testRedundantAliceAndBobEdges() { assertEquals(4, test.maxNumEdgesToRemove(2, new int[][]{{1, 1, 2}, {1, 1, 2}, {2, 1, 2}, {2, 1, 2}, {3, 1, 2}})); }
+    @Test public void testFourUsersSharedChain() { assertEquals(0, test.maxNumEdgesToRemove(4, new int[][]{{3, 1, 2}, {3, 2, 3}, {3, 3, 4}})); }
+    @Test public void testFourUsersExtraSharedCycle() { assertEquals(1, test.maxNumEdgesToRemove(4, new int[][]{{3, 1, 2}, {3, 2, 3}, {3, 3, 4}, {3, 1, 4}})); }
+    @Test public void testSeparateTypeEdgesCanComplete() { assertEquals(0, test.maxNumEdgesToRemove(3, new int[][]{{1, 1, 2}, {1, 2, 3}, {2, 1, 2}, {2, 2, 3}})); }
+    @Test public void testOneUserAlreadySingle() { assertEquals(0, test.maxNumEdgesToRemove(1, new int[][]{})); }
 }

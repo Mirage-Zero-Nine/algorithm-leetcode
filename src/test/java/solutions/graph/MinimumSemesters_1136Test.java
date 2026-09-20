@@ -107,6 +107,14 @@ public class MinimumSemesters_1136Test {
         assertEquals(200, test.minimumSemesters(n, relations));
     }
 
+    @Test public void testNoRelationsForManyCourses() { assertEquals(1, test.minimumSemesters(10, new int[][]{})); }
+    @Test public void testThreeCourseChain() { assertEquals(3, test.minimumSemesters(3, new int[][]{{1,2},{2,3}})); }
+    @Test public void testTwoIndependentChainsDifferentDepths() { assertEquals(4, test.minimumSemesters(7, new int[][]{{1,2},{2,3},{3,4},{5,6}})); }
+    @Test public void testDuplicateRelationImplementationBehavior() { assertEquals(2, test.minimumSemesters(2, new int[][]{{1,2},{1,2}})); }
+    @Test public void testCycleWithIsolatedCourses() { assertEquals(-1, test.minimumSemesters(5, new int[][]{{1,2},{2,1}})); }
+    @Test public void testDiamondWithIndependentCourse() { assertEquals(3, test.minimumSemesters(5, new int[][]{{1,2},{1,3},{2,4},{3,4}})); }
+    @Test public void testRepeatedInvocation() { assertEquals(1, test.minimumSemesters(1,new int[][]{})); assertEquals(-1, test.minimumSemesters(2,new int[][]{{1,2},{2,1}})); }
+
     private final int[][] test1 = new int[][]{{1, 3}, {2, 4}, {3, 5}, {5, 4}, {4, 3}};
     private final int[][] test2 = new int[][]{
             {5, 10}, {11, 14}, {21, 22}, {16, 19}, {21, 25}, {6, 18}, {1, 9}, {4, 7}, {10, 23}, {5, 14},

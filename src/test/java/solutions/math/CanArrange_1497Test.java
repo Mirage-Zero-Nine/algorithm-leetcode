@@ -71,4 +71,54 @@ public class CanArrange_1497Test {
         }
         assertTrue(test.canArrange(arr, k));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertTrue(test.canArrange(new int[]{1,1}, 2));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertTrue(test.canArrange(new int[]{1,2}, 3));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertFalse(test.canArrange(new int[]{1,2}, 2));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertTrue(test.canArrange(new int[]{0,0,0,0}, 7));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertTrue(test.canArrange(new int[]{-1,1,-2,2}, 4));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertTrue(test.canArrange(new int[]{-1,-1,1,1}, 3));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertTrue(test.canArrange(new int[]{5,5,5,5}, 10));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertTrue(test.canArrange(new int[]{1,1,1,1}, 2));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertFalse(test.canArrange(new int[]{1,1,1,1}, 3));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertTrue(test.canArrange(new int[]{1000000000,-1000000000,3,-3}, 7));
+    }
 }

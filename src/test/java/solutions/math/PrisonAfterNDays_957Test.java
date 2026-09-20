@@ -76,4 +76,54 @@ public class PrisonAfterNDays_957Test {
         assertArrayEquals(new int[]{0, 1, 1, 1, 1, 1, 1, 0},
             test.prisonAfterNDays(new int[]{0, 1, 0, 1, 0, 1, 0, 1}, 1));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertArrayEquals(new int[]{0,1,1,1,1,1,1,0}, test.prisonAfterNDays(new int[]{0,0,0,0,0,0,0,0}, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertArrayEquals(new int[]{0,1,1,1,1,1,1,0}, test.prisonAfterNDays(new int[]{1,1,1,1,1,1,1,1}, 1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertArrayEquals(new int[]{0,1,1,1,1,1,1,0}, test.prisonAfterNDays(new int[]{0,1,0,1,0,1,0,1}, 1));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertArrayEquals(new int[]{0,1,0,1,0,1,1,0}, test.prisonAfterNDays(new int[]{0,1,1,0,1,1,0,0}, 2));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertArrayEquals(new int[]{0,1,1,1,0,0,1,0}, test.prisonAfterNDays(new int[]{1,0,0,1,0,0,1,0}, 3));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertArrayEquals(new int[]{0,0,1,0,1,1,0,0}, test.prisonAfterNDays(new int[]{0,0,1,1,0,1,0,0}, 7));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertArrayEquals(new int[]{0,0,0,1,1,0,0,0}, test.prisonAfterNDays(new int[]{1,0,1,0,1,0,1,0}, 10));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertArrayEquals(new int[]{0,1,1,1,1,0,0,0}, test.prisonAfterNDays(new int[]{0,1,1,1,1,0,0,0}, 14));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertArrayEquals(new int[]{0,0,0,1,1,1,1,0}, test.prisonAfterNDays(new int[]{1,1,0,0,1,1,0,1}, 20));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertArrayEquals(new int[]{0,1,0,0,1,1,1,0}, test.prisonAfterNDays(new int[]{0,0,0,1,1,1,0,1}, 100));
+    }
 }

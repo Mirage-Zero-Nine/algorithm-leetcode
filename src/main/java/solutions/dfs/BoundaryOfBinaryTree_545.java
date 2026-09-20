@@ -2,6 +2,8 @@ package solutions.dfs;
 
 import library.tree.binarytree.TreeNode;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,13 +26,14 @@ import java.util.List;
 
 public class BoundaryOfBinaryTree_545 {
     /**
-     * 4 times of DFS.
-     * First time, find all left boundary nodes except left most leaf.
-     * Second time, find all leaves nodes under left subtree of root.
-     * Third time, find all leaves nodes under right subtree of root.
-     * Forth time, find all right boundary nodes except right most leaf.
-     * Note that the order is reversed compare to left boundary.
-     * In this way to avoid duplication.
+     * The iterative traversal visits each node at most once for the leaves pass and uses O(n)
+     * auxiliary space for its explicit stack, avoiding recursion-depth failures on skewed trees.
+     * <p>
+     * Collect the four boundary parts iteratively to keep the solution safe for the maximum
+     * allowed tree depth. The left and right boundary are single paths, while the leaves are
+     * visited with an explicit stack in left-to-right order. Excluding boundary leaves keeps each
+     * node from being added twice. The four passes together take O(n) time and O(n) auxiliary
+     * space in the worst case.
      *
      * @param root root of tree
      * @return the values of its boundary in anti-clockwise direction starting from root
@@ -54,27 +57,31 @@ public class BoundaryOfBinaryTree_545 {
     }
 
     /**
-     * Add all left boundary nodes of tree except left most leaf.
+     * Add all left boundary nodes of tree except the left-most leaf.
+     * <p>
+     * The path is followed iteratively, choosing the left child whenever it exists and otherwise
+     * the right child. This is equivalent to the recursive definition without consuming call
+     * stack space proportional to the tree height.
+     * <p>
+     * This takes O(h) time and O(1) auxiliary space, where h is the selected boundary height.
      *
      * @param root root node
      * @param out  output list
      */
     private void leftBoundary(TreeNode root, List<Integer> out) {
-        if (root == null || (root.left == null && root.right == null)) {
-            return;
-        }
-
-        out.add(root.val);
-
-        if (root.left == null) {
-            leftBoundary(root.right, out);
-        } else {
-            leftBoundary(root.left, out);
+        while (root != null && (root.left != null || root.right != null)) {
+            out.add(root.val);
+            root = root.left == null ? root.right : root.left;
         }
     }
 
     /**
-     * Add all leaves of current tree.
+     * Add all leaves of current tree in left-to-right order.
+     * <p>
+     * A LIFO stack pushes the right child before the left child, so the left subtree is processed
+     * first without recursive calls.
+     * <p>
+     * This takes O(n) time and O(n) auxiliary space in the worst case.
      *
      * @param root root of tree
      * @param out  output list
@@ -84,32 +91,43 @@ public class BoundaryOfBinaryTree_545 {
             return;
         }
 
-        if (root.left == null && root.right == null) {
-            out.add(root.val);
-            return;
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode current = stack.pop();
+            if (current.left == null && current.right == null) {
+                out.add(current.val);
+                continue;
+            }
+            if (current.right != null) {
+                stack.push(current.right);
+            }
+            if (current.left != null) {
+                stack.push(current.left);
+            }
         }
-
-        leaves(root.left, out);
-        leaves(root.right, out);
     }
 
     /**
-     * Add all right boundary nodes of tree except right most leaf.
+     * Add all right boundary nodes of tree except the right-most leaf, in reverse order.
+     * <p>
+     * Values are pushed onto an explicit stack while following the right child whenever possible,
+     * then popped to produce the required bottom-up order without recursive calls.
+     * <p>
+     * This takes O(h) time and O(h) auxiliary space, where h is the selected boundary height.
      *
      * @param root root node
      * @param out  output list
      */
     private void rightBound(TreeNode root, List<Integer> out) {
-        if (root == null || (root.left == null && root.right == null)) {
-            return;
+        Deque<Integer> boundary = new ArrayDeque<>();
+        while (root != null && (root.left != null || root.right != null)) {
+            boundary.push(root.val);
+            root = root.right == null ? root.left : root.right;
         }
 
-        if (root.right == null) {
-            rightBound(root.left, out);
-        } else {
-            rightBound(root.right, out);
+        while (!boundary.isEmpty()) {
+            out.add(boundary.pop());
         }
-
-        out.add(root.val);      // reverse order
     }
 }

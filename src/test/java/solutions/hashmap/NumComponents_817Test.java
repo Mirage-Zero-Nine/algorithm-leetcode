@@ -72,4 +72,14 @@ public class NumComponents_817Test {
         for (int i = 0; i < 50; i++) g[i] = i * 2;
         assertEquals(50, test.numComponents(build(vals), g));
     }
+    @Test void extra01() { assertEquals(0, test.numComponents(build(0,1), new int[]{})); }
+    @Test void extra02() { assertEquals(1, test.numComponents(build(0), new int[]{0})); }
+    @Test void extra03() { assertEquals(1, test.numComponents(build(0,1,2), new int[]{0,1,2})); }
+    @Test void extra04() { assertEquals(2, test.numComponents(build(0,1,2), new int[]{0,2})); }
+    @Test void extra05() { assertEquals(2, test.numComponents(build(0,1,2,3), new int[]{1,3})); }
+    @Test void extra06() { assertEquals(3, test.numComponents(build(0,1,2,3,4), new int[]{0,2,4})); }
+    @Test void extra07() { assertEquals(1, test.numComponents(build(0,1,2), new int[]{1,2})); }
+    @Test void extra08() { assertEquals(0, test.numComponents(build(0,1,2), new int[]{9})); }
+    @Test void extra09() { assertEquals(2, test.numComponents(build(0,1,2,3), new int[]{0,1,3})); }
+    @Test void extra10() { assertEquals(1, test.numComponents(build(0,1,2,3), new int[]{2,3})); }
 }

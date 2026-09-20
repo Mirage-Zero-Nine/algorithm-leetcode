@@ -72,4 +72,49 @@ class MaximumProduct_628Test {
         // max1=49, max2=48, max3=47 => 49*48*47 = 110544
         assertEquals(120050, solution.maximumProduct(nums));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(6, solution.maximumProduct(new int[]{1,2,3}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(-6, solution.maximumProduct(new int[]{-1,-2,-3}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(300, solution.maximumProduct(new int[]{-10,-10,1,2,3}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(0, solution.maximumProduct(new int[]{0,0,0}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(1000000, solution.maximumProduct(new int[]{100,100,100}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(600, solution.maximumProduct(new int[]{-100,-2,1,2,3}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(1, solution.maximumProduct(new int[]{1,1,1,1}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(-6, solution.maximumProduct(new int[]{-5,-4,-3,-2,-1}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(60, solution.maximumProduct(new int[]{10,0,-1,2,3}));
+    }
 }

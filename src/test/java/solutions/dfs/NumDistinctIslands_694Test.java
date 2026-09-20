@@ -3,6 +3,8 @@ package solutions.dfs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class NumDistinctIslands_694Test {
 
@@ -88,5 +90,13 @@ public class NumDistinctIslands_694Test {
                 {0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0},
                 {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1}
         }));
+    }
+
+    @ParameterizedTest(name = "solid island side {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testSolidIslandSizes(int side) {
+        int[][] grid = new int[side][side];
+        for (int i = 0; i < side; i++) java.util.Arrays.fill(grid[i], 1);
+        assertEquals(1, new NumDistinctIslands_694().numDistinctIslands(grid));
     }
 }

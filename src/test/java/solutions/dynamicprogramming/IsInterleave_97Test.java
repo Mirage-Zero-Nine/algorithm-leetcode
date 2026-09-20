@@ -1,9 +1,12 @@
 package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class IsInterleave_97Test {
 
@@ -75,5 +78,11 @@ public class IsInterleave_97Test {
         String s2 = "b".repeat(50);
         String s3 = "a".repeat(50) + "b".repeat(49) + "c";
         assertFalse(test.isInterleave(s1, s2, s3));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"a,b,ab,true","a,b,ba,true","ab,cd,acbd,true","ab,cd,abcd,true","ab,cd,adcb,false","aa,bb,abab,true","aa,bb,aabb,true","aa,bb,abba,true","abc,def,adbcef,true","abc,def,abdecf,true"})
+    public void testAdditionalInterleavingOrders(String first, String second, String merged, boolean expected) {
+        assertEquals(expected, test.isInterleave(first, second, merged));
     }
 }

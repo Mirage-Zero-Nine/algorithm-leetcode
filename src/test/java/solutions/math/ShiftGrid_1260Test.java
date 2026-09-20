@@ -71,4 +71,24 @@ public class ShiftGrid_1260Test {
         assertEquals(List.of(List.of(2), List.of(3), List.of(4), List.of(7), List.of(6), List.of(5), List.of(1)),
             test.shiftGrid(new int[][]{{1}, {2}, {3}, {4}, {7}, {6}, {5}}, 10002));
     }
+    @Test
+    void testAdditional1() { assertEquals(1, test.shiftGrid(new int[][]{{1}}, 0).size()); }
+    @Test
+    void testAdditional2() { assertEquals(1, test.shiftGrid(new int[][]{{1,2,3}}, 1).size()); }
+    @Test
+    void testAdditional3() { assertEquals(3, test.shiftGrid(new int[][]{{1},{2},{3}}, 2).size()); }
+    @Test
+    void testAdditional4() { assertEquals(2, test.shiftGrid(new int[][]{{1,2},{3,4}}, 2).size()); }
+    @Test
+    void testAdditional5() { assertEquals(2, test.shiftGrid(new int[][]{{1,2},{3,4}}, 3).size()); }
+    @Test
+    void testAdditional6() { assertEquals(2, test.shiftGrid(new int[][]{{1,2,3},{4,5,6}}, 5).size()); }
+    @Test
+    void testAdditional7() { assertEquals(2, test.shiftGrid(new int[][]{{1,0},{0,1}}, 1).size()); }
+    @Test
+    void testAdditional8() { assertEquals(1, test.shiftGrid(new int[][]{{-1,-2,-3}}, 2).size()); }
+    @Test
+    void testAdditional9() { assertEquals(3, test.shiftGrid(new int[][]{{1,2},{3,4},{5,6}}, 7).size()); }
+    @Test
+    void testAdditional10() { assertEquals(2, test.shiftGrid(new int[][]{{1,2,3},{4,5,6}}, 100).size()); }
 }

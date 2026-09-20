@@ -90,4 +90,15 @@ public class ReverseString_344Test {
         test.reverseString(arr);
         assertArrayEquals(new char[]{'0', '9', '8', '7', '6', '5', '4', '3', '2', '1'}, arr);
     }
+
+    @Test public void testThreeChars() { char[] a={'a','b','c'};test.reverseString(a);assertArrayEquals(new char[]{'c','b','a'},a); }
+    @Test public void testFourSymbols() { char[] a={'!','@','#','$'};test.reverseString(a);assertArrayEquals(new char[]{'$','#','@','!'},a); }
+    @Test public void testUnicode() { char[] a={'λ','β','α'};test.reverseString(a);assertArrayEquals(new char[]{'α','β','λ'},a); }
+    @Test public void testWhitespace() { char[] a={' ','x',' '};test.reverseString(a);assertArrayEquals(new char[]{' ','x',' '},a); }
+    @Test public void testTwoDifferent() { char[] a={'x','y'};test.reverseString(a);assertArrayEquals(new char[]{'y','x'},a); }
+    @Test public void testAlreadyReverse() { char[] a={'c','b','a'};test.reverseString(a);assertArrayEquals(new char[]{'a','b','c'},a); }
+    @Test public void testLongRun() { char[] a="0123456789".repeat(100).toCharArray();char[] e=new StringBuilder(new String(a)).reverse().toString().toCharArray();test.reverseString(a);assertArrayEquals(e,a); }
+    @Test public void testRepeatedCall() { char[] a={'a','b'};test.reverseString(a);test.reverseString(a);assertArrayEquals(new char[]{'a','b'},a); }
+    @Test public void testMixedCase() { char[] a={'A','b','C','d'};test.reverseString(a);assertArrayEquals(new char[]{'d','C','b','A'},a); }
+    @Test public void testEmptyAgain() { char[] a={};test.reverseString(a);assertArrayEquals(new char[]{},a); }
 }

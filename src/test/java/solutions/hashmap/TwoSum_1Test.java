@@ -115,4 +115,14 @@ class TwoSum_1Test {
                 Arrays.stream(actual).sorted().toArray()
         );
     }
+    @Test void extra01() { assertPairEquals(new int[]{0,1}, twoSum.twoSum(new int[]{1,2}, 3)); }
+    @Test void extra02() { assertPairEquals(new int[]{0,1}, twoSum.twoSum(new int[]{-1,1}, 0)); }
+    @Test void extra03() { assertPairEquals(new int[]{0,1}, twoSum.twoSum(new int[]{0,0}, 0)); }
+    @Test void extra04() { assertPairEquals(new int[]{1,2}, twoSum.twoSum(new int[]{5,3,4}, 7)); }
+    @Test void extra05() { assertPairEquals(new int[]{0,3}, twoSum.twoSum(new int[]{10,2,4,5}, 15)); }
+    @Test void extra06() { assertPairEquals(new int[]{0,1}, twoSum.twoSum(new int[]{1000000000,-1000000000}, 0)); }
+    @Test void extra07() { assertPairEquals(new int[]{0,2}, twoSum.twoSum(new int[]{3,7,8}, 11)); }
+    @Test void extra08() { assertPairEquals(new int[]{0,2}, twoSum.twoSum(new int[]{1,4,9,7}, 10)); }
+    @Test void extra09() { assertPairEquals(new int[]{0,1}, twoSum.twoSum(new int[]{-5,-3,-1}, -8)); }
+    @Test void extra10() { assertPairEquals(new int[]{0,1}, twoSum.twoSum(new int[]{2,2,4}, 4)); }
 }

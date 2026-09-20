@@ -62,4 +62,54 @@ public class PathInZigZagTree_1104Test {
     public void testLabel5() {
         assertEquals(List.of(1, 3, 5), test.pathInZigZagTree(5));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(java.util.List.of(1), test.pathInZigZagTree(1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(java.util.List.of(1,2), test.pathInZigZagTree(2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(java.util.List.of(1,3), test.pathInZigZagTree(3));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(java.util.List.of(1,3,4), test.pathInZigZagTree(4));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(java.util.List.of(1,3,5), test.pathInZigZagTree(5));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(java.util.List.of(1,2,6), test.pathInZigZagTree(6));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(java.util.List.of(1,2,7), test.pathInZigZagTree(7));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(java.util.List.of(1,2,7,8), test.pathInZigZagTree(8));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(java.util.List.of(1,3,4,14), test.pathInZigZagTree(14));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(java.util.List.of(1,2,6,10,26), test.pathInZigZagTree(26));
+    }
 }

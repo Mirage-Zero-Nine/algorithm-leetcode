@@ -13,8 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Note: SimplifyPath_71 has a known bug - it checks for "src/main" instead of "..".
- * Tests verify actual behavior of the implementation.
+ * Tests follow the Unix canonical-path contract: parent traversal never escapes root.
  */
 public class SimplifyPath_71Test {
     private final SimplifyPath_71 s = new SimplifyPath_71();
@@ -29,8 +28,7 @@ public class SimplifyPath_71Test {
     @Test public void testMultipleDirs() { assertEquals("/a/b/c/d", s.simplifyPath("/a/b/c/d/")); }
     @Test public void testSingleDir() { assertEquals("/foo", s.simplifyPath("/foo")); }
 
-    // Negative/edge: ".." is treated as literal dir name due to known bug (checks "src/main" not "..")
-    @Test public void testDoubleDotBug() { assertEquals("/a/../b/../c", s.simplifyPath("/a/../b/../c/")); }
+    @Test public void testDoubleDot() { assertEquals("/c", s.simplifyPath("/a/../b/../c/")); }
 
     // Edge cases
     @Test public void testRootOnly() { assertEquals("/", s.simplifyPath("/")); }
@@ -49,8 +47,7 @@ public class SimplifyPath_71Test {
 
     // --- NEW TESTS ---
 
-    // ".." treated as regular name (known bug), so "/.." -> "/.."
-    @Test public void testDoubleDotAtRoot() { assertEquals("/..", s.simplifyPath("/..")); }
+    @Test public void testDoubleDotAtRoot() { assertEquals("/", s.simplifyPath("/..")); }
 
     // "/a/" trailing slash stripped
     @Test public void testSingleDirTrailingSlash() { assertEquals("/a", s.simplifyPath("/a/")); }
@@ -67,8 +64,7 @@ public class SimplifyPath_71Test {
     // Only dots and slashes: "/./././." -> "/"
     @Test public void testOnlyDotsAndSlashes() { assertEquals("/", s.simplifyPath("/./././.")); }
 
-    // Deep path with ".." as literal names (bug): "/a/b/c/../.." -> "/a/b/c/../.."
-    @Test public void testDeepDoubleDotBug() { assertEquals("/a/b/c/../..", s.simplifyPath("/a/b/c/../..")); }
+    @Test public void testDeepDoubleDot() { assertEquals("/a", s.simplifyPath("/a/b/c/../..")); }
 
     // Many consecutive slashes only -> "/"
     @Test public void testOnlySlashes() { assertEquals("/", s.simplifyPath("/////")); }
@@ -87,13 +83,13 @@ public class SimplifyPath_71Test {
         assertEquals(expected, actual);
     }
 
-    /** Reference implementation matching the buggy behavior (treats ".." as literal name). */
+    /** Independent canonical-path reference implementation. */
     private String referenceSimplify(String path) {
         Deque<String> stack = new ArrayDeque<>();
         for (String seg : path.split("/")) {
-            if (seg.equals("src/main") && !stack.isEmpty()) {
+            if (seg.equals("..") && !stack.isEmpty()) {
                 stack.pollLast();
-            } else if (!seg.equals("src/main") && !seg.equals(".") && !seg.isEmpty()) {
+            } else if (!seg.equals("..") && !seg.equals(".") && !seg.isEmpty()) {
                 stack.addLast(seg);
             }
         }

@@ -53,4 +53,14 @@ public class RobotWithString_2434Test {
         String result = solver.robotWithString(sb.toString());
         assertEquals(sb.toString(), result);
     }
+    @Test public void testZbac() { assertEquals("abcz", solver.robotWithString("zbac")); }
+    @Test public void testCabbage() { assertEquals("aabbceg", solver.robotWithString("cabbage")); }
+    @Test public void testRepeatedPattern() { assertEquals("aabcbc", solver.robotWithString("abcabc")); }
+    @Test public void testSmallestAtEnd() { assertEquals("acb", solver.robotWithString("bca")); }
+    @Test public void testTwoBlocks() { assertEquals("aabb", solver.robotWithString("bbaa")); }
+    @Test public void testDescendingFour() { assertEquals("abcd", solver.robotWithString("dcba")); }
+    @Test public void testAlternating() { assertEquals("aabb", solver.robotWithString("baba")); }
+    @Test public void testLateMinimum() { assertEquals("abdc", solver.robotWithString("cdab")); }
+    @Test public void testRepeatedCall() { solver.robotWithString("zyx"); assertEquals("abc",solver.robotWithString("cba")); }
+    @Test public void testDistinctLetters() { assertEquals("acbd", solver.robotWithString("bcad")); }
 }

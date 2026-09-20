@@ -81,4 +81,49 @@ public class CorpFlightBookings_1109Test {
             assertEquals(1000, result[i]);
         }
     }
+
+    @Test
+    public void testAdditional1() {
+        assertArrayEquals(new int[]{5}, test.corpFlightBookings(new int[][]{{1,1,5}}, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertArrayEquals(new int[]{10,10}, test.corpFlightBookings(new int[][]{{1,2,10}}, 2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertArrayEquals(new int[]{0,7,7}, test.corpFlightBookings(new int[][]{{2,3,7}}, 3));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertArrayEquals(new int[]{2,2,2}, test.corpFlightBookings(new int[][]{{1,3,2}}, 3));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertArrayEquals(new int[]{10,30,20}, test.corpFlightBookings(new int[][]{{1,2,10},{2,3,20}}, 3));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertArrayEquals(new int[]{0,0,4,4,4}, test.corpFlightBookings(new int[][]{{3,5,4}}, 5));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertArrayEquals(new int[]{12}, test.corpFlightBookings(new int[][]{{1,1,9},{1,1,3}}, 1));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertArrayEquals(new int[]{0,5,5,11,6}, test.corpFlightBookings(new int[][]{{2,4,5},{4,5,6}}, 5));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertArrayEquals(new int[]{1,1,1,1,1}, test.corpFlightBookings(new int[][]{{1,5,1}}, 5));
+    }
 }

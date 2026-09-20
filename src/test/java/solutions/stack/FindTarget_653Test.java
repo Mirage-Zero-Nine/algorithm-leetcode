@@ -80,4 +80,14 @@ public class FindTarget_653Test {
         n.right = buildBalanced(mid + 1, hi);
         return n;
     }
+    @Test public void testPairAcrossRoot() { assertTrue(solver.findTarget_Stack(buildBST(),11)); }
+    @Test public void testMissingNearTarget() { assertFalse(solver.findTarget_Stack(buildBST(),14)); }
+    @Test public void testNegativeValues() { TreeNode r=new TreeNode(0); r.left=new TreeNode(-3); r.right=new TreeNode(4); assertTrue(solver.findTarget_Stack(r,1)); }
+    @Test public void testDuplicateValuesNeedDistinctNodes() { TreeNode r=new TreeNode(2); r.left=new TreeNode(2); assertTrue(solver.findTarget_Stack(r,4)); }
+    @Test public void testDuplicateSingleNodeNotReused() { assertFalse(solver.findTarget_Stack(new TreeNode(2),4)); }
+    @Test public void testLeftSkewed() { TreeNode r=new TreeNode(5); r.left=new TreeNode(4); r.left.left=new TreeNode(3); assertTrue(solver.findTarget_Stack(r,7)); }
+    @Test public void testRightSkewed() { TreeNode r=new TreeNode(1); r.right=new TreeNode(2); r.right.right=new TreeNode(3); assertTrue(solver.findTarget_Stack(r,5)); }
+    @Test public void testIntegerBoundaries() { TreeNode r=new TreeNode(Integer.MAX_VALUE); r.left=new TreeNode(Integer.MIN_VALUE); assertTrue(solver.findTarget_Stack(r,-1)); }
+    @Test public void testRepeatedInvocation() { assertTrue(solver.findTarget_Stack(buildBST(),9)); assertFalse(solver.findTarget_Stack(buildBST(),100)); }
+    @Test public void testTargetWithNoNodes() { assertFalse(solver.findTarget_Stack(null,Integer.MIN_VALUE)); }
 }

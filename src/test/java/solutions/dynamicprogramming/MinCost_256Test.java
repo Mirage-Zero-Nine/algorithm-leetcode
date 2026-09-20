@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class MinCost_256Test {
 
@@ -67,5 +69,17 @@ public class MinCost_256Test {
         // 500 * 1 + 500 * 2 = 1500
         int result = test.minCost(costs);
         assertEquals(1500, result);
+    }
+
+    @ParameterizedTest(name = "paint costs {0}")
+    @CsvSource({"'1;2;3|3;2;1',2", "'5;1;5|1;5;1',2", "'2;8;4|7;3;9|6;1;5',10", "'9;1;9|9;9;1|1;9;9',3", "'4;4;4|4;4;4',8", "'1;10;10|10;10;1|1;10;10',3", "'7;2;9|8;6;3',5", "'3;1;8|2;9;4|5;2;6',5", "'10;20;30|30;20;10|20;10;30',30", "'6;5;4|4;5;6|6;4;5|5;6;4',16"})
+    public void testAdditionalColorTransitions(String encoded, int expected) {
+        assertEquals(expected, test.minCost(parse(encoded)));
+    }
+
+    private static int[][] parse(String encoded) {
+        String[] rows = encoded.split("\\|"); int[][] result = new int[rows.length][];
+        for (int i = 0; i < rows.length; i++) { String[] values = rows[i].split(";"); result[i] = new int[values.length]; for (int j = 0; j < values.length; j++) result[i][j] = Integer.parseInt(values[j]); }
+        return result;
     }
 }

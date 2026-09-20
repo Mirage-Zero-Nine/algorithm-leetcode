@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class NumWays_276Test {
 
@@ -66,5 +68,11 @@ public class NumWays_276Test {
         // n=30, k=5 - just verify it runs and returns a positive number
         int result = test.numWays(30, 5);
         assertEquals(true, result > 0);
+    }
+
+    @ParameterizedTest(name = "posts {0}, colors {1}")
+    @CsvSource({"2,3,9", "3,1,0", "3,4,60", "4,4,228", "5,2,16", "6,2,26", "2,5,25", "3,5,120", "4,3,66", "6,3,492"})
+    public void testAdditionalPostColorCombinations(int posts, int colors, int expected) {
+        assertEquals(expected, test.numWays(posts, colors));
     }
 }

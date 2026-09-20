@@ -134,4 +134,53 @@ public class MostVisitedPattern_1152Test {
         List<String> result = test.mostVisitedPattern(usernames, timestamps, websites);
         assertEquals(3, result.size());
     }
+
+    @Test public void testTimestampsInterleavedByUser() {
+        assertEquals(List.of("a", "b", "c"), test.mostVisitedPattern(
+            new String[]{"u", "v", "u", "v", "u", "v"}, new int[]{1, 2, 5, 4, 3, 6},
+            new String[]{"a", "x", "c", "b", "b", "c"}));
+    }
+
+    @Test public void testLexicographicTieAtSecondWebsite() {
+        assertEquals(List.of("a", "a", "z"), test.mostVisitedPattern(
+            new String[]{"u1","u1","u1","u2","u2","u2"}, new int[]{1,2,3,4,5,6},
+            new String[]{"a","a","z","a","b","z"}));
+    }
+
+    @Test public void testRepeatedVisitsGenerateDistinctSubsequences() {
+        assertEquals(List.of("a", "a", "a"), test.mostVisitedPattern(
+            new String[]{"u","u","u","u"}, new int[]{4,1,2,3}, new String[]{"a","b","a","a"}));
+    }
+
+    @Test public void testOnlyOneEligibleUser() {
+        assertEquals(List.of("x","y","z"), test.mostVisitedPattern(
+            new String[]{"short","long","long","long"}, new int[]{1,1,2,3}, new String[]{"q","x","y","z"}));
+    }
+
+    @Test public void testDifferentUsersDoNotCombineVisits() {
+        assertEquals(List.of("a","b","c"), test.mostVisitedPattern(
+            new String[]{"u1","u1","u2","u2","u2"}, new int[]{1,2,3,4,5}, new String[]{"a","b","a","b","c"}));
+    }
+
+    @Test public void testTieChoosesLexicographicallySmallestCompleteSequence() {
+        assertEquals(List.of("a","x","z"), test.mostVisitedPattern(
+            new String[]{"u1","u1","u1","u2","u2","u2"}, new int[]{1,2,3,4,5,6}, new String[]{"a","x","z","a","y","z"}));
+    }
+
+    @Test public void testFourVisitsPreferSequenceSeenByMoreUsers() {
+        assertEquals(List.of("a","b","d"), test.mostVisitedPattern(
+            new String[]{"u1","u1","u1","u1","u2","u2","u2"}, new int[]{1,2,3,4,5,6,7},
+            new String[]{"a","b","c","d","a","b","d"}));
+    }
+
+    @Test public void testLargeWebsiteNamesRemainLexicographicallyComparable() {
+        assertEquals(List.of("alpha","middle","zeta"), test.mostVisitedPattern(
+            new String[]{"u","u","u"}, new int[]{3,1,2}, new String[]{"zeta","alpha","middle"}));
+    }
+
+    @Test public void testSameSequenceCountedOncePerUser() {
+        assertEquals(List.of("a","a","b"), test.mostVisitedPattern(
+            new String[]{"u","u","u","u","v","v","v"}, new int[]{1,2,3,4,5,6,7},
+            new String[]{"a","b","a","b","a","b","c"}));
+    }
 }

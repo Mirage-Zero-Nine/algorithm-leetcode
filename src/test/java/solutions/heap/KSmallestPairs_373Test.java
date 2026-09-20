@@ -82,4 +82,14 @@ public class KSmallestPairs_373Test {
         // First pair should be (0,0)
         assertEquals(List.of(0, 0), res.get(0));
     }
+
+    @Test public void testKAllPairs() { assertEquals(List.of(List.of(1, 3), List.of(2, 3)), solver.kSmallestPairs(new int[]{1, 2}, new int[]{3}, 2)); }
+    @Test public void testDuplicatePairsRetained() { assertEquals(4, solver.kSmallestPairs(new int[]{1, 1}, new int[]{1, 1}, 4).size()); }
+    @Test public void testNegativeAndPositiveOrdering() { List<List<Integer>> r = solver.kSmallestPairs(new int[]{-4, -1}, new int[]{-2, 3}, 4); assertEquals(List.of(-4, -2), r.get(0)); assertEquals(4, r.size()); }
+    @Test public void testKNegative() { assertTrue(solver.kSmallestPairs(new int[]{1}, new int[]{2}, -1).isEmpty()); }
+    @Test public void testOneArrayLonger() { assertEquals(3, solver.kSmallestPairs(new int[]{0}, new int[]{1, 2, 3}, 10).size()); }
+    @Test public void testZeroValues() { assertEquals(List.of(List.of(0, 0), List.of(0, 1)), solver.kSmallestPairs(new int[]{0, 2}, new int[]{0, 1}, 2)); }
+    @Test public void testLargeMagnitudeValues() { assertEquals(List.of(List.of(-100000, -100000)), solver.kSmallestPairs(new int[]{-100000}, new int[]{-100000}, 1)); }
+    @Test public void testSortedOutputBySum() { List<List<Integer>> r = solver.kSmallestPairs(new int[]{1, 2, 4}, new int[]{1, 3, 5}, 6); for (int i = 1; i < r.size(); i++) assertTrue(r.get(i - 1).get(0) + r.get(i - 1).get(1) <= r.get(i).get(0) + r.get(i).get(1)); }
+    @Test public void testRepeatedInvocation() { solver.kSmallestPairs(new int[]{1}, new int[]{2}, 1); assertEquals(List.of(List.of(3, 4)), solver.kSmallestPairs(new int[]{3}, new int[]{4}, 1)); }
 }

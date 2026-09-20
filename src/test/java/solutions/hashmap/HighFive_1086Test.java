@@ -100,4 +100,23 @@ public class HighFive_1086Test {
         int[][] result = test.highFive(items);
         assertArrayEquals(new int[][]{{1, 48}}, result); // avg of top 5: 46+47+48+49+50=240/5=48
     }
+
+    @Test
+    public void testNonContiguousStudentIdsAreSorted() {
+        assertArrayEquals(new int[][]{{1, 90}, {3, 80}},
+            test.highFive(new int[][]{
+                {3, 80}, {1, 90}, {3, 80}, {1, 90}, {3, 80},
+                {1, 90}, {3, 80}, {1, 90}, {3, 80}, {1, 90}
+            }));
+    }
+    @Test void extra01() { assertArrayEquals(new int[][]{{1,80}}, test.highFive(new int[][]{{1,80},{1,80},{1,80},{1,80},{1,80}})); }
+    @Test void extra02() { assertArrayEquals(new int[][]{{2,90}}, test.highFive(new int[][]{{2,90},{2,90},{2,90},{2,90},{2,90}})); }
+    @Test void extra03() { assertArrayEquals(new int[][]{{1,98}}, test.highFive(new int[][]{{1,100},{1,99},{1,98},{1,97},{1,96},{1,1}})); }
+    @Test void extra04() { assertArrayEquals(new int[][]{{1,1}}, test.highFive(new int[][]{{1,1},{1,1},{1,1},{1,1},{1,1}})); }
+    @Test void extra05() { assertArrayEquals(new int[][]{{1,90},{2,80}}, test.highFive(new int[][]{{1,90},{1,90},{1,90},{1,90},{1,90},{2,80},{2,80},{2,80},{2,80},{2,80}})); }
+    @Test void extra06() { assertArrayEquals(new int[][]{{3,50}}, test.highFive(new int[][]{{3,70},{3,60},{3,50},{3,40},{3,30},{3,20}})); }
+    @Test void extra07() { assertArrayEquals(new int[][]{{1,3}}, test.highFive(new int[][]{{1,1},{1,2},{1,3},{1,4},{1,5}})); }
+    @Test void extra08() { assertArrayEquals(new int[][]{{4,100}}, test.highFive(new int[][]{{4,100},{4,100},{4,100},{4,100},{4,100},{4,0}})); }
+    @Test void extra09() { assertArrayEquals(new int[][]{{5,30}}, test.highFive(new int[][]{{5,50},{5,40},{5,30},{5,20},{5,10}})); }
+    @Test void extra10() { assertArrayEquals(new int[][]{{1,100},{2,100}}, test.highFive(new int[][]{{1,100},{1,100},{1,100},{1,100},{1,100},{2,100},{2,100},{2,100},{2,100},{2,100}})); }
 }

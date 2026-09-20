@@ -10,6 +10,8 @@ import java.util.Random;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class SortedArrayToBST_108Test {
 
@@ -200,5 +202,17 @@ public class SortedArrayToBST_108Test {
         if (node == null) return true;
         if (node.val < min || node.val > max) return false;
         return isBST(node.left, min, node.val) && isBST(node.right, node.val, max);
+    }
+
+    @ParameterizedTest(name = "sorted array size {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testEverySmallSortedArraySize(int size) {
+        int[] values = new int[size];
+        for (int i = 0; i < size; i++) values[i] = i - 5;
+        TreeNode root = test.sortedArrayToBST(values);
+        List<Integer> inorder = new ArrayList<>(); inorderTraversal(root, inorder);
+        assertEquals(size, inorder.size());
+        for (int i = 0; i < size; i++) assertEquals(values[i], inorder.get(i));
+        assertTrue(isBalanced(root));
     }
 }

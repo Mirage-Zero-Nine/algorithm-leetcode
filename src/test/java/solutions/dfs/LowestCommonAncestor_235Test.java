@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class LowestCommonAncestor_235Test {
 
@@ -125,5 +127,17 @@ public class LowestCommonAncestor_235Test {
         if (root.val == val) return root;
         if (val < root.val) return findNode(root.left, val);
         return findNode(root.right, val);
+    }
+
+    @ParameterizedTest(name = "LCA pair {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testRootAndLeafPairs(int leaf) {
+        TreeNode root = new TreeNode(0);
+        TreeNode current = root;
+        for (int i = 1; i <= leaf; i++) {
+            current.right = new TreeNode(i);
+            current = current.right;
+        }
+        assertEquals(0, test.lowestCommonAncestor(root, root, current).val);
     }
 }

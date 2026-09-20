@@ -70,7 +70,9 @@ public class UndergroundSystem_1396 {
         StartTime current = checkIn.get(id);
         checkIn.remove(id);     // the passenger has exit the system, remove it to avoid duplication
 
-        String path = current.start + stationName;
+        // Station names are alphanumeric, so this separator cannot occur in either name and
+        // keeps pairs such as ("AB", "C") distinct from ("A", "BC").
+        String path = pathKey(current.start, stationName);
         int travelTime = t - current.time;
 
         if (checkOut.containsKey(path)) {       // one new passenger travel on this exist path
@@ -92,7 +94,7 @@ public class UndergroundSystem_1396 {
      * @return average travel time between the given start and end station
      */
     public double getAverageTime(String startStation, String endStation) {
-        String path = startStation + endStation;
+        String path = pathKey(startStation, endStation);
         if (checkOut.containsKey(path)) {
             TravelTime tmp = checkOut.get(path);
             return (double) tmp.totalTime / tmp.count;
@@ -101,11 +103,16 @@ public class UndergroundSystem_1396 {
         return 0;
     }
 
+    /** Builds an unambiguous route key for the alphanumeric station-name contract. */
+    private String pathKey(String startStation, String endStation) {
+        return startStation + '\u0000' + endStation;
+    }
+
     /**
      * Stores the total time of travel and the total number of passengers travel through this path.
      */
     static class TravelTime {
-        int totalTime;
+        long totalTime;
         int count;
 
         /**
@@ -113,7 +120,7 @@ public class UndergroundSystem_1396 {
          *
          * @param totalTime total travel time
          */
-        TravelTime(int totalTime) {
+        TravelTime(long totalTime) {
             this.totalTime = totalTime;
             count = 1;
         }

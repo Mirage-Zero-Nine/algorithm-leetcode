@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class MinCut_132Test {
 
@@ -70,4 +72,8 @@ public class MinCut_132Test {
         for (int i = 0; i < 500; i++) sb.append('a');
         assertEquals(0, test.minCut(sb.toString()));
     }
+
+    @ParameterizedTest
+    @CsvSource({"'aba',0","'abba',0","'abca',3","'aabcc',2","'aabb',1","'abcbaabc',2","'aabbcc',2","'racecarx',1","'abcdba',5","'aabaa',0"})
+    public void testAdditionalPalindromePartitions(String input, int expected) { assertEquals(expected, test.minCut(input)); }
 }

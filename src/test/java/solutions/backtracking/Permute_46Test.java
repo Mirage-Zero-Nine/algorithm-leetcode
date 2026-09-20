@@ -155,6 +155,24 @@ class Permute_46Test {
     }
 
     @Test
+    void handlesIntegerRangeExtremesOutsideTheLeetCodeBounds() {
+        // The implementation accepts int values generally, even though the
+        // online judge narrows them to -10..10.
+        assertPermutationResult(new int[]{Integer.MIN_VALUE, -1, 0, Integer.MAX_VALUE});
+    }
+
+    @Test
+    void returnsIndependentRowsWithinOneResult() {
+        List<List<Integer>> actual = solution.permute(new int[]{1, 2, 3});
+        List<Integer> untouchedRow = new ArrayList<>(actual.get(1));
+
+        actual.get(0).set(0, 99);
+
+        assertEquals(untouchedRow, actual.get(1),
+                "mutating one permutation must not mutate another permutation");
+    }
+
+    @Test
     void returnsFreshResultsForRepeatedCalls() {
         int[] input = {-2, 0, 2};
 
@@ -183,6 +201,14 @@ class Permute_46Test {
     @Test
     void returnsEmptyListForEmptyInput() {
         assertTrue(solution.permute(new int[]{}).isEmpty());
+    }
+
+    @Test
+    void returnsEmptyForDuplicateInputDocumentedAsUnsupported() {
+        // LeetCode guarantees distinct values, and the solution explicitly
+        // documents that its value-based used set does not support duplicates.
+        assertTrue(solution.permute(new int[]{1, 1}).isEmpty());
+        assertTrue(solution.permute(new int[]{-1, -1, 0}).isEmpty());
     }
 
     private void assertAllInputs(int[] domain, int[] input, boolean[] selected, int position) {

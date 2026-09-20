@@ -197,4 +197,6 @@ public class Compress_443Test {
         }
         return sb.toString();
     }
+
+    @Test public void testRunOfExactly1000() { char[] c = new char[1000]; Arrays.fill(c, 'm'); assertEquals(5, solver.compress(c)); assertEquals("m1000", new String(c, 0, 5)); }
 }

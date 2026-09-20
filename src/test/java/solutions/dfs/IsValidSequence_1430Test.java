@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class IsValidSequence_1430Test {
 
@@ -99,5 +101,22 @@ public class IsValidSequence_1430Test {
         int[] wrongArr = arr.clone();
         wrongArr[49] = 999;
         assertFalse(test.isValidSequence(root, wrongArr));
+    }
+
+    @ParameterizedTest(name = "valid sequence length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testLeftChainSequences(int length) {
+        TreeNode root = new TreeNode(0);
+        TreeNode current = root;
+        int[] sequence = new int[length];
+        sequence[0] = 0;
+        for (int i = 1; i < length; i++) {
+            current.left = new TreeNode(i);
+            current = current.left;
+            sequence[i] = i;
+        }
+        assertTrue(test.isValidSequence(root, sequence));
+        sequence[length - 1] = -1;
+        assertFalse(test.isValidSequence(root, sequence));
     }
 }

@@ -74,4 +74,15 @@ public class ReverseWords_557Test {
     public void testNumbersAndSpecialChars() {
         assertEquals("321 654", test.reverseWords("123 456"));
     }
+
+    @Test public void testUppercase() { assertEquals("CBA FED",test.reverseWords("ABC DEF")); }
+    @Test public void testPunctuationInside() { assertEquals("!olleh ,dlrow",test.reverseWords("hello! world,")); }
+    @Test public void testMultipleSpaces() { assertEquals("a   b  c",test.reverseWords("a   b  c")); }
+    @Test public void testTabsWithinWord() { assertEquals("b\ta",test.reverseWords("a\tb")); }
+    @Test public void testLongWord() { assertEquals("z".repeat(500),test.reverseWords("z".repeat(500))); }
+    @Test public void testRepeatedCall() { assertEquals("ba",test.reverseWords("ab")); assertEquals("dc",test.reverseWords("cd")); }
+    @Test public void testMixedDigits() { assertEquals("cba 321",test.reverseWords("abc 123")); }
+    @Test public void testTwoLetterWords() { assertEquals("zyx wvu",test.reverseWords("xyz uvw")); }
+    @Test public void testSingleSpaceBetween() { assertEquals("cba",test.reverseWords("abc")); }
+    @Test public void testEmptyAgain() { assertEquals("",test.reverseWords("")); }
 }

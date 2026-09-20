@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
 
@@ -52,6 +54,20 @@ public class LevelOrderBottom_107Test {
     }
 
     @Test
+    public void testOnlyLeftChildAtTheRoot() {
+        TreeNode root = new TreeNode(10);
+        root.left = new TreeNode(20);
+        assertEquals(List.of(List.of(20), List.of(10)), test.levelOrderBottom(root));
+    }
+
+    @Test
+    public void testOnlyRightChildAtTheRoot() {
+        TreeNode root = new TreeNode(10);
+        root.right = new TreeNode(30);
+        assertEquals(List.of(List.of(30), List.of(10)), test.levelOrderBottom(root));
+    }
+
+    @Test
     public void testNegativeValues() {
         TreeNode root = new TreeNode(-1);
         root.left = new TreeNode(-2);
@@ -67,6 +83,34 @@ public class LevelOrderBottom_107Test {
         root.left.right = new TreeNode(4);
         root.right.left = new TreeNode(5);
         assertEquals(List.of(List.of(4, 5), List.of(2, 3), List.of(1)), test.levelOrderBottom(root));
+    }
+
+    @Test
+    public void testAlternatingSingleChildChain() {
+        TreeNode root = new TreeNode(0);
+        root.left = new TreeNode(1);
+        root.left.right = new TreeNode(2);
+        root.left.right.left = new TreeNode(3);
+        root.left.right.left.right = new TreeNode(4);
+
+        assertEquals(List.of(
+                List.of(4), List.of(3), List.of(2), List.of(1), List.of(0)),
+                test.levelOrderBottom(root));
+    }
+
+    @Test
+    public void testSparseCrossParentOrdering() {
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        root.left.left = new TreeNode(4);
+        root.right.right = new TreeNode(5);
+        root.left.left.right = new TreeNode(6);
+        root.right.right.left = new TreeNode(7);
+
+        assertEquals(List.of(
+                List.of(6, 7), List.of(4, 5), List.of(2, 3), List.of(1)),
+                test.levelOrderBottom(root));
     }
 
     @Test
@@ -131,6 +175,21 @@ public class LevelOrderBottom_107Test {
     }
 
     @Test
+    public void testOfficialValueBoundsInEveryLevel() {
+        TreeNode root = new TreeNode(-1000);
+        root.left = new TreeNode(1000);
+        root.right = new TreeNode(-1000);
+        root.left.left = new TreeNode(1000);
+        root.left.right = new TreeNode(-1000);
+        root.right.right = new TreeNode(1000);
+
+        assertEquals(List.of(
+                List.of(1000, -1000, 1000),
+                List.of(1000, -1000),
+                List.of(-1000)), test.levelOrderBottom(root));
+    }
+
+    @Test
     public void testResultListsAreIndependentAcrossInvocations() {
         TreeNode root = new TreeNode(1);
         root.left = new TreeNode(2);
@@ -174,6 +233,33 @@ public class LevelOrderBottom_107Test {
     }
 
     @Test
+    public void testRepeatedCallsAcrossDifferentTreesDoNotRetainState() {
+        TreeNode first = new TreeNode(1);
+        first.left = new TreeNode(2);
+        first.right = new TreeNode(3);
+        TreeNode second = new TreeNode(9);
+        second.right = new TreeNode(8);
+        second.right.left = new TreeNode(7);
+
+        assertEquals(List.of(List.of(2, 3), List.of(1)), test.levelOrderBottom(first));
+        assertEquals(List.of(List.of(7), List.of(8), List.of(9)), test.levelOrderBottom(second));
+        assertEquals(List.of(List.of(2, 3), List.of(1)), test.levelOrderBottom(first));
+    }
+
+    @Test
+    public void testOuterResultMutationDoesNotAffectLaterCall() {
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        List<List<Integer>> first = test.levelOrderBottom(root);
+        List<List<Integer>> second = test.levelOrderBottom(root);
+
+        first.clear();
+        assertEquals(List.of(List.of(2, 3), List.of(1)), second);
+        assertEquals(List.of(List.of(2, 3), List.of(1)), test.levelOrderBottom(root));
+    }
+
+    @Test
     public void testCompleteTreeHasExpectedBottomUpLevelSizesAndValues() {
         int depth = 10;
         int nodeCount = (1 << depth) - 1;
@@ -204,5 +290,97 @@ public class LevelOrderBottom_107Test {
                 assertEquals((1 << treeLevel) + offset, result.get(resultLevel).get(offset));
             }
         }
+    }
+
+    @Test
+    public void testIndependentOracleAcrossSeededSparseTrees() {
+        Random random = new Random(107_2026L);
+        for (int caseNumber = 0; caseNumber < 80; caseNumber++) {
+            int nodeCount = 1 + random.nextInt(120);
+            TreeNode root = seededTree(random, nodeCount);
+            assertEquals(bottomUpByDepthFirstTraversal(root), test.levelOrderBottom(root),
+                    "seeded tree case " + caseNumber + " with " + nodeCount + " nodes");
+        }
+    }
+
+    @Test
+    public void testOfficialMaximumNodeCount() {
+        TreeNode root = completePrefixTree(2000);
+        List<List<Integer>> expected = bottomUpByDepthFirstTraversal(root);
+        List<List<Integer>> actual = test.levelOrderBottom(root);
+
+        assertEquals(expected, actual);
+        assertEquals(2000, actual.stream().mapToInt(List::size).sum());
+        assertEquals(11, actual.size());
+        assertEquals(977, actual.get(0).size());
+    }
+
+    private static TreeNode seededTree(Random random, int nodeCount) {
+        TreeNode root = new TreeNode(randomOfficialValue(random));
+        List<TreeNode> nodes = new ArrayList<>();
+        nodes.add(root);
+        for (int index = 1; index < nodeCount; index++) {
+            TreeNode child = new TreeNode(randomOfficialValue(random));
+            while (true) {
+                TreeNode parent = nodes.get(random.nextInt(nodes.size()));
+                if (random.nextBoolean()) {
+                    if (parent.left == null) {
+                        parent.left = child;
+                        break;
+                    }
+                } else if (parent.right == null) {
+                    parent.right = child;
+                    break;
+                }
+            }
+            nodes.add(child);
+        }
+        return root;
+    }
+
+    private static int randomOfficialValue(Random random) {
+        return random.nextInt(2001) - 1000;
+    }
+
+    private static TreeNode completePrefixTree(int nodeCount) {
+        TreeNode[] nodes = new TreeNode[nodeCount];
+        for (int index = 0; index < nodeCount; index++) {
+            int value = (int) (((long) index * 7919) % 2001) - 1000;
+            nodes[index] = new TreeNode(value);
+        }
+        for (int index = 0; index < nodeCount; index++) {
+            int left = index * 2 + 1;
+            int right = left + 1;
+            if (left < nodeCount) {
+                nodes[index].left = nodes[left];
+            }
+            if (right < nodeCount) {
+                nodes[index].right = nodes[right];
+            }
+        }
+        return nodes[0];
+    }
+
+    /**
+     * Independent oracle: depth-first traversal groups values by depth, then reverses the
+     * completed top-down groups. It does not use the queue/level-size algorithm under test.
+     */
+    private static List<List<Integer>> bottomUpByDepthFirstTraversal(TreeNode root) {
+        List<List<Integer>> topDown = new ArrayList<>();
+        collectByDepth(root, 0, topDown);
+        Collections.reverse(topDown);
+        return topDown;
+    }
+
+    private static void collectByDepth(TreeNode node, int depth, List<List<Integer>> levels) {
+        if (node == null) {
+            return;
+        }
+        while (levels.size() <= depth) {
+            levels.add(new ArrayList<>());
+        }
+        levels.get(depth).add(node.val);
+        collectByDepth(node.left, depth + 1, levels);
+        collectByDepth(node.right, depth + 1, levels);
     }
 }

@@ -72,4 +72,14 @@ public class MinDominoRotations_1007Test {
         // B already all 3s, so 0 rotations needed to make B uniform
         assertEquals(0, solver.minDominoRotations(A, B));
     }
+    @Test public void testAdditionalTop() { assertEquals(0, solver.minDominoRotations(new int[]{1, 2, 3}, new int[]{2, 2, 2})); }
+    @Test public void testAdditionalBottom() { assertEquals(0, solver.minDominoRotations(new int[]{2, 2, 2}, new int[]{1, 2, 3})); }
+    @Test public void testAdditionalAlreadyBottom() { assertEquals(0, solver.minDominoRotations(new int[]{2, 2, 2}, new int[]{1, 1, 1})); }
+    @Test public void testAdditionalTwo() { assertEquals(1, solver.minDominoRotations(new int[]{1, 2}, new int[]{2, 3})); }
+    @Test public void testAdditionalNoMatch() { assertEquals(-1, solver.minDominoRotations(new int[]{1, 2, 3}, new int[]{4, 5, 6})); }
+    @Test public void testAdditionalFour() { assertEquals(-1, solver.minDominoRotations(new int[]{1, 2, 3, 4}, new int[]{2, 1, 4, 2})); }
+    @Test public void testAdditionalValueSix() { assertEquals(1, solver.minDominoRotations(new int[]{6, 1, 6}, new int[]{2, 6, 3})); }
+    @Test public void testAdditionalMixed() { assertEquals(1, solver.minDominoRotations(new int[]{3, 5, 3, 3}, new int[]{5, 3, 4, 3})); }
+    @Test public void testAdditionalUniformB() { assertEquals(0, solver.minDominoRotations(new int[]{2, 3, 4}, new int[]{5, 5, 5})); }
+    @Test public void testAdditionalSingleMatch() { assertEquals(0, solver.minDominoRotations(new int[]{6}, new int[]{6})); }
 }

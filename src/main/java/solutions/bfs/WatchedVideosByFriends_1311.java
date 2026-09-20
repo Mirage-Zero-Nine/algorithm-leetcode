@@ -106,7 +106,8 @@ public class WatchedVideosByFriends_1311 {
 
             for (int i = 0; i < size; i++) {
                 int current = queue.poll();
-                Set<Integer> next = friendship.get(current);
+                // An isolated person has no graph entry; treat that as an empty frontier.
+                Set<Integer> next = friendship.getOrDefault(current, Set.of());
                 for (Integer n : next) {
                     if (people.add(n)) {
                         queue.add(n);

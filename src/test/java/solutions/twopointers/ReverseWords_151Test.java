@@ -70,4 +70,15 @@ public class ReverseWords_151Test {
         assertTrue(result.startsWith("word499"));
         assertTrue(result.endsWith("word0"));
     }
+
+    @Test public void testTwoWordsNoPadding() { assertEquals("b a",test.reverseWords("a b")); }
+    @Test public void testTabsAreCharacters() { assertEquals("a\tb",test.reverseWords("a\tb")); }
+    @Test public void testPunctuation() { assertEquals("world! hello,",test.reverseWords("hello, world!")); }
+    @Test public void testNumbers() { assertEquals("3 2 1",test.reverseWords("1 2 3")); }
+    @Test public void testTwoPointersLong() { assertEquals("c b a",test.twoPointers("a b c")); }
+    @Test public void testManySpaces() { assertEquals("c b a",test.reverseWords("a     b     c")); }
+    @Test public void testRepeatedWord() { assertEquals("go go stop",test.reverseWords("stop go go")); }
+    @Test public void testLongWord() { assertEquals("z".repeat(500),test.reverseWords("z".repeat(500))); }
+    @Test public void testLeadingOnly() { assertEquals("word",test.reverseWords("   word")); }
+    @Test public void testTrailingOnly() { assertEquals("word",test.reverseWords("word   ")); }
 }

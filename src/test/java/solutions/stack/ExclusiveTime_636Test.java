@@ -64,4 +64,14 @@ public class ExclusiveTime_636Test {
         assertEquals(n, result.length);
         for (int v : result) assertTrue(v > 0);
     }
+    @Test public void testTwoNestedFunctions() { assertArrayEquals(new int[]{2,2}, e.exclusiveTime(2,List.of("0:start:0","1:start:1","1:end:2","0:end:3"))); }
+    @Test public void testChildOneUnit() { assertArrayEquals(new int[]{1,1}, e.exclusiveTime(2,List.of("0:start:0","1:start:1","1:end:1","0:end:1"))); }
+    @Test public void testRecursiveThreeLevels() { assertArrayEquals(new int[]{5},e.exclusiveTime(1,List.of("0:start:0","0:start:1","0:start:2","0:end:2","0:end:3","0:end:4"))); }
+    @Test public void testIdleGapsInSeparateCalls() { assertArrayEquals(new int[]{3},e.exclusiveTime(1,List.of("0:start:5","0:end:6","0:start:10","0:end:10"))); }
+    @Test public void testThreeSiblings() { assertArrayEquals(new int[]{4},e.exclusiveTime(1,List.of("0:start:0","0:end:0","0:start:2","0:end:3","0:start:5","0:end:5"))); }
+    @Test public void testMultipleIdsWithChild() { assertArrayEquals(new int[]{1,1,2},e.exclusiveTime(3,List.of("0:start:0","1:start:0","1:end:0","2:start:1","2:end:2","0:end:3"))); }
+    @Test public void testEndTimestampInclusive() { assertArrayEquals(new int[]{1},e.exclusiveTime(1,List.of("0:start:99","0:end:99"))); }
+    @Test public void testIndependentInvocation() { assertArrayEquals(new int[]{1},e.exclusiveTime(1,List.of("0:start:0","0:end:0"))); assertArrayEquals(new int[]{2},e.exclusiveTime(1,List.of("0:start:4","0:end:5"))); }
+    @Test public void testLargeSingleDuration() { assertArrayEquals(new int[]{1001},e.exclusiveTime(1,List.of("0:start:0","0:end:1000"))); }
+    @Test public void testNestedDifferentOrder() { assertArrayEquals(new int[]{2,2},e.exclusiveTime(2,List.of("0:start:1","1:start:2","1:end:3","0:end:4"))); }
 }

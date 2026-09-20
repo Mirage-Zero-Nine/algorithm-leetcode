@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import library.tree.TreeParser;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MaxDepth_104Test {
 
@@ -187,5 +189,13 @@ public class MaxDepth_104Test {
         root.right = tmp;
         invertTree(root.left);
         invertTree(root.right);
+    }
+
+    @ParameterizedTest(name = "binary chain depth {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testChainDepths(int depth) {
+        TreeNode root = new TreeNode(0); TreeNode current = root;
+        for (int i = 1; i < depth; i++) { current.left = new TreeNode(i); current = current.left; }
+        assertEquals(depth, test.maxDepth(root));
     }
 }

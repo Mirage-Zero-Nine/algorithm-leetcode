@@ -139,8 +139,28 @@ class GetFactors_254Test {
     }
 
     @Test
-    void everyValueThroughOneHundredTwentyMatchesIndependentProductDp() {
-        for (int n = 1; n <= 120; n++) {
+    void officialMaximumValueHasAllItsMultiplicativePartitions() {
+        List<List<Integer>> result = solution.getFactors(10_000_000);
+
+        // 10^7 = 2^7 * 5^7 has 2,997 unordered factorizations with every factor > 1.
+        assertEquals(2_997, result.size());
+        assertWellFormed(10_000_000, result);
+    }
+
+    @Test
+    void returnedNestedListsDoNotShareMutableStateAcrossCalls() {
+        List<List<Integer>> first = solution.getFactors(12);
+        first.get(0).add(99);
+        first.clear();
+
+        List<List<Integer>> second = solution.getFactors(12);
+        assertEquals(Set.of("2*2*3", "2*6", "3*4"), canonical(second));
+        assertWellFormed(12, second);
+    }
+
+    @Test
+    void everyValueThroughThreeHundredMatchesIndependentProductDp() {
+        for (int n = 1; n <= 300; n++) {
             assertEquals(independentCombinations(n), canonical(solution.getFactors(n)), "factor combinations for " + n);
         }
     }
@@ -175,10 +195,13 @@ class GetFactors_254Test {
             assertFalse(factors.isEmpty());
             assertTrue(factors.size() >= 2, "a combination must contain at least two factors: " + factors);
             long product = 1;
+            int previous = 1;
             for (int factor : factors) {
                 assertTrue(factor >= 2);
                 assertTrue(factor < n, "the input itself is not a factor: " + factors);
+                assertTrue(previous <= factor, "factors must be nondecreasing: " + factors);
                 product *= factor;
+                previous = factor;
             }
             assertEquals(n, product, "invalid product: " + factors);
             assertTrue(seen.add(factors.stream().sorted().map(String::valueOf).collect(Collectors.joining("*"))),

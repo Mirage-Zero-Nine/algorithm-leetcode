@@ -64,4 +64,14 @@ class LargestUniqueNumber_1133Test {
         }
         assertEquals(999, solution.largestUniqueNumber(arr));
     }
+    @Test void extra01() { assertEquals(-1, solution.largestUniqueNumber(new int[]{})); }
+    @Test void extra02() { assertEquals(2, solution.largestUniqueNumber(new int[]{1,2})); }
+    @Test void extra03() { assertEquals(-1, solution.largestUniqueNumber(new int[]{4,4,4})); }
+    @Test void extra04() { assertEquals(100, solution.largestUniqueNumber(new int[]{100,99,99})); }
+    @Test void extra05() { assertEquals(2, solution.largestUniqueNumber(new int[]{1,1,2})); }
+    @Test void extra06() { assertEquals(1, solution.largestUniqueNumber(new int[]{1,2,3,3,2})); }
+    @Test void extra07() { assertEquals(7, solution.largestUniqueNumber(new int[]{7,1,2,3,4,5,6})); }
+    @Test void extra08() { assertEquals(-100, solution.largestUniqueNumber(new int[]{-100})); }
+    @Test void extra09() { assertEquals(7, solution.largestUniqueNumber(new int[]{8,8,9,9,10,10,7})); }
+    @Test void extra10() { assertEquals(0, solution.largestUniqueNumber(new int[]{1,1,0})); }
 }

@@ -68,4 +68,50 @@ public class LastSubstring_1163Test {
         String input = "a".repeat(10000) + "z" + "a".repeat(10000);
         assertEquals("z" + "a".repeat(10000), test.lastSubstring(input));
     }
+
+    @Test
+    public void testMaxCharacterAppearsSeveralTimes() {
+        assertEquals("zaz", test.lastSubstring("azaz"));
+    }
+
+    @Test
+    public void testEqualPrefixChoosesLongerSuffixWhenNeeded() {
+        assertEquals("bbab", test.lastSubstring("bbab"));
+    }
+
+    @Test
+    public void testAlphabetBoundaries() {
+        assertEquals("z", test.lastSubstring("abcdefghijklmnopqrstuvwxyz"));
+    }
+
+    @Test
+    public void testNegativeJavaCharacterValuesAreNotRelevant() {
+        assertEquals("z", test.lastSubstring("yz"));
+    }
+
+    @Test
+    public void testRepeatedCallsDoNotShareState() {
+        assertEquals("c", test.lastSubstring("abc"));
+        assertEquals("baba", test.lastSubstring("baba"));
+    }
+
+    @Test
+    public void testAlternatingMaximumSuffix() {
+        assertEquals("zzab", test.lastSubstring("abzzab"));
+    }
+
+    @Test
+    public void testMaximumAtBeginningAndEnd() {
+        assertEquals("zaz", test.lastSubstring("zaz"));
+    }
+
+    @Test
+    public void testLongSingleCharacterRun() {
+        assertEquals("b".repeat(100), test.lastSubstring("a".repeat(100) + "b".repeat(100)));
+    }
+
+    @Test
+    public void testTwoSuffixesWithSameLeadingCharacter() {
+        assertEquals("cabc", test.lastSubstring("abcabc"));
+    }
 }

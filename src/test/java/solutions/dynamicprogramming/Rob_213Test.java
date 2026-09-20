@@ -149,4 +149,9 @@ public class Rob_213Test {
         assertEquals(42, test.rob(new int[]{42}));
         assertEquals(0, test.rob(new int[]{0}));
     }
+
+    @Test
+    public void testAlternatingLargeAndSmallCircularValues() {
+        assertEquals(20, test.rob(new int[]{10, 1, 10, 1, 10}));
+    }
 }

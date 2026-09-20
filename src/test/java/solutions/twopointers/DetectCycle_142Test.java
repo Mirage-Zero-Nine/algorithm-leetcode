@@ -96,4 +96,14 @@ public class DetectCycle_142Test {
         n1.next = n2; n2.next = n3; n3.next = n2;
         assertEquals(-2, test.detectCycle(n1).val);
     }
+
+    @Test public void testTwoNodeNoCycle() { ListNode a=new ListNode(1), b=new ListNode(2); a.next=b; assertNull(test.detectCycle(a)); }
+    @Test public void testCycleStartsAtSecondOfFour() { ListNode a=new ListNode(1),b=new ListNode(2),c=new ListNode(3),d=new ListNode(4); a.next=b;b.next=c;c.next=d;d.next=b;assertEquals(2,test.detectCycle(a).val); }
+    @Test public void testCycleStartsAtTail() { ListNode a=new ListNode(1),b=new ListNode(2),c=new ListNode(3);a.next=b;b.next=c;c.next=c;assertEquals(3,test.detectCycle(a).val); }
+    @Test public void testLongAcyclic() { ListNode h=new ListNode(0),p=h; for(int i=1;i<1000;i++){p.next=new ListNode(i);p=p.next;} assertNull(test.detectCycle(h)); }
+    @Test public void testLongCycleNearHead() { ListNode h=new ListNode(0),p=h,entry=null; for(int i=1;i<100;i++){p.next=new ListNode(i);p=p.next;if(i==1)entry=p;} p.next=entry; assertEquals(1,test.detectCycle(h).val); }
+    @Test public void testSelfCycleNegative() { ListNode n=new ListNode(-4);n.next=n;assertEquals(-4,test.detectCycle(n).val); }
+    @Test public void testCycleAfterLongPrefix() { ListNode h=new ListNode(0),p=h; for(int i=1;i<5;i++){p.next=new ListNode(i);p=p.next;} ListNode e=new ListNode(99);p.next=e;e.next=e;assertEquals(99,test.detectCycle(h).val); }
+    @Test public void testRepeatedCall() { assertNull(test.detectCycle(new ListNode(8))); ListNode n=new ListNode(9);n.next=n;assertEquals(9,test.detectCycle(n).val); }
+    @Test public void testDistinctEqualValuesIdentity() { ListNode a=new ListNode(1),b=new ListNode(1);a.next=b;b.next=b;assertEquals(b,test.detectCycle(a)); }
 }

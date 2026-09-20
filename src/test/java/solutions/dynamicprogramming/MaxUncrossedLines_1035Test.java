@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class MaxUncrossedLines_1035Test {
 
@@ -61,5 +63,24 @@ public class MaxUncrossedLines_1035Test {
     @Test
     public void testPartialOverlap() {
         assertEquals(3, test.maxUncrossedLines(new int[]{1, 2, 3, 4, 5}, new int[]{3, 4, 5, 6, 7}));
+    }
+
+    @ParameterizedTest(name = "LCS case {0}")
+    @CsvSource({
+            "'1;2;3', '3;2;1', 1", "'1;2;1', '1;1', 2",
+            "'1;3;5;7', '2;4;6;8', 0", "'1;2;3;2', '2;1;2;3', 3",
+            "'4;4;4', '4;4', 2", "'0;-1;2', '-1;0;2', 2",
+            "'1;2', '1;2;3;4', 2", "'9', '8;9;10', 1",
+            "'2;2;1', '2;1;2', 2", "'5;6;7', '7;6;5', 1"
+    })
+    public void testAdditionalOrderingAndDuplicateCases(String left, String right, int expected) {
+        assertEquals(expected, test.maxUncrossedLines(parse(left), parse(right)));
+    }
+
+    private static int[] parse(String encoded) {
+        String[] values = encoded.split(";");
+        int[] result = new int[values.length];
+        for (int i = 0; i < values.length; i++) result[i] = Integer.parseInt(values[i]);
+        return result;
     }
 }

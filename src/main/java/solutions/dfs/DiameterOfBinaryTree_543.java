@@ -1,5 +1,10 @@
 package solutions.dfs;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 import library.tree.binarytree.TreeNode;
 
 /**
@@ -13,42 +18,54 @@ import library.tree.binarytree.TreeNode;
  */
 
 public class DiameterOfBinaryTree_543 {
-    private int max = 0;        // global max
 
     /**
-     * Find max depth in both left sub tree and right subtree.
+     * <p>The returned length is measured in edges, so a null or singleton tree has diameter zero.
+     * Node values do not affect the result.  The implementation uses an iterative post-order
+     * traversal so a valid tree at the 10,000-node constraint boundary cannot overflow the Java
+     * call stack, and keeps all per-call state local so one invocation cannot affect another.</p>
+     * <p>
+     * Finds the largest number of edges on any path between two nodes.
+     *
+     * <p>For every node, the longest path that uses that node as its highest point has length
+     * {@code leftHeight + rightHeight}.  A post-order traversal makes both child heights
+     * available before evaluating the node.  Two explicit stacks replace recursive calls, and
+     * an identity map stores heights for this invocation only.</p>
      *
      * @param root root node
-     * @return max path
+     * @return diameter in edges, or zero for a null tree
+     * @implNote Runs in O(n) time and uses O(n) auxiliary space for the traversal and heights.
      */
     public int diameterOfBinaryTree(TreeNode root) {
-
-        /* Corner case */
-        if (root == null) {
-            return 0;
-        }
-        path(root);
-        return max;
-    }
-
-    /**
-     * Find current tree node max depth.
-     *
-     * @param root root node
-     * @return max depth of current node
-     */
-    private int path(TreeNode root) {
-
-        /* End point */
         if (root == null) {
             return 0;
         }
 
-        int left = path(root.left);     // left root depth
-        int right = path(root.right);       // right root depth
+        Deque<TreeNode> pending = new ArrayDeque<>();
+        Deque<TreeNode> postOrder = new ArrayDeque<>();
+        pending.push(root);
+        while (!pending.isEmpty()) {
+            TreeNode node = pending.pop();
+            postOrder.push(node);
+            if (node.left != null) {
+                pending.push(node.left);
+            }
+            if (node.right != null) {
+                pending.push(node.right);
+            }
+        }
 
-        max = Math.max(max, left + right);      // global max sum of path
+        Map<TreeNode, Integer> heights = new IdentityHashMap<>();
+        int diameter = 0;
+        while (!postOrder.isEmpty()) {
+            TreeNode node = postOrder.pop();
+            int left = node.left == null ? 0 : heights.get(node.left);
+            int right = node.right == null ? 0 : heights.get(node.right);
 
-        return Math.max(left, right) + 1;       // current max
+            diameter = Math.max(diameter, left + right);
+            heights.put(node, Math.max(left, right) + 1);
+        }
+
+        return diameter;
     }
 }

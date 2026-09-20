@@ -67,6 +67,9 @@ public class VideoStitching_1024 {
      */
     public int backtracking(int[][] clips, int T) {
 
+        // Reset the per-invocation optimum when this instance is reused.
+        min = Integer.MAX_VALUE;
+
         int n = clips.length;
         TreeMap<Integer, Integer> m = new TreeMap<>();
         Arrays.sort(clips, (a, b) -> {

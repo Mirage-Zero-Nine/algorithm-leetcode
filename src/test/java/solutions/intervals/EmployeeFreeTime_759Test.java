@@ -146,4 +146,55 @@ public class EmployeeFreeTime_759Test {
         assertEquals(4, actual.get(0).start);
         assertEquals(5, actual.get(0).end);
     }
+
+    @Test public void testSingleEmployeeFullyBusy() {
+        assertTrue(solver.employeeFreeTime(List.of(List.of(new Interval(0, 10)))).isEmpty());
+    }
+
+    @Test public void testCommonGapAfterAllEmployeesFinish() {
+        List<Interval> actual = solver.employeeFreeTime(List.of(
+                List.of(new Interval(1, 2)), List.of(new Interval(3, 4))));
+        assertEquals(1, actual.size());
+        assertEquals(2, actual.get(0).start);
+        assertEquals(3, actual.get(0).end);
+    }
+
+    @Test public void testSeveralEmployeesLeaveOneGap() {
+        List<Interval> actual = solver.employeeFreeTime(List.of(
+                List.of(new Interval(0, 2), new Interval(5, 8)),
+                List.of(new Interval(1, 4), new Interval(6, 9)),
+                List.of(new Interval(2, 4))));
+        assertEquals(1, actual.size());
+        assertEquals(4, actual.get(0).start);
+        assertEquals(5, actual.get(0).end);
+    }
+
+    @Test public void testEmptyEmployeeScheduleDoesNotCreateBusyTime() {
+        assertTrue(solver.employeeFreeTime(List.of(Collections.emptyList())).isEmpty());
+    }
+
+    @Test public void testFreeIntervalsAreStrictlyPositive() {
+        List<Interval> actual = solver.employeeFreeTime(List.of(
+                List.of(new Interval(0, 1), new Interval(1, 2)),
+                List.of(new Interval(0, 2))));
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test public void testMultipleEmployeesWithDifferentOuterBounds() {
+        List<Interval> actual = solver.employeeFreeTime(List.of(
+                List.of(new Interval(0, 3)), List.of(new Interval(5, 8))));
+        assertEquals(1, actual.size());
+        assertEquals(3, actual.get(0).start);
+        assertEquals(5, actual.get(0).end);
+    }
+
+    @Test public void testSingleEmployeeMultipleGapsInOrder() {
+        List<Interval> actual = solver.employeeFreeTime(List.of(List.of(
+                new Interval(0, 2), new Interval(4, 6), new Interval(8, 10))));
+        assertEquals(2, actual.size());
+        assertEquals(2, actual.get(0).start);
+        assertEquals(4, actual.get(0).end);
+        assertEquals(6, actual.get(1).start);
+        assertEquals(8, actual.get(1).end);
+    }
 }

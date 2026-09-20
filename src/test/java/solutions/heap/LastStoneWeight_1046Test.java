@@ -61,4 +61,15 @@ public class LastStoneWeight_1046Test {
     public void testLargeWeights() {
         assertEquals(0, test.lastStoneWeight(new int[]{1000, 1000}));
     }
+
+    @Test public void testEmptyInput() { assertEquals(0, test.lastStoneWeight(new int[]{})); }
+    @Test public void testThreeStones() { assertEquals(1, test.lastStoneWeight(new int[]{2, 3, 4})); }
+    @Test public void testUnequalPair() { assertEquals(1, test.lastStoneWeight(new int[]{1, 2})); }
+    @Test public void testZeros() { assertEquals(0, test.lastStoneWeight(new int[]{0, 0, 0})); }
+    @Test public void testOneLargeRemaining() { assertEquals(8, test.lastStoneWeight(new int[]{10, 1, 1})); }
+    @Test public void testBalancedPairs() { assertEquals(0, test.lastStoneWeight(new int[]{1, 2, 3, 4})); }
+    @Test public void testRepeatedInvocation() { test.lastStoneWeight(new int[]{1, 2}); assertEquals(9, test.lastStoneWeight(new int[]{9})); }
+    @Test public void testMaximumSingleWeight() { assertEquals(10000, test.lastStoneWeight(new int[]{10000})); }
+    @Test public void testOddCountPairing() { assertEquals(1, test.lastStoneWeight(new int[]{7, 5, 3, 1, 1})); }
+    @Test public void testManyDistinctWeights() { assertEquals(1, test.lastStoneWeight(new int[]{1, 2, 4, 8, 16})); }
 }

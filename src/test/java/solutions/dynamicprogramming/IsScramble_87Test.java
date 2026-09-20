@@ -1,9 +1,12 @@
 package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class IsScramble_87Test {
 
@@ -70,5 +73,11 @@ public class IsScramble_87Test {
     @Test
     public void testAllSameChars() {
         assertTrue(test.isScramble("aaaa", "aaaa"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"abc,bca,true","abc,cab,true","abcd,bdac,false","abcd,acbd,true","abcd,abdc,true","abcd,efgh,false","a,a,true","a,b,false","great,rgtae,true","abcde,ebcda,true"})
+    public void testAdditionalScramblePartitions(String first, String second, boolean expected) {
+        assertEquals(expected, test.isScramble(first, second));
     }
 }

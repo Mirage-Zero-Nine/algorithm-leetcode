@@ -44,6 +44,38 @@ class GenerateAbbreviations_320Test {
         return expected;
     }
 
+    /**
+     * Independently parses one output and verifies that it consumes the source exactly once.
+     * A digit run denotes one positive-length, contiguous abbreviated substring.
+     */
+    private void assertWellFormed(String word, String abbreviation) {
+        int sourcePosition = 0;
+        int abbreviationPosition = 0;
+        while (abbreviationPosition < abbreviation.length()) {
+            char token = abbreviation.charAt(abbreviationPosition);
+            if (Character.isDigit(token)) {
+                assertTrue(token != '0', "zero-length abbreviation: " + abbreviation);
+                int numberStart = abbreviationPosition;
+                while (abbreviationPosition < abbreviation.length()
+                        && Character.isDigit(abbreviation.charAt(abbreviationPosition))) {
+                    abbreviationPosition++;
+                }
+                int count = Integer.parseInt(abbreviation.substring(numberStart, abbreviationPosition));
+                assertTrue(count > 0, "abbreviation length must be positive: " + abbreviation);
+                assertTrue(sourcePosition + count <= word.length(),
+                        "abbreviation consumes beyond source: " + abbreviation);
+                sourcePosition += count;
+            } else {
+                assertTrue(sourcePosition < word.length(), "literal consumes beyond source: " + abbreviation);
+                assertEquals(word.charAt(sourcePosition), token,
+                        "literal differs from source in " + abbreviation);
+                sourcePosition++;
+                abbreviationPosition++;
+            }
+        }
+        assertEquals(word.length(), sourcePosition, "abbreviation does not consume source: " + abbreviation);
+    }
+
     @Test
     void testEmpty() {
         assertExact("");
@@ -180,5 +212,56 @@ class GenerateAbbreviations_320Test {
     @Test
     void testLeadingAndTrailingRuns() {
         assertExact("aaabbb");
+    }
+
+    @Test
+    void testExhaustiveBinaryWordsThroughLengthSix() {
+        // Exhaustive small inputs catch state-transition errors independently of hand-picked words.
+        for (int length = 0; length <= 6; length++) {
+            for (int mask = 0; mask < (1 << length); mask++) {
+                StringBuilder word = new StringBuilder(length);
+                for (int position = 0; position < length; position++) {
+                    word.append((mask & (1 << position)) == 0 ? 'a' : 'b');
+                }
+                assertExact(word.toString());
+            }
+        }
+    }
+
+    @Test
+    void testEveryGeneratedAbbreviationIsWellFormed() {
+        String word = "abcdefghijklmno";
+        for (String abbreviation : new GenerateAbbreviations_320().generateAbbreviations(word)) {
+            assertWellFormed(word, abbreviation);
+        }
+    }
+
+    @Test
+    void testDecimalRunLengthsAtMaximumWordSize() {
+        Set<String> actual = new HashSet<>(
+                new GenerateAbbreviations_320().generateAbbreviations("abcdefghijklmno"));
+        assertTrue(actual.contains("15"));
+        assertTrue(actual.contains("10klmno"));
+        assertTrue(actual.contains("9jklmno"));
+        assertFalse(actual.contains("0"));
+    }
+
+    @Test
+    void testInvalidAdjacentOrOverlappingFormsAreAbsent() {
+        Set<String> actual = new HashSet<>(new GenerateAbbreviations_320().generateAbbreviations("abcde"));
+        // Adjacent abbreviated runs must be merged, and overlapping runs cannot be represented.
+        assertFalse(actual.contains("23"));
+        assertFalse(actual.contains("22de"));
+        assertFalse(actual.contains("11cde"));
+        assertFalse(actual.contains("0bcde"));
+    }
+
+    @Test
+    void testReturnedListMutationDoesNotLeakIntoLaterCalls() {
+        GenerateAbbreviations_320 solution = new GenerateAbbreviations_320();
+        List<String> first = solution.generateAbbreviations("abc");
+        first.clear();
+        assertExact("abc");
+        assertExact("xy");
     }
 }

@@ -63,4 +63,54 @@ public class LicenseKeyFormatting_482Test {
         assertEquals(50 + 12, result.length()); // 50 chars + 12 dashes
         assertEquals("AA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA", result);
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("2-5G-3J", test.licenseKeyFormatting("2-5g-3-J", 2));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("25-G3J", test.licenseKeyFormatting("2-5g-3-J", 3));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals("A-B-C", test.licenseKeyFormatting("abc", 1));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals("A-BC", test.licenseKeyFormatting("abc", 2));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals("", test.licenseKeyFormatting("---", 3));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals("AB", test.licenseKeyFormatting("a--b", 2));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals("ABC-DEF", test.licenseKeyFormatting("abcdef", 3));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals("A-BCD-EFG", test.licenseKeyFormatting("abcdefg", 3));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals("Z", test.licenseKeyFormatting("Z", 4));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals("12-34", test.licenseKeyFormatting("1-2-3-4", 2));
+    }
 }

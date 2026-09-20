@@ -93,4 +93,14 @@ public class ClosestKValues_272Test {
         node.right = buildBalancedBST(mid + 1, hi);
         return node;
     }
+    @Test public void testKTwoExactTarget() { assertEquals(List.of(3, 2), solver.closestKValues(buildBST(), 2.5, 2)); }
+    @Test public void testKAllSingle() { assertEquals(List.of(1), solver.closestKValues(new TreeNode(1), 1.0, 1)); }
+    @Test public void testRightSkewed() { TreeNode r=new TreeNode(1); r.right=new TreeNode(3); r.right.right=new TreeNode(7); assertEquals(List.of(3,1), solver.closestKValues(r,2.0,2)); }
+    @Test public void testLeftOnlyAll() { TreeNode r=new TreeNode(3); r.left=new TreeNode(2); r.left.left=new TreeNode(1); assertEquals(3,solver.closestKValues(r,2,3).size()); }
+    @Test public void testFractionalTarget() { assertEquals(List.of(3), solver.closestKValues(buildBST(),2.9,1)); }
+    @Test public void testTargetBelowMinimum() { assertEquals(List.of(1), solver.closestKValues(buildBST(),-100,1)); }
+    @Test public void testTargetAboveMaximum() { assertEquals(List.of(5), solver.closestKValues(buildBST(),100,1)); }
+    @Test public void testRepeatedCall() { assertEquals(2,solver.closestKValues(buildBST(),3,2).size()); assertEquals(1,solver.closestKValues(buildBST(),1,1).get(0)); }
+    @Test public void testKFour() { assertEquals(4,solver.closestKValues(buildBST(),3.5,4).size()); }
+    @Test public void testEmptyK() { assertTrue(solver.closestKValues(buildBST(),3,0).isEmpty()); }
 }

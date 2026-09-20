@@ -49,6 +49,55 @@ public class AddBinary_67Test {
         assertEquals("10100", solver.addBinary("1010", "1010"));
     }
 
+    @Test public void testCarryIntoNewMostSignificantPosition() {
+        assertEquals("10000", solver.addBinary("1110", "10"));
+    }
+
+    @Test public void testUnequalLengthsWithoutCarry() {
+        assertEquals("11111111", solver.addBinary("10101010", "1010101"));
+    }
+
+    @Test public void testAlternatingCarryAndNoCarryPositions() {
+        assertEquals("1100000", solver.addBinary("110011", "101101"));
+    }
+
+    @Test public void testCarryChainStopsAtAnExistingZero() {
+        assertEquals("10110000", solver.addBinary("10101111", "1"));
+    }
+
+    @Test public void testPowerOfTwoBoundaryWithoutOverflow() {
+        assertEquals("10000000000000000001",
+                solver.addBinary("10000000000000000000", "1"));
+    }
+
+    @Test public void testZeroOperandKeepsOtherCanonicalValue() {
+        assertEquals("101010101", solver.addBinary("0", "101010101"));
+    }
+
+    @Test public void testRightOperandLongerWithLeadingCarry() {
+        assertEquals("100111111", solver.addBinary("111111", "100000000"));
+    }
+
+    @Test public void testRepeatedCallsDoNotShareCarryState() {
+        assertEquals("1000", solver.addBinary("111", "1"));
+        assertEquals("1", solver.addBinary("0", "1"));
+        assertEquals("100000", solver.addBinary("11111", "1"));
+    }
+
+    @Test public void testCommutativityAcrossDifferentWidths() {
+        String a = "100101001011";
+        String b = "111001";
+        assertEquals("100110000100", solver.addBinary(a, b));
+        assertEquals("100110000100", solver.addBinary(b, a));
+    }
+
+    @Test public void testLongMixedCarryPatternAgainstIndependentOracle() {
+        String a = "101101001011010010110100101101";
+        String b = "11001011010010110100101101001";
+        assertEquals(new BigInteger(a, 2).add(new BigInteger(b, 2)).toString(2),
+                solver.addBinary(a, b));
+    }
+
     @Test public void testExhaustiveSmallCanonicalInputs() {
         String[] inputs = canonicalBinaryInputs(8);
 

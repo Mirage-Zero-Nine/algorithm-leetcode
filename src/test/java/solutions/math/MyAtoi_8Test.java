@@ -151,4 +151,9 @@ public class MyAtoi_8Test {
         assertEquals(Integer.MAX_VALUE, test.myAtoi("2147483650"));
         assertEquals(Integer.MIN_VALUE, test.myAtoi("-2147483649"));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(-2147483648, test.myAtoi("-91283472332"));
+    }
 }

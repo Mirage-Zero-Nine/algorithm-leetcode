@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 
 public class LongestCommonSubsequence_1143Test {
@@ -108,5 +110,21 @@ public class LongestCommonSubsequence_1143Test {
         }
         addSubsequences(subsequences, text, index + 1, current);
         addSubsequences(subsequences, text, index + 1, current + text.charAt(index));
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctCases() {
+        return Stream.of(
+                DynamicTest.dynamicTest("empty left", () -> assertEquals(0, test.longestCommonSubsequence("", "abc"))),
+                DynamicTest.dynamicTest("empty right", () -> assertEquals(0, test.longestCommonSubsequence("abc", ""))),
+                DynamicTest.dynamicTest("one common middle", () -> assertEquals(1, test.longestCommonSubsequence("ax", "ya"))),
+                DynamicTest.dynamicTest("ordered overlap", () -> assertEquals(2, test.longestCommonSubsequence("abc", "bac"))),
+                DynamicTest.dynamicTest("alternating overlap", () -> assertEquals(3, test.longestCommonSubsequence("abab", "baba"))),
+                DynamicTest.dynamicTest("repeated blocks", () -> assertEquals(4, test.longestCommonSubsequence("aabbcc", "abcabc"))),
+                DynamicTest.dynamicTest("longer left", () -> assertEquals(3, test.longestCommonSubsequence("zzabczz", "abc"))),
+                DynamicTest.dynamicTest("case-sensitive", () -> assertEquals(0, test.longestCommonSubsequence("ABC", "abc"))),
+                DynamicTest.dynamicTest("single repeated match", () -> assertEquals(1, test.longestCommonSubsequence("aaaa", "ba"))),
+                DynamicTest.dynamicTest("disjoint suffixes", () -> assertEquals(2, test.longestCommonSubsequence("mnop", "opqr"))),
+                DynamicTest.dynamicTest("whole short string", () -> assertEquals(4, test.longestCommonSubsequence("abcd", "abcd"))));
     }
 }

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MergeTrees_617Test {
 
@@ -260,5 +262,16 @@ public class MergeTrees_617Test {
         node.left = buildTree(val * 2, depth - 1);
         node.right = buildTree(val * 2 + 1, depth - 1);
         return node;
+    }
+
+    @ParameterizedTest(name = "merge chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testOverlappingChains(int length) {
+        TreeNode first = new TreeNode(1), second = new TreeNode(2);
+        TreeNode a = first, b = second;
+        for (int i = 1; i < length; i++) { a.left = new TreeNode(1); b.left = new TreeNode(2); a = a.left; b = b.left; }
+        TreeNode result = test.mergeTrees(first, second); a = result;
+        for (int i = 0; i < length; i++) { assertEquals(3, a.val); a = a.left; }
+        assertNull(a);
     }
 }

@@ -32,7 +32,7 @@ public class ParseTernary_439Test {
     }
 
     @Test public void testShortExpression() {
-        assertEquals("", solver.parseTernary("T?2:3"));
+        assertEquals("2", solver.parseTernary("T?2:3"));
     }
 
     @Test public void testSimpleTrue() {
@@ -63,4 +63,14 @@ public class ParseTernary_439Test {
         for (int i = 0; i < 500; i++) sb.append(":0");
         assertEquals("1", solver.parseTernary(sb.toString()));
     }
+    @Test public void testSingleDigitContractExtension() { assertEquals("",solver.parseTernary("1")); }
+    @Test public void testTrueChoosesLeftDigit() { assertEquals("2",solver.parseTernary("T?2:3")); }
+    @Test public void testFalseChoosesRightDigitLong() { assertEquals("9",solver.parseTernary("F?1:9")); }
+    @Test public void testNestedDigitFalseBranch() { assertEquals("6",solver.parseTernary("T?F?4:6:8")); }
+    @Test public void testNestedTrueBranch() { assertEquals("7",solver.parseTernary("F?1:T?7:8")); }
+    @Test public void testAllBranchesDifferent() { assertEquals("0",solver.parseTernary("F?T?1:2:F?3:0")); }
+    @Test public void testResultBooleanF() { assertEquals("F",solver.parseTernary("T?F:T")); }
+    @Test public void testResultBooleanT() { assertEquals("T",solver.parseTernary("F?F:T")); }
+    @Test public void testRepeatedInvocation() { assertEquals("1",solver.parseTernary("T?1:2")); assertEquals("2",solver.parseTernary("F?1:2")); }
+    @Test public void testLongFalseChain() { assertEquals("9",solver.parseTernary("F?1:F?2:F?3:F?4:9")); }
 }

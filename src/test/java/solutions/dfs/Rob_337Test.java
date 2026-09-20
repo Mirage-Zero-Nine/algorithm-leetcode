@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class Rob_337Test {
 
@@ -193,5 +195,13 @@ public class Rob_337Test {
     public void testSingleLargeValue() {
         TreeNode root = new TreeNode(10000);
         assertEquals(10000, test.rob(root));
+    }
+
+    @ParameterizedTest(name = "uniform chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testUniformLeftChains(int length) {
+        TreeNode root = new TreeNode(1); TreeNode current = root;
+        for (int i = 1; i < length; i++) { current.left = new TreeNode(1); current = current.left; }
+        assertEquals((length + 1) / 2, test.rob(root));
     }
 }

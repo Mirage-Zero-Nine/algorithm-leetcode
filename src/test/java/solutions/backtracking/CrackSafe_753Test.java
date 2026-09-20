@@ -15,15 +15,38 @@ class CrackSafe_753Test {
     private final CrackSafe_753 solution = new CrackSafe_753();
 
     private void assertValidDeBruijnSequence(String result, int n, int k) {
+        assertNotNull(result);
         assertEquals((int) Math.pow(k, n) + n - 1, result.length());
 
         Set<String> seen = new HashSet<>();
         for (int i = 0; i <= result.length() - n; i++) {
             String window = result.substring(i, i + n);
             assertTrue(window.chars().allMatch(ch -> ch >= '0' && ch < '0' + k));
-            seen.add(window);
+            assertTrue(seen.add(window), "Repeated password window: " + window);
         }
-        assertEquals((int) Math.pow(k, n), seen.size());
+
+        // The minimum-length requirement gives exactly k^n windows.  Comparing
+        // with an independently generated set proves that no legal password
+        // is missing, rather than only checking the number of distinct windows.
+        assertEquals(allCodes(n, k), seen);
+    }
+
+    private static Set<String> allCodes(int n, int k) {
+        Set<String> expected = new HashSet<>();
+        collectCodes(n, k, new StringBuilder(), expected);
+        return expected;
+    }
+
+    private static void collectCodes(int remaining, int k, StringBuilder prefix, Set<String> expected) {
+        if (remaining == 0) {
+            expected.add(prefix.toString());
+            return;
+        }
+        for (int digit = 0; digit < k; digit++) {
+            prefix.append(digit);
+            collectCodes(remaining - 1, k, prefix, expected);
+            prefix.deleteCharAt(prefix.length() - 1);
+        }
     }
 
     @Test
@@ -84,6 +107,52 @@ class CrackSafe_753Test {
     void testOneOneContainsZero() {
         String result = solution.crackSafe(1, 1);
         assertTrue(result.contains("0"));
+    }
+
+    @Test
+    void testSingleSymbolPasswordIsDeterministicForEveryLength() {
+        assertEquals("0000", solution.crackSafe(4, 1));
+    }
+
+    @Test
+    void testSingleSymbolThreeDigitPassword() {
+        assertEquals("000", solution.crackSafe(3, 1));
+    }
+
+    @Test
+    void testSingleDigitMaximumAlphabet() {
+        assertValidDeBruijnSequence(solution.crackSafe(1, 10), 1, 10);
+    }
+
+    @Test
+    void testTwoDigitMaximumAlphabet() {
+        assertValidDeBruijnSequence(solution.crackSafe(2, 10), 2, 10);
+    }
+
+    @Test
+    void testThreeDigitMaximumAlphabet() {
+        assertValidDeBruijnSequence(solution.crackSafe(3, 10), 3, 10);
+    }
+
+    @Test
+    void testRepeatedCallsOnOneInstanceDoNotShareState() {
+        assertValidDeBruijnSequence(solution.crackSafe(2, 3), 2, 3);
+        assertValidDeBruijnSequence(solution.crackSafe(1, 2), 1, 2);
+        assertValidDeBruijnSequence(solution.crackSafe(3, 2), 3, 2);
+    }
+
+    @Test
+    void testRepeatedSameInputProducesIndependentResults() {
+        String first = solution.crackSafe(2, 4);
+        String second = solution.crackSafe(2, 4);
+        assertValidDeBruijnSequence(first, 2, 4);
+        assertValidDeBruijnSequence(second, 2, 4);
+    }
+
+    @Test
+    void testMaximumProductBoundary() {
+        // The official upper product bound is k^n = 4096, reached by (4, 8).
+        assertValidDeBruijnSequence(solution.crackSafe(4, 8), 4, 8);
     }
 
     @Test

@@ -69,4 +69,15 @@ public class ThreeSumSmaller_259Test {
         // all triplets sum < 300 (max sum is 97+98+99=294 < 300)
         assertEquals(161700, test.threeSumSmaller(nums, 300));
     }
+
+    @Test public void testExactlyThreeElementsQualify() { assertEquals(1,test.threeSumSmaller(new int[]{-1,0,1},1)); }
+    @Test public void testExactlyAtTargetExcluded() { assertEquals(0,test.threeSumSmaller(new int[]{-1,0,1},0)); }
+    @Test public void testAllTripletsQualify() { assertEquals(4,test.threeSumSmaller(new int[]{1,2,3,4},20)); }
+    @Test public void testNoTripletQualifies() { assertEquals(0,test.threeSumSmaller(new int[]{1,2,3,4},6)); }
+    @Test public void testNegativeTarget() { assertEquals(2,test.threeSumSmaller(new int[]{-5,-2,-1,4},-2)); }
+    @Test public void testDuplicatesCountByIndex() { assertEquals(2,test.threeSumSmaller(new int[]{0,0,1,1},2)); }
+    @Test public void testMixedLargeValues() { assertEquals(3,test.threeSumSmaller(new int[]{-10,1,2,9},2)); }
+    @Test public void testFourZeros() { assertEquals(4,test.threeSumSmaller(new int[]{0,0,0,0},1)); }
+    @Test public void testFiveElementsThreshold() { assertEquals(7,test.threeSumSmaller(new int[]{-2,0,1,2,3},4)); }
+    @Test public void testRepeatedCall() { assertEquals(1,test.threeSumSmaller(new int[]{0,0,0},1)); assertEquals(0,test.threeSumSmaller(new int[]{0,0,0},0)); }
 }

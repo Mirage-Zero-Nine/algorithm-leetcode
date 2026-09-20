@@ -42,6 +42,44 @@ class SolveSudoku_37Test {
     }
 
     @Test
+    void officialExampleMatchesItsDocumentedUniqueSolutionExactly() {
+        char[][] board = parse(new String[] {
+            "53..7....", "6..195...", ".98....6.", "8...6...3", "4..8.3..1",
+            "7...2...6", ".6....28.", "...419..5", "....8..79"
+        });
+        solution.solveSudoku(board);
+        assertArrayEquals(parse(SOLVED), board);
+    }
+
+    @Test
+    void solvesAValidPuzzleWithADifferentDigitPermutation() {
+        String[] transformed = digitComplement(SOLVED);
+        char[][] board = parse(withBlanks(transformed,
+            new int[] {2, 8, 10, 17, 21, 28, 38, 49, 62, 74, 80}));
+        assertEquals(1, countSolutions(copy(board), 2));
+
+        solution.solveSudoku(board);
+
+        assertArrayEquals(parse(transformed), board);
+    }
+
+    @Test
+    void usesTheCallerBoardAndKeepsItsRowArraysInPlace() {
+        char[][] board = parse(new String[] {
+            "53..7....", "6..195...", ".98....6.", "8...6...3", "4..8.3..1",
+            "7...2...6", ".6....28.", "...419..5", "....8..79"
+        });
+        char[][] originalRows = board.clone();
+
+        solution.solveSudoku(board);
+
+        for (int row = 0; row < 9; row++) {
+            assertTrue(board[row] == originalRows[row], "row " + row + " was replaced");
+        }
+        assertSolved(board);
+    }
+
+    @Test
     void repeatedCallsUseFreshBoardState() {
         char[][] first = parse(puzzles().findFirst().orElseThrow().rows);
         char[][] second = parse(puzzles().skip(1).findFirst().orElseThrow().rows);
@@ -84,10 +122,26 @@ class SolveSudoku_37Test {
     }
 
     private static String[] withBlanks(int[] cells) {
-        char[][] board = parse(SOLVED);
+        return withBlanks(SOLVED, cells);
+    }
+
+    private static String[] withBlanks(String[] solved, int[] cells) {
+        char[][] board = parse(solved);
         for (int cell : cells) board[cell / 9][cell % 9] = '.';
         String[] result = new String[9];
         for (int row = 0; row < 9; row++) result[row] = new String(board[row]);
+        return result;
+    }
+
+    private static String[] digitComplement(String[] solved) {
+        String[] result = new String[solved.length];
+        for (int row = 0; row < solved.length; row++) {
+            StringBuilder transformed = new StringBuilder(9);
+            for (char digit : solved[row].toCharArray()) {
+                transformed.append((char) ('1' + ('9' - digit)));
+            }
+            result[row] = transformed.toString();
+        }
         return result;
     }
 

@@ -87,4 +87,10 @@ public class ShortestPalindrome_214Test {
         }
         return true;
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"'aacecaaa','aaacecaaa'","'abcd','dcbabcd'","'abac','cabac'","'abc','cbabc'","'abb','bbabb'","'aaba','abaaba'","'race','ecarace'","'aaab','baaab'","'xyz','zyxyz'","'abaac','caabaac'"})
+    public void testAdditionalPrefixPalindromes(String input, String expected) {
+        assertEquals(expected, solver.shortestPalindrome(input));
+    }
 }

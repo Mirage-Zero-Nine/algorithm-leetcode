@@ -79,4 +79,54 @@ public class RemoveVowels_1119Test {
         assertEquals("AEIOU", test.removeVowels("AEIOU"));
         assertEquals("Hll", test.removeVowels("Hello"));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("", test.removeVowels("aeiou"));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("AEIOU", test.removeVowels("AEIOU"));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals("hll", test.removeVowels("hello"));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals("ltcd", test.removeVowels("leetcode"));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals("xyz", test.removeVowels("xyz"));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(" qck brwn fx", test.removeVowels("a quick brown fox"));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals("", test.removeVowels(""));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals("rhythm", test.removeVowels("rhythm"));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals("btfl", test.removeVowels("beautiful"));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals("AEIOU", test.removeVowels("AaEeIiOoUu"));
+    }
 }

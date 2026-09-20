@@ -67,4 +67,11 @@ public class LongestOnes1004Test {
         // total zeros = 50000, k=50000 -> can flip all -> entire array
         assertEquals(100000, test.longestOnes(nums, 50000));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"1,0,1", "0,0,0", "00111,1,4", "1010101,1,3", "110011,1,3", "000111,2,5", "100001,2,3", "111000111,2,5", "010101,3,6", "11111,0,5"})
+    void additionalBoundaryCases(String values, int k, int expected) {
+        int[] nums = values.chars().map(c -> c - '0').toArray();
+        assertEquals(expected, test.longestOnes(nums, k));
+    }
 }

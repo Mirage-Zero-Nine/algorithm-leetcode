@@ -25,4 +25,14 @@ public class BackspaceCompare_844Test {
         for (int i = 0; i < 5000; i++) { s.append("a#"); }
         assertTrue(b.backspaceCompare(s.toString(), s.toString()));
     }
+    @Test public void testBackspaceDifferences() { assertFalse(b.backspaceCompare("a#", "b")); }
+    @Test public void testHashAfterEmpty() { assertTrue(b.backspaceCompare("###a", "a")); }
+    @Test public void testDeleteThenType() { assertTrue(b.backspaceCompare("abc##d", "ad")); }
+    @Test public void testRepeatedCalls() { assertTrue(b.backspaceCompare("x#y", "y")); assertFalse(b.backspaceCompare("x", "y")); }
+    @Test public void testUnicodeCharacters() { assertTrue(b.backspaceCompare("é#a", "a")); }
+    @Test public void testHashesAndDifferentResiduals() { assertFalse(b.backspaceCompare("##a", "##b")); }
+    @Test public void testLongResidual() { assertTrue(b.backspaceCompare("abcdefghij##########", "")); }
+    @Test public void testNullBoth() { assertFalse(b.backspaceCompare(null, null)); }
+    @Test public void testOneEmptyAfterDeletes() { assertTrue(b.backspaceCompare("a##", "")); }
+    @Test public void testOrderMatters() { assertFalse(b.backspaceCompare("ab#c", "ac#b")); }
 }

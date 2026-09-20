@@ -3,6 +3,8 @@ package solutions.dfs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class LongestIncreasingPath_329Test {
 
@@ -68,5 +70,13 @@ public class LongestIncreasingPath_329Test {
                 matrix[i][j] = i * n + j;
         // strictly increasing left-to-right, top-to-bottom; longest path is n + n - 1 = 99
         assertEquals(99, test.longestIncreasingPath(matrix));
+    }
+
+    @ParameterizedTest(name = "increasing row length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testIncreasingRows(int length) {
+        int[] row = new int[length];
+        for (int i = 0; i < length; i++) row[i] = i;
+        assertEquals(length, test.longestIncreasingPath(new int[][]{row}));
     }
 }

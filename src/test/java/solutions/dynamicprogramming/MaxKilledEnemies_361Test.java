@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class MaxKilledEnemies_361Test {
 
@@ -69,5 +71,21 @@ public class MaxKilledEnemies_361Test {
         // From center, row has 50 enemies minus 1 (the cell itself), col same
         // But actually row enemies = enemies in same row without wall = 49, col = 49, total = 98
         assertEquals(98, test.maxKilledEnemies(grid));
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctGrids() {
+        return Stream.of(
+                DynamicTest.dynamicTest("empty row", () -> assertEquals(0, test.maxKilledEnemies(new char[][]{{}}))),
+                DynamicTest.dynamicTest("one empty cell", () -> assertEquals(0, test.maxKilledEnemies(new char[][]{{'0'}}))),
+                DynamicTest.dynamicTest("two enemies row", () -> assertEquals(2, test.maxKilledEnemies(new char[][]{{'E', '0', 'E'}}))),
+                DynamicTest.dynamicTest("wall splits row", () -> assertEquals(0, test.maxKilledEnemies(new char[][]{{'E', 'W', 'E'}}))),
+                DynamicTest.dynamicTest("two rows shared column", () -> assertEquals(2, test.maxKilledEnemies(new char[][]{{'E'}, {'0'}, {'E'}}))),
+                DynamicTest.dynamicTest("wall splits column", () -> assertEquals(0, test.maxKilledEnemies(new char[][]{{'E'}, {'W'}, {'E'}}))),
+                DynamicTest.dynamicTest("center placement", () -> assertEquals(2, test.maxKilledEnemies(new char[][]{{'E', '0', 'E'}, {'0', '0', '0'}, {'E', '0', 'E'}}))),
+                DynamicTest.dynamicTest("all empty", () -> assertEquals(0, test.maxKilledEnemies(new char[][]{{'0', '0'}, {'0', '0'}}))),
+                DynamicTest.dynamicTest("enemy surrounded walls", () -> assertEquals(1, test.maxKilledEnemies(new char[][]{{'W', '0', 'W'}, {'0', 'E', '0'}, {'W', '0', 'W'}}))),
+                DynamicTest.dynamicTest("horizontal choice", () -> assertEquals(3, test.maxKilledEnemies(new char[][]{{'E', '0', 'E', 'E'}}))),
+                DynamicTest.dynamicTest("vertical choice", () -> assertEquals(3, test.maxKilledEnemies(new char[][]{{'E'}, {'0'}, {'E'}, {'E'}}))));
     }
 }

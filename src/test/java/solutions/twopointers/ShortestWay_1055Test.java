@@ -63,4 +63,15 @@ public class ShortestWay_1055Test {
     public void testLargeUnbalancedPattern() {
         assertEquals(50, test.shortestWay("ab", "a".repeat(50)));
     }
+
+    @Test public void testTwoPassReordered() { assertEquals(2,test.shortestWay("abc","acb")); }
+    @Test public void testRepeatedSingleSource() { assertEquals(3,test.shortestWay("ab","ababab")); }
+    @Test public void testMissingAtEnd() { assertEquals(-1,test.shortestWay("abc","abz")); }
+    @Test public void testOneCharacterTarget() { assertEquals(1,test.shortestWay("abc","b")); }
+    @Test public void testTargetEmptyAgain() { assertEquals(0,test.shortestWay("abc","")); }
+    @Test public void testAlternatingTarget() { assertEquals(3,test.shortestWay("ab","baba")); }
+    @Test public void testSourceLonger() { assertEquals(3,test.shortestWay("abcdef","fed")); }
+    @Test public void testManyPasses() { assertEquals(10,test.shortestWay("a","a".repeat(10))); }
+    @Test public void testInterleavedSource() { assertEquals(3,test.shortestWay("xyz","xzyxz")); }
+    @Test public void testImpossibleSourceEmpty() { assertEquals(-1,test.shortestWay("","a")); }
 }

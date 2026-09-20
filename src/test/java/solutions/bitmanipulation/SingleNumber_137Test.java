@@ -4,9 +4,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SingleNumber_137Test {
@@ -53,21 +58,14 @@ public class SingleNumber_137Test {
     }
 
     @Test public void testGiantCase() {
-        int[] nums = new int[10001];
-        for (int i = 0; i < 3333; i++) {
+        int[] nums = new int[301];
+        for (int i = 0; i < 100; i++) {
             nums[3 * i] = i;
             nums[3 * i + 1] = i;
             nums[3 * i + 2] = i;
         }
-        nums[9999] = 77777;
-        nums[10000] = 0; // padding - actually let's fix this
-        // Rebuild: 3334 triples + 1 single = 10003, too big. Use smaller.
-        int[] nums2 = new int[10];
-        nums2[0] = 5; nums2[1] = 5; nums2[2] = 5;
-        nums2[3] = 8; nums2[4] = 8; nums2[5] = 8;
-        nums2[6] = 3; nums2[7] = 3; nums2[8] = 3;
-        nums2[9] = 42;
-        assertEquals(42, solver.singleNumber(nums2));
+        nums[300] = -777;
+        assertEquals(-777, solver.singleNumber(nums));
     }
 
     @Test public void testFourElementsUniqueAtEnd() {
@@ -129,10 +127,11 @@ public class SingleNumber_137Test {
     }
 
     @Test public void testActualGiantArrayOfTriplesAndOneUnique() {
-        int[] values = new int[30001];
-        for (int i = 0; i < 10000; i++)
-            values[i] = values[i + 10000] = values[i + 20000] = i;
-        values[30000] = Integer.MIN_VALUE;
+        // 3 * 9,999 + 1 is the largest valid length not exceeding LeetCode's 30,000 limit.
+        int[] values = new int[29998];
+        for (int i = 0; i < 9999; i++)
+            values[i] = values[i + 9999] = values[i + 19998] = i;
+        values[29997] = Integer.MIN_VALUE;
         assertEquals(Integer.MIN_VALUE, solver.singleNumber(values));
     }
 
@@ -152,5 +151,91 @@ public class SingleNumber_137Test {
             assertEquals(unique, solver.singleNumber(new int[]{~unique, unique, ~unique, ~unique}));
             assertEquals(~unique, solver.singleNumber(new int[]{unique, ~unique, unique, unique}));
         }
+    }
+
+    @Test public void testTriplesMayBeInterleavedInAnyOrder() {
+        int[] nums = {7, -4, 7, 19, -4, 7, -4, 123, 19, 19};
+        assertEquals(123, solver.singleNumber(nums));
+    }
+
+    @Test public void testSignBitAndBitCountRemainders() {
+        int[] nums = {
+                Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE,
+                Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE,
+                0, 0, 0,
+                0x55555555, 0x55555555, 0x55555555,
+                0xAAAAAAAA
+        };
+        assertEquals(frequencyOracle(nums), solver.singleNumber(nums));
+        assertEquals(0xAAAAAAAA, solver.singleNumber(nums));
+    }
+
+    @Test public void testInputIsNotMutatedAndSolverCanBeReused() {
+        int[] first = {
+                Integer.MIN_VALUE, 4, 4, 4, 9, 9, 9,
+                Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE
+        };
+        int[] firstBefore = first.clone();
+        assertEquals(Integer.MIN_VALUE, solver.singleNumber(first));
+        assertArrayEquals(firstBefore, first);
+
+        int[] second = {8, 8, 8, -12};
+        assertEquals(-12, solver.singleNumber(second));
+        assertEquals(Integer.MIN_VALUE, solver.singleNumber(first));
+        assertArrayEquals(firstBefore, first);
+    }
+
+    @Test public void testGeneratedValidArraysMatchIndependentFrequencyOracle() {
+        Random random = new Random(137L);
+        for (int scenario = 0; scenario < 100; scenario++) {
+            int tripleCount = 1 + random.nextInt(40);
+            int unique;
+            Set<Integer> used = new HashSet<>();
+            do {
+                unique = random.nextInt();
+            } while (!used.add(unique));
+
+            List<Integer> values = new ArrayList<>(3 * tripleCount + 1);
+            for (int i = 0; i < tripleCount; i++) {
+                int repeated;
+                do {
+                    repeated = random.nextInt();
+                } while (repeated == unique || !used.add(repeated));
+                values.add(repeated);
+                values.add(repeated);
+                values.add(repeated);
+            }
+            values.add(unique);
+            Collections.shuffle(values, random);
+            int[] nums = values.stream().mapToInt(Integer::intValue).toArray();
+            assertEquals(frequencyOracle(nums), solver.singleNumber(nums),
+                    "scenario " + scenario + " should preserve the frequency invariant");
+        }
+    }
+
+    @Test public void testSmallExhaustiveValueFamiliesMatchFrequencyOracle() {
+        int[] candidates = {Integer.MIN_VALUE, -2, -1, 0, 1, 2, Integer.MAX_VALUE};
+        for (int unique : candidates) {
+            for (int repeated : candidates) {
+                if (unique == repeated) {
+                    continue;
+                }
+                int[] nums = {repeated, unique, repeated, repeated};
+                assertEquals(frequencyOracle(nums), solver.singleNumber(nums),
+                        "unique=" + unique + ", repeated=" + repeated);
+            }
+        }
+    }
+
+    private int frequencyOracle(int[] nums) {
+        Map<Integer, Integer> frequencies = new HashMap<>();
+        for (int num : nums) {
+            frequencies.merge(num, 1, Integer::sum);
+        }
+        return frequencies.entrySet().stream()
+                .filter(entry -> entry.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("valid input must contain one singleton"));
     }
 }

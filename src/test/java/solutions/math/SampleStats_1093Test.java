@@ -88,4 +88,54 @@ public class SampleStats_1093Test {
         assertEquals(127.5, result[2], 0.0001); // mean
         assertEquals(127.5, result[3], 0.0001); // median
     }
+
+    @Test
+    public void testAdditional1() {
+        assertArrayEquals(new double[]{0,0,0,0,0}, test.sampleStats(new int[]{1,0,0,0,0}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertArrayEquals(new double[]{1,2,1.5,1.5,1}, test.sampleStats(new int[]{0,1,1}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertArrayEquals(new double[]{2,4,2.6666666667,2,2}, test.sampleStats(new int[]{0,0,2,0,1}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertArrayEquals(new double[]{3,3,3,3,3}, test.sampleStats(new int[]{0,0,0,5}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertArrayEquals(new double[]{0,2,1,1,0}, test.sampleStats(new int[]{1,0,1}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertArrayEquals(new double[]{1,3,2,2,1}, test.sampleStats(new int[]{0,2,0,2}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertArrayEquals(new double[]{0,3,1.5,1.5,0}, test.sampleStats(new int[]{1,1,1,1}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertArrayEquals(new double[]{4,4,4,4,4}, test.sampleStats(new int[]{0,0,0,0,10}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertArrayEquals(new double[]{0,5,2.5,2.5,0}, test.sampleStats(new int[]{1,0,0,0,0,1}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertArrayEquals(new double[]{1,6,3.5,3.5,1}, test.sampleStats(new int[]{0,1,0,0,0,0,1}), 0.0001);
+    }
 }

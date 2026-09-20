@@ -53,4 +53,49 @@ public class ReachingPoints_780Test {
     @Test public void testStartLargerThanTarget() {
         assertFalse(solver.reachingPoints(10, 10, 5, 5));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertTrue(solver.reachingPoints(1,1,1,1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertTrue(solver.reachingPoints(1,1,2,1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertTrue(solver.reachingPoints(1,1,1,2));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertTrue(solver.reachingPoints(1,1,3,5));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertFalse(solver.reachingPoints(1,1,2,2));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertTrue(solver.reachingPoints(1,2,1,3));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertFalse(solver.reachingPoints(2,3,10,15));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertTrue(solver.reachingPoints(3,7,3,7));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertFalse(solver.reachingPoints(9,5,18,10));
+    }
 }

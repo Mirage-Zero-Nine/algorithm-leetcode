@@ -32,6 +32,11 @@ public class MinKnightMoves_1197 {
 
         x = Math.abs(x);
         y = Math.abs(y);
+        // The shortest route to (1, 1) must temporarily leave the first quadrant.
+        // Handle this near-origin exception before restricting the BFS to nonnegative cells.
+        if (x == 1 && y == 1) {
+            return 2;
+        }
         int n = Math.max(x, y) + 5;
         int[][] matrix = new int[n][n];
         for (int[] arr : matrix) {

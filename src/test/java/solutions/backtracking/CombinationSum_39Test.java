@@ -2,6 +2,7 @@ package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -254,6 +255,78 @@ class CombinationSum_39Test {
         int[] candidates = {2, 3, 5, 7};
         List<List<Integer>> result = solution.combinationSum(candidates, 20);
         assertEquals(enumerateByMultiplicity(candidates, 20), toSetOfSortedLists(result));
+    }
+
+    @Test
+    void testExhaustiveSmallCandidateSubsetsAndTargetsAgainstIndependentOracle() {
+        int[] universe = {2, 3, 4, 5};
+        for (int mask = 1; mask < (1 << universe.length); mask++) {
+            int[] candidates = new int[Integer.bitCount(mask)];
+            int next = 0;
+            for (int i = 0; i < universe.length; i++) {
+                if ((mask & (1 << i)) != 0) {
+                    candidates[next++] = universe[i];
+                }
+            }
+            for (int target = 1; target <= 12; target++) {
+                Set<List<Integer>> expected = enumerateByMultiplicity(candidates, target);
+                assertEquals(expected, toSetOfSortedLists(solution.combinationSum(candidates.clone(), target)),
+                        "candidates=" + Arrays.toString(candidates) + ", target=" + target);
+            }
+        }
+    }
+
+    @Test
+    void testOfficialMaximumCandidateCountWithMaximumCandidateValue() {
+        int[] candidates = new int[30];
+        for (int i = 0; i < candidates.length; i++) {
+            candidates[i] = i + 11;
+        }
+        List<List<Integer>> result = solution.combinationSum(candidates, 40);
+        Set<List<Integer>> expected = enumerateByMultiplicity(candidates, 40);
+        assertEquals(Set.of(List.of(11, 11, 18), List.of(11, 12, 17), List.of(11, 13, 16),
+                        List.of(11, 14, 15), List.of(12, 12, 16), List.of(12, 13, 15),
+                        List.of(12, 14, 14), List.of(13, 13, 14), List.of(11, 29),
+                        List.of(12, 28), List.of(13, 27), List.of(14, 26), List.of(15, 25),
+                        List.of(16, 24), List.of(17, 23), List.of(18, 22), List.of(19, 21),
+                        List.of(20, 20), List.of(40)), expected);
+        assertEquals(expected, toSetOfSortedLists(result));
+    }
+
+    @Test
+    void testMinimumOfficialTargetWithAllCandidatesTooLarge() {
+        int[] candidates = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+                21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+        assertEquals(Set.of(), toSetOfSortedLists(solution.combinationSum(candidates, 1)));
+    }
+
+    @Test
+    void testMaximumTargetWithOnlyLargeCandidatesHasExactMaximumMatch() {
+        assertEquals(Set.of(List.of(40)),
+                toSetOfSortedLists(solution.combinationSum(new int[]{37, 38, 39, 40}, 40)));
+    }
+
+    @Test
+    void testDifferentCandidateOrdersProduceSameSetWithoutPermutationDuplicates() {
+        int[] candidates = {2, 3, 5};
+        Set<List<Integer>> expected = Set.of(
+                List.of(2, 2, 2, 2, 2), List.of(2, 2, 3, 3), List.of(2, 3, 5), List.of(5, 5));
+        assertEquals(expected, toSetOfSortedLists(solution.combinationSum(candidates.clone(), 10)));
+        assertEquals(expected, toSetOfSortedLists(
+                solution.combinationSum(new int[]{5, 3, 2}, 10)));
+    }
+
+    @Test
+    void testEmptyCandidatesTakePreBacktrackingBranchEvenForZeroTarget() {
+        assertEquals(Set.of(), toSetOfSortedLists(solution.combinationSum(new int[]{}, 0)));
+    }
+
+    @Test
+    void testRepeatedCallsRemainIndependentAfterTargetZeroInvocation() {
+        assertEquals(Set.of(List.of()),
+                toSetOfSortedLists(solution.combinationSum(new int[]{2, 3}, 0)));
+        assertEquals(Set.of(List.of(2, 2, 2), List.of(3, 3)),
+                toSetOfSortedLists(solution.combinationSum(new int[]{2, 3}, 6)));
     }
 
     private Set<List<Integer>> enumerateByMultiplicity(int[] candidates, int target) {

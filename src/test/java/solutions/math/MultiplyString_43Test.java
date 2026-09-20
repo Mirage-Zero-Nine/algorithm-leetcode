@@ -129,4 +129,14 @@ public class MultiplyString_43Test {
         assertEquals("10201", result2);
         assertFalse(result2.length() > 1 && result2.startsWith("0"));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("0", test.multiply("0", "123"));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("9801", test.multiply("99", "99"));
+    }
 }

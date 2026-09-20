@@ -95,4 +95,23 @@ public class MinCameraCover_968Test {
         int result = new MinCameraCover_968().minCameraCover(root);
         assertEquals(34, result);
     }
+
+    @Test public void testReuseResetsCameraCount() {
+        MinCameraCover_968 solver = new MinCameraCover_968();
+        TreeNode chain = new TreeNode(0);
+        chain.left = new TreeNode(0);
+        chain.left.left = new TreeNode(0);
+        assertEquals(1, solver.minCameraCover(chain));
+        assertEquals(0, solver.minCameraCover(null));
+    }
+    @Test public void testAdditionalFourChain() { TreeNode r=new TreeNode(0); r.left=new TreeNode(0); r.left.left=new TreeNode(0); r.left.left.left=new TreeNode(0); assertEquals(2,new MinCameraCover_968().minCameraCover(r)); }
+    @Test public void testAdditionalRightTwo() { TreeNode r=new TreeNode(0); r.right=new TreeNode(0); assertEquals(1,new MinCameraCover_968().minCameraCover(r)); }
+    @Test public void testAdditionalFullSeven() { TreeNode r=new TreeNode(0); r.left=new TreeNode(0); r.right=new TreeNode(0); r.left.left=new TreeNode(0); r.left.right=new TreeNode(0); r.right.left=new TreeNode(0); r.right.right=new TreeNode(0); assertEquals(2,new MinCameraCover_968().minCameraCover(r)); }
+    @Test public void testAdditionalLeftLeaf() { TreeNode r=new TreeNode(0); r.left=new TreeNode(0); assertEquals(1,new MinCameraCover_968().minCameraCover(r)); }
+    @Test public void testAdditionalRightChain() { TreeNode r=new TreeNode(0); r.right=new TreeNode(0); r.right.right=new TreeNode(0); assertEquals(1,new MinCameraCover_968().minCameraCover(r)); }
+    @Test public void testAdditionalFiveChain() { TreeNode r=new TreeNode(0); r.left=new TreeNode(0); r.left.left=new TreeNode(0); r.left.left.left=new TreeNode(0); r.left.left.left.left=new TreeNode(0); assertEquals(2,new MinCameraCover_968().minCameraCover(r)); }
+    @Test public void testAdditionalBalancedFour() { TreeNode r=new TreeNode(0); r.left=new TreeNode(0); r.right=new TreeNode(0); r.left.left=new TreeNode(0); assertEquals(2,new MinCameraCover_968().minCameraCover(r)); }
+    @Test public void testAdditionalSkewed() { TreeNode r=new TreeNode(0); r.right=new TreeNode(0); r.right.left=new TreeNode(0); r.right.left.right=new TreeNode(0); assertEquals(2,new MinCameraCover_968().minCameraCover(r)); }
+    @Test public void testAdditionalReuse() { assertEquals(0,new MinCameraCover_968().minCameraCover(null)); }
+    @Test public void testAdditionalRootChildren() { TreeNode r=new TreeNode(0); r.left=new TreeNode(0); r.right=new TreeNode(0); assertEquals(1,new MinCameraCover_968().minCameraCover(r)); }
 }

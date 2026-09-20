@@ -5,8 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Random;
 
 public class FndBottomLeftValue_513Test {
 
@@ -173,6 +176,96 @@ public class FndBottomLeftValue_513Test {
         assertEquals(nodes[depthStart].val, test.findBottomLeftValue(nodes[0]));
     }
 
+    @Test
+    public void testBoundaryValuesAndDuplicateValuesAtLastLevel() {
+        TreeNode root = tree(Integer.MIN_VALUE,
+                tree(Integer.MIN_VALUE, tree(Integer.MAX_VALUE), tree(Integer.MIN_VALUE)),
+                tree(Integer.MAX_VALUE, tree(Integer.MIN_VALUE), tree(Integer.MAX_VALUE)));
+        assertEquals(Integer.MAX_VALUE, test.findBottomLeftValue(root));
+
+        TreeNode duplicateTree = tree(42,
+                tree(42, tree(42), tree(42)),
+                tree(42, tree(42), tree(42)));
+        assertEquals(42, test.findBottomLeftValue(duplicateTree));
+    }
+
+    @Test
+    public void testRepeatedCallsAreIndependentAndDoNotMutateTopology() {
+        TreeNode first = tree(10, tree(20, null, tree(30)), tree(40));
+        TreeNode second = tree(-10, tree(-20), tree(-30, tree(-40), null));
+        String firstShape = shape(first);
+        String secondShape = shape(second);
+
+        assertEquals(30, test.findBottomLeftValue(first));
+        assertEquals(-40, test.findBottomLeftValue(second));
+        assertEquals(30, test.findBottomLeftValue(first));
+        assertEquals(firstShape, shape(first));
+        assertEquals(secondShape, shape(second));
+    }
+
+    /**
+     * Exercises arbitrary sparse shapes and value distributions with an oracle that traverses each
+     * level independently.  The seed makes failures reproducible while varying which deepest
+     * node is leftmost, including cases where the deepest node is in the right subtree.
+     */
+    @Test
+    public void testSeededSparseTreesAgainstIndependentBreadthFirstOracle() {
+        Random random = new Random(513_2026L);
+        for (int caseNumber = 0; caseNumber < 200; caseNumber++) {
+            TreeNode root = randomTree(random, 1 + random.nextInt(250));
+            String before = shape(root);
+            assertEquals(breadthFirstOracle(root), test.findBottomLeftValue(root),
+                    "unexpected result for seeded tree " + caseNumber);
+            assertEquals(before, shape(root), "solution must not mutate seeded tree " + caseNumber);
+        }
+    }
+
+    /** Covers the official 10,000-node limit with the maximum possible depth. */
+    @Test
+    public void testMaximumNodeCountRightSpine() {
+        final int nodeCount = 10_000;
+        TreeNode root = new TreeNode(Integer.MIN_VALUE);
+        TreeNode current = root;
+        for (int i = 1; i < nodeCount; i++) {
+            current.right = new TreeNode(i == nodeCount - 1 ? Integer.MAX_VALUE : i);
+            current = current.right;
+        }
+
+        assertEquals(Integer.MAX_VALUE, test.findBottomLeftValue(root));
+    }
+
+    @Test
+    public void testLastLevelStartsInRightSubtree() {
+        TreeNode root = tree(10, tree(5), tree(15, null, tree(20, tree(18), null)));
+        assertEquals(18, test.findBottomLeftValue(root));
+    }
+
+    @Test
+    public void testAlternatingSparseLevelsPreserveQueueOrder() {
+        TreeNode root = tree(1, tree(2, null, tree(4, tree(8), null)),
+                tree(3, tree(5), tree(6, null, tree(9))));
+        assertEquals(8, test.findBottomLeftValue(root));
+    }
+
+    @Test
+    public void testBoundaryValuesAtDifferentDepths() {
+        TreeNode root = tree(Integer.MAX_VALUE, tree(Integer.MIN_VALUE, tree(0)), tree(42));
+        assertEquals(0, test.findBottomLeftValue(root));
+    }
+
+    @Test
+    public void testSingleChildAtEveryLevel() {
+        TreeNode root = tree(0, tree(1, null, tree(2, tree(3), null)), null);
+        assertEquals(3, test.findBottomLeftValue(root));
+    }
+
+    @Test
+    public void testFreshInstanceAndRepeatedNullCalls() {
+        assertEquals(9, new FndBottomLeftValue_513().findBottomLeftValue(tree(9)));
+        assertEquals(0, test.findBottomLeftValue(null));
+        assertEquals(0, test.findBottomLeftValue(null));
+    }
+
     private static TreeNode tree(int value) {
         return new TreeNode(value);
     }
@@ -186,6 +279,47 @@ public class FndBottomLeftValue_513Test {
         node.left = left;
         node.right = right;
         return node;
+    }
+
+    private static TreeNode randomTree(Random random, int maximumNodes) {
+        TreeNode root = new TreeNode(randomValue(random, 0));
+        Queue<TreeNode> pending = new ArrayDeque<>();
+        pending.add(root);
+        int created = 1;
+        while (!pending.isEmpty() && created < maximumNodes) {
+            TreeNode parent = pending.remove();
+            if (created < maximumNodes && random.nextInt(100) < 68) {
+                parent.left = new TreeNode(randomValue(random, created++));
+                pending.add(parent.left);
+            }
+            if (created < maximumNodes && random.nextInt(100) < 68) {
+                parent.right = new TreeNode(randomValue(random, created++));
+                pending.add(parent.right);
+            }
+        }
+        return root;
+    }
+
+    private static int randomValue(Random random, int index) {
+        if (index % 31 == 0) return Integer.MIN_VALUE;
+        if (index % 37 == 0) return Integer.MAX_VALUE;
+        return random.nextInt(401) - 200;
+    }
+
+    private static int breadthFirstOracle(TreeNode root) {
+        Queue<TreeNode> currentLevel = new ArrayDeque<>();
+        currentLevel.add(root);
+        int leftmost = root.val;
+        while (!currentLevel.isEmpty()) {
+            leftmost = currentLevel.peek().val;
+            int nodesThisLevel = currentLevel.size();
+            for (int i = 0; i < nodesThisLevel; i++) {
+                TreeNode node = currentLevel.remove();
+                if (node.left != null) currentLevel.add(node.left);
+                if (node.right != null) currentLevel.add(node.right);
+            }
+        }
+        return leftmost;
     }
 
     private static int oracle(TreeNode node, int depth, Best best) {

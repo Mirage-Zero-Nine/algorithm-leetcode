@@ -60,4 +60,54 @@ public class IsBoomerang_1037Test {
     public void testDiagonalNotCollinear() {
         assertTrue(test.isBoomerang(new int[][]{{1, 2}, {3, 5}, {5, 7}}));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertTrue(test.isBoomerang(new int[][]{{0,0},{1,1},{2,3}}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertFalse(test.isBoomerang(new int[][]{{0,0},{1,0},{2,0}}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertFalse(test.isBoomerang(new int[][]{{0,0},{0,1},{0,2}}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertFalse(test.isBoomerang(new int[][]{{1,1},{2,2},{3,3}}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertTrue(test.isBoomerang(new int[][]{{-1,-1},{0,1},{2,0}}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertTrue(test.isBoomerang(new int[][]{{0,0},{1,2},{2,1}}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertFalse(test.isBoomerang(new int[][]{{1,1},{1,1},{2,2}}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertTrue(test.isBoomerang(new int[][]{{0,0},{-1,2},{2,-1}}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertTrue(test.isBoomerang(new int[][]{{5,5},{6,8},{9,6}}));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertTrue(test.isBoomerang(new int[][]{{100,100},{200,300},{400,101}}));
+    }
 }

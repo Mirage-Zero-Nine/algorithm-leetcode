@@ -120,4 +120,10 @@ public class UniquePaths_62Test {
         // C(33, 19) = 818809200
         assertEquals(818809200, test.uniquePaths(20, 15));
     }
+
+    @Test
+    public void testAdditionalCombinatorialShapes() {
+        assertEquals(120, test.uniquePaths(4, 8));
+        assertEquals(210, test.uniquePaths(5, 7));
+    }
 }

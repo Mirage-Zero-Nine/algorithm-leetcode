@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import library.tree.narytree.Node;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class Postorder_590Test {
 
@@ -85,5 +87,20 @@ public class Postorder_590Test {
         // Postorder of a chain: deepest first
         assertEquals(100, result.get(0));
         assertEquals(1, result.get(99));
+    }
+
+    @ParameterizedTest(name = "N-ary chain size {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testChainSizes(int size) {
+        Node root = new Node(1);
+        Node current = root;
+        for (int value = 2; value <= size; value++) {
+            Node child = new Node(value);
+            current.children = Collections.singletonList(child);
+            current = child;
+        }
+        List<Integer> result = test.postorder(root);
+        assertEquals(size, result.size());
+        for (int i = 0; i < size; i++) assertEquals(size - i, result.get(i));
     }
 }

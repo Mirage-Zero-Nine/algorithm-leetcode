@@ -88,4 +88,46 @@ public class InvalidTransactions_1169Test {
         List<String> result = test.invalidTransactions(transactions);
         assertTrue(result.size() > 0);
     }
+
+    @Test public void testAmountBoundaryAndUnrelatedUsers() {
+        assertEquals(2, test.invalidTransactions(new String[]{"a,0,1001,x", "b,0,1001,y"}).size());
+        assertTrue(test.invalidTransactions(new String[]{"a,0,1001,x", "b,0,1001,y"}).contains("a,0,1001,x"));
+    }
+
+    @Test public void testEarlierTransactionMarksBoth() {
+        assertEquals(2, test.invalidTransactions(new String[]{"sam,100,10,a", "sam,40,20,b"}).size());
+    }
+
+    @Test public void testSameNameDifferentCityOutsideWindow() {
+        assertTrue(test.invalidTransactions(new String[]{"sam,0,1,a", "sam,60,1,b"}).size() == 2);
+        assertTrue(test.invalidTransactions(new String[]{"sam,0,1,a", "sam,61,1,b"}).isEmpty());
+    }
+
+    @Test public void testRepeatedSameCityRemainsValid() {
+        assertTrue(test.invalidTransactions(new String[]{"sam,0,1,a", "sam,60,1000,a", "sam,120,1,a"}).isEmpty());
+    }
+
+    @Test public void testOneHighAmountAndOneCrossCity() {
+        List<String> out = test.invalidTransactions(new String[]{"a,0,1001,x", "a,50,1,y", "a,200,1,z"});
+        // The first two are invalid for independent reasons; the third is outside both windows.
+        assertEquals(2, out.size());
+    }
+
+    @Test public void testCrossCityPairAmongManyValidRecords() {
+        List<String> out = test.invalidTransactions(new String[]{"a,0,1,x", "b,1,1,y", "a,10,1,y", "b,100,1,y"});
+        assertEquals(2, out.size());
+    }
+
+    @Test public void testDuplicateRecordsAreEachReported() {
+        assertEquals(2, test.invalidTransactions(new String[]{"a,1,1001,x", "a,1,1001,x"}).size());
+    }
+
+    @Test public void testUnorderedInputPreservesInputOrder() {
+        List<String> out = test.invalidTransactions(new String[]{"a,80,1,y", "a,20,1,x"});
+        assertEquals(List.of("a,80,1,y", "a,20,1,x"), out);
+    }
+
+    @Test public void testOnlyBoundaryAmountsAreValid() {
+        assertTrue(test.invalidTransactions(new String[]{"a,0,0,x", "b,0,1000,y"}).isEmpty());
+    }
 }

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class InsertIntoBST_701Test {
 
@@ -112,5 +114,15 @@ public class InsertIntoBST_701Test {
         node.left = buildBalancedBST(lo, mid - 1);
         node.right = buildBalancedBST(mid + 1, hi);
         return node;
+    }
+
+    @ParameterizedTest(name = "insert {0} into right chain")
+    @ValueSource(ints = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
+    public void testInsertEveryGreaterValue(int value) {
+        TreeNode root = new TreeNode(10);
+        root.right = new TreeNode(20);
+        TreeNode result = test.insertIntoBST(root, value);
+        if (value < 20) assertEquals(value, result.right.left.val);
+        else if (value > 20) assertEquals(value, result.right.right.val);
     }
 }

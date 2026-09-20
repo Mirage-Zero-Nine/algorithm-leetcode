@@ -35,6 +35,7 @@ public class MinTime_1443 {
      * @return the minimum time in order to collect all apples in the tree starting at vertex 0 and back to this vertex
      */
     public int minTime(int n, int[][] edges, List<Boolean> hasApple) {
+        min = 0;
         List<List<Integer>> graph = new LinkedList<>();
 
         for (int i = 0; i < n; i++) {

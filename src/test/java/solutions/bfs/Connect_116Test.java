@@ -1,6 +1,7 @@
 package solutions.bfs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -120,6 +121,113 @@ public class Connect_116Test {
         assertEquals(root, out);
     }
 
+    @Test
+    public void testOfficialExampleLevelOrderChains() {
+        Node root = buildPerfectTree(3, 0);
+
+        assertSame(root, test.connect(root));
+        assertNull(root.next);
+        assertSame(root.right, root.left.next);
+        assertSame(root.left.right, root.left.left.next);
+        assertSame(root.right.left, root.left.right.next);
+        assertSame(root.right.right, root.right.left.next);
+        assertNull(root.right.right.next);
+    }
+
+    @Test
+    public void testEmptyTreeReturnsNullWithoutState() {
+        assertNull(test.connect(null));
+    }
+
+    @Test
+    public void testMinimumPerfectTreeHasOnlyRootTerminator() {
+        Node root = buildPerfectTree(1, 1);
+
+        assertSame(root, test.connect(root));
+        assertNull(root.next);
+        assertNull(root.left);
+        assertNull(root.right);
+    }
+
+    @Test
+    public void testMaximumPositiveNodeValues() {
+        Node root = buildPerfectTree(4, 13);
+
+        test.connect(root);
+        assertNextPointersMatchBfs(root);
+    }
+
+    @Test
+    public void testMinimumNegativeNodeValues() {
+        Node root = buildPerfectTree(4, 12);
+
+        test.connect(root);
+        assertNextPointersMatchBfs(root);
+    }
+
+    @Test
+    public void testDuplicateValuesStillLinkDistinctNodeIdentities() {
+        Node root = buildPerfectTree(5, 14);
+
+        test.connect(root);
+        assertNextPointersMatchBfs(root);
+        assertSame(root.right, root.left.next,
+                "equal values must not cause value-based linking");
+    }
+
+    @Test
+    public void testEveryRightmostNodeTerminatesItsLevel() {
+        Node root = buildPerfectTree(7, 5);
+
+        test.connect(root);
+        Node levelStart = root;
+        int width = 1;
+        while (levelStart != null) {
+            Node cursor = levelStart;
+            for (int position = 0; position < width - 1; position++) {
+                assertNotNull(cursor.next, "non-rightmost node must have a successor");
+                cursor = cursor.next;
+            }
+            assertNull(cursor.next, "rightmost node must terminate its level");
+            levelStart = levelStart.left;
+            width <<= 1;
+        }
+    }
+
+    @Test
+    public void testConnectLeavesChildTopologyUnchanged() {
+        Node root = buildPerfectTree(6, 6);
+        Map<Node, Node[]> originalChildren = snapshotChildren(root);
+
+        test.connect(root);
+        for (Map.Entry<Node, Node[]> entry : originalChildren.entrySet()) {
+            assertSame(entry.getValue()[0], entry.getKey().left);
+            assertSame(entry.getValue()[1], entry.getKey().right);
+        }
+    }
+
+    @Test
+    public void testRepeatedCallsPreserveAllChainsAtMaximumDepth() {
+        Node root = buildPerfectTree(10, 7);
+
+        test.connect(root);
+        test.connect(root);
+        assertNextPointersMatchBfs(root);
+    }
+
+    @Test
+    public void testSameSolutionInstanceDoesNotLeakBetweenTrees() {
+        Node first = buildPerfectTree(3, 8);
+        Node second = buildPerfectTree(4, 9);
+
+        test.connect(first);
+        test.connect(second);
+        assertNextPointersMatchBfs(first);
+        assertNextPointersMatchBfs(second);
+        assertNull(first.next);
+        assertNull(second.next);
+    }
+
     /**
      * Exercises twenty different valid trees, including every perfect-tree height from one
      * through twelve (the problem's maximum of 4095 nodes) and trees with duplicate,
@@ -147,11 +255,11 @@ public class Connect_116Test {
 
     @Test
     public void testGiantPerfectTree() {
-        int levels = 8;
+        int levels = 12;
         int total = (1 << levels) - 1;
         Node[] nodes = new Node[total + 1];
         for (int i = 1; i <= total; i++) {
-            nodes[i] = build(i);
+            nodes[i] = build((i - 1) % 2001 - 1000);
         }
         for (int i = 1; i <= total / 2; i++) {
             nodes[i].left = nodes[i * 2];
@@ -159,8 +267,8 @@ public class Connect_116Test {
         }
 
         test.connect(nodes[1]);
-        assertEquals(129, nodes[128].next.val);
-        assertNull(nodes[255].next);
+        assertSame(nodes[2049], nodes[2048].next);
+        assertNull(nodes[4095].next);
     }
 
     private Node buildPerfectTree(int levels, int valueMode) {

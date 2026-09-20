@@ -63,4 +63,54 @@ public class CountPrimes_204Test {
     public void testGiantCase() {
         assertEquals(9592, test.countPrimes(100000));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0, test.countPrimes(0));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(0, test.countPrimes(1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(0, test.countPrimes(2));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(1, test.countPrimes(3));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(2, test.countPrimes(4));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(4, test.countPrimes(10));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(8, test.countPrimes(20));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(9, test.countPrimes(25));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(15, test.countPrimes(50));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(9592, test.countPrimes(100000));
+    }
 }

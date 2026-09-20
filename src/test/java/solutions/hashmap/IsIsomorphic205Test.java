@@ -70,4 +70,14 @@ public class IsIsomorphic205Test {
         }
         assertTrue(test.isIsomorphic(s.toString(), t.toString()));
     }
+    @Test void extra01() { assertTrue(test.isIsomorphic("a","b")); }
+    @Test void extra02() { assertFalse(test.isIsomorphic("ab","aa")); }
+    @Test void extra03() { assertTrue(test.isIsomorphic("abc","def")); }
+    @Test void extra04() { assertFalse(test.isIsomorphic("foo","bar")); }
+    @Test void extra05() { assertTrue(test.isIsomorphic("paper","title")); }
+    @Test void extra06() { assertFalse(test.isIsomorphic("ab","cc")); }
+    @Test void extra07() { assertTrue(test.isIsomorphic("xy","zt")); }
+    @Test void extra08() { assertFalse(test.isIsomorphic("aba","abb")); }
+    @Test void extra09() { assertTrue(test.isIsomorphic("aa","bb")); }
+    @Test void extra10() { assertFalse(test.isIsomorphic("abc","dee")); }
 }

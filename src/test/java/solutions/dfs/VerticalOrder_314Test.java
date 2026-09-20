@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -159,5 +161,19 @@ public class VerticalOrder_314Test {
             ),
             test.verticalOrder(root)
         );
+    }
+
+    @ParameterizedTest(name = "left chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    void testLeftChainLengths(int length) {
+        TreeNode root = new TreeNode(0);
+        TreeNode current = root;
+        for (int i = 1; i < length; i++) {
+            current.left = new TreeNode(i);
+            current = current.left;
+        }
+        List<List<Integer>> result = test.verticalOrder(root);
+        assertEquals(length, result.size());
+        for (int i = 0; i < length; i++) assertEquals(List.of(length - 1 - i), result.get(i));
     }
 }

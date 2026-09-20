@@ -71,4 +71,14 @@ public class FindJudge_997Test {
         }
         assertEquals(N, test.findJudge(N, trust));
     }
+    @Test void extra01() { assertEquals(1, test.findJudge(1, new int[][]{})); }
+    @Test void extra02() { assertEquals(-1, test.findJudge(2, new int[][]{})); }
+    @Test void extra03() { assertEquals(3, test.findJudge(4, new int[][]{{1,3},{2,3},{4,3}})); }
+    @Test void extra04() { assertEquals(-1, test.findJudge(4, new int[][]{{1,4},{2,4},{3,1},{4,3}})); }
+    @Test void extra05() { assertEquals(2, test.findJudge(3, new int[][]{{1,2},{3,2}})); }
+    @Test void extra06() { assertEquals(-1, test.findJudge(3, new int[][]{{1,2},{2,1}})); }
+    @Test void extra07() { assertEquals(5, test.findJudge(5, new int[][]{{1,5},{2,5},{3,5},{4,5}})); }
+    @Test void extra08() { assertEquals(-1, test.findJudge(5, new int[][]{{1,5},{2,5},{3,5}})); }
+    @Test void extra09() { assertEquals(-1, test.findJudge(4, new int[][]{{1,2},{2,3},{3,4}})); }
+    @Test void extra10() { assertEquals(2, test.findJudge(2, new int[][]{{1,2}})); }
 }

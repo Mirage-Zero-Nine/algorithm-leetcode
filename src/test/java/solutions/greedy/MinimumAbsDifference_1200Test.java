@@ -76,4 +76,14 @@ class MinimumAbsDifference_1200Test {
         assertEquals(9999, result.size());
         assertEquals(Arrays.asList(0, 2), result.get(0));
     }
+    @Test void testAdditionalPair() { assertEquals(Arrays.asList(Arrays.asList(1, 2)), solution.minimumAbsDifference(new int[]{1, 2})); }
+    @Test void testAdditionalNegatives() { assertEquals(Arrays.asList(Arrays.asList(-2, -1)), solution.minimumAbsDifference(new int[]{-1, -2})); }
+    @Test void testAdditionalDuplicates() { assertEquals(Arrays.asList(Arrays.asList(1, 1)), solution.minimumAbsDifference(new int[]{1, 1, 2})); }
+    @Test void testAdditionalFour() { assertEquals(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(2, 3), Arrays.asList(3, 4)), solution.minimumAbsDifference(new int[]{4, 3, 2, 1})); }
+    @Test void testAdditionalLarge() { assertEquals(Arrays.asList(Arrays.asList(0, 100)), solution.minimumAbsDifference(new int[]{0, 100})); }
+    @Test void testAdditionalNegativeGap() { assertEquals(Arrays.asList(Arrays.asList(-5, -4), Arrays.asList(-2, -1)), solution.minimumAbsDifference(new int[]{-1, -5, -2, -4})); }
+    @Test void testAdditionalMultiple() { assertEquals(Arrays.asList(Arrays.asList(1, 3), Arrays.asList(3, 5), Arrays.asList(5, 7)), solution.minimumAbsDifference(new int[]{7, 1, 5, 3})); }
+    @Test void testAdditionalZero() { assertEquals(Arrays.asList(Arrays.asList(0, 0)), solution.minimumAbsDifference(new int[]{0, 0})); }
+    @Test void testAdditionalWide() { assertEquals(Arrays.asList(Arrays.asList(-100, -99)), solution.minimumAbsDifference(new int[]{-100, 0, 100, -99})); }
+    @Test void testAdditionalFive() { assertEquals(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(2, 3), Arrays.asList(3, 4), Arrays.asList(4, 5)), solution.minimumAbsDifference(new int[]{5, 4, 3, 2, 1})); }
 }

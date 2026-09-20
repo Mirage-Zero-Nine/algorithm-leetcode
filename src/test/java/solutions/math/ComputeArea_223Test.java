@@ -61,4 +61,54 @@ public class ComputeArea_223Test {
         // large coordinates, no overflow for area since int range
         assertEquals(200000, test.computeArea(-100000, 0, 0, 1, 0, 0, 100000, 1));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(2, test.computeArea(0,0,1,1,2,2,3,3));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(6, test.computeArea(0,0,2,2,1,0,3,2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(6, test.computeArea(0,0,2,2,0,1,2,3));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(16, test.computeArea(-2,-2,2,2,-1,-1,1,1));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(20, test.computeArea(-5,0,-1,4,-3,1,1,3));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(10, test.computeArea(0,0,10,1,3,0,7,1));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(10, test.computeArea(0,0,1,10,0,2,1,8));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(2000000, test.computeArea(0,0,1000,1000,1000,1000,2000,2000));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(175, test.computeArea(-10,-10,0,0,-5,-5,5,5));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(0, test.computeArea(1,1,1,1,1,1,1,1));
+    }
 }

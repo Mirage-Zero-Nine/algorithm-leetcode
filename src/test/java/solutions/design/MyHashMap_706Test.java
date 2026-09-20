@@ -304,23 +304,125 @@ public class MyHashMap_706Test {
     public void testMultipleRehashesAndMutationsMatchReferenceMap() {
         HashMap<Integer, Integer> expected = new HashMap<>();
 
-        for (int key = 0; key < 5_000; key++) {
+        // Keep the complete stateful workload below LeetCode's 10,000-call limit,
+        // while still forcing several rehashes and exercising a large mapping set.
+        for (int key = 0; key < 4_000; key++) {
             int value = key * 3;
             test.put(key, value);
             expected.put(key, value);
         }
-        for (int key = 0; key < 5_000; key += 17) {
+        for (int key = 0; key < 4_000; key += 17) {
             int value = 1_000_000 - key;
             test.put(key, value);
             expected.put(key, value);
         }
-        for (int key = 0; key < 5_000; key += 9) {
+        for (int key = 0; key < 4_000; key += 9) {
             test.remove(key);
             expected.remove(key);
         }
 
-        for (int key = 0; key < 5_000; key++) {
+        for (int key = 0; key < 4_000; key++) {
             assertEquals(expected.getOrDefault(key, -1), test.get(key), "Mismatch for key " + key);
+        }
+    }
+
+    @Test
+    public void testOfficialOperationSequence() {
+        test.put(1, 1);
+        test.put(2, 2);
+        assertEquals(1, test.get(1));
+        assertEquals(-1, test.get(3));
+
+        test.put(2, 1);
+        assertEquals(1, test.get(2));
+
+        test.remove(2);
+        assertEquals(-1, test.get(2));
+        assertEquals(1, test.get(1));
+    }
+
+    @Test
+    public void testMinimumAndMaximumDocumentedKeysAndValues() {
+        test.put(0, 0);
+        test.put(1_000_000, 1_000_000);
+
+        assertEquals(0, test.get(0));
+        assertEquals(1_000_000, test.get(1_000_000));
+
+        test.put(0, 1_000_000);
+        test.put(1_000_000, 0);
+        assertEquals(1_000_000, test.get(0));
+        assertEquals(0, test.get(1_000_000));
+    }
+
+    @Test
+    public void testMissingKeysReturnMinusOneAfterBoundaryOperations() {
+        test.put(0, 1);
+        test.put(1_000_000, 2);
+        test.remove(500_000);
+
+        assertEquals(-1, test.get(500_000));
+        assertEquals(-1, test.get(999_999));
+        assertEquals(1, test.get(0));
+        assertEquals(2, test.get(1_000_000));
+    }
+
+    @Test
+    public void testSeparateInstancesDoNotShareMappings() {
+        MyHashMap_706 first = new MyHashMap_706();
+        MyHashMap_706 second = new MyHashMap_706();
+
+        first.put(42, 100);
+        second.put(42, 200);
+        second.put(43, 300);
+
+        assertEquals(100, first.get(42));
+        assertEquals(-1, first.get(43));
+        assertEquals(200, second.get(42));
+        assertEquals(300, second.get(43));
+
+        first.remove(42);
+        assertEquals(-1, first.get(42));
+        assertEquals(200, second.get(42));
+    }
+
+    @Test
+    public void testCollisionMappingsAtDocumentedKeyMaximumRemainIndependent() {
+        int[] keys = {0, 256, 512, 768, 1_000_000};
+        for (int i = 0; i < keys.length; i++) {
+            test.put(keys[i], i * 100_000);
+        }
+
+        test.put(256, 1_000_000);
+        test.remove(768);
+
+        assertEquals(0, test.get(0));
+        assertEquals(1_000_000, test.get(256));
+        assertEquals(200_000, test.get(512));
+        assertEquals(-1, test.get(768));
+        assertEquals(400_000, test.get(1_000_000));
+    }
+
+    @Test
+    public void testExactTenThousandCallsMatchIndependentOracle() {
+        HashMap<Integer, Integer> expected = new HashMap<>();
+
+        for (int operation = 0; operation < 10_000; operation++) {
+            int key = (operation * 256 + operation / 17) % 1_000_001;
+            int value = (operation * 97) % 1_000_001;
+            switch (operation % 5) {
+                case 0, 1 -> {
+                    test.put(key, value);
+                    expected.put(key, value);
+                }
+                case 2, 4 -> assertEquals(expected.getOrDefault(key, -1), test.get(key),
+                        "get(" + key + ") at operation " + operation);
+                case 3 -> {
+                    test.remove(key);
+                    expected.remove(key);
+                }
+                default -> throw new AssertionError("unreachable operation type");
+            }
         }
     }
 }

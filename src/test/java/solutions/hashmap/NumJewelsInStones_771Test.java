@@ -73,4 +73,14 @@ public class NumJewelsInStones_771Test {
         String stones = "abcdefghij".repeat(100);
         assertEquals(1000, test.numJewelsInStones(jewels, stones));
     }
+    @Test void extra01() { assertEquals(0, test.numJewelsInStones("a", "bbb")); }
+    @Test void extra02() { assertEquals(3, test.numJewelsInStones("a", "aaa")); }
+    @Test void extra03() { assertEquals(1, test.numJewelsInStones("A", "Aa")); }
+    @Test void extra04() { assertEquals(0, test.numJewelsInStones("", "abc")); }
+    @Test void extra05() { assertEquals(0, test.numJewelsInStones("abc", "")); }
+    @Test void extra06() { assertEquals(4, test.numJewelsInStones("ab", "aabb")); }
+    @Test void extra07() { assertEquals(1, test.numJewelsInStones("z", "xyz")); }
+    @Test void extra08() { assertEquals(3, test.numJewelsInStones("xX", "XxX")); }
+    @Test void extra09() { assertEquals(6, test.numJewelsInStones("abc", "abcabcxyz")); }
+    @Test void extra10() { assertEquals(0, test.numJewelsInStones("q", "QQQ")); }
 }

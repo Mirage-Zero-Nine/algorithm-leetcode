@@ -157,4 +157,21 @@ public class AreSentencesSimilarTwo_737Test {
         }
         assertTrue(test.areSentencesSimilarTwo(words1, words2, pairs));
     }
+
+    @Test
+    public void testDifferentLengthAfterRelations() { assertFalse(test.areSentencesSimilarTwo(new String[]{"a"}, new String[]{"b", "c"}, List.of(List.of("a", "b")))); }
+    @Test
+    public void testRepeatedWordsMustAllMatch() { assertFalse(test.areSentencesSimilarTwo(new String[]{"a", "a"}, new String[]{"b", "c"}, List.of(List.of("a", "b")))); }
+    @Test
+    public void testDisconnectedRelationIgnored() { assertFalse(test.areSentencesSimilarTwo(new String[]{"a", "x"}, new String[]{"b", "y"}, List.of(List.of("a", "b")))); }
+    @Test
+    public void testLongerTransitiveRelation() { assertTrue(test.areSentencesSimilarTwo(new String[]{"a", "x"}, new String[]{"d", "z"}, List.of(List.of("a", "b"), List.of("b", "c"), List.of("c", "d"), List.of("x", "z")))); }
+    @Test
+    public void testRelationDirectionIsSymmetricForSeveralWords() { assertTrue(test.areSentencesSimilarTwo(new String[]{"b", "d"}, new String[]{"a", "c"}, List.of(List.of("a", "b"), List.of("c", "d")))); }
+    @Test
+    public void testUnknownSameWordIsReflexive() { assertTrue(test.areSentencesSimilarTwo(new String[]{"unlisted", "unlisted"}, new String[]{"unlisted", "unlisted"}, List.of())); }
+    @Test
+    public void testOneOfManyWordsUnknown() { assertFalse(test.areSentencesSimilarTwo(new String[]{"a", "unknown"}, new String[]{"b", "unknown2"}, List.of(List.of("a", "b")))); }
+    @Test
+    public void testDuplicateRelationsRemainValid() { assertTrue(test.areSentencesSimilarTwo(new String[]{"left"}, new String[]{"right"}, List.of(List.of("left", "middle"), List.of("left", "middle"), List.of("middle", "right")))); }
 }

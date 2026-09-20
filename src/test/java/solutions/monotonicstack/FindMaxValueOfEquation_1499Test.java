@@ -65,4 +65,15 @@ public class FindMaxValueOfEquation_1499Test {
         // Within k=5: (0,100)&(5,1)=100+1+5=106, (5,1)&(10,100)=1+100+5=106
         assertEquals(106, solver.findMaxValueOfEquation(new int[][]{{0, 100}, {5, 1}, {10, 100}}, 5));
     }
+
+    @Test public void testThreeNegativePairs() { assertEquals(-6, solver.findMaxValueOfEquation(new int[][]{{0,-5},{1,-3},{2,-4}}, 2)); }
+    @Test public void testOnlyAdjacentWhenKOne() { assertEquals(11, solver.findMaxValueOfEquation(new int[][]{{0,5},{1,5},{2,5}}, 1)); }
+    @Test public void testIncreasingCoordinates() { assertEquals(16, solver.findMaxValueOfEquation(new int[][]{{-2,4},{0,1},{3,7}}, 5)); }
+    @Test public void testFarBestExcluded() { assertEquals(13, solver.findMaxValueOfEquation(new int[][]{{0,0},{2,1},{4,10}}, 2)); }
+    @Test public void testNegativeCoordinates() { assertEquals(6, solver.findMaxValueOfEquation(new int[][]{{-5,2},{-4,3}}, 1)); }
+    @Test public void testZeroK() { assertEquals(Integer.MIN_VALUE, solver.findMaxValueOfEquation(new int[][]{{0,4},{1,5}}, 0)); }
+    @Test public void testLargeNegativeValues() { assertEquals(-1999999999, solver.findMaxValueOfEquation(new int[][]{{0,-1000000000},{1,-1000000000}}, 1)); }
+    @Test public void testBestUsesMiddlePoint() { assertEquals(13, solver.findMaxValueOfEquation(new int[][]{{0,1},{2,10},{4,1}}, 4)); }
+    @Test public void testManyPoints() { assertEquals(9, solver.findMaxValueOfEquation(new int[][]{{0,0},{1,3},{2,1},{3,4},{4,2}}, 2)); }
+    @Test public void testUnitDistance() { assertEquals(3, solver.findMaxValueOfEquation(new int[][]{{10,1},{11,1}}, 1)); }
 }

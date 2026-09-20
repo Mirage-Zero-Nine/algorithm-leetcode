@@ -60,4 +60,14 @@ public class RemoveDuplicates_1209Test {
         String result = solver.removeDuplicates(s, 3);
         assertEquals("a", result); // 10000 mod 3 = 1
     }
+    @Test public void testKOne() { assertEquals("",solver.removeDuplicates("abc",1)); }
+    @Test public void testExactTwoRuns() { assertEquals("b",solver.removeDuplicates("aaab",3)); }
+    @Test public void testRemainderTwo() { assertEquals("aa",solver.removeDuplicates("aaaaa",3)); }
+    @Test public void testChainAcrossRuns() { assertEquals("",solver.removeDuplicates("aabbaa",2)); }
+    @Test public void testNoAdjacentK() { assertEquals("ababa",solver.removeDuplicates("ababa",2)); }
+    @Test public void testLargeKOneChar() { assertEquals("a",solver.removeDuplicates("a",2)); }
+    @Test public void testMultipleCharactersK3() { assertEquals("",solver.removeDuplicates("aaabbbccc",3)); }
+    @Test public void testRepeatedInvocation() { assertEquals("",solver.removeDuplicates("aa",2)); assertEquals("b",solver.removeDuplicates("b",2)); }
+    @Test public void testNestedChain() { assertEquals("a",solver.removeDuplicates("abbbaaa",3)); }
+    @Test public void testKFour() { assertEquals("ab",solver.removeDuplicates("aaaabbbbab",4)); }
 }

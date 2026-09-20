@@ -62,4 +62,54 @@ public class MinOperations_1551Test {
         // n=9999 (odd), n/2=4999, result = 4999*5000 = 24995000
         assertEquals(24995000, test.minOperations(9999));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0, test.minOperations(1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(1, test.minOperations(2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(2, test.minOperations(3));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(4, test.minOperations(4));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(6, test.minOperations(5));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(9, test.minOperations(6));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(12, test.minOperations(7));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(16, test.minOperations(8));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(20, test.minOperations(9));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(25, test.minOperations(10));
+    }
 }

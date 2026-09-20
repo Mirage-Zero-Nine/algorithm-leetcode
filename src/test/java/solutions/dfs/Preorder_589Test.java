@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import library.tree.narytree.Node;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class Preorder_589Test {
 
@@ -93,5 +95,17 @@ public class Preorder_589Test {
         List<Integer> result = test.preorder(root);
         assertEquals(1001, result.size());
         assertEquals(0, result.get(0));
+    }
+
+    @ParameterizedTest(name = "N-ary chain size {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testChainSizes(int size) {
+        Node root = new Node(1); Node current = root;
+        for (int value = 2; value <= size; value++) {
+            Node child = new Node(value); current.children = List.of(child); current = child;
+        }
+        java.util.List<Integer> expected = new java.util.ArrayList<>();
+        for (int i = 1; i <= size; i++) expected.add(i);
+        assertEquals(expected, test.preorder(root));
     }
 }

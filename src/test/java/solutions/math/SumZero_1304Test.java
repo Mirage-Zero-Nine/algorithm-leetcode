@@ -108,4 +108,49 @@ public class SumZero_1304Test {
         long uniqueCount = java.util.Arrays.stream(result).distinct().count();
         assertEquals(n, uniqueCount);
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, solver.sumZero(1).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(1)).sum());
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(2, solver.sumZero(2).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(2)).sum());
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(3, solver.sumZero(3).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(3)).sum());
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(4, solver.sumZero(4).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(4)).sum());
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(5, solver.sumZero(5).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(5)).sum());
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(8, solver.sumZero(8).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(8)).sum());
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(9, solver.sumZero(9).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(9)).sum());
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(10, solver.sumZero(10).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(10)).sum());
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(11, solver.sumZero(11).length); assertEquals(0, java.util.Arrays.stream(solver.sumZero(11)).sum());
+    }
 }

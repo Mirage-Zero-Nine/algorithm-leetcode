@@ -84,6 +84,16 @@ class NextPermutation_31Test {
         assertArrayEquals(expected, nums);
     }
 
+    @Test void testPivotAtEnd() { int[] a={1,2,4,3};solution.nextPermutation(a);assertArrayEquals(new int[]{1,3,2,4},a); }
+    @Test void testDuplicatePivot() { int[] a={1,5,1};solution.nextPermutation(a);assertArrayEquals(new int[]{5,1,1},a); }
+    @Test void testDescendingDuplicates() { int[] a={3,2,2,1};solution.nextPermutation(a);assertArrayEquals(new int[]{1,2,2,3},a); }
+    @Test void testNegativeValues() { int[] a={-2,-1,-3};solution.nextPermutation(a);assertArrayEquals(new int[]{-1,-3,-2},a); }
+    @Test void testAllNegativeDescending() { int[] a={-1,-2,-3};solution.nextPermutation(a);assertArrayEquals(new int[]{-3,-2,-1},a); }
+    @Test void testTwoEqualAndOneGreater() { int[] a={2,2,3};solution.nextPermutation(a);assertArrayEquals(new int[]{2,3,2},a); }
+    @Test void testFourWithSuffixReverse() { int[] a={1,4,3,2};solution.nextPermutation(a);assertArrayEquals(new int[]{2,1,3,4},a); }
+    @Test void testRepeatedInvocation() { int[] a={1,2,3};solution.nextPermutation(a);solution.nextPermutation(a);assertArrayEquals(new int[]{2,1,3},a); }
+    @Test void testZerosAndOnes() { int[] a={0,1,1,0};solution.nextPermutation(a);assertArrayEquals(new int[]{1,0,0,1},a); }
+
     @Test
     void testExhaustiveShortArraysWithDuplicates() {
         // 3^1 + ... + 3^8 = 9,840 deterministic cases, including duplicates.

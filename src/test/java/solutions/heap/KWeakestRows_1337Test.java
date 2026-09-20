@@ -111,4 +111,13 @@ public class KWeakestRows_1337Test {
             {1, 1, 1, 0}
         }, 2));
     }
+    @Test public void testAllRowsSameStrength() { assertArrayEquals(new int[]{0, 1, 2, 3}, test.kWeakestRows(new int[][]{{1, 0}, {1, 0}, {1, 0}, {1, 0}}, 4)); }
+    @Test public void testKOneWeakest() { assertArrayEquals(new int[]{2}, test.kWeakestRows(new int[][]{{1, 1}, {1, 0}, {0, 0}}, 1)); }
+    @Test public void testRowsFullySoldier() { assertArrayEquals(new int[]{0, 1, 2}, test.kWeakestRows(new int[][]{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}, 3)); }
+    @Test public void testRowsFullyCivilian() { assertArrayEquals(new int[]{0, 1, 2}, test.kWeakestRows(new int[][]{{0, 0}, {0, 0}, {0, 0}}, 3)); }
+    @Test public void testIncreasingStrength() { assertArrayEquals(new int[]{0, 1, 2, 3}, test.kWeakestRows(new int[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {1, 1, 1}}, 4)); }
+    @Test public void testKLessThanRowsWithTie() { assertArrayEquals(new int[]{2, 0}, test.kWeakestRows(new int[][]{{1, 0}, {1, 0}, {0, 0}}, 2)); }
+    @Test public void testLongRows() { assertArrayEquals(new int[]{1, 0}, test.kWeakestRows(new int[][]{{1, 1, 1, 0, 0}, {1, 1, 0, 0, 0}, {1, 1, 1, 1, 1}}, 2)); }
+    @Test public void testSingleColumnZeroAndOne() { assertArrayEquals(new int[]{1, 0}, test.kWeakestRows(new int[][]{{1}, {0}}, 2)); }
+    @Test public void testManyRowsKAll() { int[][] mat = new int[20][4]; for (int i = 0; i < 20; i++) for (int j = 0; j < i % 5; j++) mat[i][j] = 1; assertArrayEquals(new int[]{0, 5, 10, 15, 1, 6, 11, 16, 2, 7, 12, 17, 3, 8, 13, 18, 4, 9, 14, 19}, test.kWeakestRows(mat, 20)); }
 }

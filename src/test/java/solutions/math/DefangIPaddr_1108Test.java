@@ -68,4 +68,54 @@ public class DefangIPaddr_1108Test {
         }
         assertEquals(expected.toString(), test.defangIPaddr(input.toString()));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("0[.]0[.]0[.]0", test.defangIPaddr("0.0.0.0"));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("255[.]255[.]255[.]255", test.defangIPaddr("255.255.255.255"));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals("1[.]10[.]100[.]255", test.defangIPaddr("1.10.100.255"));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals("192[.]168[.]1[.]1", test.defangIPaddr("192.168.1.1"));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals("10[.]0[.]0[.]1", test.defangIPaddr("10.0.0.1"));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals("127[.]0[.]0[.]1", test.defangIPaddr("127.0.0.1"));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals("8[.]8[.]8[.]8", test.defangIPaddr("8.8.8.8"));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals("172[.]16[.]0[.]5", test.defangIPaddr("172.16.0.5"));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals("100[.]64[.]0[.]1", test.defangIPaddr("100.64.0.1"));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals("1[.]1[.]1[.]1", test.defangIPaddr("1.1.1.1"));
+    }
 }

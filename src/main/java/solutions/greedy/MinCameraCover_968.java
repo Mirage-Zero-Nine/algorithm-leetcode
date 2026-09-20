@@ -23,6 +23,8 @@ public class MinCameraCover_968 {
      * @return minimum number of cameras needed to monitor all nodes of the tree
      */
     public int minCameraCover(TreeNode root) {
+        // The same solution instance may be reused for independent trees.
+        res = 0;
         return (dfs(root) < 1 ? 1 : 0) + res;
     }
 

@@ -72,4 +72,54 @@ public class CanDivideIntoSubsequences_1121Test {
         }
         assertTrue(test.canDivideIntoSubsequences(arr, 5000));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertTrue(test.canDivideIntoSubsequences(new int[]{1,2}, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertFalse(test.canDivideIntoSubsequences(new int[]{1,1}, 2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertTrue(test.canDivideIntoSubsequences(new int[]{1,2,3,4}, 2));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertTrue(test.canDivideIntoSubsequences(new int[]{1,1,2,2}, 2));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertTrue(test.canDivideIntoSubsequences(new int[]{1,1,1,2,2,2}, 2));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertFalse(test.canDivideIntoSubsequences(new int[]{1,1,1,2,2}, 2));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertTrue(test.canDivideIntoSubsequences(new int[]{1,2,3,4,5,6}, 3));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertFalse(test.canDivideIntoSubsequences(new int[]{1,1,1,1}, 4));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertFalse(test.canDivideIntoSubsequences(new int[]{1,1,1,1}, 3));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertTrue(test.canDivideIntoSubsequences(new int[]{0,0,1,1,2,2}, 2));
+    }
 }

@@ -7,231 +7,250 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link FindDisappearedNumbers_448}.
+ *
+ * <p>The LeetCode contract requires every input value to be in {@code [1, n]};
+ * the solution marks the input array in place and returns the missing values in
+ * increasing index order. Expected values below are derived independently by
+ * recording presence in a boolean array before invoking the mutating solution.
  */
 public class FindDisappearedNumbers_448Test {
 
     private final FindDisappearedNumbers_448 solver = new FindDisappearedNumbers_448();
 
     @Test
-    public void testClassicExample() {
-        int[] nums = {4, 3, 2, 7, 8, 2, 3, 1};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(2, result.size());
-        assertTrue(result.contains(5));
-        assertTrue(result.contains(6));
+    public void testOfficialExample() {
+        assertMissingNumbers(new int[]{4, 3, 2, 7, 8, 2, 3, 1}, List.of(5, 6));
     }
 
     @Test
-    public void testNoMissingNumbers() {
-        int[] nums = {1, 2, 3};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertTrue(result.isEmpty());
+    public void testOfficialNoMissingExample() {
+        assertMissingNumbers(new int[]{1, 2, 3, 4}, List.of());
     }
 
     @Test
-    public void testAllDuplicates() {
-        int[] nums = {3, 3, 3, 3};
-        // Only value 3 appears, so 1, 2, 4 are missing
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(3, result.size());
-        assertTrue(result.contains(1));
-        assertTrue(result.contains(2));
-        assertTrue(result.contains(4));
+    public void testOfficialSingleMissingExample() {
+        assertMissingNumbers(new int[]{1, 1}, List.of(2));
     }
 
     @Test
-    public void testSingleElementPresent() {
-        int[] nums = {1};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertTrue(result.isEmpty());
+    public void testSingletonRange() {
+        assertMissingNumbers(new int[]{1}, List.of());
     }
 
     @Test
-    public void testSingleElementMissing() {
-        // n=1, code returns empty for n<=1 regardless of value
-        int[] nums = {2};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertTrue(result.isEmpty());
+    public void testEmptyArrayImplementationBoundary() {
+        assertEquals(List.of(), solver.findDisappearedNumbers(new int[0]));
     }
 
     @Test
-    public void testNullInput() {
-        List<Integer> result = solver.findDisappearedNumbers(null);
-        assertTrue(result.isEmpty());
+    public void testNullInputImplementationBoundary() {
+        assertEquals(List.of(), solver.findDisappearedNumbers(null));
     }
 
     @Test
-    public void testEmptyArray() {
-        int[] nums = {};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertTrue(result.isEmpty());
+    public void testSmallestDuplicateRange() {
+        assertMissingNumbers(new int[]{2, 2}, List.of(1));
     }
 
     @Test
-    public void testPartialOverlap() {
-        // All values are 2, so indices 0, 2, 3 not marked
-        int[] nums = {2, 2, 2, 2};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(3, result.size());
-        assertTrue(result.contains(1));
-        assertTrue(result.contains(3));
-        assertTrue(result.contains(4));
+    public void testSortedPermutationHasNoMissingValues() {
+        assertMissingNumbers(new int[]{1, 2, 3, 4, 5, 6}, List.of());
     }
 
     @Test
-    public void testTwoMissingAtEnd() {
-        int[] nums = {1, 2, 3, 4};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertTrue(result.isEmpty());
+    public void testReversePermutationHasNoMissingValues() {
+        assertMissingNumbers(new int[]{6, 5, 4, 3, 2, 1}, List.of());
     }
 
     @Test
-    public void testOneMissingMiddle() {
-        int[] nums = {1, 1, 3, 4};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(1, result.size());
-        assertTrue(result.contains(2));
+    public void testMissingFirstValue() {
+        assertMissingNumbers(new int[]{2, 3, 4, 5, 2}, List.of(1));
     }
 
     @Test
-    public void testPartialDuplicates() {
-        int[] nums = {1, 2, 2, 4};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(1, result.size());
-        assertTrue(result.contains(3));
+    public void testMissingLastValue() {
+        assertMissingNumbers(new int[]{1, 2, 3, 4, 1}, List.of(5));
     }
 
     @Test
-    public void testAllUnique() {
-        int[] nums = {4, 3, 2, 1};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertTrue(result.isEmpty());
+    public void testMissingInteriorValue() {
+        assertMissingNumbers(new int[]{1, 1, 3, 4, 5}, List.of(2));
     }
 
     @Test
-    public void testAllPresentFullRange() {
-        // [1..5] all present -> []
-        int[] nums = {5, 4, 3, 2, 1};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertTrue(result.isEmpty());
+    public void testSeparatedMissingValues() {
+        assertMissingNumbers(new int[]{1, 3, 5, 1, 3, 5}, List.of(2, 4, 6));
     }
 
     @Test
-    public void testAllSameValue() {
-        // n=5, all values are 1 -> missing [2,3,4,5]
-        int[] nums = {1, 1, 1, 1, 1};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(List.of(2, 3, 4, 5), result);
+    public void testOneDistinctValueLeavesMaximumMissingSet() {
+        assertMissingNumbers(new int[]{4, 4, 4, 4, 4}, List.of(1, 2, 3, 5));
     }
 
     @Test
-    public void testLeetCodeExample() {
-        // Fresh instance to avoid mutation side effects
-        FindDisappearedNumbers_448 s = new FindDisappearedNumbers_448();
-        int[] nums = {4, 3, 2, 7, 8, 2, 3, 1};
-        List<Integer> result = s.findDisappearedNumbers(nums);
-        assertEquals(List.of(5, 6), result);
+    public void testDuplicatesAtBothRangeBoundaries() {
+        assertMissingNumbers(new int[]{1, 1, 2, 5, 5, 5}, List.of(3, 4, 6));
     }
 
     @Test
-    public void testSingleMissingAtStart() {
-        // n=5, missing 1 -> [1]
-        int[] nums = {2, 3, 4, 5, 2};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(List.of(1), result);
+    public void testInterleavedDuplicatePattern() {
+        assertMissingNumbers(new int[]{8, 1, 5, 4, 1, 8, 4, 5}, List.of(2, 3, 6, 7));
     }
 
     @Test
-    public void testSingleMissingAtEnd() {
-        // n=5, missing 5 -> [5]
-        int[] nums = {1, 2, 3, 4, 1};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(List.of(5), result);
-    }
-
-    @Test
-    public void testMultipleMissing() {
-        // n=6, missing 2,4,6
-        int[] nums = {1, 3, 5, 1, 3, 5};
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(List.of(2, 4, 6), result);
-    }
-
-    @Test
-    public void testLargeN10000Seed42() {
-        int n = 10000;
-        int[] nums = new int[n];
-        for (int i = 0; i < n; i++) nums[i] = i + 1;
-        Random rng = new Random(42L);
-        for (int i = 0; i < 500; i++) {
-            int target = rng.nextInt(n);
-            int source = rng.nextInt(n);
-            nums[target] = nums[source];
-        }
-        // Cross-check via boolean array
-        boolean[] seen = new boolean[n + 1];
-        for (int v : nums) seen[v] = true;
-        List<Integer> expected = new ArrayList<>();
-        for (int i = 1; i <= n; i++) if (!seen[i]) expected.add(i);
-
-        List<Integer> result = solver.findDisappearedNumbers(nums);
-        assertEquals(expected, result);
-    }
-
-    @Test
-    public void testPropertyResultSortedAscending() {
-        int[] nums = {4, 3, 2, 7, 8, 2, 3, 1};
-        List<Integer> result = new FindDisappearedNumbers_448().findDisappearedNumbers(nums);
+    public void testResultIsStrictlyAscending() {
+        List<Integer> result = solver.findDisappearedNumbers(new int[]{4, 3, 2, 7, 8, 2, 3, 1});
         for (int i = 1; i < result.size(); i++) {
-            assertTrue(result.get(i) > result.get(i - 1), "Result should be sorted ascending");
+            assertTrue(result.get(i - 1) < result.get(i));
         }
     }
 
     @Test
-    public void testPropertyResultUnionInputCoversFullRange() {
+    public void testPresentAndMissingValuesPartitionTheRange() {
         int[] nums = {4, 3, 2, 7, 8, 2, 3, 1};
-        int n = nums.length;
-        Set<Integer> inputValues = new HashSet<>();
-        for (int v : nums) inputValues.add(v);
-        List<Integer> result = new FindDisappearedNumbers_448().findDisappearedNumbers(nums);
-        Set<Integer> union = new HashSet<>(inputValues);
-        union.addAll(result);
-        Set<Integer> fullRange = new HashSet<>();
-        IntStream.rangeClosed(1, n).forEach(fullRange::add);
-        assertEquals(fullRange, union);
+        Set<Integer> present = new HashSet<>();
+        for (int value : nums) {
+            present.add(value);
+        }
+        List<Integer> missing = solver.findDisappearedNumbers(nums);
+        Set<Integer> partition = new HashSet<>(present);
+        partition.addAll(missing);
+        assertEquals(Set.of(1, 2, 3, 4, 5, 6, 7, 8), partition);
+        assertEquals(2, missing.size());
     }
-@Test
-    public void testEveryMissingPositionWithOneReplacement() {
-        for (int n = 2; n <= 50; n++) {
-            for (int missing = 1; missing <= n; missing++) {
-                int[] values = java.util.stream.IntStream.rangeClosed(1, n).toArray();
-                values[missing - 1] = missing == n ? 1 : n;
-                assertEquals(List.of(missing), solver.findDisappearedNumbers(values));
+
+    @Test
+    public void testInputIsMarkedInPlaceForPresentAndMissingIndices() {
+        int[] nums = {1, 3, 3, 5, 5};
+        List<Integer> missing = solver.findDisappearedNumbers(nums);
+        assertEquals(List.of(2, 4), missing);
+        for (int i = 0; i < nums.length; i++) {
+            if (missing.contains(i + 1)) {
+                assertTrue(nums[i] > 0, "missing index should remain positive");
+            } else {
+                assertTrue(nums[i] < 0, "present index should be marked negative");
             }
         }
     }
 
     @Test
-    public void testGiantUpperHalfRepeatedHasExactMissingRange() {
-        int[] values = new int[20000];
-        for (int i = 0; i < values.length; i++) values[i] = 10001 + i % 10000;
-        List<Integer> expected = java.util.stream.IntStream.rangeClosed(1, 10000).boxed().toList();
-        assertEquals(expected, solver.findDisappearedNumbers(values));
+    public void testSameInstanceSupportsRepeatedCalls() {
+        assertMissingNumbers(new int[]{2, 2, 3, 1}, List.of(4));
+        assertMissingNumbers(new int[]{1, 1, 1, 1}, List.of(2, 3, 4));
+        assertMissingNumbers(new int[]{3, 4, 1, 2}, List.of());
     }
 
     @Test
-    public void testInterleavedPairsAtRangeExtremes() {
-        assertEquals(List.of(2, 3, 6, 7),
-                solver.findDisappearedNumbers(new int[]{8, 1, 5, 4, 1, 8, 4, 5}));
+    public void testReturnedListsAreIndependent() {
+        List<Integer> first = solver.findDisappearedNumbers(new int[]{1, 1, 3, 4});
+        List<Integer> second = solver.findDisappearedNumbers(new int[]{2, 2, 3, 4});
+        first.clear();
+        assertEquals(List.of(1), second);
+        assertNotSame(first, second);
+    }
+
+    @Test
+    public void testExhaustiveValidArraysThroughLengthFive() {
+        for (int n = 2; n <= 5; n++) {
+            int total = (int) Math.pow(n, n);
+            for (int code = 0; code < total; code++) {
+                int encoded = code;
+                int[] nums = new int[n];
+                for (int i = 0; i < n; i++) {
+                    nums[i] = encoded % n + 1;
+                    encoded /= n;
+                }
+                assertMissingNumbers(nums, expectedMissing(nums));
+            }
+        }
+    }
+
+    @Test
+    public void testSeededRandomValidArraysAgainstBooleanOracle() {
+        Random random = new Random(448_2026L);
+        for (int trial = 0; trial < 500; trial++) {
+            int n = 2 + random.nextInt(99);
+            int[] nums = new int[n];
+            for (int i = 0; i < n; i++) {
+                nums[i] = 1 + random.nextInt(n);
+            }
+            assertMissingNumbers(nums, expectedMissing(nums));
+        }
+    }
+
+    @Test
+    public void testMaximumAllowedLengthWithLowerHalfRepeated() {
+        int n = 100_000;
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = i % (n / 2) + 1;
+        }
+        List<Integer> expected = new ArrayList<>(n / 2);
+        for (int value = n / 2 + 1; value <= n; value++) {
+            expected.add(value);
+        }
+        assertMissingNumbers(nums, expected);
+    }
+
+    @Test
+    public void testMaximumAllowedLengthPermutationHasNoMissingValues() {
+        int n = 100_000;
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            // 37 is coprime to 100,000, so this visits every value exactly once.
+            nums[i] = (i * 37) % n + 1;
+        }
+        assertMissingNumbers(nums, List.of());
+    }
+
+    @Test
+    public void testManyDuplicateRunsAgainstOracle() {
+        int[] nums = {
+                9, 9, 1, 2, 2, 2, 7, 4, 4, 10,
+                6, 6, 6, 3, 8, 8, 5, 5, 1, 10
+        };
+        assertMissingNumbers(nums, expectedMissing(nums));
+    }
+
+    @Test
+    public void testFreshSolverProducesSameResult() {
+        int[] input = {10, 2, 6, 7, 2, 9, 1, 10, 4, 6};
+        List<Integer> expected = expectedMissing(input);
+        List<Integer> first = new FindDisappearedNumbers_448().findDisappearedNumbers(input.clone());
+        List<Integer> second = new FindDisappearedNumbers_448().findDisappearedNumbers(input.clone());
+        assertEquals(new HashSet<>(expected), new HashSet<>(first));
+        assertEquals(first, second);
+    }
+
+    private void assertMissingNumbers(int[] nums, List<Integer> expected) {
+        int[] original = nums.clone();
+        List<Integer> actual = solver.findDisappearedNumbers(nums);
+
+        assertEquals(new HashSet<>(expected), new HashSet<>(actual));
+        assertEquals(expected.size(), actual.size(), "result must not contain duplicates");
+        assertTrue(actual.stream().allMatch(value -> value >= 1 && value <= original.length));
+        assertEquals(expectedMissing(original), expected);
+    }
+
+    /** Builds the expected set without relying on the solution's in-place marking algorithm. */
+    private static List<Integer> expectedMissing(int[] nums) {
+        boolean[] seen = new boolean[nums.length + 1];
+        for (int value : nums) {
+            seen[value] = true;
+        }
+        List<Integer> missing = new ArrayList<>();
+        for (int value = 1; value <= nums.length; value++) {
+            if (!seen[value]) {
+                missing.add(value);
+            }
+        }
+        return missing;
     }
 }

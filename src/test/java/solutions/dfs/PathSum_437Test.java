@@ -49,6 +49,13 @@ public class PathSum_437Test {
     }
 
     @Test
+    public void testHashMapApproachResetsCountBetweenCalls() {
+        PathSum_437 solution = new PathSum_437();
+        assertEquals(1, solution.pathSumWithHashMap(new TreeNode(5), 5));
+        assertEquals(0, solution.pathSumWithHashMap(new TreeNode(1), 5));
+    }
+
+    @Test
     public void testSingleNodeMatch() {
         PathSum_437 test = new PathSum_437();
         TreeNode root = new TreeNode(5);

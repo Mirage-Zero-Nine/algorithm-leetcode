@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 class UniquePathsIII_980Test {
     private final UniquePathsIII_980 solution = new UniquePathsIII_980();
@@ -194,6 +195,21 @@ class UniquePathsIII_980Test {
     }
 
     @Test
+    void testMaximumCellCountWithParityNegative() {
+        int[][] grid = new int[2][10];
+        for (int row = 0; row < grid.length; row++) {
+            Arrays.fill(grid[row], 0);
+        }
+        grid[0][0] = 1;
+        grid[1][9] = 2;
+
+        // A 20-cell Hamiltonian path must have endpoints on opposite checkerboard colors;
+        // these endpoints have the same color, so the complete walk is impossible.
+        assertEquals(0, oracle(grid));
+        assertEquals(0, solution.uniquePathsIII(grid));
+    }
+
+    @Test
     void testStartAndEndInMiddleOfLongRow() {
         assertEquals(0, solution.uniquePathsIII(new int[][]{{0, 1, 0, 2, 0}}));
     }
@@ -221,6 +237,74 @@ class UniquePathsIII_980Test {
         for (int[][] grid : grids) {
             assertEquals(oracle(grid), solution.uniquePathsIII(deepCopy(grid)), Arrays.deepToString(grid));
         }
+    }
+
+    @Test
+    void testEveryThreeByThreeObstacleLayoutMatchesIndependentOracle() {
+        // Keep the endpoints fixed and enumerate every obstacle layout for the seven
+        // remaining cells. This exercises both connected and disconnected free-cell
+        // graphs, including all valid path counts for this small boundary.
+        for (int obstacleMask = 0; obstacleMask < (1 << 7); obstacleMask++) {
+            int[][] grid = new int[3][3];
+            for (int row = 0; row < grid.length; row++) {
+                Arrays.fill(grid[row], 0);
+            }
+            grid[0][0] = 1;
+            grid[2][2] = 2;
+
+            int freeCell = 0;
+            for (int row = 0; row < grid.length; row++) {
+                for (int col = 0; col < grid[row].length; col++) {
+                    if ((row == 0 && col == 0) || (row == 2 && col == 2)) {
+                        continue;
+                    }
+                    if ((obstacleMask & (1 << freeCell++)) != 0) {
+                        grid[row][col] = -1;
+                    }
+                }
+            }
+
+            assertEquals(oracle(grid), solution.uniquePathsIII(deepCopy(grid)),
+                    "obstacle mask " + obstacleMask + " " + Arrays.deepToString(grid));
+        }
+    }
+
+    @Test
+    void testSeededNearBoundaryGridsMatchIndependentOracle() {
+        Random random = new Random(980_2026L);
+        for (int caseNumber = 0; caseNumber < 40; caseNumber++) {
+            int[][] grid = new int[4][5];
+            for (int row = 0; row < grid.length; row++) {
+                Arrays.fill(grid[row], 0);
+            }
+            grid[0][0] = 1;
+            grid[3][4] = 2;
+
+            // Leave at least twelve walkable cells, while varying walls and branches.
+            int obstacleCount = 1 + random.nextInt(8);
+            while (obstacleCount > 0) {
+                int row = random.nextInt(4);
+                int col = random.nextInt(5);
+                if ((row == 0 && col == 0) || (row == 3 && col == 4) || grid[row][col] == -1) {
+                    continue;
+                }
+                grid[row][col] = -1;
+                obstacleCount--;
+            }
+
+            assertEquals(oracle(grid), solution.uniquePathsIII(deepCopy(grid)),
+                    "seeded case " + caseNumber + " " + Arrays.deepToString(grid));
+        }
+    }
+
+    @Test
+    void testRepeatedCallsDoNotLeakVisitedState() {
+        int[][] pathGrid = {{1, 0, 0, 0, 2}};
+        int[][] blockedGrid = {{1, 0, -1, 0, 2}};
+
+        assertEquals(1, solution.uniquePathsIII(pathGrid));
+        assertEquals(0, solution.uniquePathsIII(blockedGrid));
+        assertEquals(1, solution.uniquePathsIII(pathGrid));
     }
 
     /** Independent Hamiltonian-path count over the small grid's free-cell graph. */

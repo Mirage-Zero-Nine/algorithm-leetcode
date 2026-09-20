@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class SmallestSufficientTeam_1125Test {
 
@@ -133,5 +135,28 @@ public class SmallestSufficientTeam_1125Test {
         );
         int[] result = test.smallestSufficientTeam(skills, people);
         assertEquals(1, result.length);
+    }
+
+    @Test
+    public void testReusableSolverResetsPreviousAnswer() {
+        int[] first = test.smallestSufficientTeam(new String[]{"a", "b"},
+                List.of(List.of("a", "b"), List.of("a"), List.of("b")));
+        assertEquals(1, first.length);
+        int[] second = test.smallestSufficientTeam(new String[]{"a", "b", "c"},
+                List.of(List.of("a"), List.of("b"), List.of("c")));
+        assertEquals(3, second.length);
+    }
+
+    @ParameterizedTest(name = "singleton team for {0} skills")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testIndependentDisjointSkillRequirements(int skillCount) {
+        String[] skills = new String[skillCount];
+        List<List<String>> people = new java.util.ArrayList<>();
+        for (int i = 0; i < skillCount; i++) {
+            skills[i] = "skill" + i;
+            people.add(List.of(skills[i]));
+        }
+        int[] result = test.smallestSufficientTeam(skills, people);
+        assertEquals(skillCount, result.length);
     }
 }

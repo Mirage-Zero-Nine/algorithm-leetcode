@@ -2,6 +2,8 @@ package solutions.divideandconquer;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -90,6 +92,64 @@ public class WiggleSort_324Test {
         int[] nums = new int[1000];
         for (int i = 0; i < 1000; i++) nums[i] = i;
         solver.wiggleSort(nums);
+        assertTrue(isWiggle(nums));
+    }
+
+    @Test public void testPermutationPreservedBySortedApproach() {
+        int[] original = {4, 1, 5, 2, 6, 3, 7, 0};
+        int[] expected = original.clone();
+        Arrays.sort(expected);
+        solver.wiggleSort(original);
+        int[] actual = original.clone();
+        Arrays.sort(actual);
+        assertTrue(isWiggle(original));
+        assertTrue(Arrays.equals(expected, actual));
+    }
+
+    @Test public void testPermutationPreservedByIndexMappingApproach() {
+        int[] original = {4, 1, 5, 2, 6, 3, 7, 0};
+        int[] expected = original.clone();
+        Arrays.sort(expected);
+        solver.wiggleSortIndexMapping(original);
+        int[] actual = original.clone();
+        Arrays.sort(actual);
+        assertTrue(isWiggle(original));
+        assertTrue(Arrays.equals(expected, actual));
+    }
+
+    @Test public void testOddLengthSortedApproach() {
+        int[] nums = {1, 2, 3, 4, 5, 6, 7};
+        solver.wiggleSort(nums);
+        assertTrue(isWiggle(nums));
+    }
+
+    @Test public void testOddLengthIndexMappingApproach() {
+        int[] nums = {1, 2, 3, 4, 5, 6, 7};
+        solver.wiggleSortIndexMapping(nums);
+        assertTrue(isWiggle(nums));
+    }
+
+    @Test public void testNegativeValuesBothApproaches() {
+        int[] first = {-5, -1, -3, -2, -4};
+        int[] second = first.clone();
+        solver.wiggleSort(first);
+        solver.wiggleSortIndexMapping(second);
+        assertTrue(isWiggle(first));
+        assertTrue(isWiggle(second));
+    }
+
+    @Test public void testFindMedianOddWithDuplicates() {
+        int[] nums = {2, 2, 1, 3, 2};
+        assertEquals(2, solver.findMedian(nums));
+    }
+
+    @Test public void testFindMedianSingletonNegative() {
+        assertEquals(-7, solver.findMedian(new int[]{-7}));
+    }
+
+    @Test public void testManyDuplicatesValidArrangement() {
+        int[] nums = {1, 1, 1, 2, 2, 2};
+        solver.wiggleSortIndexMapping(nums);
         assertTrue(isWiggle(nums));
     }
 }

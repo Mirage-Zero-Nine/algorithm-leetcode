@@ -98,6 +98,22 @@ public class Connect_117Test {
     }
 
     @Test
+    void everyContractValueEndpointAndDuplicateStillUsesIdentity() {
+        Node root = node(-100);
+        root.left = node(100);
+        root.right = node(-100);
+        root.left.left = node(100);
+        root.left.right = node(-100);
+        root.right.left = node(100);
+        root.right.right = node(-100);
+        root.left.right.left = node(100);
+        root.right.left.right = node(-100);
+        verify(root);
+        assertSame(root.right, root.left.next);
+        assertSame(root.left.right, root.left.left.next);
+    }
+
+    @Test
     void levelTailIsNullAtEveryDepth() {
         verify(levels(10, 20, 30, 40, null, null, 50, null, 60));
     }
@@ -250,6 +266,30 @@ public class Connect_117Test {
     }
 
     @Test
+    void seededSparseTreeExercisesAdversarialCrossParentChains() {
+        Node root = seededSparseTree(1024);
+        assertEquals(1024, snapshotChildren(root).size());
+        verify(root);
+    }
+
+    @Test
+    void alternatingChainAtMaximumNodeCountHasOnlyNullSuccessors() {
+        Node root = node(-100);
+        Node current = root;
+        for (int value = 1; value < 6000; value++) {
+            Node next = node(value % 201 - 100);
+            if ((value & 1) == 0) {
+                current.left = next;
+            } else {
+                current.right = next;
+            }
+            current = next;
+        }
+        assertEquals(6000, snapshotChildren(root).size());
+        verify(root);
+    }
+
+    @Test
     void repeatedCallRetainsCorrectLinksAndChildren() {
         Node root = levels(1, 2, 3, null, 4, 5);
         verify(root);
@@ -341,6 +381,45 @@ public class Connect_117Test {
         Node result = new Node();
         result.val = value;
         return result;
+    }
+
+    /** Builds a deterministic irregular tree without using next pointers. */
+    private static Node seededSparseTree(int nodeCount) {
+        Node root = node(-100);
+        List<Node> nodes = new ArrayList<>();
+        nodes.add(root);
+        long state = 0x5DEECE66DL;
+        for (int value = 1; value < nodeCount; value++) {
+            state = state * 6364136223846793005L + 1442695040888963407L;
+            int parentIndex = (int) Math.floorMod(state, nodes.size());
+            Node parent = nodes.get(parentIndex);
+            boolean rightFirst = (state & 2L) != 0;
+            Node child = node((int) Math.floorMod(state, 201) - 100);
+            if (rightFirst && parent.right == null) {
+                parent.right = child;
+            } else if (parent.left == null) {
+                parent.left = child;
+            } else if (parent.right == null) {
+                parent.right = child;
+            } else {
+                int offset = 1;
+                while (true) {
+                    Node candidate = nodes.get((parentIndex + offset) % nodes.size());
+                    if (candidate.left == null || candidate.right == null) {
+                        parent = candidate;
+                        if (candidate.left == null) {
+                            candidate.left = child;
+                        } else {
+                            candidate.right = child;
+                        }
+                        break;
+                    }
+                    offset++;
+                }
+            }
+            nodes.add(child);
+        }
+        return root;
     }
 
     /** Builds a tree from heap positions; null entries denote absent nodes. */

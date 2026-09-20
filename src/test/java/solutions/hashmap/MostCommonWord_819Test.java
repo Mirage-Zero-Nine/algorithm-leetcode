@@ -34,9 +34,10 @@ public class MostCommonWord_819Test {
 
     @Test
     public void testEdgeCaseWithOnlyBannedWords() {
-        String paragraph = "hello world! hello world!";
+        // LeetCode guarantees that at least one non-banned word exists.
+        String paragraph = "hello world! hello leetcode!";
         String[] banned = {"hello", "world"};
-        assertEquals("", test.mostCommonWord(paragraph, banned));
+        assertEquals("leetcode", test.mostCommonWord(paragraph, banned));
     }
 
     @Test
@@ -101,5 +102,14 @@ public class MostCommonWord_819Test {
         String[] banned = {};
         assertEquals("this", test.mostCommonWord(paragraph, banned));
     }
+    @Test void extra01() { assertEquals("a", test.mostCommonWord("a", new String[]{})); }
+    @Test void extra02() { assertEquals("ball", test.mostCommonWord("Ball ball!", new String[]{})); }
+    @Test void extra03() { assertEquals("dog", test.mostCommonWord("dog cat dog", new String[]{"cat"})); }
+    @Test void extra04() { assertEquals("cat", test.mostCommonWord("dog cat", new String[]{"dog"})); }
+    @Test void extra05() { assertEquals("hello", test.mostCommonWord("Hello, hello.", new String[]{})); }
+    @Test void extra06() { assertEquals("a", test.mostCommonWord("a b a b a", new String[]{"b"})); }
+    @Test void extra07() { assertEquals("world", test.mostCommonWord("world world test", new String[]{"test"})); }
+    @Test void extra08() { assertEquals("one", test.mostCommonWord("one two three one", new String[]{})); }
+    @Test void extra09() { assertEquals("quick", test.mostCommonWord("Quick brown quick fox", new String[]{"brown"})); }
+    @Test void extra10() { assertEquals("x", test.mostCommonWord("x y x", new String[]{"y"})); }
 }
-

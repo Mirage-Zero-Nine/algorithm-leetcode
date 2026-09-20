@@ -32,8 +32,7 @@ public class Crawl_1242 {
      */
     public List<String> crawl(String startUrl, HtmlParser htmlParser) {
 
-        int index = startUrl.indexOf('/', 7);
-        String hostname = (index != -1) ? startUrl.substring(0, index) : startUrl;
+        String hostname = hostnamePrefix(startUrl);
 
         Crawler crawler = new Crawler(startUrl, hostname, htmlParser);
         Crawler.visited = ConcurrentHashMap.newKeySet();        // thread-safe set
@@ -53,8 +52,7 @@ public class Crawl_1242 {
      */
     public List<String> crawlWithMap(String startUrl, HtmlParser htmlParser) {
 
-        int index = startUrl.indexOf('/', 7);
-        String hostname = (index != -1) ? startUrl.substring(0, index) : startUrl;
+        String hostname = hostnamePrefix(startUrl);
 
         CrawlerWithMap crawler = new CrawlerWithMap(startUrl, hostname, htmlParser);
         CrawlerWithMap.map = new ConcurrentHashMap<>();
@@ -64,6 +62,24 @@ public class Crawl_1242 {
 
         CrawlerWithMap.joinThread(thread);
         return new ArrayList<>(CrawlerWithMap.result);
+    }
+
+    /**
+     * Returns the scheme and authority portion used by this problem's HTTP URLs.
+     * The problem guarantees that URLs have no port and use {@code http}, so a
+     * slash after the authority is the only delimiter that needs to be handled.
+     */
+    private static String hostnamePrefix(String url) {
+        int index = url.indexOf('/', 7);
+        return (index != -1) ? url.substring(0, index) : url;
+    }
+
+    /**
+     * Tests exact host membership rather than accepting a hostname prefix such
+     * as {@code http://example.com.evil}.
+     */
+    static boolean isSameHost(String url, String hostname) {
+        return url.equals(hostname) || url.startsWith(hostname + "/");
     }
 }
 
@@ -104,7 +120,7 @@ class Crawler implements Runnable {
      */
     @Override
     public void run() {
-        if (this.startURL.startsWith(hostName) && visited.add(startURL)) {
+        if (Crawl_1242.isSameHost(this.startURL, hostName) && visited.add(startURL)) {
             List<Thread> threads = new LinkedList<>();
             for (String s : htmlParser.getUrls(startURL)) {
                 Crawler crawler = new Crawler(s, hostName, htmlParser);
@@ -161,13 +177,12 @@ class CrawlerWithMap implements Runnable {
      */
     @Override
     public void run() {
-        if (this.startUrl.startsWith(hostname) && !result.contains(this.startUrl)) {
+        if (Crawl_1242.isSameHost(this.startUrl, hostname) && result.add(this.startUrl)) {
 
-            result.add(this.startUrl);
             List<Thread> threads = new ArrayList<>();
 
             for (String s : htmlParser.getUrls(startUrl)) {
-                Crawler crawler = new Crawler(s, hostname, htmlParser);
+                CrawlerWithMap crawler = new CrawlerWithMap(s, hostname, htmlParser);
                 Thread thread = new Thread(crawler);
                 thread.start();
                 threads.add(thread);

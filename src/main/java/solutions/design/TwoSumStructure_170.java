@@ -41,7 +41,16 @@ public class TwoSumStructure_170 {
     public boolean find(int value) {
         for (Map.Entry<Integer, Integer> entry : temp.entrySet()) {
             int i = entry.getKey();
-            int j = value - i;
+            /*
+             * Compute the complement in a wider type.  With arbitrary Java ints,
+             * subtracting in int can wrap and make two values whose mathematical
+             * sum is outside the int range look like a valid pair.
+             */
+            long complement = (long) value - i;
+            if (complement < Integer.MIN_VALUE || complement > Integer.MAX_VALUE) {
+                continue;
+            }
+            int j = (int) complement;
 
             /* Note that if there is only one element in the set, return false */
             if ((i == j && entry.getValue() > 1) || (i != j && temp.containsKey(j))) {

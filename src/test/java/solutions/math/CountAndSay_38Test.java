@@ -137,4 +137,54 @@ public class CountAndSay_38Test {
         assertTrue(result.length() > 1000, "n=30 should produce a very long string");
         assertTrue(result.matches("[123]+"), "n=30 should only contain digits 1,2,3");
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("1", test.countAndSay(1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("11", test.countAndSay(2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals("21", test.countAndSay(3));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals("312211", test.countAndSay(6));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals("13112221", test.countAndSay(7));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals("1113213211", test.countAndSay(8));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals("31131211131221", test.countAndSay(9));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals("13211311123113112211", test.countAndSay(10));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals("11131221133112132113212221", test.countAndSay(11));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals("3113112221232112111312211312113211", test.countAndSay(12));
+    }
 }

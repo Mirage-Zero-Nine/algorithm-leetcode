@@ -78,4 +78,54 @@ public class MajorityElement_229Test {
         List<Integer> result = test.majorityElement(arr);
         assertTrue(result.contains(42));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(java.util.List.of(1), test.majorityElement(new int[]{1,1,1,2,2,3}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(java.util.List.of(), test.majorityElement(new int[]{1,2,3,4}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(java.util.List.of(2, 1), test.majorityElement(new int[]{2,2,1,1,1,2,2}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(java.util.List.of(0), test.majorityElement(new int[]{0,0,0,1,1,2,2}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(java.util.List.of(-1), test.majorityElement(new int[]{-1,-1,-1,2,2,3}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(java.util.List.of(), test.majorityElement(new int[]{1,1,2,2,3,3}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(java.util.List.of(5), test.majorityElement(new int[]{5}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(java.util.List.of(1, 2), test.majorityElement(new int[]{1,2,1,2,1}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(java.util.List.of(4, 3), test.majorityElement(new int[]{4,4,4,4,3,3,3}));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(java.util.List.of(1000000000), test.majorityElement(new int[]{1000000000,1000000000,-1}));
+    }
 }

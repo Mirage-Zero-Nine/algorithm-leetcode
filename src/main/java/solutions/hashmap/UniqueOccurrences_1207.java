@@ -22,7 +22,7 @@ public class UniqueOccurrences_1207 {
 
         HashMap<Integer, Integer> m = new HashMap<>();
         for (int i = 0; i < arr.length; i++) {
-            m.put(arr[i], m.getOrDefault(i, 0) + 1);
+            m.put(arr[i], m.getOrDefault(arr[i], 0) + 1);
         }
 
         HashSet<Integer> s = new HashSet<>();

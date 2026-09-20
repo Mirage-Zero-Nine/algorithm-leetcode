@@ -139,4 +139,6 @@ public class Trap_42Test {
                     "Reversal invariance failed on trial " + trial);
         }
     }
+
+    @Test public void testSingleInteriorPeak() { assertEquals(1,test.trap(new int[]{2,0,1})); }
 }

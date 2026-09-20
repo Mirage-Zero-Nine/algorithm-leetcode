@@ -168,4 +168,10 @@ public class Rotate_48Test {
         test.rotate(matrix);
         assertArrayEquals(original, matrix);
     }
+    @Test
+    void testAdditional1() { int[][] m={{1,2},{3,4}}; test.rotate(m); assertArrayEquals(new int[][]{{3,1},{4,2}},m); }
+    @Test
+    void testAdditional2() { int[][] m={{1,2,3},{4,5,6},{7,8,9}}; test.rotate(m); assertArrayEquals(new int[][]{{7,4,1},{8,5,2},{9,6,3}},m); }
+    @Test
+    void testAdditional3() { int[][] m={{-1,0},{2,3}}; test.rotate(m); assertArrayEquals(new int[][]{{2,-1},{3,0}},m); }
 }

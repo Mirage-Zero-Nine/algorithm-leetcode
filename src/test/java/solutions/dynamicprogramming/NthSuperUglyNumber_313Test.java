@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class NthSuperUglyNumber_313Test {
 
@@ -64,5 +66,13 @@ public class NthSuperUglyNumber_313Test {
     public void testNthEquals3() {
         // sequence: 1, 2, 4 for prime [2]
         assertEquals(4, test.nthSuperUglyNumber(3, new int[]{2}));
+    }
+
+    @ParameterizedTest(name = "super ugly index {0}")
+    @CsvSource({"2,'2;3',2", "3,'2;3',3", "4,'2;3',4", "5,'2;3',6", "2,'3;5',3", "3,'3;5',5", "4,'3;5',9", "5,'2;5',8", "6,'2;5',10", "7,'2;3;7',8"})
+    public void testAdditionalPrimeSets(int index, String encodedPrimes, int expected) {
+        String[] values = encodedPrimes.split(";"); int[] primes = new int[values.length];
+        for (int i = 0; i < values.length; i++) primes[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, test.nthSuperUglyNumber(index, primes));
     }
 }

@@ -40,8 +40,7 @@ public class Intersection_349Test {
     @Test
     public void testNoIntersection() {
         int[] result = solver.intersection(new int[]{1, 2, 3}, new int[]{4, 5, 6});
-        assertTrue(Arrays.stream(result).allMatch(x -> x == 0));
-        // Actually HashSet iteration order is undefined, so let me check size
+        assertEquals(0, result.length);
     }
 
     @Test
@@ -107,4 +106,14 @@ public class Intersection_349Test {
         assertTrue(s.contains(0));
         assertTrue(s.contains(1));
     }
+    @Test void extra01() { assertArrayEquals(new int[]{}, solver.intersection(new int[]{}, new int[]{1})); }
+    @Test void extra02() { assertEquals(1, solver.intersection(new int[]{1}, new int[]{1}).length); }
+    @Test void extra03() { assertEquals(2, solver.intersection(new int[]{1,2,2}, new int[]{2,1}).length); }
+    @Test void extra04() { assertEquals(0, solver.intersection(new int[]{1,2}, new int[]{3,4}).length); }
+    @Test void extra05() { assertEquals(1, solver.intersection(new int[]{-1,-1}, new int[]{-1}).length); }
+    @Test void extra06() { assertEquals(3, solver.intersection(new int[]{1,2,3}, new int[]{3,2,1}).length); }
+    @Test void extra07() { assertEquals(1, solver.intersection(new int[]{0,0}, new int[]{0}).length); }
+    @Test void extra08() { assertEquals(2, solver.intersection(new int[]{5,6,7}, new int[]{6,7,8}).length); }
+    @Test void extra09() { assertEquals(1, solver.intersection(new int[]{1000}, new int[]{1000,1001}).length); }
+    @Test void extra10() { assertEquals(2, solver.intersection(new int[]{4,9,4}, new int[]{9,4}).length); }
 }

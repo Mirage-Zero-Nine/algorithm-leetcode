@@ -166,4 +166,9 @@ public class MinimumTotal_120Test {
         // 1(col0) -> -2(col0) -> -5(col1) = 1 + -2 + -5 = -6
         assertEquals(-6, test.minimumTotal(List.of(List.of(1), List.of(-2, 3), List.of(4, -5, 6))));
     }
+
+    @Test
+    public void testDeepSingleBranchTriangle() {
+        assertEquals(15, test.minimumTotal(List.of(List.of(1), List.of(2, 9), List.of(3, 9, 9), List.of(4, 9, 9, 9), List.of(5, 9, 9, 9, 9))));
+    }
 }

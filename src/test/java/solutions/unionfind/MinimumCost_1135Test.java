@@ -88,4 +88,14 @@ public class MinimumCost_1135Test {
         }
         assertEquals(n - 1, test.minimumCost(n, connections));
     }
+
+    @Test public void testNegativeCostEdgesChooseMinimum() { assertEquals(-3, test.minimumCost(3, new int[][]{{1, 2, -1}, {2, 3, -2}, {1, 3, 4}})); }
+    @Test public void testUnsortedConnections() { assertEquals(9, test.minimumCost(4, new int[][]{{3, 4, 4}, {1, 2, 3}, {2, 3, 2}, {1, 4, 9}})); }
+    @Test public void testCycleUsesCheapestEdges() { assertEquals(3, test.minimumCost(4, new int[][]{{1, 2, 1}, {2, 3, 1}, {3, 4, 1}, {1, 3, 9}, {1, 4, 10}})); }
+    @Test public void testDuplicateExpensiveConnection() { assertEquals(2, test.minimumCost(2, new int[][]{{1, 2, 2}, {1, 2, 8}})); }
+    @Test public void testThreeCitiesStar() { assertEquals(7, test.minimumCost(3, new int[][]{{1, 2, 3}, {1, 3, 4}})); }
+    @Test public void testFiveCitiesDisconnectedSingleton() { assertEquals(-1, test.minimumCost(5, new int[][]{{1, 2, 1}, {2, 3, 1}, {3, 4, 1}})); }
+    @Test public void testSingleCityWithIgnoredEdgesNotApplicable() { assertEquals(0, test.minimumCost(1, new int[][]{})); }
+    @Test public void testZeroCostConnections() { assertEquals(0, test.minimumCost(4, new int[][]{{1, 2, 0}, {2, 3, 0}, {3, 4, 0}})); }
+    @Test public void testInputOrderMayBeMutatedButResultCorrect() { assertEquals(10, test.minimumCost(4, new int[][]{{1, 4, 7}, {1, 2, 2}, {2, 3, 8}, {3, 4, 1}})); }
 }

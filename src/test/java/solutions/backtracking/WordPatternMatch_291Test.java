@@ -1,6 +1,8 @@
 package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,8 +89,85 @@ class WordPatternMatch_291Test {
         assertMatch("abc", "aaaa", false);
     }
 
+    @Test
+    void implementationDefinedEmptyInputsAndLengthBoundaries() {
+        // The LeetCode contract is non-empty, but this implementation reaches a
+        // well-defined terminal state for empty inputs; keep that behavior covered.
+        assertMatch("", "", true);
+        assertMatch("", "a", false);
+        assertMatch("a", "", false);
+
+        // The official upper bound is 20 characters for both inputs.
+        assertMatch("a", "abcdefghijklmnopqrst", true);
+        assertMatch("abcdefghijklmnopqrst", "a", false);
+        assertMatch("abcdefghijklmnopqrst", "abcdefghijklmnopqrst", true);
+        assertMatch("abababababababababab", "xyxyxyxyxyxyxyxyxyxy", true);
+    }
+
+    @Test
+    void bijectionCollisionsAndRepeatedCharacterConstraints() {
+        assertMatch("ab", "aa", false); // two pattern symbols cannot share a word
+        assertMatch("aabb", "aaaa", false); // neither equal-length partition works
+        assertMatch("abc", "aaaaa", false); // three symbols need three distinct substrings
+        assertMatch("abc", "aaaaaa", true); // lengths 1, 2, and 3 are distinct
+        assertMatch("abab", "aaaaaa", true); // overlapping repeated candidates: a=a, b=aa
+        assertMatch("ababa", "aaaaaaa", true); // same pair reused across five positions
+        assertMatch("aabc", "redredbluegreen", true);
+        assertMatch("aabc", "redbluegreenred", false);
+        assertMatch("abba", "redblueredblue", false); // final a must be the first word
+        assertMatch("abca", "onetwothreeone", true);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'a','x',true", "'a','xy',true", "'aa','x',false", "'aa','xx',true",
+            "'ab','xy',true", "'ab','xx',false", "'aba','xyx',true", "'aba','xyz',false",
+            "'abc','xyz',true", "'abc','xyx',false", "'abba','redbluebluered',true",
+            "'abba','redbluebluegreen',false", "'abcabc','xyzxyz',true"
+    })
+    void directBijectionBoundaryCases(String pattern, String value, boolean expected) {
+        assertMatch(pattern, value, expected);
+    }
+
+    @Test
+    void sameInstanceCallsDoNotLeakMappingsOrSearchState() {
+        WordPatternMatch_291 reused = new WordPatternMatch_291();
+
+        assertMatch(reused, "abab", "redblueredblue", true);
+        assertMatch(reused, "abab", "redblueredgreen", false);
+        assertMatch(reused, "a", "x", true);
+        assertMatch(reused, "aa", "xy", false);
+        assertMatch(reused, "", "", true);
+        assertMatch(reused, "abc", "onetwothree", true);
+        assertMatch(reused, "abc", "aaaaa", false);
+        assertMatch(reused, "a", "abcdefghijklmnopqrst", true);
+    }
+
+    @Test
+    void exhaustiveTernaryCasesAgainstIndependentPartitionOracle() {
+        int checked = 0;
+        for (int patternLength = 1; patternLength <= 3; patternLength++) {
+            for (String pattern : words("abc", patternLength)) {
+                for (int stringLength = 1; stringLength <= 5; stringLength++) {
+                    for (String value : words("abc", stringLength)) {
+                        boolean expected = partitionOracle(pattern, value);
+                        assertEquals(expected, solution.wordPatternMatch(pattern, value),
+                                () -> "pattern=" + pattern + ", string=" + value);
+                        checked++;
+                    }
+                }
+            }
+        }
+        assertEquals(14_157, checked);
+    }
+
     private void assertMatch(String pattern, String value, boolean expected) {
-        assertEquals(expected, solution.wordPatternMatch(pattern, value),
+        assertMatch(solution, pattern, value, expected);
+    }
+
+    private static void assertMatch(WordPatternMatch_291 candidate, String pattern, String value,
+                                    boolean expected) {
+        assertEquals(expected, candidate.wordPatternMatch(pattern, value),
                 () -> "pattern=" + pattern + ", string=" + value);
     }
 

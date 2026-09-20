@@ -1,6 +1,8 @@
 package solutions.math;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,5 +68,59 @@ class MinOperationsMaxProfit_1599Test {
         // each rotation: 4*5 - 6 = 14 profit, all served in 1000 rotations
         int result = solution.minOperationsMaxProfit(customers, 5, 6);
         assertEquals(1000, result);
+    }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(-1, solution.minOperationsMaxProfit(new int[]{0,0,0}, 5, 6));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(1, solution.minOperationsMaxProfit(new int[]{4}, 5, 1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(2, solution.minOperationsMaxProfit(new int[]{8}, 5, 6));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(8, solution.minOperationsMaxProfit(new int[]{10,10,10}, 5, 6));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(4, solution.minOperationsMaxProfit(new int[]{1,1,1,1}, 5, 1));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(5, solution.minOperationsMaxProfit(new int[]{0,4,0,0,4}, 5, 1));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(3, solution.minOperationsMaxProfit(new int[]{3,3,3}, 10, 20));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(5, solution.minOperationsMaxProfit(new int[]{20,0,0,0}, 10, 5));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(5, solution.minOperationsMaxProfit(new int[]{2,2,2,2,2}, 8, 3));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"'4',5,10,1", "'1,0,0,0',5,1,1", "'0,4',5,1,2", "'8,0',5,6,2", "'0,0,4',5,1,3"})
+    void delayedArrivalsAndExactCapacity(String encoded, int boardingCost, int runningCost, int expected) {
+        String[] values = encoded.split(",");
+        int[] customers = new int[values.length];
+        for (int i = 0; i < values.length; i++) customers[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, solution.minOperationsMaxProfit(customers, boardingCost, runningCost));
     }
 }

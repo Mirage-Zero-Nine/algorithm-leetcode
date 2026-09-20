@@ -11,6 +11,10 @@ public class HammingDistance_461Test {
         assertEquals(2, solver.hammingDistance(1, 4));
     }
 
+    @Test public void testSecondOfficialExample() {
+        assertEquals(1, solver.hammingDistance(3, 1));
+    }
+
     @Test public void testSameNumber() {
         assertEquals(0, solver.hammingDistance(5, 5));
     }
@@ -31,14 +35,49 @@ public class HammingDistance_461Test {
         assertEquals(31, solver.hammingDistance(0, Integer.MAX_VALUE));
     }
 
+    @Test public void testMaxIntAgainstItself() {
+        assertEquals(0, solver.hammingDistance(Integer.MAX_VALUE, Integer.MAX_VALUE));
+    }
+
+    @Test public void testMaxIntAgainstImmediatePredecessor() {
+        assertEquals(1, solver.hammingDistance(Integer.MAX_VALUE, Integer.MAX_VALUE - 1));
+    }
+
+    @Test public void testHighestAllowedBit() {
+        int highestAllowedBit = 1 << 30;
+        assertEquals(1, solver.hammingDistance(0, highestAllowedBit));
+        assertEquals(30, solver.hammingDistance(Integer.MAX_VALUE, highestAllowedBit));
+    }
+
     @Test public void testConsecutive() {
         // 2 = 10, 3 = 11 -> differ in 1 bit
         assertEquals(1, solver.hammingDistance(2, 3));
     }
 
+    @Test public void testSingleBitCarryChangesTwoPositions() {
+        assertEquals(2, solver.hammingDistance(1, 2));
+    }
+
     @Test public void testLargeNumbers() {
         // 255 = 11111111, 0 = 00000000
         assertEquals(8, solver.hammingDistance(255, 0));
+    }
+
+    @Test public void testAlternatingBitsAgainstZero() {
+        assertEquals(16, solver.hammingDistance(0, 0x55555555));
+        assertEquals(15, solver.hammingDistance(0, 0x2AAAAAAA));
+    }
+
+    @Test public void testUpperAndLowerHalfMasks() {
+        assertEquals(31, solver.hammingDistance(0x40000000, 0x3FFFFFFF));
+    }
+
+    @Test public void testSparseDisjointBits() {
+        assertEquals(4, solver.hammingDistance(0x40000001, 0x20000002));
+    }
+
+    @Test public void testDenseMaskDifference() {
+        assertEquals(15, solver.hammingDistance(0x7FFFFFFF, 0x0000FFFF));
     }
 
     @Test public void testSymmetric() {
@@ -90,5 +129,37 @@ public class HammingDistance_461Test {
     @Test public void testConsecutiveNumbersAcrossEveryCarryBoundary() {
         for (int bit = 1; bit < 31; bit++)
             assertEquals(bit + 1, solver.hammingDistance((1 << bit) - 1, 1 << bit));
+    }
+
+    @Test public void testAdjacentSingleBitMasks() {
+        for (int bit = 0; bit < 30; bit++) {
+            assertEquals(2, solver.hammingDistance(1 << bit, 1 << (bit + 1)),
+                    "bit=" + bit);
+        }
+    }
+
+    @Test public void testClearingEveryBitFromMaximum() {
+        for (int bit = 0; bit < 31; bit++) {
+            assertEquals(1, solver.hammingDistance(Integer.MAX_VALUE, Integer.MAX_VALUE ^ (1 << bit)),
+                    "bit=" + bit);
+        }
+    }
+
+    @Test public void testSymmetryAcrossBoundaryValues() {
+        int[] values = {0, 1, 2, 31, 1 << 15, 1 << 30, Integer.MAX_VALUE};
+        for (int x : values) {
+            for (int y : values) {
+                assertEquals(solver.hammingDistance(x, y), solver.hammingDistance(y, x),
+                        "x=" + x + ", y=" + y);
+            }
+        }
+    }
+
+    @Test public void testRepeatedCallsDoNotRetainState() {
+        assertEquals(31, solver.hammingDistance(0, Integer.MAX_VALUE));
+        assertEquals(0, solver.hammingDistance(123456789, 123456789));
+        assertEquals(Integer.bitCount(0x12345678 ^ 0x0F0F0F0F),
+                solver.hammingDistance(0x12345678, 0x0F0F0F0F));
+        assertEquals(1, solver.hammingDistance(0, 1));
     }
 }

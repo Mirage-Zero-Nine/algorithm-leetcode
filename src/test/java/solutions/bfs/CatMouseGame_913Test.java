@@ -94,6 +94,119 @@ public class CatMouseGame_913Test {
         assertTrue(seen[0] && seen[1] && seen[2], "fixtures must exercise draw, mouse, and cat outcomes");
     }
 
+    @Test
+    void exhaustiveFourNodeGraphsMatchIndependentRetrogradeOracle() {
+        int[] outcomeCounts = new int[3];
+        int graphCount = 0;
+        for (int[][] graph : allValidUndirectedGraphs(4)) {
+            outcomeCounts[assertOutcome(graph)]++;
+            graphCount++;
+        }
+
+        // This exercises every edge subset that satisfies the published graph contract,
+        // including sparse terminal branches and dense cycle-heavy positions.
+        assertTrue(graphCount > 20, "small-graph enumeration should be substantial");
+        assertTrue(outcomeCounts[1] > 0 && outcomeCounts[2] > 0,
+                "enumeration must contain both terminal outcomes: " + Arrays.toString(outcomeCounts));
+    }
+
+    @Test
+    void exhaustiveFiveNodeGraphsCoverHoleAndCycleInteractions() {
+        int[] outcomeCounts = new int[3];
+        int graphCount = 0;
+        for (int[][] graph : allValidUndirectedGraphs(5)) {
+            outcomeCounts[assertOutcome(graph)]++;
+            graphCount++;
+        }
+
+        // 1,024 edge subsets are still small enough to keep this test well below the
+        // 15-second test limit while exercising many independent game-state graphs.
+        assertTrue(graphCount > 100, "five-node enumeration should be substantial");
+        assertTrue(outcomeCounts[0] > 0 && outcomeCounts[1] > 0 && outcomeCounts[2] > 0,
+                "enumeration must contain all outcomes: " + Arrays.toString(outcomeCounts));
+    }
+
+    @Test
+    void terminalNeighborsAndCatHoleRestrictionAreHandled() {
+        // The mouse is forced onto the cat on its first move.
+        assertOutcome(new int[][]{{3}, {2}, {1, 3}, {0, 2}});
+
+        // The mouse has a direct hole move, which is immediately winning.
+        assertOutcome(new int[][]{{1, 3}, {0, 2}, {1, 3, 4}, {0, 2, 4}, {2, 3}});
+
+        // The cat is adjacent to the hole but must choose a non-hole edge.  This
+        // specifically guards the rule that cat->0 is never a legal transition.
+        assertOutcome(new int[][]{{2, 4}, {2}, {0, 1, 3}, {2, 4}, {0, 3}});
+
+        // A sparse graph with a long cycle and no 0-1 shortcut exercises unresolved
+        // repeated-position states rather than an immediate terminal move.
+        assertOutcome(new int[][]{{3}, {2, 3}, {1, 3}, {0, 1, 2}});
+    }
+
+    @Test
+    void independentOracleChecksSeededSmallGraphsAndInputIsolation() {
+        for (int n = 3; n <= 8; n++) {
+            for (int seed = 0; seed < 12; seed++) {
+                int[][] graph = randomUndirectedGraph(n, 913_000L + n * 100L + seed);
+                int[][] before = copy(graph);
+                int expected = independentOutcome(graph);
+                assertEquals(expected, solution.catMouseGame(graph),
+                        "seeded graph n=" + n + ", seed=" + seed);
+                assertTrue(Arrays.deepEquals(before, graph), "graph input was mutated");
+            }
+        }
+    }
+
+    @Test
+    void pathWithHoleAtOneEnd() {
+        assertOutcome(new int[][]{{5}, {2}, {1, 3}, {2, 4}, {3, 5}, {0, 4}});
+    }
+
+    @Test
+    void cycleWithSeparateHoleBranch() {
+        assertOutcome(new int[][]{{4}, {2, 3}, {1, 3}, {1, 2, 4}, {0, 3}});
+    }
+
+    @Test
+    void mouseShortcutAndCatDetour() {
+        assertOutcome(new int[][]{{3, 4}, {3}, {3, 4}, {0, 1, 2}, {0, 2}});
+    }
+
+    @Test
+    void sparseFiveNodeCycle() {
+        assertOutcome(new int[][]{{4}, {2}, {1, 3}, {2, 4}, {0, 3}});
+    }
+
+    @Test
+    void denseSixNodeGraph() {
+        assertOutcome(completeGraph(6));
+    }
+
+    @Test
+    void denseGraphWithoutMouseHoleShortcut() {
+        assertOutcome(completeGraphWithout01(7));
+    }
+
+    @Test
+    void expandedCycleExercisesDrawStates() {
+        assertOutcome(expandCore(new int[][]{{2}, {2, 3}, {0, 1, 3}, {1, 2}}, 12, 2, 3));
+    }
+
+    @Test
+    void generatedSmallGraphOne() {
+        assertOutcome(randomUndirectedGraph(9, 913_100L));
+    }
+
+    @Test
+    void generatedSmallGraphTwo() {
+        assertOutcome(randomUndirectedGraph(11, 913_101L));
+    }
+
+    @Test
+    void generatedSmallGraphThree() {
+        assertOutcome(randomUndirectedGraph(13, 913_102L));
+    }
+
     private int assertOutcome(int[][] graph) {
         validateOfficialGraph(graph);
         int[][] before = copy(graph);
@@ -179,6 +292,52 @@ public class CatMouseGame_913Test {
             for (int j = 0; j < n; j++) if (j != i) graph[i][index++] = j;
         }
         return graph;
+    }
+
+    /**
+     * Enumerate all simple undirected graphs of a small size that satisfy LeetCode's
+     * non-empty-adjacency and initial-cat-move guarantees.  Expected outcomes still come
+     * from {@link #independentOutcome(int[][])}, never from graph construction.
+     */
+    private static List<int[][]> allValidUndirectedGraphs(int n) {
+        List<int[][]> graphs = new ArrayList<>();
+        int edgeCount = n * (n - 1) / 2;
+        int totalMasks = 1 << edgeCount;
+        for (int mask = 0; mask < totalMasks; mask++) {
+            boolean[][] edges = new boolean[n][n];
+            int bit = 0;
+            for (int left = 0; left < n; left++) {
+                for (int right = left + 1; right < n; right++) {
+                    if ((mask & (1 << bit++)) != 0) {
+                        edges[left][right] = true;
+                        edges[right][left] = true;
+                    }
+                }
+            }
+
+            boolean valid = true;
+            for (int node = 0; node < n; node++) {
+                boolean hasNeighbor = false;
+                for (int neighbor = 0; neighbor < n; neighbor++) hasNeighbor |= edges[node][neighbor];
+                valid &= hasNeighbor;
+            }
+            boolean initialCatCanMove = false;
+            for (int neighbor = 1; neighbor < n; neighbor++) initialCatCanMove |= edges[2][neighbor];
+            if (!valid || !initialCatCanMove) continue;
+
+            int[][] graph = new int[n][];
+            for (int node = 0; node < n; node++) {
+                int degree = 0;
+                for (int neighbor = 0; neighbor < n; neighbor++) if (edges[node][neighbor]) degree++;
+                graph[node] = new int[degree];
+                int index = 0;
+                for (int neighbor = 0; neighbor < n; neighbor++) {
+                    if (edges[node][neighbor]) graph[node][index++] = neighbor;
+                }
+            }
+            graphs.add(graph);
+        }
+        return graphs;
     }
 
     private static int[][] completeGraphWithout01(int n) {

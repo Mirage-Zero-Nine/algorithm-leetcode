@@ -104,9 +104,10 @@ public class MyStack_225Test {
     @Test
     public void testGiantCase() {
         MyStack_225 stack = new MyStack_225();
-        for (int i = 0; i < 1000; i++) stack.push(i);
-        for (int i = 999; i >= 0; i--) assertEquals(i, stack.pop());
-        assertTrue(stack.empty());
+        // The problem permits at most 100 method calls, so exercise that
+        // exact boundary instead of using an out-of-contract stress case.
+        for (int i = 1; i <= 50; i++) stack.push(i);
+        for (int i = 50; i >= 1; i--) assertEquals(i, stack.pop());
     }
 
     @Test
@@ -196,12 +197,14 @@ public class MyStack_225Test {
     }
 
     @Test
-    public void testLargeStress1000OpsRandomCrossCheck() {
+    public void testMaximumDocumentedCallsRandomCrossCheck() {
         MyStack_225 stack = new MyStack_225();
         Deque<Integer> ref = new ArrayDeque<>();
         Random rng = new Random(42L);
 
-        for (int i = 0; i < 1000; i++) {
+        // Leave one call for the final empty() assertion: exactly 100 stack
+        // operations, with every pop/top valid by construction.
+        for (int i = 0; i < 99; i++) {
             int op = ref.isEmpty() ? 0 : rng.nextInt(4);
             switch (op) {
                 case 0 -> {
@@ -214,5 +217,89 @@ public class MyStack_225Test {
                 case 3 -> assertEquals(ref.isEmpty(), stack.empty(), "empty mismatch at op " + i);
             }
         }
+        assertEquals(ref.isEmpty(), stack.empty());
+    }
+
+    @Test
+    public void testDuplicateValuesPreserveLifo() {
+        MyStack_225 stack = new MyStack_225();
+        stack.push(7);
+        stack.push(7);
+        stack.push(7);
+
+        assertEquals(7, stack.top());
+        assertEquals(7, stack.pop());
+        assertEquals(7, stack.pop());
+        assertEquals(7, stack.pop());
+        assertTrue(stack.empty());
+    }
+
+    @Test
+    public void testIntegerBoundaryValues() {
+        MyStack_225 stack = new MyStack_225();
+        stack.push(Integer.MIN_VALUE);
+        stack.push(0);
+        stack.push(Integer.MAX_VALUE);
+
+        assertEquals(Integer.MAX_VALUE, stack.top());
+        assertEquals(Integer.MAX_VALUE, stack.pop());
+        assertEquals(0, stack.pop());
+        assertEquals(Integer.MIN_VALUE, stack.pop());
+        assertTrue(stack.empty());
+    }
+
+    @Test
+    public void testDocumentedValueBounds() {
+        MyStack_225 stack = new MyStack_225();
+        stack.push(1);
+        stack.push(9);
+        assertEquals(9, stack.pop());
+        assertEquals(1, stack.pop());
+        assertTrue(stack.empty());
+    }
+
+    @Test
+    public void testIndependentInstancesDoNotShareState() {
+        MyStack_225 first = new MyStack_225();
+        MyStack_225 second = new MyStack_225();
+        first.push(11);
+        second.push(22);
+
+        assertEquals(11, first.top());
+        assertEquals(22, second.top());
+        assertEquals(11, first.pop());
+        assertTrue(first.empty());
+        assertFalse(second.empty());
+        assertEquals(22, second.pop());
+        assertTrue(second.empty());
+    }
+
+    @Test
+    public void testSeededOracleCoversFullSignedRange() {
+        MyStack_225 stack = new MyStack_225();
+        Deque<Integer> ref = new ArrayDeque<>();
+        int[] boundaryValues = {
+                Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE
+        };
+        Random rng = new Random(225L);
+
+        // Five setup pushes plus 91 generated calls and one final empty call
+        // stay within the problem's 100-call limit.
+        for (int value : boundaryValues) {
+            stack.push(value);
+            ref.push(value);
+        }
+        for (int i = 0; i < 91; i++) {
+            if (ref.isEmpty() || rng.nextBoolean()) {
+                int value = i % 5 == 0
+                        ? boundaryValues[i % boundaryValues.length]
+                        : rng.nextInt();
+                stack.push(value);
+                ref.push(value);
+            } else {
+                assertEquals(ref.pop(), stack.pop(), "pop mismatch at generated call " + i);
+            }
+        }
+        assertEquals(ref.isEmpty(), stack.empty());
     }
 }

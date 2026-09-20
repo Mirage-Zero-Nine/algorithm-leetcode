@@ -60,4 +60,54 @@ public class LargestTriangleArea_812Test {
         // 5 points, largest triangle
         assertEquals(4.0, test.largestTriangleArea(new int[][]{{0, 0}, {2, 0}, {0, 4}, {1, 1}, {1, 2}}), 0.0001);
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0.5, test.largestTriangleArea(new int[][]{{0,0},{1,0},{0,1}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(2, test.largestTriangleArea(new int[][]{{0,0},{2,0},{0,2}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(6, test.largestTriangleArea(new int[][]{{0,0},{3,0},{0,4}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(1, test.largestTriangleArea(new int[][]{{0,0},{1,1},{2,0}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(0, test.largestTriangleArea(new int[][]{{0,0},{0,0},{1,1}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(4, test.largestTriangleArea(new int[][]{{-1,0},{0,2},{3,0}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(8, test.largestTriangleArea(new int[][]{{-2,-2},{2,-2},{0,2}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(2.5, test.largestTriangleArea(new int[][]{{1,1},{2,3},{4,2}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(2.5, test.largestTriangleArea(new int[][]{{0,0},{5,0},{2,1}}), 0.0001);
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(5000, test.largestTriangleArea(new int[][]{{0,0},{100,0},{0,100}}), 0.0001);
+    }
 }

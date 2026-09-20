@@ -69,4 +69,15 @@ public class WordPattern_290Test {
         }
         assertTrue(test.wordPattern(pattern.toString(), str.toString()));
     }
+
+    @Test public void testRepeatedPatternWord() { assertTrue(test.wordPattern("abcabc", "one two three one two three")); }
+    @Test public void testWordCountExceedsPattern() { assertFalse(test.wordPattern("ab", "one two three")); }
+    @Test public void testPatternCountExceedsWords() { assertFalse(test.wordPattern("abc", "one two")); }
+    @Test public void testTwoWordsTwoKeys() { assertTrue(test.wordPattern("ab", "one two")); }
+    @Test public void testOneWordRepeatedPattern() { assertTrue(test.wordPattern("aaa", "same same same")); }
+    @Test public void testOneWordWithDifferentKeys() { assertFalse(test.wordPattern("aba", "same other other")); }
+    @Test public void testLongRepeatedBlocks() { assertTrue(test.wordPattern("aabbcc", "x x y y z z")); }
+    @Test public void testValueCollisionLater() { assertFalse(test.wordPattern("abc", "x y x")); }
+    @Test public void testThreeDistinctWords() { assertTrue(test.wordPattern("xyz", "alpha beta gamma")); }
+    @Test public void testWhitespaceSeparatedWords() { assertTrue(test.wordPattern("ab", "left right")); }
 }

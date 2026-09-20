@@ -38,6 +38,23 @@ class Partition_131Test {
     }
 
     @Test
+    void testNoWholeStringPalindromeStillIncludesPartialPalindromes() {
+        // The complete input is not a palindrome, but "aa" is a valid first part.
+        assertMatchesIndependentOracle("aabca");
+        assertTrue(solution.partition("aabca").stream()
+                .noneMatch(partition -> partition.size() == 1));
+    }
+
+    @Test
+    void testCharactersAreComparedExactlyWithoutCaseOrPunctuationNormalization() {
+        // These are outside LeetCode's lowercase-only input contract, but the implementation
+        // naturally supports them by comparing Java characters exactly.
+        assertMatchesIndependentOracle("AaA");
+        assertMatchesIndependentOracle("a!a");
+        assertMatchesIndependentOracle("a!A");
+    }
+
+    @Test
     void testLonger() {
         assertMatchesIndependentOracle("aabb");
     }

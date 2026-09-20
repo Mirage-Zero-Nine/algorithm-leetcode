@@ -109,6 +109,15 @@ public class IntToRoman_12Test {
         assertEquals("", test.intToRoman(-1));
     }
 
+    @Test public void testAdditionalEleven() { assertEquals("XI", test.intToRoman(11)); }
+    @Test public void testAdditionalFortyNine() { assertEquals("XLIX", test.intToRoman(49)); }
+    @Test public void testAdditionalNinetyNine() { assertEquals("XCIX", test.intToRoman(99)); }
+    @Test public void testAdditionalFourHundredNinetyNine() { assertEquals("CDXCIX", test.intToRoman(499)); }
+    @Test public void testAdditionalNineHundredNinetyNine() { assertEquals("CMXCIX", test.intToRoman(999)); }
+    @Test public void testAdditionalOneThousandOne() { assertEquals("MI", test.intToRoman(1001)); }
+    @Test public void testAdditionalThreeThousandNine() { assertEquals("MMMIX", test.intToRoman(3009)); }
+    @Test public void testAdditionalThreeThousandNineHundred() { assertEquals("MMMCM", test.intToRoman(3900)); }
+
     /**
      * Iterable sweep: every integer in [1, 100] must produce the canonical
      * Roman numeral. This exercises every combination of subtractive forms

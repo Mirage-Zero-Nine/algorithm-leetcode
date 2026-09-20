@@ -1,8 +1,11 @@
 package solutions.dynamicprogramming;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class StoneGame_877Test {
 
@@ -36,7 +39,7 @@ public class StoneGame_877Test {
 
     @Test
     public void testFourPilesSymmetric() {
-        // {2,1,1,2}: total=6, dp shows tie so Alex doesn't strictly win
+        // Optimal play on {3,1,1,2} gives Alex 4 stones versus Lee's 3.
         assertTrue(test.stoneGame(new int[]{3, 1, 1, 2}));
     }
 
@@ -62,5 +65,14 @@ public class StoneGame_877Test {
             piles[i] = i + 1;
         }
         assertTrue(test.stoneGame(piles));
+    }
+
+    @ParameterizedTest(name = "stone game {0}")
+    @CsvSource({"'1,2',true", "'2,1',true", "'1,3,1,3',true", "'2,2,2,2',false", "'9,1,8,2',true", "'6,4,7,3',true", "'100,1,100,1',true", "'1,10,2,9,3,8',true", "'5,4,3,2,1,6',true", "'11,7,5,3,2,1',true"})
+    public void testAdditionalEvenLengthGames(String encoded, boolean expected) {
+        String[] values = encoded.split(",");
+        int[] piles = new int[values.length];
+        for (int i = 0; i < values.length; i++) piles[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, test.stoneGame(piles));
     }
 }

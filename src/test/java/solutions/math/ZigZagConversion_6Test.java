@@ -137,4 +137,14 @@ public class ZigZagConversion_6Test {
             assertEquals(inputs[i].length(), test.convert(inputs[i], rows[i]).length());
         }
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("AB", test.convert("AB", 2));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("ACB", test.convert("ABC", 2));
+    }
 }

@@ -71,4 +71,58 @@ public class FindCelebrity_277Test {
     public void testTwoPeople() {
         assertEquals(0, test.findCelebrity(2));
     }
+
+    @Test
+    public void testContractAcrossIncreasingPartySizes() {
+        for (int n = 1; n <= 1000; n++) assertEquals(0, test.findCelebrity(n));
+    }
+
+    @Test
+    public void testBoundarySizedParties() {
+        assertEquals(0, test.findCelebrity(11));
+        assertEquals(0, test.findCelebrity(101));
+        assertEquals(0, test.findCelebrity(1001));
+    }
+
+    @Test
+    public void testRepeatedInvocationAcrossDifferentSizes() {
+        assertEquals(0, test.findCelebrity(3));
+        assertEquals(0, test.findCelebrity(300));
+        assertEquals(0, test.findCelebrity(2));
+    }
+
+    @Test
+    public void testLargeBoundaryWithinPracticalRuntime() {
+        assertEquals(0, test.findCelebrity(20000));
+    }
+
+    @Test
+    public void testOddAndEvenPartySizes() {
+        assertEquals(0, test.findCelebrity(999));
+        assertEquals(0, test.findCelebrity(1000));
+    }
+
+    @Test
+    public void testSmallPartySizes() {
+        assertEquals(0, test.findCelebrity(1));
+        assertEquals(0, test.findCelebrity(2));
+        assertEquals(0, test.findCelebrity(3));
+    }
+
+    @Test
+    public void testPowerOfTwoPartySizes() {
+        assertEquals(0, test.findCelebrity(16));
+        assertEquals(0, test.findCelebrity(1024));
+    }
+
+    @Test
+    public void testNearIntegerBoundaryDoesNotApplyInvalidInput() {
+        // Keep this within the practical contract; the API's fixed relation makes all valid n return 0.
+        assertEquals(0, test.findCelebrity(4096));
+    }
+
+    @Test
+    public void testNoStateLeaksBetweenCalls() {
+        for (int n : new int[]{4, 7, 64, 5, 128}) assertEquals(0, test.findCelebrity(n));
+    }
 }

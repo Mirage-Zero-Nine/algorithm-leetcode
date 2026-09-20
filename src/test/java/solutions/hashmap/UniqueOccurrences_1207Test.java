@@ -11,39 +11,36 @@ public class UniqueOccurrences_1207Test {
 
     @Test
     public void testHappyCases() {
-        // Note: implementation uses index i as key instead of arr[i], so results may differ from LeetCode
-        // Testing based on actual implementation behavior
-        assertFalse(test.uniqueOccurrences(new int[]{1, 2, 2, 1, 1, 3}));
+        assertTrue(test.uniqueOccurrences(new int[]{1, 2, 2, 1, 1, 3}));
     }
 
     @Test
-    public void testEdgeCases() {
+    public void testRepeatedValueEdges() {
         assertTrue(test.uniqueOccurrences(new int[]{1}));
     }
 
     @Test
     public void testLargeCase() {
-        assertTrue(test.uniqueOccurrences(new int[]{1, 2, 3, 4, 5}));
+        assertFalse(test.uniqueOccurrences(new int[]{1, 2, 3, 4, 5}));
     }
 
     @Test
-    public void testImplementationSpecificHappyCases() {
-        // Based on the current implementation, not the intended LeetCode contract.
+    public void testEmptyAndEqualFrequencyCases() {
         assertTrue(test.uniqueOccurrences(new int[]{}));
         assertTrue(test.uniqueOccurrences(new int[]{1, 1}));
-        assertTrue(test.uniqueOccurrences(new int[]{1, 2}));
+        assertFalse(test.uniqueOccurrences(new int[]{1, 2}));
     }
 
     @Test
-    public void testImplementationSpecificEdgeCases() {
+    public void testEdgeCases() {
         assertTrue(test.uniqueOccurrences(new int[]{5, 5, 5}));
-        assertFalse(test.uniqueOccurrences(new int[]{4, 4, 5}));
+        assertTrue(test.uniqueOccurrences(new int[]{4, 4, 5}));
         assertFalse(test.uniqueOccurrences(new int[]{9, 8, 7, 6}));
         assertTrue(test.uniqueOccurrences(new int[]{-1}));
     }
 
     @Test
-    public void testImplementationSpecificGiantCase() {
+    public void testGiantCase() {
         int[] nums = new int[200];
         for (int i = 0; i < nums.length; i++) {
             nums[i] = i;
@@ -58,7 +55,6 @@ public class UniqueOccurrences_1207Test {
 
     @Test
     public void testThreeDistinct() {
-        // Implementation uses index as key, so 3 entries each with count 1 -> duplicate counts
         assertFalse(test.uniqueOccurrences(new int[]{7, 8, 9}));
     }
 
@@ -75,4 +71,14 @@ public class UniqueOccurrences_1207Test {
         // each of 50 values appears 20 times — not unique
         assertFalse(new UniqueOccurrences_1207().uniqueOccurrences(arr));
     }
+    @Test void extra01() { assertTrue(test.uniqueOccurrences(new int[]{1,1,2})); }
+    @Test void extra02() { assertFalse(test.uniqueOccurrences(new int[]{1,1,2,2})); }
+    @Test void extra03() { assertTrue(test.uniqueOccurrences(new int[]{-1,-1,0})); }
+    @Test void extra04() { assertTrue(test.uniqueOccurrences(new int[]{1,2,2,3,3,3})); }
+    @Test void extra05() { assertFalse(test.uniqueOccurrences(new int[]{1,2,3,4})); }
+    @Test void extra06() { assertTrue(test.uniqueOccurrences(new int[]{5,5,5,6,6})); }
+    @Test void extra07() { assertFalse(test.uniqueOccurrences(new int[]{0,0,1,1,2,2})); }
+    @Test void extra08() { assertTrue(test.uniqueOccurrences(new int[]{1,1,1,2,2,3})); }
+    @Test void extra09() { assertFalse(test.uniqueOccurrences(new int[]{-2,-1,0})); }
+    @Test void extra10() { assertTrue(test.uniqueOccurrences(new int[]{7})); }
 }

@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class DieSimulator_1223Test {
 
@@ -71,5 +73,13 @@ public class DieSimulator_1223Test {
         int result = test.dieSimulator(20, new int[]{8, 8, 8, 8, 8, 8});
         // Just verify it returns a positive value within mod range
         assertEquals(true, result > 0 && result < 1000000007);
+    }
+
+    @ParameterizedTest(name = "rolls {0}, limits {1}")
+    @CsvSource({"1,'1;1;1;1;1;1',6", "1,'2;3;4;5;6;7',6", "1,'16;16;16;16;16;16',6", "2,'2;2;2;2;2;2',36", "2,'3;3;3;3;3;3',36", "2,'1;2;3;4;5;6',35", "2,'1;1;2;2;3;3',34", "2,'1;1;1;1;1;1',30", "3,'2;2;2;2;2;2',210", "3,'1;2;3;4;5;6',204"})
+    public void testAdditionalRollLimits(int rolls, String encodedLimits, int expected) {
+        String[] values = encodedLimits.split(";"); int[] limits = new int[values.length];
+        for (int i = 0; i < values.length; i++) limits[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, test.dieSimulator(rolls, limits));
     }
 }

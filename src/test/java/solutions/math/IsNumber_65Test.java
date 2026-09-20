@@ -230,4 +230,54 @@ public class IsNumber_65Test {
         assertTrue(test.isNumber("0"));
         assertTrue(test.isNumber("2e10"));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertTrue(test.isNumber("0"));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertTrue(test.isNumber("-0"));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertTrue(test.isNumber("+3.14"));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertTrue(test.isNumber("-.9"));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertTrue(test.isNumber("2e10"));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertTrue(test.isNumber("-90E3"));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertTrue(test.isNumber("6e-1"));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertFalse(test.isNumber("Infinity"));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertFalse(test.isNumber("NaN"));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertFalse(test.isNumber("1e"));
+    }
 }

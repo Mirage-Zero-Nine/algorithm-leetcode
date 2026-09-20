@@ -83,4 +83,14 @@ public class CanPermutePalindrome_266Test {
         sb.append('y');
         assertFalse(test.canPermutePalindrome(sb.toString()));
     }
+    @Test void extra01() { assertTrue(test.canPermutePalindrome("")); }
+    @Test void extra02() { assertFalse(test.canPermutePalindrome("ab")); }
+    @Test void extra03() { assertTrue(test.canPermutePalindrome("abcba")); }
+    @Test void extra04() { assertFalse(test.canPermutePalindrome("aabbcd")); }
+    @Test void extra05() { assertTrue(test.canPermutePalindrome("aabbccd")); }
+    @Test void extra06() { assertFalse(test.canPermutePalindrome("xyz")); }
+    @Test void extra07() { assertTrue(test.canPermutePalindrome("aabbccddeeff")); }
+    @Test void extra08() { assertFalse(test.canPermutePalindrome("aabbccddeeffgh")); }
+    @Test void extra09() { assertTrue(test.canPermutePalindrome("112233")); }
+    @Test void extra10() { assertFalse(test.canPermutePalindrome("123")); }
 }

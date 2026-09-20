@@ -320,4 +320,246 @@ public class MyCircularDeque_641Test {
             assertEquals(ref.size() == capacity, deque.isFull(), "isFull mismatch at op " + i);
         }
     }
+
+    @Test
+    public void testOfficialLeetCodeSequence() {
+        MyCircularDeque_641 deque = new MyCircularDeque_641(3);
+
+        assertTrue(deque.insertLast(1));
+        assertTrue(deque.insertLast(2));
+        assertTrue(deque.insertFront(3));
+        assertFalse(deque.insertFront(4));
+        assertEquals(2, deque.getRear());
+        assertTrue(deque.isFull());
+        assertTrue(deque.deleteLast());
+        assertTrue(deque.insertFront(4));
+        assertEquals(4, deque.getFront());
+    }
+
+    @Test
+    public void testCapacityOneCanBeReusedThroughBothEnds() {
+        MyCircularDeque_641 deque = new MyCircularDeque_641(1);
+
+        for (int value = 0; value < 30; value++) {
+            assertTrue(deque.insertFront(value));
+            assertTrue(deque.isFull());
+            assertEquals(value, deque.getFront());
+            assertEquals(value, deque.getRear());
+            assertFalse(deque.insertLast(value + 100));
+            assertTrue(deque.deleteLast());
+            assertTrue(deque.isEmpty());
+            assertFalse(deque.deleteFront());
+
+            assertTrue(deque.insertLast(-value));
+            assertEquals(-value, deque.getFront());
+            assertEquals(-value, deque.getRear());
+            assertTrue(deque.deleteFront());
+            assertTrue(deque.isEmpty());
+        }
+    }
+
+    @Test
+    public void testRepeatedMixedWraparoundAgainstIndependentDeque() {
+        MyCircularDeque_641 deque = new MyCircularDeque_641(4);
+        ArrayDeque<Integer> expected = new ArrayDeque<>();
+        int[][] operations = {
+                {1, 10}, {1, 20}, {0, 5}, {0, 1}, {3, 0}, {1, 30},
+                {2, 0}, {0, 40}, {1, 50}, {3, 0}, {2, 0}, {1, 60},
+                {0, 70}, {3, 0}, {3, 0}, {2, 0}, {1, 80}, {0, 90},
+                {1, 100}, {0, 110}, {2, 0}, {3, 0}, {2, 0}, {3, 0}
+        };
+
+        for (int index = 0; index < operations.length; index++) {
+            int operation = operations[index][0];
+            int value = operations[index][1];
+            switch (operation) {
+                case 0 -> {
+                    boolean actual = deque.insertFront(value);
+                    boolean model = expected.size() < 4;
+                    assertEquals(model, actual, "insertFront at operation " + index);
+                    if (model) {
+                        expected.addFirst(value);
+                    }
+                }
+                case 1 -> {
+                    boolean actual = deque.insertLast(value);
+                    boolean model = expected.size() < 4;
+                    assertEquals(model, actual, "insertLast at operation " + index);
+                    if (model) {
+                        expected.addLast(value);
+                    }
+                }
+                case 2 -> {
+                    boolean actual = deque.deleteFront();
+                    boolean model = !expected.isEmpty();
+                    assertEquals(model, actual, "deleteFront at operation " + index);
+                    if (model) {
+                        expected.removeFirst();
+                    }
+                }
+                case 3 -> {
+                    boolean actual = deque.deleteLast();
+                    boolean model = !expected.isEmpty();
+                    assertEquals(model, actual, "deleteLast at operation " + index);
+                    if (model) {
+                        expected.removeLast();
+                    }
+                }
+                default -> throw new AssertionError("unknown operation " + operation);
+            }
+            assertDequeMatches(deque, expected, 4, "operation " + index);
+        }
+    }
+
+    @Test
+    public void testDuplicateAndSignedBoundaryValuesRemainDistinct() {
+        MyCircularDeque_641 deque = new MyCircularDeque_641(6);
+        int[] values = {Integer.MIN_VALUE, -1, -1, 0, 1000, Integer.MAX_VALUE};
+        for (int value : values) {
+            assertTrue(deque.insertLast(value));
+        }
+        assertTrue(deque.isFull());
+        assertEquals(Integer.MIN_VALUE, deque.getFront());
+        assertEquals(Integer.MAX_VALUE, deque.getRear());
+
+        assertTrue(deque.deleteFront());
+        assertEquals(-1, deque.getFront());
+        assertTrue(deque.deleteLast());
+        assertEquals(1000, deque.getRear());
+        assertTrue(deque.insertFront(Integer.MIN_VALUE));
+        assertEquals(Integer.MIN_VALUE, deque.getFront());
+        assertTrue(deque.insertLast(Integer.MAX_VALUE));
+        assertEquals(Integer.MAX_VALUE, deque.getRear());
+        assertTrue(deque.isFull());
+    }
+
+    @Test
+    public void testStoredNegativeOneIsNotTreatedAsEmpty() {
+        MyCircularDeque_641 deque = new MyCircularDeque_641(2);
+
+        assertTrue(deque.insertFront(-1));
+        assertFalse(deque.isEmpty());
+        assertFalse(deque.isFull());
+        assertEquals(-1, deque.getFront());
+        assertEquals(-1, deque.getRear());
+        assertTrue(deque.insertLast(7));
+        assertTrue(deque.isFull());
+        assertEquals(-1, deque.getFront());
+        assertEquals(7, deque.getRear());
+        assertTrue(deque.deleteFront());
+        assertEquals(7, deque.getFront());
+        assertEquals(7, deque.getRear());
+        assertTrue(deque.deleteLast());
+        assertTrue(deque.isEmpty());
+        assertEquals(-1, deque.getFront());
+        assertEquals(-1, deque.getRear());
+    }
+
+    @Test
+    public void testIndependentInstancesDoNotShareNodesOrSize() {
+        MyCircularDeque_641 first = new MyCircularDeque_641(2);
+        MyCircularDeque_641 second = new MyCircularDeque_641(2);
+
+        assertTrue(first.insertLast(1));
+        assertTrue(first.insertLast(2));
+        assertTrue(second.insertFront(9));
+        assertEquals(1, first.getFront());
+        assertEquals(2, first.getRear());
+        assertTrue(first.isFull());
+        assertEquals(9, second.getFront());
+        assertEquals(9, second.getRear());
+        assertFalse(second.isFull());
+
+        assertTrue(first.deleteFront());
+        assertEquals(2, first.getFront());
+        assertEquals(9, second.getFront());
+        assertTrue(second.insertLast(8));
+        assertTrue(second.isFull());
+    }
+
+    @Test
+    public void testMaximumCapacityAndTwoThousandCallBoundary() {
+        MyCircularDeque_641 deque = new MyCircularDeque_641(1000);
+
+        for (int value = 0; value < 1000; value++) {
+            assertTrue(deque.insertLast(value));
+        }
+        assertTrue(deque.isFull());
+        assertFalse(deque.insertFront(1000));
+        assertFalse(deque.insertLast(1000));
+        assertEquals(0, deque.getFront());
+        assertEquals(999, deque.getRear());
+        for (int value = 0; value < 1000; value++) {
+            assertTrue(deque.deleteFront());
+        }
+        assertTrue(deque.isEmpty());
+        assertFalse(deque.deleteFront());
+        assertFalse(deque.deleteLast());
+        assertEquals(-1, deque.getFront());
+        assertEquals(-1, deque.getRear());
+    }
+
+    @Test
+    public void testSeededOracleCoversEverySmallCapacityAndOperationType() {
+        Random rng = new Random(641L);
+        for (int capacity = 1; capacity <= 10; capacity++) {
+            MyCircularDeque_641 deque = new MyCircularDeque_641(capacity);
+            ArrayDeque<Integer> expected = new ArrayDeque<>();
+            for (int operationIndex = 0; operationIndex < 200; operationIndex++) {
+                int operation = rng.nextInt(8);
+                int value = rng.nextInt(1001);
+                switch (operation) {
+                    case 0 -> {
+                        boolean actual = deque.insertFront(value);
+                        boolean model = expected.size() < capacity;
+                        assertEquals(model, actual, "insertFront c=" + capacity + " op=" + operationIndex);
+                        if (model) {
+                            expected.addFirst(value);
+                        }
+                    }
+                    case 1 -> {
+                        boolean actual = deque.insertLast(value);
+                        boolean model = expected.size() < capacity;
+                        assertEquals(model, actual, "insertLast c=" + capacity + " op=" + operationIndex);
+                        if (model) {
+                            expected.addLast(value);
+                        }
+                    }
+                    case 2 -> {
+                        boolean actual = deque.deleteFront();
+                        boolean model = !expected.isEmpty();
+                        assertEquals(model, actual, "deleteFront c=" + capacity + " op=" + operationIndex);
+                        if (model) {
+                            expected.removeFirst();
+                        }
+                    }
+                    case 3 -> {
+                        boolean actual = deque.deleteLast();
+                        boolean model = !expected.isEmpty();
+                        assertEquals(model, actual, "deleteLast c=" + capacity + " op=" + operationIndex);
+                        if (model) {
+                            expected.removeLast();
+                        }
+                    }
+                    case 4 -> assertEquals(expected.isEmpty() ? -1 : expected.peekFirst(), deque.getFront());
+                    case 5 -> assertEquals(expected.isEmpty() ? -1 : expected.peekLast(), deque.getRear());
+                    case 6 -> assertEquals(expected.isEmpty(), deque.isEmpty());
+                    case 7 -> assertEquals(expected.size() == capacity, deque.isFull());
+                    default -> throw new AssertionError("unreachable operation " + operation);
+                }
+                assertDequeMatches(deque, expected, capacity,
+                        "capacity " + capacity + ", operation " + operationIndex);
+            }
+        }
+    }
+
+    private static void assertDequeMatches(MyCircularDeque_641 actual, ArrayDeque<Integer> expected,
+                                           int capacity, String context) {
+        assertEquals(expected.isEmpty(), actual.isEmpty(), "isEmpty mismatch at " + context);
+        assertEquals(expected.size() == capacity, actual.isFull(), "isFull mismatch at " + context);
+        assertEquals(expected.isEmpty() ? -1 : expected.peekFirst(), actual.getFront(),
+                "front mismatch at " + context);
+        assertEquals(expected.isEmpty() ? -1 : expected.peekLast(), actual.getRear(),
+                "rear mismatch at " + context);
+    }
 }

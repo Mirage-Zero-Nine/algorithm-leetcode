@@ -6,6 +6,8 @@ import com.google.common.collect.Lists;
 import library.tree.TreeParser;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class PostorderTraversalTest {
     private PostorderTraversal test = new PostorderTraversal();
@@ -84,5 +86,16 @@ public class PostorderTraversalTest {
         TreeNode root = TreeParser.deserialize("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31");
         assertEquals(Lists.newArrayList(16, 17, 8, 18, 19, 9, 4, 20, 21, 10, 22, 23, 11, 5, 2, 24, 25, 12, 26, 27, 13, 6, 28, 29, 14, 30, 31, 15, 7, 3, 1), test.postorderTraversal(root));
         assertEquals(Lists.newArrayList(16, 17, 8, 18, 19, 9, 4, 20, 21, 10, 22, 23, 11, 5, 2, 24, 25, 12, 26, 27, 13, 6, 28, 29, 14, 30, 31, 15, 7, 3, 1), test.postorderTraversalStack(root));
+    }
+
+    @ParameterizedTest(name = "binary chain size {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testBothImplementationsOnChains(int size) {
+        TreeNode root = new TreeNode(1); TreeNode current = root;
+        for (int i = 2; i <= size; i++) { current.right = new TreeNode(i); current = current.right; }
+        java.util.List<Integer> expected = new java.util.ArrayList<>();
+        for (int i = size; i >= 1; i--) expected.add(i);
+        assertEquals(expected, test.postorderTraversal(root));
+        assertEquals(expected, test.postorderTraversalStack(root));
     }
 }

@@ -151,4 +151,97 @@ public class SpecialGrid_3537Test {
         for (int[] row : grid) for (int v : row) values.add(v);
         assertEquals(size * size, values.size());
     }
+
+    @Test
+    public void testRepeatedCallsRestartNumbering() {
+        int[][] first = test.specialGrid(2);
+        int[][] second = test.specialGrid(2);
+        assertArrayEquals(first[0], second[0]);
+        assertEquals(0, second[0][3]);
+    }
+
+    @Test
+    public void testN5ContainsEveryValueExactlyOnce() {
+        int[][] grid = test.specialGrid(5);
+        java.util.Set<Integer> values = new java.util.HashSet<>();
+        for (int[] row : grid) for (int v : row) values.add(v);
+        assertEquals(1024, values.size());
+        assertTrue(values.contains(0));
+        assertTrue(values.contains(1023));
+    }
+
+    @Test
+    public void testQuadrantOrderN3() {
+        int[][] grid = test.specialGrid(3);
+        assertQuadrantOrder(grid, 0, 0, 8);
+    }
+
+    @Test
+    public void testEveryNestedQuadrantN3IsOrdered() {
+        int[][] grid = test.specialGrid(3);
+        assertQuadrantOrder(grid, 0, 0, 8);
+        assertQuadrantOrder(grid, 0, 0, 4);
+        assertQuadrantOrder(grid, 0, 4, 4);
+        assertQuadrantOrder(grid, 4, 0, 4);
+        assertQuadrantOrder(grid, 4, 4, 4);
+    }
+
+    @Test
+    public void testN6ShapeAndBounds() {
+        int[][] grid = test.specialGrid(6);
+        assertEquals(64, grid.length);
+        assertEquals(64, grid[0].length);
+        assertEquals(0, grid[0][63]);
+        assertEquals(4095, grid[0][0]);
+    }
+
+    @Test
+    public void testN7ShapeAndBounds() {
+        int[][] grid = test.specialGrid(7);
+        assertEquals(128, grid.length);
+        assertEquals(128, grid[0].length);
+        assertEquals(0, grid[0][127]);
+        assertEquals(16383, grid[0][0]);
+    }
+
+    @Test
+    public void testN1AllValuesAreDistinct() {
+        int[][] grid = test.specialGrid(1);
+        java.util.Set<Integer> values = new java.util.HashSet<>();
+        for (int[] row : grid) for (int v : row) values.add(v);
+        assertEquals(java.util.Set.of(0, 1, 2, 3), values);
+    }
+
+    @Test
+    public void testTopRightAlwaysContainsSmallestValue() {
+        int[][] grid = test.specialGrid(4);
+        assertEquals(0, grid[0][15]);
+    }
+
+    @Test public void testN2TopLeftContainsLargestValue() {
+        int[][] grid = test.specialGrid(2);
+        assertEquals(15, grid[0][0]);
+    }
+
+    @Test public void testN0RepeatedCallsStayZero() {
+        test.specialGrid(4);
+        assertEquals(0, test.specialGrid(0)[0][0]);
+    }
+
+    private void assertQuadrantOrder(int[][] grid, int row, int column, int size) {
+        int half = size / 2;
+        int[] max = {Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
+        int[] min = {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
+        for (int r = row; r < row + size; r++) {
+            for (int c = column; c < column + size; c++) {
+                int quadrant = r < row + half ? (c < column + half ? 3 : 0)
+                        : (c < column + half ? 2 : 1);
+                max[quadrant] = Math.max(max[quadrant], grid[r][c]);
+                min[quadrant] = Math.min(min[quadrant], grid[r][c]);
+            }
+        }
+        assertTrue(max[0] < min[1]);
+        assertTrue(max[1] < min[2]);
+        assertTrue(max[2] < min[3]);
+    }
 }

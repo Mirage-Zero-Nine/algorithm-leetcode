@@ -73,4 +73,14 @@ public class NumOfPairs_2023Test {
         // This gives 0+0, 1+1, 2+2, 3+3, ... = 2*(0+1+2+...+999) = 2*499500 = 999000
         assertEquals(999000, test.numOfPairs(nums, "aa"));
     }
+    @Test void extra01() { assertEquals(1, test.numOfPairs(new String[]{"1","2"},"12")); }
+    @Test void extra02() { assertEquals(1, test.numOfPairs(new String[]{"12","3"},"123")); }
+    @Test void extra03() { assertEquals(0, test.numOfPairs(new String[]{"1","2"},"13")); }
+    @Test void extra04() { assertEquals(2, test.numOfPairs(new String[]{"1","1"},"11")); }
+    @Test void extra05() { assertEquals(2, test.numOfPairs(new String[]{"ab","ab"},"abab")); }
+    @Test void extra06() { assertEquals(2, test.numOfPairs(new String[]{"","a"},"a")); }
+    @Test void extra07() { assertEquals(0, test.numOfPairs(new String[]{"abc"},"abc")); }
+    @Test void extra08() { assertEquals(2, test.numOfPairs(new String[]{"0","0"},"00")); }
+    @Test void extra09() { assertEquals(2, test.numOfPairs(new String[]{"x","y","x"},"xy")); }
+    @Test void extra10() { assertEquals(0, test.numOfPairs(new String[]{"12","34"},"12345")); }
 }

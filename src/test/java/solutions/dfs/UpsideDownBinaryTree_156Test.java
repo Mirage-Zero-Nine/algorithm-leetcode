@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class UpsideDownBinaryTree_156Test {
 
@@ -119,5 +121,13 @@ public class UpsideDownBinaryTree_156Test {
         }
         TreeNode result = test.upsideDownBinaryTree(root);
         assertEquals(100, result.val); // leftmost node becomes root
+    }
+
+    @ParameterizedTest(name = "left chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testChainRoots(int length) {
+        TreeNode root = new TreeNode(1); TreeNode current = root;
+        for (int i = 2; i <= length; i++) { current.left = new TreeNode(i); current = current.left; }
+        assertEquals(length, test.upsideDownBinaryTree(root).val);
     }
 }

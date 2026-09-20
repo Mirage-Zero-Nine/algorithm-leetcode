@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class MaxProfit_714Test {
 
@@ -70,5 +72,21 @@ public class MaxProfit_714Test {
         int result = test.maxProfit(prices, 2);
         // Should be positive and computable
         assertEquals(result, test.maxProfitOptimized(prices, 2));
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctCases() {
+        return Stream.of(
+                DynamicTest.dynamicTest("single zero fee", () -> assertEquals(0, test.maxProfit(new int[]{1}, 0))),
+                DynamicTest.dynamicTest("one profitable trade", () -> assertEquals(3, test.maxProfit(new int[]{1, 5}, 1))),
+                DynamicTest.dynamicTest("fee equals gain", () -> assertEquals(0, test.maxProfit(new int[]{1, 3}, 2))),
+                DynamicTest.dynamicTest("two trades", () -> assertEquals(6, test.maxProfit(new int[]{1, 4, 2, 7}, 1))),
+                DynamicTest.dynamicTest("plateau", () -> assertEquals(0, test.maxProfit(new int[]{3, 3, 3}, 1))),
+                DynamicTest.dynamicTest("late rise", () -> assertEquals(8, test.maxProfit(new int[]{5, 4, 3, 2, 10}, 0))),
+                DynamicTest.dynamicTest("large fee", () -> assertEquals(0, test.maxProfit(new int[]{1, 100}, 100))),
+                DynamicTest.dynamicTest("small fee repeated", () -> assertEquals(3, test.maxProfit(new int[]{1, 3, 2, 5}, 1))),
+                DynamicTest.dynamicTest("descending zero fee", () -> assertEquals(0, test.maxProfit(new int[]{9, 7, 5}, 0))),
+                DynamicTest.dynamicTest("optimized agrees", () -> assertEquals(test.maxProfit(new int[]{2, 8, 3, 9}, 2), test.maxProfitOptimized(new int[]{2, 8, 3, 9}, 2))),
+                DynamicTest.dynamicTest("high prices", () -> assertEquals(7, test.maxProfit(new int[]{100, 102, 101, 110}, 3))));
     }
 }

@@ -65,4 +65,14 @@ public class ContainsDuplicate_217Test {
         nums[nums.length - 1] = 0;
         assertTrue(solution.containsDuplicate(nums));
     }
+    @Test void extra01() { assertTrue(solution.containsDuplicate(new int[]{1,1})); }
+    @Test void extra02() { assertFalse(solution.containsDuplicate(new int[]{1,2})); }
+    @Test void extra03() { assertTrue(solution.containsDuplicate(new int[]{0,0})); }
+    @Test void extra04() { assertFalse(solution.containsDuplicate(new int[]{-1,0,1})); }
+    @Test void extra05() { assertTrue(solution.containsDuplicate(new int[]{1,2,3,1})); }
+    @Test void extra06() { assertFalse(solution.containsDuplicate(new int[]{1000000000,-1000000000})); }
+    @Test void extra07() { assertTrue(solution.containsDuplicate(new int[]{5,4,3,2,1,5})); }
+    @Test void extra08() { assertFalse(solution.containsDuplicate(new int[]{42})); }
+    @Test void extra09() { assertTrue(solution.containsDuplicate(new int[]{-7,-7,-7})); }
+    @Test void extra10() { assertFalse(solution.containsDuplicate(new int[]{9,8,7,6})); }
 }

@@ -151,4 +151,12 @@ public class NumIslands2_305Test {
         // After filling row 0 and row 1 fully, everything is connected
         assertEquals(1, result.get(result.size() - 1));
     }
+
+    @Test public void testSingleRowSeparatedThenJoined() { assertEquals(List.of(1, 2, 2, 1), test.numIslands2(1, 4, new int[][]{{0, 0}, {0, 3}, {0, 1}, {0, 2}})); }
+    @Test public void testSingleColumn() { assertEquals(List.of(1, 2, 1), test.numIslands2(3, 1, new int[][]{{0, 0}, {2, 0}, {1, 0}})); }
+    @Test public void testDiagonalCellsStaySeparate() { assertEquals(List.of(1, 2, 3), test.numIslands2(3, 3, new int[][]{{0, 0}, {1, 1}, {2, 2}})); }
+    @Test public void testFourWayMerge() { assertEquals(List.of(1, 1, 1, 1, 1), test.numIslands2(3, 3, new int[][]{{1, 1}, {0, 1}, {1, 0}, {1, 2}, {2, 1}})); }
+    @Test public void testDuplicateAfterMerges() { assertEquals(List.of(1, 1, 1, 1), test.numIslands2(2, 2, new int[][]{{0, 0}, {0, 1}, {0, 0}, {1, 1}})); }
+    @Test public void testNoOperations() { assertEquals(List.of(), test.numIslands2(5, 5, new int[][]{})); }
+    @Test public void testNonSquareGrid() { assertEquals(List.of(1, 2, 2, 2), test.numIslands2(2, 3, new int[][]{{0, 0}, {1, 2}, {0, 2}, {1, 1}})); }
 }

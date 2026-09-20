@@ -75,4 +75,11 @@ public class PartitionLabels_763Test {
             assertEquals(1000, size);
         }
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"a,1", "ab,1|1", "aba,3", "abc,1|1|1", "aabb,2|2", "abca,4", "eccbbbbdec,10", "abab,4", "xyzxyz,6", "qwerty,1|1|1|1|1|1"})
+    void additionalBoundaryCases(String value, String encodedExpected) {
+        java.util.List<Integer> expected = java.util.Arrays.stream(encodedExpected.split("\\|" )).map(Integer::valueOf).toList();
+        assertEquals(expected, solution.partitionLabels(value));
+    }
 }

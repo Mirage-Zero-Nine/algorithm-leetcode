@@ -117,4 +117,39 @@ public class RemoveInterval_1272Test {
                     "remove=[" + left + "," + right + ")");
         }
     }
+
+    @Test public void testRemoveEntireMiddleIntervalOnly() {
+        assertEquals(List.of(List.of(0, 2), List.of(6, 8)),
+                solver.removeInterval(new int[][]{{0, 2}, {3, 5}, {6, 8}}, new int[]{3, 5}));
+    }
+
+    @Test public void testRemoveStrictlyInsideSeveralIntervals() {
+        assertEquals(List.of(List.of(0, 4), List.of(7, 10)),
+                solver.removeInterval(new int[][]{{0, 10}}, new int[]{4, 7}));
+    }
+
+    @Test public void testRemovalAfterAllIntervals() {
+        assertEquals(List.of(List.of(-5, -1), List.of(0, 2)),
+                solver.removeInterval(new int[][]{{-5, -1}, {0, 2}}, new int[]{3, 8}));
+    }
+
+    @Test public void testRemovalBeforeAllWithNegativeCoordinates() {
+        assertEquals(List.of(List.of(-4, -2), List.of(0, 3)),
+                solver.removeInterval(new int[][]{{-4, -2}, {0, 3}}, new int[]{-10, -5}));
+    }
+
+    @Test public void testRemovalSplitsOneIntervalAtBothEnds() {
+        assertEquals(List.of(List.of(0, 3), List.of(7, 10)),
+                solver.removeInterval(new int[][]{{0, 10}}, new int[]{3, 7}));
+    }
+
+    @Test public void testRemovalMatchesAtLeftBoundary() {
+        assertEquals(List.of(List.of(4, 10)),
+                solver.removeInterval(new int[][]{{0, 10}}, new int[]{0, 4}));
+    }
+
+    @Test public void testRemovalMatchesAtRightBoundary() {
+        assertEquals(List.of(List.of(0, 6)),
+                solver.removeInterval(new int[][]{{0, 10}}, new int[]{6, 10}));
+    }
 }

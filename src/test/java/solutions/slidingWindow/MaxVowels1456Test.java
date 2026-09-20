@@ -68,4 +68,10 @@ public class MaxVowels1456Test {
         }
         assertEquals(1000, test.maxVowels(sb.toString(), 1000));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"a,1,1", "b,1,0", "ab,2,1", "ae,1,1", "xyz,3,0", "hello,2,1", "rhythms,4,0", "education,5,3", "bcdfae,3,2", "uoiea,4,4"})
+    void additionalBoundaryCases(String value, int k, int expected) {
+        assertEquals(expected, test.maxVowels(value, k));
+    }
 }

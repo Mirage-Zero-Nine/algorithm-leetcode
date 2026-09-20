@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import library.tree.binarytree.Node;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class InorderSuccessor_510Test {
 
@@ -111,5 +113,21 @@ public class InorderSuccessor_510Test {
         assertNull(test.inorderSuccessor(nodes[10]));
         // Successor of node 1 (root with right child) should be 2
         assertEquals(2, test.inorderSuccessor(nodes[1]).val);
+    }
+
+    @ParameterizedTest(name = "parent-linked successor at {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testEveryPositionInRightSkewedTree(int value) {
+        Node root = new Node(); root.val = 1;
+        Node target = root;
+        for (int i = 2; i <= 10; i++) {
+            Node next = new Node(); next.val = i; next.parent = target;
+            target.right = next; target = next;
+        }
+        target = root;
+        for (int i = 1; i < value; i++) target = target.right;
+        Node successor = test.inorderSuccessor(target);
+        if (value == 10) assertNull(successor);
+        else assertEquals(value + 1, successor.val);
     }
 }

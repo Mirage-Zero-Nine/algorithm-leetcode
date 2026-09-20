@@ -156,6 +156,64 @@ class GeneratePalindromes_267Test {
         }
     }
 
+    @Test
+    void testEmptyInputUsesImplementationBaseCase() {
+        // LeetCode supplies a non-empty string, but this implementation's natural base case is one empty palindrome.
+        assertEquals(List.of(""), solution.generatePalindromes(""));
+    }
+
+    @Test
+    void testExhaustiveSmallAlphabetInputsMatchIndependentOracle() {
+        // Exhaustively exercises every string over {a,b,c} through length six, including all impossible cases.
+        for (int length = 0; length <= 6; length++) {
+            assertAllStringsOfLength(new StringBuilder(), length);
+        }
+    }
+
+    @Test
+    void testRepeatedCallsAfterImpossibleInputRemainIndependent() {
+        assertExact("aabb");
+        assertExact("abcde");
+        assertExact("aabb");
+    }
+
+    @Test
+    void testMutatingReturnedListDoesNotAffectLaterCalls() {
+        List<String> first = solution.generatePalindromes("aabb");
+        first.clear();
+        assertExact("aabb");
+    }
+
+    @Test
+    void testLowercaseAlphabetBoundaryCharacters() {
+        assertExact("aazz");
+        assertExact("yyzz");
+        assertCountAndValidity("aabbccddeeffyyzz", 40320);
+    }
+
+    @Test
+    void testUnequalPairMultiplicityHasMultinomialCount() {
+        // The half has counts a=2, b=2, c=d=e=f=1, so 8!/(2!2!) = 10,080 results.
+        assertCountAndValidity("aaaabbbbccddeeff", 10080);
+    }
+
+    @Test
+    void testImplementationSupportsOtherAsciiCharacters() {
+        assertExact("1122");
+        assertExact("!!@@");
+    }
+
+    @Test
+    void testEveryResultHasExactlyOneCenterWhenLengthIsOdd() {
+        String input = "aaaabbccd";
+        Set<String> results = new HashSet<>(solution.generatePalindromes(input));
+        assertEquals(12, results.size());
+        assertEveryResultIsValid(input, results);
+        for (String palindrome : results) {
+            assertEquals('d', palindrome.charAt(palindrome.length() / 2));
+        }
+    }
+
     private void assertExact(String input) {
         Set<String> expected = independentHalfArrangements(input);
         List<String> actualList = solution.generatePalindromes(input);
@@ -179,6 +237,18 @@ class GeneratePalindromes_267Test {
             assertEquals(input.length(), palindrome.length());
             assertEquals(palindrome, new StringBuilder(palindrome).reverse().toString());
             assertEquals(expectedCounts, counts(palindrome), "Wrong character multiset: " + palindrome);
+        }
+    }
+
+    private void assertAllStringsOfLength(StringBuilder current, int targetLength) {
+        if (current.length() == targetLength) {
+            assertExact(current.toString());
+            return;
+        }
+        for (char character : new char[]{'a', 'b', 'c'}) {
+            current.append(character);
+            assertAllStringsOfLength(current, targetLength);
+            current.deleteCharAt(current.length() - 1);
         }
     }
 

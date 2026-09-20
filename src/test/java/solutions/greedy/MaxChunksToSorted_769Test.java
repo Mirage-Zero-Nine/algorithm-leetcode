@@ -72,4 +72,14 @@ class MaxChunksToSorted_769Test {
         }
         assertEquals(1, solution.maxChunksToSorted(arr));
     }
+    @Test void testAdditionalReverse() { assertEquals(1, solution.maxChunksToSorted(new int[]{2, 1, 0})); }
+    @Test void testAdditionalSorted() { assertEquals(3, solution.maxChunksToSorted(new int[]{0, 1, 2})); }
+    @Test void testAdditionalSwap() { assertEquals(2, solution.maxChunksToSorted(new int[]{1, 0, 2})); }
+    @Test void testAdditionalTwoChunks() { assertEquals(3, solution.maxChunksToSorted(new int[]{0, 2, 1, 3})); }
+    @Test void testAdditionalNested() { assertEquals(1, solution.maxChunksToSorted(new int[]{1, 3, 2, 0})); }
+    @Test void testAdditionalFour() { assertEquals(3, solution.maxChunksToSorted(new int[]{0, 1, 3, 2})); }
+    @Test void testAdditionalLateSwap() { assertEquals(2, solution.maxChunksToSorted(new int[]{0, 2, 1})); }
+    @Test void testAdditionalMiddle() { assertEquals(2, solution.maxChunksToSorted(new int[]{1, 2, 0, 3})); }
+    @Test void testAdditionalFive() { assertEquals(4, solution.maxChunksToSorted(new int[]{0, 1, 2, 4, 3})); }
+    @Test void testAdditionalPair() { assertEquals(1, solution.maxChunksToSorted(new int[]{2, 0, 1})); }
 }

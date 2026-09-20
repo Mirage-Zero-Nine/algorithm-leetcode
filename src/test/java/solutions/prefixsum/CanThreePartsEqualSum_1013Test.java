@@ -1,6 +1,8 @@
 package solutions.prefixsum;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -117,5 +119,14 @@ public class CanThreePartsEqualSum_1013Test {
     public void testPartitionAtBoundaries() {
         int[] A = {1, 2, -3, 0, 0};
         assertTrue(solver.canThreePartsEqualSum(A));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"'0,0,0',true", "'1,1,1,1,1,1',true", "'2,-1,-1,0,0,0',true", "'5,-2,-3,1,1,1',true", "'1,2,3,0,0,0',false"})
+    void additionalSignedCutConfigurations(String encoded, boolean expected) {
+        String[] values = encoded.split(",");
+        int[] numbers = new int[values.length];
+        for (int i = 0; i < values.length; i++) numbers[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, solver.canThreePartsEqualSum(numbers));
     }
 }

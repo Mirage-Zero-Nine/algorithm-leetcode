@@ -67,4 +67,10 @@ public class MinWindow_727Test {
         String s = "a".repeat(2000) + "b" + "c".repeat(2000) + "d";
         assertEquals("b" + "c".repeat(2000) + "d", test.minWindow(s, "bcd"));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"abc,abc,abc", "abc,ac,abc", "abc,b,b", "abc,d,''", "a,aa,''", "zzzaazz,az,az", "ababc,ac,abc", "aaaa,b,''", "cab,cb,cab", "abcde,bd,bcd"})
+    void additionalBoundaryCases(String source, String target, String expected) {
+        assertEquals(expected, test.minWindow(source, target));
+    }
 }

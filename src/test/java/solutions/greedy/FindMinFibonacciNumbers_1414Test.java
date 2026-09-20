@@ -54,4 +54,15 @@ public class FindMinFibonacciNumbers_1414Test {
         int result = solver.findMinFibonacciNumbers(1_000_000_000);
         assertTrue(result > 0 && result <= 44);
     }
+
+    @Test public void testEight() { assertEquals(1, solver.findMinFibonacciNumbers(8)); }
+    @Test public void testSix() { assertEquals(2, solver.findMinFibonacciNumbers(6)); }
+    @Test public void testFive() { assertEquals(1, solver.findMinFibonacciNumbers(5)); }
+    @Test public void testNine() { assertEquals(2, solver.findMinFibonacciNumbers(9)); }
+    @Test public void testEleven() { assertEquals(2, solver.findMinFibonacciNumbers(11)); }
+    @Test public void testTwelve() { assertEquals(3, solver.findMinFibonacciNumbers(12)); }
+    @Test public void testThirteen() { assertEquals(1, solver.findMinFibonacciNumbers(13)); }
+    @Test public void testFourteen() { assertEquals(2, solver.findMinFibonacciNumbers(14)); }
+    @Test public void testTwenty() { assertEquals(3, solver.findMinFibonacciNumbers(20)); }
+    @Test public void testThirtyFour() { assertEquals(1, solver.findMinFibonacciNumbers(34)); }
 }

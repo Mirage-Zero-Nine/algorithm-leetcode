@@ -126,4 +126,19 @@ public class PlusOne_66Test {
             assertEquals(expected, new BigInteger(resultStr.toString()));
         }
     }
+
+    @Test
+    public void testAdditional1() {
+        assertArrayEquals(new int[]{1}, test.plusOne(new int[]{0}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertArrayEquals(new int[]{2}, test.plusOne(new int[]{1}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertArrayEquals(new int[]{9}, test.plusOne(new int[]{8}));
+    }
 }

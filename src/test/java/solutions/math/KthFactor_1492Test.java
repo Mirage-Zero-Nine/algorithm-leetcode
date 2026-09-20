@@ -67,4 +67,54 @@ public class KthFactor_1492Test {
         // factors of 1000000: many factors
         assertEquals(2, test.kthFactor(1000000, 2));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, test.kthFactor(1, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(2, test.kthFactor(2, 2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(1, test.kthFactor(12, 1));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(2, test.kthFactor(12, 2));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(3, test.kthFactor(12, 3));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(12, test.kthFactor(12, 6));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(-1, test.kthFactor(12, 7));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(5, test.kthFactor(100, 4));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(100, test.kthFactor(100, 9));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(1000, test.kthFactor(1000, 16));
+    }
 }

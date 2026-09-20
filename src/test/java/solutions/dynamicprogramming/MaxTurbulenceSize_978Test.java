@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class MaxTurbulenceSize_978Test {
 
@@ -62,5 +64,20 @@ public class MaxTurbulenceSize_978Test {
             arr[i] = (i % 2 == 0) ? 1 : 2;
         }
         assertEquals(1000, test.maxTurbulenceSize(arr));
+    }
+
+    @ParameterizedTest(name = "turbulence case {0}")
+    @CsvSource({
+            "'1,2,1', 3", "'2,1,2', 3", "'1,2,3', 2", "'3,2,1', 2",
+            "'1,3,2,4', 4", "'4,2,3,1', 4", "'1,1,2', 2", "'2,2,1', 2",
+            "'0,-1,0,-1', 4", "'-2,-1,-3,-2', 4"
+    })
+    public void testAdditionalAlternatingAndEqualityCases(String encoded, int expected) {
+        String[] parts = encoded.split(",");
+        int[] values = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            values[i] = Integer.parseInt(parts[i]);
+        }
+        assertEquals(expected, test.maxTurbulenceSize(values));
     }
 }

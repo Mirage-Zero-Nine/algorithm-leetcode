@@ -201,4 +201,6 @@ public class MedianFinder_295Test {
         double expected = (Integer.MAX_VALUE / 2 + (double) (Integer.MAX_VALUE / 2 - 1)) / 2.0;
         assertEquals(expected, test.findMedian(), 1e-9);
     }
+
+    @Test public void testInterleavedOrder() { MedianFinder_295 t = new MedianFinder_295(); for (int n : new int[]{10, -10, 5, -5}) t.addNum(n); assertEquals(0.0, t.findMedian(), 1e-9); }
 }

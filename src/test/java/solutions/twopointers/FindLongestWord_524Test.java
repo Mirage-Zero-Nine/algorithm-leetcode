@@ -69,4 +69,15 @@ public class FindLongestWord_524Test {
     public void testNoSubsequenceMatch() {
         assertEquals("", test.findLongestWord("abc", List.of("def", "ghi", "jkl")));
     }
+
+    @Test public void testTieChoosesLexicographicallySmallest() { assertEquals("abc", test.findLongestWord("abcde", List.of("abd", "abc"))); }
+    @Test public void testDictionaryDuplicateEntries() { assertEquals("cat", test.findLongestWord("cat", List.of("cat", "cat", "at"))); }
+    @Test public void testSingleCharacterTie() { assertEquals("a", test.findLongestWord("ba", List.of("b", "a"))); }
+    @Test public void testWordRequiresOrder() { assertEquals("ac", test.findLongestWord("abc", List.of("ca", "ac"))); }
+    @Test public void testEmptyCandidateWinsNothing() { assertEquals("", test.findLongestWord("xyz", List.of("", "ab"))); }
+    @Test public void testRepeatedSourceLetters() { assertEquals("aaa", test.findLongestWord("aaaa", List.of("aa", "aaa", "aaaaa"))); }
+    @Test public void testLongCandidateSubsequence() { assertEquals("acegi", test.findLongestWord("a1c2e3g4i", List.of("acegi", "acegi"))); }
+    @Test public void testCandidateLongerThanSource() { assertEquals("ab", test.findLongestWord("ab", List.of("abc", "ba", "ab"))); }
+    @Test public void testCapitalLettersPreserved() { assertEquals("ABC", test.findLongestWord("xAyBzC", List.of("ABC", "AbC", "xA"))); }
+    @Test public void testManyCandidates() { assertEquals("algorithm", test.findLongestWord("algorithmic", List.of("algo", "rhythm", "algorithm", "logic"))); }
 }

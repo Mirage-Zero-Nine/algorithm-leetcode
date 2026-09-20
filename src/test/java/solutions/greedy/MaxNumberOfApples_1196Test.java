@@ -69,4 +69,14 @@ class MaxNumberOfApples_1196Test {
         for (int i = 0; i < 10000; i++) arr[i] = 1;
         assertEquals(5000, solution.maxNumberOfApples(arr));
     }
+    @Test void testAdditionalZero() { assertEquals(0, solution.maxNumberOfApples(new int[]{5001})); }
+    @Test void testAdditionalTwo() { assertEquals(2, solution.maxNumberOfApples(new int[]{1000, 2000})); }
+    @Test void testAdditionalExact() { assertEquals(1, solution.maxNumberOfApples(new int[]{5000, 5000})); }
+    @Test void testAdditionalMixed() { assertEquals(3, solution.maxNumberOfApples(new int[]{1500, 1500, 1500, 6000})); }
+    @Test void testAdditionalSmall() { assertEquals(5, solution.maxNumberOfApples(new int[]{1, 2, 3, 4, 5})); }
+    @Test void testAdditionalCapacity() { assertEquals(2, solution.maxNumberOfApples(new int[]{2000, 2000, 2000, 2000})); }
+    @Test void testAdditionalLarge() { assertEquals(1, solution.maxNumberOfApples(new int[]{4999, 4999, 4999})); }
+    @Test void testAdditionalUnordered() { assertEquals(2, solution.maxNumberOfApples(new int[]{3000, 1000, 2000})); }
+    @Test void testAdditionalOne() { assertEquals(1, solution.maxNumberOfApples(new int[]{1})); }
+    @Test void testAdditionalZeros() { assertEquals(3, solution.maxNumberOfApples(new int[]{0, 0, 0})); }
 }

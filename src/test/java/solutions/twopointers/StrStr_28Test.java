@@ -124,4 +124,7 @@ public class StrStr_28Test {
                 "Property violated for haystack='" + c[0] + "' needle='" + c[1] + "'");
         }
     }
+
+    @Test public void testMatchAfterRepeatedPrefix() { assertEquals(4,test.strStr("aaaaab", "ab")); }
+    @Test public void testPunctuationNeedle() { assertEquals(2,test.strStr("hi!there", "!t")); }
 }

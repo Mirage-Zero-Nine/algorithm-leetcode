@@ -73,4 +73,15 @@ public class isIsomorphic_205Test {
         t.append('c');
         assertFalse(test.isIsomorphic(s.toString(), t.toString()));
     }
+
+    @Test public void testAlternatingMapping() { assertTrue(test.isIsomorphic("abab", "cdcd")); }
+    @Test public void testAlternatingCollision() { assertFalse(test.isIsomorphic("abab", "cddc")); }
+    @Test public void testThreeDistinctSelfMapping() { assertTrue(test.isIsomorphic("abc", "abc")); }
+    @Test public void testRepeatedSingleCharacter() { assertTrue(test.isIsomorphic("zzzz", "yyyy")); }
+    @Test public void testFirstCharacterCollision() { assertFalse(test.isIsomorphic("abca", "zbxw")); }
+    @Test public void testLongConstantStrings() { assertTrue(test.isIsomorphic("aaaaaaaaaa", "bbbbbbbbbb")); }
+    @Test public void testTwoWayMappingRequired() { assertFalse(test.isIsomorphic("ab", "cc")); }
+    @Test public void testPunctuationCharacters() { assertTrue(test.isIsomorphic("a-b", "x-y")); }
+    @Test public void testSamePatternDifferentSymbols() { assertTrue(test.isIsomorphic("paper", "title")); }
+    @Test public void testPunctuationWithinAsciiContract() { assertTrue(test.isIsomorphic("!@#!", "$%^$")); }
 }

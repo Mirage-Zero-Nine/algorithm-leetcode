@@ -97,4 +97,15 @@ public class PartitionList_86Test {
         assertEquals(3, result.next.next.val);
         assertEquals(4, result.next.next.next.val);
     }
+
+    @Test public void testNegativePivot() { ListNode r=test.partition(build(-3,-1,-2,0),-2); assertEquals(-3,r.val);assertEquals(-1,r.next.val); }
+    @Test public void testAllEqualPivot() { ListNode r=test.partition(build(3,3,3),3); assertEquals(3,r.val);assertEquals(3,r.next.next.val); }
+    @Test public void testMixedNegatives() { ListNode r=test.partition(build(-1,2,-3,4),1); assertEquals(-1,r.val);assertEquals(-3,r.next.val); }
+    @Test public void testSingleBelow() { assertEquals(1,test.partition(build(1),2).val); }
+    @Test public void testSingleAbove() { assertEquals(3,test.partition(build(3),2).val); }
+    @Test public void testStableOrderBelow() { ListNode r=test.partition(build(3,1,2,0),3); assertEquals(1,r.val);assertEquals(2,r.next.val);assertEquals(0,r.next.next.val); }
+    @Test public void testStableOrderAbove() { ListNode r=test.partition(build(5,4,6,7),3); assertEquals(5,r.val);assertEquals(7,r.next.next.next.val); }
+    @Test public void testZeroPivot() { ListNode r=test.partition(build(-1,0,1,-2),0); assertEquals(-1,r.val);assertEquals(-2,r.next.val); }
+    @Test public void testRepeatedCall() { assertEquals(1,test.partition(build(2,1),2).val); assertNull(test.partition(null,1)); }
+    @Test public void testDuplicateBoundaryValues() { ListNode r=test.partition(build(2,1,2,1),2); assertEquals(1,r.val);assertEquals(1,r.next.val);assertEquals(2,r.next.next.val); }
 }

@@ -89,6 +89,54 @@ public class AvoidFlood_1488Test {
         assertValidPlan(rains, result);
     }
 
+    @Test
+    public void testRepeatedLakeWithSeveralDryDays() {
+        int[] rains = {7, 0, 0, 7, 0, 7};
+        assertValidPlan(rains, test.avoidFlood(rains));
+    }
+
+    @Test
+    public void testDryDayMayDryEmptyLake() {
+        assertValidPlan(new int[]{0, 1, 0, 2}, test.avoidFlood(new int[]{0, 1, 0, 2}));
+    }
+
+    @Test
+    public void testSeveralLakesAndOnlyOneUsefulDryDay() {
+        assertValidPlan(new int[]{1, 2, 0, 1}, test.avoidFlood(new int[]{1, 2, 0, 1}));
+    }
+
+    @Test
+    public void testImpossibleAfterMultipleFullLakes() {
+        assertEquals(0, test.avoidFlood(new int[]{1, 2, 3, 0, 1, 2, 3}).length);
+    }
+
+    @Test
+    public void testLargestLakeIdentifier() {
+        assertValidPlan(new int[]{1_000_000_000, 0, 1_000_000_000},
+            test.avoidFlood(new int[]{1_000_000_000, 0, 1_000_000_000}));
+    }
+
+    @Test
+    public void testDryBetweenDifferentLakes() {
+        assertValidPlan(new int[]{4, 0, 5, 0, 4, 5}, test.avoidFlood(new int[]{4, 0, 5, 0, 4, 5}));
+    }
+
+    @Test
+    public void testNoRepeatedRainNeedsNoDryAssignment() {
+        int[] rains = {9, 8, 7, 6};
+        assertArrayEquals(new int[]{-1, -1, -1, -1}, test.avoidFlood(rains));
+    }
+
+    @Test
+    public void testDryBeforeAnyRain() {
+        assertValidPlan(new int[]{0, 5, 0, 5}, test.avoidFlood(new int[]{0, 5, 0, 5}));
+    }
+
+    @Test
+    public void testThreeRepeatedRainsNeedTwoDryDays() {
+        assertValidPlan(new int[]{2, 0, 2, 0, 2}, test.avoidFlood(new int[]{2, 0, 2, 0, 2}));
+    }
+
     private static void assertValidPlan(int[] rains, int[] plan) {
         if (plan.length == 0) {
             throw new AssertionError("Expected a valid plan");
