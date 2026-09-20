@@ -13,47 +13,64 @@ import library.randomnode.Node;
 
 public class CopyRandomList_138 {
     /**
-     * Traverse list for 3 times.
-     * First time, duplicate node to original node's next.
-     * Second time, set the new node's random pointer.
-     * Finally, detach the original list and copied list, and return copied list.
+     * Returns a deep copy of the list beginning at {@code head}.
      *
-     * @param head head of original list
-     * @return deep copy of the list
+     * <p>The algorithm makes three linear passes. First, it inserts a newly allocated copy
+     * after each original node. Second, because each copied node follows its original, it
+     * assigns {@code copy.random} in constant time: a non-null original random target is
+     * followed by {@code .next} to reach that target's copy. Third, it detaches alternating
+     * nodes into the copied list and the original list. During that final pass, each original
+     * node's {@code next} pointer is restored before advancing.</p>
+     *
+     * <p>Correctness follows from the interleaving invariant after the first pass: for every
+     * original node {@code x}, {@code x.next} is exactly its copy, and the original next
+     * node is {@code x.next.next}. Therefore the second pass gives every copy the random
+     * edge corresponding to its original, including the null case. The final pass preserves
+     * those copied edges while restoring every original next edge, so the result is a deep
+     * structural copy and the input list is left unchanged.</p>
+     *
+     * <p>For a list of {@code n} nodes, the running time is O(n) and the auxiliary space is
+     * O(1), excluding the O(n) nodes required for the returned copy. The input list is
+     * temporarily modified while the method runs but is restored before returning.</p>
+     *
+     * @param head head of the original list, or {@code null}
+     * @return the independent deep copy, or {@code null} when {@code head} is null
      */
     public Node copyRandomList(Node head) {
-        Node h = head, next;
-
-        while (h != null) {       // first traverse: duplicate original nodes
-            next = h.next;
-            h.next = new Node();
-            h.next.val = h.val;
-            h.next.next = next;
-            h = next;
+        // corner case
+        if (head == null) {
+            return null;
         }
 
-        h = head;
+        Node h1 = head, n;
 
-        while (h != null) {        // second traverse: set duplicated node's random pointer
-            if (h.random != null) {
-                h.next.random = h.random.next;
-            }
-            h = h.next.next;
+        // Invariant: every processed original is immediately followed by its copy;
+        // the saved next node lets the traversal continue through original nodes only.
+        while (h1 != null) {
+            n = h1.next;
+            h1.next = new Node(h1.val);
+            h1.next.next = n;
+            h1 = n;
         }
 
-        h = head;
-        Node dummy = new Node();
-        Node current = dummy, tmp;
+        h1 = head;
+        // Since each copy follows its original, random.next identifies the copied target.
+        while (h1 != null) {
+            h1.next.random = h1.random == null ? null : h1.random.next;
+            h1 = h1.next.next;
+        }
 
-        while (h != null) {
-            next = h.next.next;     // next node in original list
-            tmp = h.next;           // next node in copied list
+        Node dummy = new Node(-1), current = dummy;
+        h1 = head;
 
-            current.next = tmp;
-            current = tmp;
-
-            h.next = next;
-            h = next;
+        // Detach alternating original/copy nodes. Restoring h1.next before advancing
+        // re-establishes the original list while current builds the independent copy.
+        while (h1 != null) {
+            n = h1.next.next;
+            current.next = h1.next;
+            current = current.next;
+            h1.next = n;
+            h1 = n;
         }
 
         return dummy.next;
