@@ -52,4 +52,15 @@ public class MaxWidthRamp_962Test {
         for (int i = 0; i < 10000; i++) arr[i] = i;
         assertEquals(9999, solver.maxWidthRamp(arr));
     }
+
+    @Test public void testTwoElementsEqual() { assertEquals(1, solver.maxWidthRamp(new int[]{3,3})); }
+    @Test public void testLateRamp() { assertEquals(4, solver.maxWidthRamp(new int[]{5,4,3,1,2,4})); }
+    @Test public void testEarlyRamp() { assertEquals(2, solver.maxWidthRamp(new int[]{1,0,1,0})); }
+    @Test public void testNegativeValues() { assertEquals(3, solver.maxWidthRamp(new int[]{-1,-3,-2,-1})); }
+    @Test public void testDuplicateMinimums() { assertEquals(4, solver.maxWidthRamp(new int[]{2,1,1,1,2})); }
+    @Test public void testPeakThenDrop() { assertEquals(3, solver.maxWidthRamp(new int[]{1,5,2,3})); }
+    @Test public void testMinimumLengthNoRamp() { assertEquals(0, solver.maxWidthRamp(new int[]{2,1})); }
+    @Test public void testLargeDescendingPrefix() { assertEquals(1, solver.maxWidthRamp(new int[]{9,8,7,6,1,2})); }
+    @Test public void testIntegerBounds() { assertEquals(2, solver.maxWidthRamp(new int[]{Integer.MIN_VALUE,0,Integer.MAX_VALUE})); }
+    @Test public void testRampAtFullWidth() { assertEquals(5, solver.maxWidthRamp(new int[]{0,5,4,3,2,5})); }
 }

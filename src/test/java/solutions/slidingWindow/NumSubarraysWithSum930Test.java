@@ -66,4 +66,11 @@ public class NumSubarraysWithSum930Test {
         // number of subarrays of length 100 in array of 10000 = 9901
         assertEquals(9901, test.numSubarraysWithSum(arr, 100));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"0,0,1", "1,1,1", "00,0,3", "11,1,2", "11,2,1", "101,2,1", "010,1,4", "01010,2,4", "11111,0,0", "00100,1,9"})
+    void additionalBoundaryCases(String values, int goal, int expected) {
+        int[] nums = values.chars().map(c -> c - '0').toArray();
+        assertEquals(expected, test.numSubarraysWithSum(nums, goal));
+    }
 }

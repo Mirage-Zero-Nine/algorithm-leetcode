@@ -63,9 +63,10 @@ public class BrowserHistory_1472 {
      * @return the current url after forwarding in history at most steps
      */
     public String forward(int steps) {
-        position = Math.min(history.size() - 1, position + steps);
+        int available = history.size() - 1 - position;
+        // Compare before adding so a very large positive step cannot overflow the index.
+        position = steps >= available ? history.size() - 1 : position + steps;
 
         return history.get(position);
     }
 }
-

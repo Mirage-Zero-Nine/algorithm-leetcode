@@ -1,5 +1,6 @@
 package solutions.dynamicprogramming;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 /**
@@ -15,14 +16,18 @@ import java.util.TreeSet;
 public class MakeArrayIncreasing_1187 {
     /**
      * Dynamic programming.
-     * State transition:
-     * dp[i][j]: the min value can be put in arr1[j] when i replacements was taken.
-     * arr1 has to be increasing, hence, dp[i][j - 1] should be larger than dp[i][j].
-     * Then, if there is a smaller value from previous array, replace dp[i][j] with it.
+     * State transition: for each processed prefix, retain the minimum replacement count
+     * for every possible last value. Each state can keep the current value when it is
+     * larger than the previous value, or replace it with the smallest available value
+     * from {@code arr2} that is larger than the previous value. Dominated states with
+     * the same last value are merged.
      *
      * @param arr1 first array
      * @param arr2 array contains elements can be replaced into arr1
      * @return minimum number of operations (possibly zero) needed to make arr1 strictly increasing
+     *         or {@code -1} when no valid sequence exists
+     * @implNote The map has at most {@code O(n^2)} states; time is {@code O(n^2 log n)}
+     *          and auxiliary space is {@code O(n^2)} in the worst case.
      */
     public int makeArrayIncreasing(int[] arr1, int[] arr2) {
 
@@ -38,32 +43,25 @@ public class MakeArrayIncreasing_1187 {
             ts.add(value);
         }
 
-        int[][] dp = new int[n + 1][n + 1];
-        for (int[] a : dp) {
-            Arrays.fill(a, Integer.MAX_VALUE);
-        }
-        dp[0][0] = Integer.MIN_VALUE;       // dp[1][0] is arr[0]
-
-        for (int j = 1; j <= n; j++) {          // arr1[0] to arr1[n]
-            for (int i = 0; i <= j; i++) {      // replacements taken, at most i (arr[0, j])
-
-                /*
-                 * dp[i][j]: the min value can be put in arr1[j] when i replacements was taken
-                 * arr1 has to be increasing, hence, dp[i][j - 1] should be larger than dp[i][j].
-                 * Then, if there is a smaller value from previous array, replace dp[i][j] with it. */
-                if (arr1[j - 1] > dp[i][j - 1]) {
-                    dp[i][j] = arr1[j - 1];
+        Map<Integer, Integer> states = new HashMap<>();
+        states.put(Integer.MIN_VALUE, 0);
+        for (int value : arr1) {
+            Map<Integer, Integer> next = new HashMap<>();
+            for (Map.Entry<Integer, Integer> state : states.entrySet()) {
+                if (value > state.getKey()) {
+                    next.merge(value, state.getValue(), Math::min);
                 }
-                if (i > 0 && ts.higher(dp[i - 1][j - 1]) != null) {
-                    dp[i][j] = Math.min(dp[i][j], ts.higher(dp[i - 1][j - 1]));
-                }
-                if (j == n && dp[i][j] != Integer.MAX_VALUE) {
-                    return i;
+                Integer replacement = ts.higher(state.getKey());
+                if (replacement != null) {
+                    next.merge(replacement, state.getValue() + 1, Math::min);
                 }
             }
+            states = next;
+            if (states.isEmpty()) {
+                return -1;
+            }
         }
-
-        return -1;
+        return states.values().stream().min(Integer::compareTo).orElse(-1);
     }
 
 

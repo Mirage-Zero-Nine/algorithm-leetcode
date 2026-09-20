@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.listnode.ListNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class ReverseBetween_92Test {
 
@@ -141,5 +143,19 @@ public class ReverseBetween_92Test {
         ListNode cur = result;
         for (int i = 1; i < 100; i++) cur = cur.next;
         assertEquals(400, cur.val);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"1,1", "1,2", "2,2", "2,4", "3,5"})
+    void boundaryRangesOnFiveNodes(int left, int right) {
+        ListNode result = test.reverseBetween(build(1, 2, 3, 4, 5), left, right);
+        int[] expected = {1, 2, 3, 4, 5};
+        for (int i = left - 1, j = right - 1; i < j; i++, j--) {
+            int value = expected[i]; expected[i] = expected[j]; expected[j] = value;
+        }
+        for (int value : expected) {
+            assertEquals(value, result.val);
+            result = result.next;
+        }
     }
 }

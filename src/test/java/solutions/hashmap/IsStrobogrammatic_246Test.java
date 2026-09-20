@@ -84,4 +84,14 @@ public class IsStrobogrammatic_246Test {
         sb.setCharAt(500, '3');
         assertFalse(test.isStrobogrammatic(sb.toString()));
     }
+    @Test void extra01() { assertTrue(test.isStrobogrammatic("69")); }
+    @Test void extra02() { assertFalse(test.isStrobogrammatic("6")); }
+    @Test void extra03() { assertFalse(test.isStrobogrammatic("962")); }
+    @Test void extra04() { assertTrue(test.isStrobogrammatic("101")); }
+    @Test void extra05() { assertFalse(test.isStrobogrammatic("123")); }
+    @Test void extra06() { assertTrue(test.isStrobogrammatic("818")); }
+    @Test void extra07() { assertFalse(test.isStrobogrammatic("2")); }
+    @Test void extra08() { assertTrue(test.isStrobogrammatic("609")); }
+    @Test void extra09() { assertFalse(test.isStrobogrammatic("88x")); }
+    @Test void extra10() { assertTrue(test.isStrobogrammatic("111")); }
 }

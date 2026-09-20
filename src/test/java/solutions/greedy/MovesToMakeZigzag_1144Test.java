@@ -68,4 +68,14 @@ public class MovesToMakeZigzag_1144Test {
         int result = test.movesToMakeZigzag(arr);
         assertEquals(500, result);
     }
+    @Test public void testAdditionalFour() { assertEquals(1, test.movesToMakeZigzag(new int[]{1, 1, 1})); }
+    @Test public void testAdditionalIncreasing() { assertEquals(2, test.movesToMakeZigzag(new int[]{1, 2, 3, 4})); }
+    @Test public void testAdditionalDecreasingFour() { assertEquals(2, test.movesToMakeZigzag(new int[]{4, 3, 2, 1})); }
+    @Test public void testAdditionalEqualThree() { assertEquals(1, test.movesToMakeZigzag(new int[]{2, 2, 2})); }
+    @Test public void testAdditionalNegative() { assertEquals(0, test.movesToMakeZigzag(new int[]{-1, 0, -1, 0})); }
+    @Test public void testAdditionalAlternating() { assertEquals(0, test.movesToMakeZigzag(new int[]{5, 1, 5, 1})); }
+    @Test public void testAdditionalPeak() { assertEquals(0, test.movesToMakeZigzag(new int[]{1, 3, 1})); }
+    @Test public void testAdditionalValley() { assertEquals(0, test.movesToMakeZigzag(new int[]{3, 1, 3})); }
+    @Test public void testAdditionalFiveEqual() { assertEquals(2, test.movesToMakeZigzag(new int[]{4, 4, 4, 4, 4})); }
+    @Test public void testAdditionalLargeNegative() { assertEquals(0, test.movesToMakeZigzag(new int[]{-5, 0, -5, 0, -5})); }
 }

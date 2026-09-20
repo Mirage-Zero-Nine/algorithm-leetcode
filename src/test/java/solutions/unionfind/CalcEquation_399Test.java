@@ -162,4 +162,36 @@ public class CalcEquation_399Test {
         double[] result = test.calcEquation(equations, values, List.of(List.of("x0", "x" + n)));
         assertEquals(Math.pow(2, n), result[0], 0.0001);
     }
+
+    @Test
+    public void testSameInstanceDoesNotRetainEarlierVariables() {
+        CalcEquation_399 test = new CalcEquation_399();
+        test.calcEquation(List.of(List.of("a", "b")), new double[]{2.0}, List.of(List.of("a", "b")));
+        assertArrayEquals(new double[]{-1.0, 3.0}, test.calcEquation(
+                List.of(List.of("x", "y")), new double[]{3.0},
+                List.of(List.of("a", "b"), List.of("x", "y"))), 0.0001);
+    }
+
+    @Test
+    public void testFractionalRatios() {
+        CalcEquation_399 test = new CalcEquation_399();
+        double[] result = test.calcEquation(
+                List.of(List.of("a", "b"), List.of("b", "c")),
+                new double[]{0.5, 0.25},
+                List.of(List.of("a", "c"), List.of("c", "a")));
+        assertArrayEquals(new double[]{0.125, 8.0}, result, 1e-9);
+    }
+
+    @Test
+    public void testSelfEquationOverridesNoIssue() { assertArrayEquals(new double[]{1.0}, new CalcEquation_399().calcEquation(List.of(List.of("a", "a")), new double[]{1.0}, List.of(List.of("a", "a"))), 1e-9); }
+    @Test
+    public void testMultipleQueriesPreserveOrder() { assertArrayEquals(new double[]{2.0, 0.5, -1.0}, new CalcEquation_399().calcEquation(List.of(List.of("a", "b")), new double[]{2.0}, List.of(List.of("a", "b"), List.of("b", "a"), List.of("a", "z"))), 1e-9); }
+    @Test
+    public void testBranchingNetwork() { assertArrayEquals(new double[]{1.5, 2.0 / 3.0}, new CalcEquation_399().calcEquation(List.of(List.of("a", "b"), List.of("a", "c")), new double[]{2.0, 3.0}, List.of(List.of("b", "c"), List.of("c", "b"))), 1e-9); }
+    @Test
+    public void testOneVariableQueries() { assertArrayEquals(new double[]{1.0, -1.0}, new CalcEquation_399().calcEquation(List.of(List.of("a", "b")), new double[]{7.0}, List.of(List.of("a", "a"), List.of("q", "q"))), 1e-9); }
+    @Test
+    public void testVerySmallRatio() { assertArrayEquals(new double[]{1e-9, 1e9}, new CalcEquation_399().calcEquation(List.of(List.of("a", "b")), new double[]{1e-9}, List.of(List.of("a", "b"), List.of("b", "a"))), 1e-6); }
+    @Test
+    public void testEmptyQueries() { assertArrayEquals(new double[]{}, new CalcEquation_399().calcEquation(List.of(List.of("a", "b")), new double[]{2.0}, List.of()), 1e-9); }
 }

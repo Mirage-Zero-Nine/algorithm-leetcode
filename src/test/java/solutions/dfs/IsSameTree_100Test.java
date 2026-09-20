@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class IsSameTree_100Test {
 
@@ -91,5 +93,19 @@ public class IsSameTree_100Test {
         node.left = buildTree(val * 2, depth - 1);
         node.right = buildTree(val * 2 + 1, depth - 1);
         return node;
+    }
+
+    @ParameterizedTest(name = "identical chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testEqualAndDifferentChains(int length) {
+        TreeNode first = new TreeNode(0), second = new TreeNode(0);
+        TreeNode a = first, b = second;
+        for (int i = 1; i < length; i++) {
+            a.left = new TreeNode(i); b.left = new TreeNode(i);
+            a = a.left; b = b.left;
+        }
+        assertTrue(test.isSameTree(first, second));
+        b.val = -1;
+        assertFalse(test.isSameTree(first, second));
     }
 }

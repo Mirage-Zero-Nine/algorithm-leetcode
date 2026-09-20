@@ -132,4 +132,14 @@ public class LowestCommonAncestor_1650Test {
         // LCA of node 25 and node 49 should be node 25
         assertEquals(nodes[24], test.lowestCommonAncestor(nodes[24], nodes[48]));
     }
+
+    @Test public void testRootWithTwoChildren() { Node r=new Node();Node a=new Node();Node b=new Node();a.parent=r;b.parent=r;assertEquals(r,test.lowestCommonAncestor(a,b)); }
+    @Test public void testDeepAncestor() { Node r=new Node();Node a=new Node();Node b=new Node();a.parent=r;b.parent=a;assertEquals(a,test.lowestCommonAncestor(a,b)); }
+    @Test public void testSameLeaf() { Node a=new Node();assertEquals(a,test.lowestCommonAncestor(a,a)); }
+    @Test public void testTwoLevelCousins() { Node r=new Node();Node a=new Node();Node b=new Node();Node c=new Node();Node d=new Node();a.parent=r;b.parent=r;c.parent=a;d.parent=b;assertEquals(r,test.lowestCommonAncestor(c,d)); }
+    @Test public void testRightChain() { Node r=new Node();Node a=new Node();Node b=new Node();a.parent=r;b.parent=a;assertEquals(r,test.lowestCommonAncestor(r,b)); }
+    @Test public void testLeftChain() { Node r=new Node();Node a=new Node();Node b=new Node();a.parent=r;b.parent=a;assertEquals(a,test.lowestCommonAncestor(a,b)); }
+    @Test public void testUnequalDepths() { Node r=new Node();Node a=new Node();Node b=new Node();Node c=new Node();a.parent=r;b.parent=a;c.parent=b;assertEquals(a,test.lowestCommonAncestor(a,c)); }
+    @Test public void testDistinctEqualValues() { Node r=new Node();r.val=1;Node a=new Node();a.val=1;a.parent=r;assertEquals(r,test.lowestCommonAncestor(r,a)); }
+    @Test public void testRepeatedCall() { Node r=new Node();Node a=new Node();a.parent=r;assertEquals(r,test.lowestCommonAncestor(r,a));assertEquals(a,test.lowestCommonAncestor(a,a)); }
 }

@@ -241,6 +241,14 @@ class WordBreak_140Test {
     }
 
     @Test
+    void testDuplicateDictionaryEntriesDoNotDuplicateSentences() {
+        List<String> result = solution.wordBreak("aa", List.of("a", "a", "aa", "a"));
+
+        assertEquals(Set.of("a a", "aa"), new HashSet<>(result));
+        assertEquals(2, result.size());
+    }
+
+    @Test
     void testDictionaryOrderDoesNotChangePossibleSentences() {
         List<String> firstOrder = List.of("cat", "cats", "and", "sand", "dog");
         List<String> secondOrder = List.of("dog", "sand", "and", "cats", "cat");
@@ -283,6 +291,20 @@ class WordBreak_140Test {
     }
 
     @Test
+    void testRepeatedCallsAndReturnedListMutationAreIsolated() {
+        List<String> first = solution.wordBreak("a", List.of("a"));
+        assertEquals(List.of("a"), first);
+
+        first.clear();
+        assertEquals(Set.of("a a", "aa"),
+                new HashSet<>(solution.wordBreak("aa", List.of("a", "aa"))));
+
+        List<String> second = solution.wordBreak("a", List.of("a"));
+        second.add("forged result");
+        assertEquals(Set.of("a"), new HashSet<>(solution.wordBreak("a", List.of("a"))));
+    }
+
+    @Test
     void testMaximumInputLengthWithSafeAnswerSize() {
         String s = "abcdefghijklmnopqrst";
         assertSentences(s, List.of("abcdefghij", "klmnopqrst"), Set.of("abcdefghij klmnopqrst"));
@@ -320,6 +342,25 @@ class WordBreak_140Test {
             List<String> actual = solution.wordBreak(testCase.s(), testCase.dictionary());
             assertEquals(expected, new HashSet<>(actual), testCase.s());
             assertEquals(actual.size(), new HashSet<>(actual).size(), "Duplicate sentence returned");
+        }
+    }
+
+    @Test
+    void testExhaustiveBinaryStringsAgainstIndependentCutMaskOracle() {
+        List<String> dictionary = List.of(
+                "a", "b",
+                "aa", "ab", "ba", "bb",
+                "aaa", "aab", "aba", "abb", "baa", "bab", "bba", "bbb");
+        Set<String> dictionarySet = new HashSet<>(dictionary);
+
+        // Every binary string through length seven exercises every cut pattern while
+        // keeping the independently enumerated oracle comfortably small.
+        for (int length = 1; length <= 7; length++) {
+            for (int mask = 0; mask < (1 << length); mask++) {
+                String s = binaryString(mask, length);
+                Set<String> expected = cutMaskOracle(s, dictionarySet);
+                assertSentences(s, dictionary, expected);
+            }
         }
     }
 
@@ -375,6 +416,14 @@ class WordBreak_140Test {
             value /= 23;
         }
         return new String(encoded);
+    }
+
+    private String binaryString(int mask, int length) {
+        char[] result = new char[length];
+        for (int index = 0; index < length; index++) {
+            result[index] = (mask & (1 << index)) == 0 ? 'a' : 'b';
+        }
+        return new String(result);
     }
 
     private record TestCase(String s, List<String> dictionary) {

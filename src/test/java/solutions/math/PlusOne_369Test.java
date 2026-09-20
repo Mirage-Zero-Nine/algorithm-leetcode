@@ -96,4 +96,64 @@ public class PlusOne_369Test {
         assertEquals(2, result.val);
         assertEquals(0, result.next.val);
     }
+    @Test
+    public void testAdditional1() {
+        ListNode result = test.plusOne(build(1,0));
+        assertEquals(1, result.val);
+    }
+
+    @Test
+    public void testAdditional2() {
+        ListNode result = test.plusOne(build(2,0,0));
+        assertEquals(2, result.val);
+    }
+
+    @Test
+    public void testAdditional3() {
+        ListNode result = test.plusOne(build(4,9,0));
+        assertEquals(4, result.val);
+    }
+
+    @Test
+    public void testAdditional4() {
+        ListNode result = test.plusOne(build(9,0,9));
+        assertEquals(9, result.val);
+    }
+
+    @Test
+    public void testAdditional5() {
+        ListNode result = test.plusOne(build(7,8,9));
+        assertEquals(7, result.val);
+    }
+
+    @Test
+    public void testAdditional6() {
+        ListNode result = test.plusOne(build(9,9));
+        assertEquals(1, result.val);
+    }
+
+    @Test
+    public void testAdditional7() {
+        ListNode result = test.plusOne(build(0,9));
+        assertEquals(1, result.val);
+    }
+
+    @Test
+    public void testAdditional8() {
+        ListNode result = test.plusOne(build(3,9,9,9,9));
+        assertEquals(4, result.val);
+    }
+
+    @Test
+    public void testAdditional9() {
+        ListNode result = test.plusOne(build(1,0,0,9));
+        assertEquals(1, result.val);
+    }
+
+    @Test
+    public void testAdditional10() {
+        ListNode result = test.plusOne(build(8,8,8,8));
+        assertEquals(8, result.val);
+    }
+
 }

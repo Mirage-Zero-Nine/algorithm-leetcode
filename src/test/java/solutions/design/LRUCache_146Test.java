@@ -280,4 +280,148 @@ public class LRUCache_146Test {
         }
         assertTrue(count <= capacity, "Cache size " + count + " exceeds capacity " + capacity);
     }
+
+    @Test
+    public void testZeroKeyAndValuesAtOfficialBoundaries() {
+        test = new LRUCache_146(2);
+        test.put(0, 0);
+        test.put(10_000, 100_000);
+
+        assertEquals(0, test.get(0));
+        assertEquals(100_000, test.get(10_000));
+
+        test.put(1, 1);
+        assertEquals(-1, test.get(0));
+        assertEquals(100_000, test.get(10_000));
+        assertEquals(1, test.get(1));
+    }
+
+    @Test
+    public void testUpdatingExistingKeyDoesNotIncreaseSize() {
+        test = new LRUCache_146(2);
+        test.put(1, 10);
+        test.put(2, 20);
+        test.put(1, 11);
+        test.put(1, 12);
+
+        // Updating key 1 must preserve key 2 and make key 1 most recent.
+        assertEquals(12, test.get(1));
+        assertEquals(20, test.get(2));
+        test.put(3, 30);
+        assertEquals(-1, test.get(1));
+        assertEquals(30, test.get(3));
+    }
+
+    @Test
+    public void testMissingReadsDoNotChangeEvictionOrder() {
+        test = new LRUCache_146(2);
+        test.put(1, 1);
+        test.put(2, 2);
+        assertEquals(-1, test.get(99));
+        test.put(3, 3);
+
+        assertEquals(-1, test.get(1));
+        assertEquals(2, test.get(2));
+        assertEquals(3, test.get(3));
+    }
+
+    @Test
+    public void testImplementationSupportedSignedValuesAndExtremeKeys() {
+        test = new LRUCache_146(4);
+        test.put(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        test.put(Integer.MAX_VALUE, Integer.MIN_VALUE);
+        test.put(-7, -8);
+        test.put(0, 0);
+
+        assertEquals(Integer.MAX_VALUE, test.get(Integer.MIN_VALUE));
+        assertEquals(Integer.MIN_VALUE, test.get(Integer.MAX_VALUE));
+        assertEquals(-8, test.get(-7));
+        assertEquals(0, test.get(0));
+
+        test.put(1, 1);
+        assertEquals(-1, test.get(Integer.MIN_VALUE));
+        assertEquals(Integer.MIN_VALUE, test.get(Integer.MAX_VALUE));
+    }
+
+    @Test
+    public void testIndependentInstancesDoNotShareEntriesOrOrder() {
+        LRUCache_146 first = new LRUCache_146(2);
+        LRUCache_146 second = new LRUCache_146(2);
+        first.put(1, 10);
+        second.put(1, 20);
+        first.put(2, 30);
+        second.put(2, 40);
+
+        assertEquals(10, first.get(1));
+        assertEquals(20, second.get(1));
+        first.put(3, 50);
+        second.put(3, 60);
+        assertEquals(-1, first.get(2));
+        assertEquals(-1, second.get(2));
+        assertEquals(50, first.get(3));
+        assertEquals(60, second.get(3));
+    }
+
+    @Test
+    public void testSeededStatefulSequenceAgainstIndependentOracle() {
+        int capacity = 7;
+        test = new LRUCache_146(capacity);
+        Map<Integer, Integer> reference = new LinkedHashMap<>(capacity, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
+                return size() > capacity;
+            }
+        };
+        Random rng = new Random(1_460_146L);
+
+        for (int operation = 0; operation < 25_000; operation++) {
+            int key = rng.nextInt(10_001);
+            if (rng.nextInt(4) == 0) {
+                Integer expected = reference.get(key);
+                assertEquals(expected == null ? -1 : expected, test.get(key),
+                        "get(" + key + ") at operation " + operation);
+            } else {
+                int value = rng.nextInt(100_001);
+                reference.put(key, value);
+                test.put(key, value);
+            }
+        }
+
+        // Probe each valid key independently; each probe also exercises the
+        // oracle's access-order semantics before the next probe.
+        for (int key = 0; key <= 10_000; key++) {
+            Integer expected = reference.get(key);
+            assertEquals(expected == null ? -1 : expected, test.get(key), "final key " + key);
+        }
+    }
+
+    @Test
+    public void testMaximumOfficialCallBudgetAgainstLinkedHashMap() {
+        int capacity = 3_000;
+        test = new LRUCache_146(capacity);
+        Map<Integer, Integer> reference = new LinkedHashMap<>(capacity, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
+                return size() > capacity;
+            }
+        };
+        Random rng = new Random(0x146L);
+
+        for (int operation = 0; operation < 200_000; operation++) {
+            int key = switch (operation % 5) {
+                case 0 -> 0;
+                case 1 -> 10_000;
+                default -> rng.nextInt(10_001);
+            };
+            if ((operation & 1) == 0) {
+                Integer expected = reference.get(key);
+                assertEquals(expected == null ? -1 : expected, test.get(key),
+                        "get(" + key + ") at operation " + operation);
+            } else {
+                int value = (operation % 7 == 0) ? 100_000 : rng.nextInt(100_001);
+                reference.put(key, value);
+                test.put(key, value);
+            }
+        }
+    }
 }

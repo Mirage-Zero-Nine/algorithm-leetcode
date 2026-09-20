@@ -77,4 +77,14 @@ public class GroupStrings_249Test {
         // all single chars belong to same group
         assertEquals(1, result.size());
     }
+    @Test void extra01() { assertEquals(1, test.groupStrings(new String[]{"a","z"}).size()); }
+    @Test void extra02() { assertEquals(1, test.groupStrings(new String[]{"ab","bc","za"}).size()); }
+    @Test void extra03() { assertEquals(2, test.groupStrings(new String[]{"a","ab"}).size()); }
+    @Test void extra04() { assertEquals(1, test.groupStrings(new String[]{"abc","bcd","cde"}).size()); }
+    @Test void extra05() { assertEquals(1, test.groupStrings(new String[]{"az","ba"}).size()); }
+    @Test void extra06() { assertEquals(2, test.groupStrings(new String[]{"a","b","ab"}).size()); }
+    @Test void extra07() { assertEquals(1, test.groupStrings(new String[]{"xyz","yza"}).size()); }
+    @Test void extra08() { assertEquals(0, test.groupStrings(new String[]{}).size()); }
+    @Test void extra09() { assertEquals(1, test.groupStrings(new String[]{"abc","abc"}).size()); }
+    @Test void extra10() { assertEquals(2, test.groupStrings(new String[]{"a","z","abc"}).size()); }
 }

@@ -148,6 +148,14 @@ public class FindMinHeightTrees_310Test {
         assertTrue(result.contains(50));
     }
 
+    @Test public void testFiveNodePath() { assertEquals(java.util.Set.of(2), new java.util.HashSet<>(test.findMinHeightTrees(5, new int[][]{{0,1},{1,2},{2,3},{3,4}}))); }
+    @Test public void testSixNodePathHasTwoCenters() { assertEquals(java.util.Set.of(2,3), new java.util.HashSet<>(test.findMinHeightTrees(6, new int[][]{{0,1},{1,2},{2,3},{3,4},{4,5}}))); }
+    @Test public void testTwoLeafStar() { assertEquals(java.util.Set.of(0), new java.util.HashSet<>(test.findMinHeightTrees(5, new int[][]{{0,1},{0,2},{0,3},{0,4}}))); }
+    @Test public void testBalancedSevenNodeTreeExact() { assertEquals(java.util.Set.of(0), new java.util.HashSet<>(test.findMinHeightTrees(7, new int[][]{{0,1},{0,2},{1,3},{1,4},{2,5},{2,6}}))); }
+    @Test public void testRepeatedInvocation() { assertEquals(List.of(0), test.findMinHeightTrees(1, new int[][]{})); assertEquals(java.util.Set.of(1), new java.util.HashSet<>(test.findMinHeightTrees(3, new int[][]{{0,1},{1,2}}))); }
+    @Test public void testTenNodePath() { assertEquals(java.util.Set.of(4,5), new java.util.HashSet<>(test.findMinHeightTrees(10, new int[][]{{0,1},{1,2},{2,3},{3,4},{4,5},{5,6},{6,7},{7,8},{8,9}}))); }
+    @Test public void testUnorderedEdges() { assertEquals(java.util.Set.of(1,2), new java.util.HashSet<>(test.findMinHeightTrees(4, new int[][]{{2,3},{0,1},{1,2}}))); }
+
     private final static int[][] test1 = {{0, 1}, {6, 1}, {7, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 8}};
     private final static int[][] test2 = {{0, 1}, {6, 1}, {7, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}};
     private final static int[][] test3 = {{0, 3}, {1, 3}, {2, 3}, {4, 3}, {5, 4}};

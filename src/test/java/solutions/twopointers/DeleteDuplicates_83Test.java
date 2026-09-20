@@ -96,4 +96,15 @@ public class DeleteDuplicates_83Test {
         }
         assertNull(cur);
     }
+
+    @Test public void testThreeRuns() { ListNode r = test.deleteDuplicates(build(1,1,2,2,3,3)); assertEquals(1, r.val); assertEquals(2, r.next.val); assertEquals(3, r.next.next.val); }
+    @Test public void testNegativeValues() { ListNode r = test.deleteDuplicates(build(-2,-2,-1,0,0)); assertEquals(-2, r.val); assertEquals(-1, r.next.val); }
+    @Test public void testFourCopiesCollapse() { ListNode r = test.deleteDuplicates(build(5,5,5,5)); assertEquals(5, r.val); assertNull(r.next); }
+    @Test public void testAlternatingRunLengths() { ListNode r = test.deleteDuplicates(build(1,1,2,3,3,3,4)); assertEquals(4, r.next.next.next.val); }
+    @Test public void testZeroBoundary() { ListNode r = test.deleteDuplicates(build(-1,0,0,1)); assertEquals(0, r.next.val); }
+    @Test public void testAlreadyUniqueNegative() { ListNode r = test.deleteDuplicates(build(-3,-2,-1)); assertEquals(-3, r.val); assertEquals(-1, r.next.next.val); }
+    @Test public void testLongSingleRun() { ListNode r = test.deleteDuplicates(build(9,9,9,9,9,9)); assertNull(r.next); }
+    @Test public void testTailDuplicateOnly() { ListNode r = test.deleteDuplicates(build(1,2,3,3)); assertEquals(3, r.next.next.val); }
+    @Test public void testRepeatedCall() { assertEquals(3, test.deleteDuplicates(build(2,2,3)).next.val); }
+    @Test public void testOneElementNegative() { assertEquals(-8, test.deleteDuplicates(build(-8)).val); }
 }

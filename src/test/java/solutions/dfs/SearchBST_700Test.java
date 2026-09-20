@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class SearchBST_700Test {
 
@@ -185,5 +187,14 @@ public class SearchBST_700Test {
         if (node == null) return true;
         if (node.val <= min || node.val >= max) return false;
         return isValidBST(node.left, min, node.val) && isValidBST(node.right, node.val, max);
+    }
+
+    @ParameterizedTest(name = "search right-chain value {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testEveryChainValue(int value) {
+        TreeNode root = new TreeNode(1); TreeNode current = root;
+        for (int i = 2; i <= 10; i++) { current.right = new TreeNode(i); current = current.right; }
+        assertNotNull(test.searchBST(root, value));
+        assertNull(test.searchBST(root, value + 10));
     }
 }

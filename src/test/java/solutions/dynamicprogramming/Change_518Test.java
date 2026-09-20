@@ -3,7 +3,9 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 
 public class Change_518Test {
@@ -96,5 +98,21 @@ public class Change_518Test {
             combinations += countCombinations(amountAfterCoin, coins, coinIndex + 1);
         }
         return combinations;
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctCases() {
+        return Stream.of(
+                DynamicTest.dynamicTest("amount 2 with ones", () -> assertEquals(1, test.change(2, new int[]{1}))),
+                DynamicTest.dynamicTest("amount 3 with ones and twos", () -> assertEquals(2, test.change(3, new int[]{1, 2}))),
+                DynamicTest.dynamicTest("amount 5 with ones and twos", () -> assertEquals(3, test.change(5, new int[]{1, 2}))),
+                DynamicTest.dynamicTest("amount 6 with two and three", () -> assertEquals(2, test.change(6, new int[]{2, 3}))),
+                DynamicTest.dynamicTest("amount 7 with two and five", () -> assertEquals(1, test.change(7, new int[]{2, 5}))),
+                DynamicTest.dynamicTest("amount 8 with ones and fours", () -> assertEquals(3, test.change(8, new int[]{1, 4}))),
+                DynamicTest.dynamicTest("amount 9 with three and six", () -> assertEquals(2, test.change(9, new int[]{3, 6}))),
+                DynamicTest.dynamicTest("amount 10 with two and five", () -> assertEquals(2, test.change(10, new int[]{2, 5}))),
+                DynamicTest.dynamicTest("amount 12 with three denominations", () -> assertEquals(11, test.change(12, new int[]{1, 3, 4}))),
+                DynamicTest.dynamicTest("unreachable odd amount", () -> assertEquals(0, test.change(9, new int[]{2, 4}))),
+                DynamicTest.dynamicTest("single denomination exact", () -> assertEquals(1, test.change(24, new int[]{6}))));
     }
 }

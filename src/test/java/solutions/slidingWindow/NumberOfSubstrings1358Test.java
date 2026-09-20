@@ -71,4 +71,10 @@ public class NumberOfSubstrings1358Test {
         // Should be a large positive number
         assertEquals(true, result > 0);
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"abc,1", "aab,0", "abbc,1", "abca,3", "bcab,3", "abcabc,10", "aaabc,3", "aabbcc,4", "acbac,6", "cbacba,10"})
+    void additionalBoundaryCases(String value, int expected) {
+        assertEquals(expected, test.numberOfSubstrings(value));
+    }
 }

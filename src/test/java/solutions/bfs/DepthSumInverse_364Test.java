@@ -184,6 +184,21 @@ public class DepthSumInverse_364Test {
     }
 
     @Test
+    public void officialMagnitudeBoundsRemainSignedAtDifferentDepths() {
+        assertCase(List.of(
+                integer(1_000_000),
+                listOf(integer(-1_000_000), listOf(integer(1_000_000), integer(-1_000_000))),
+                integer(-1_000_000)));
+    }
+
+    @Test
+    public void minimumAndMaximumIntValuesAreHandledAsSignedValues() {
+        assertCase(List.of(
+                integer(Integer.MIN_VALUE),
+                listOf(integer(Integer.MAX_VALUE), listOf(integer(Integer.MIN_VALUE + 1)))));
+    }
+
+    @Test
     public void wideFlatListWithinTheProblemLimit() {
         List<NestedInteger> values = new ArrayList<>();
         for (int i = 1; i <= 50; i++) {
@@ -199,6 +214,33 @@ public class DepthSumInverse_364Test {
             children.add(integer(i % 9 - 4));
         }
         assertCase(List.of(listOf(children.toArray(new NestedInteger[0])), integer(7)));
+    }
+
+    @Test
+    public void maximumTopLevelListSizeWithinTheProblemLimit() {
+        List<NestedInteger> values = new ArrayList<>();
+        for (int i = 0; i < 500; i++) {
+            values.add(integer(i % 7 - 3));
+        }
+        assertCase(values);
+    }
+
+    @Test
+    public void fiveHundredNestedLevelsRemainStackSafeForTheBfsSolution() {
+        NestedInteger current = integer(-37);
+        for (int i = 0; i < 499; i++) {
+            current = listOf(current);
+        }
+        assertCase(List.of(current));
+    }
+
+    @Test
+    public void deepEmptyBranchesDoNotOutrankTheDeepestInteger() {
+        NestedInteger empty = new NestedInteger();
+        for (int i = 0; i < 499; i++) {
+            empty = listOf(empty);
+        }
+        assertCase(List.of(integer(23), empty));
     }
 
     @Test
@@ -227,6 +269,14 @@ public class DepthSumInverse_364Test {
         assertEquals(before, shape(input));
         assertEquals(expected, solve(input));
         assertEquals(before, shape(input));
+    }
+
+    @Test
+    public void exhaustiveSmallGeneratedShapesMatchIndependentTopDownOracle() {
+        for (int seed = 0; seed < 256; seed++) {
+            List<NestedInteger> input = generatedInput(seed);
+            assertEquals(reference(input), solve(input), "generated shape seed=" + seed);
+        }
     }
 
     private void assertCase(List<NestedInteger> input) {
@@ -263,6 +313,33 @@ public class DepthSumInverse_364Test {
                 collect(value.getList(), depth + 1, leaves);
             }
         }
+    }
+
+    /** Builds bounded deterministic mixtures of integers, empty lists, and nested lists. */
+    private List<NestedInteger> generatedInput(int seed) {
+        List<NestedInteger> result = new ArrayList<>();
+        int count = 1 + Math.floorMod(seed, 5);
+        for (int i = 0; i < count; i++) {
+            result.add(generatedNode(seed * 31 + i * 17 + 1, 4));
+        }
+        return result;
+    }
+
+    private NestedInteger generatedNode(int code, int remainingDepth) {
+        int choice = Math.floorMod(code, 5);
+        if (remainingDepth == 0 || choice == 0) {
+            return integer(Math.floorMod(code, 7) - 3);
+        }
+        if (choice == 1) {
+            return new NestedInteger();
+        }
+
+        NestedInteger result = new NestedInteger();
+        int childCount = choice - 1;
+        for (int i = 0; i < childCount; i++) {
+            result.add(generatedNode(code / 5 + i * 23 + 7, remainingDepth - 1));
+        }
+        return result;
     }
 
     private String shape(List<NestedInteger> values) {

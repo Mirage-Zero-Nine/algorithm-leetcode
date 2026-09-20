@@ -81,4 +81,15 @@ public class CamelMatch_1023Test {
         assertEquals(true, result.get(0));
         assertEquals(true, result.get(49));
     }
+
+    @Test public void testPatternOnlyLowercase() { assertEquals(List.of(true, false), test.camelMatch(new String[]{"abc", "abd"}, "ac")); }
+    @Test public void testUppercaseExtraRejected() { assertEquals(List.of(false, true), test.camelMatch(new String[]{"FooBarX", "FooBar"}, "FB")); }
+    @Test public void testPatternEmpty() { assertEquals(List.of(true, false, true), test.camelMatch(new String[]{"", "A", "lower"}, "")); }
+    @Test public void testQueryEmptyAgainstPattern() { assertEquals(List.of(false, true), test.camelMatch(new String[]{"", "a"}, "a")); }
+    @Test public void testRepeatedPatternLetters() { assertEquals(List.of(true, true), test.camelMatch(new String[]{"FooFoo", "FooF"}, "FF")); }
+    @Test public void testLowercaseCanAppearAnywhere() { assertEquals(List.of(true, true), test.camelMatch(new String[]{"xAyyBz", "AxxBy"}, "AB")); }
+    @Test public void testMissingCapital() { assertEquals(List.of(false, false), test.camelMatch(new String[]{"fooBar", "fooBaz"}, "FB")); }
+    @Test public void testMultipleUppercaseQueries() { assertEquals(List.of(true, true, true), test.camelMatch(new String[]{"ABc", "AcB", "AxxB"}, "AB")); }
+    @Test public void testLongLowercasePadding() { assertEquals(List.of(true), test.camelMatch(new String[]{"a" + "x".repeat(1000) + "B"}, "B")); }
+    @Test public void testOrderOfPatternMatters() { assertEquals(List.of(false, true), test.camelMatch(new String[]{"BA", "AB"}, "AB")); }
 }

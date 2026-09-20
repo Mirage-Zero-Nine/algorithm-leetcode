@@ -136,4 +136,14 @@ public class CountComponents_323Test {
         }
         assertEquals(1, test.countComponents(n, edges));
     }
+
+    @Test public void testNoEdgesFiveVertices() { assertEquals(5, test.countComponents(5, new int[][]{})); }
+    @Test public void testOneEdgeLeavesSingletons() { assertEquals(3, test.countComponents(4, new int[][]{{0, 1}})); }
+    @Test public void testRedundantEdgesDoNotChangeCount() { assertEquals(2, test.countComponents(4, new int[][]{{0, 1}, {1, 0}, {0, 1}, {2, 3}})); }
+    @Test public void testCycleOnlyComponent() { assertEquals(3, test.countComponents(5, new int[][]{{0, 1}, {1, 2}, {2, 0}})); }
+    @Test public void testTwoLargeComponents() { assertEquals(2, test.countComponents(8, new int[][]{{0, 1}, {1, 2}, {2, 3}, {4, 5}, {5, 6}, {6, 7}})); }
+    @Test public void testEdgeOrderIndependent() { assertEquals(1, test.countComponents(4, new int[][]{{3, 0}, {2, 3}, {1, 2}})); }
+    @Test public void testIsolatedHighLabel() { assertEquals(2, test.countComponents(3, new int[][]{{0, 1}})); }
+    @Test public void testSelfLoopDoesNotMerge() { assertEquals(2, test.countComponents(2, new int[][]{{0, 0}})); }
+    @Test public void testRepeatedCallUsesFreshState() { assertEquals(1, test.countComponents(2, new int[][]{{0, 1}})); assertEquals(2, test.countComponents(3, new int[][]{{0, 1}})); }
 }

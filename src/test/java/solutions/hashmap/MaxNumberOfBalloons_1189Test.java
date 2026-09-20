@@ -71,4 +71,14 @@ public class MaxNumberOfBalloons_1189Test {
         for (int i = 0; i < 1000; i++) sb.append("balloon");
         assertEquals(1000, test.maxNumberOfBalloons(sb.toString()));
     }
+    @Test void extra01() { assertEquals(1, test.maxNumberOfBalloons("balloon")); }
+    @Test void extra02() { assertEquals(0, test.maxNumberOfBalloons("balon")); }
+    @Test void extra03() { assertEquals(2, test.maxNumberOfBalloons("balloonballoon")); }
+    @Test void extra04() { assertEquals(0, test.maxNumberOfBalloons("bbbbbaaaaa")); }
+    @Test void extra05() { assertEquals(1, test.maxNumberOfBalloons("xxballoonyy")); }
+    @Test void extra06() { assertEquals(3, test.maxNumberOfBalloons("balloonballoonballoonx")); }
+    @Test void extra07() { assertEquals(1, test.maxNumberOfBalloons("bbaallooon")); }
+    @Test void extra08() { assertEquals(1, test.maxNumberOfBalloons("nlaebolko")); }
+    @Test void extra09() { assertEquals(0, test.maxNumberOfBalloons("")); }
+    @Test void extra10() { assertEquals(4, test.maxNumberOfBalloons("balloon".repeat(4))); }
 }

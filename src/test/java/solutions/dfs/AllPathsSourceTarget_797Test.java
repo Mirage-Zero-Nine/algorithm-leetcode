@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,6 +70,16 @@ class AllPathsSourceTarget_797Test {
     }
 
     @Test
+    void testSingleNodeIsBothSourceAndTarget() {
+        // The LeetCode constraints require at least two nodes, but the class contract
+        // does not reject this degenerate graph and should return the trivial path.
+        assertPathsEqual(
+                List.of(List.of(0)),
+                solution.allPathsSourceTarget(new int[][]{{}})
+        );
+    }
+
+    @Test
     void testSourceHasNoOutgoingEdges() {
         int[][] graph = {
                 {},
@@ -115,6 +126,26 @@ class AllPathsSourceTarget_797Test {
     }
 
     @Test
+    void testDirectPathAndLongestPathCoexist() {
+        int[][] graph = {
+                {1, 5},
+                {2},
+                {3},
+                {4},
+                {5},
+                {}
+        };
+
+        assertPathsEqual(
+                List.of(
+                        List.of(0, 5),
+                        List.of(0, 1, 2, 3, 4, 5)
+                ),
+                solution.allPathsSourceTarget(graph)
+        );
+    }
+
+    @Test
     void testPathsWithSharedPrefixAndSuffix() {
         int[][] graph = {
                 {1, 2},
@@ -134,6 +165,30 @@ class AllPathsSourceTarget_797Test {
                 ),
                 solution.allPathsSourceTarget(graph)
         );
+    }
+
+    @Test
+    void testSeveralLayersOfBranchingAndMerging() {
+        int[][] graph = {
+                {1, 2},
+                {3, 4},
+                {3, 4},
+                {5, 6},
+                {5, 6},
+                {7},
+                {7},
+                {}
+        };
+
+        Set<List<Integer>> expected = new HashSet<>();
+        for (int first : List.of(1, 2)) {
+            for (int second : List.of(3, 4)) {
+                for (int third : List.of(5, 6)) {
+                    expected.add(List.of(0, first, second, third, 7));
+                }
+            }
+        }
+        assertPathsEqual(expected, solution.allPathsSourceTarget(graph));
     }
 
     @Test
@@ -181,6 +236,20 @@ class AllPathsSourceTarget_797Test {
     }
 
     @Test
+    void testMultipleDeadEndBranchesDoNotBecomePaths() {
+        int[][] graph = {
+                {1, 2, 3},
+                {4},
+                {4},
+                {},
+                {},
+                {}
+        };
+
+        assertTrue(solution.allPathsSourceTarget(graph).isEmpty());
+    }
+
+    @Test
     void testAllPathsAreUnique() {
         int[][] graph = {
                 {1, 2},
@@ -193,8 +262,15 @@ class AllPathsSourceTarget_797Test {
 
         List<List<Integer>> paths = solution.allPathsSourceTarget(graph);
 
-        assertEquals(paths.size(), new HashSet<>(paths).size());
-        assertEquals(4, paths.size());
+        assertPathsEqual(
+                List.of(
+                        List.of(0, 1, 3, 5),
+                        List.of(0, 1, 4, 5),
+                        List.of(0, 2, 3, 5),
+                        List.of(0, 2, 4, 5)
+                ),
+                paths
+        );
     }
 
     @Test
@@ -251,6 +327,27 @@ class AllPathsSourceTarget_797Test {
     }
 
     @Test
+    void testReturnedOuterListCanBeMutatedWithoutAffectingFutureCalls() {
+        int[][] graph = {
+                {1, 2},
+                {3},
+                {3},
+                {}
+        };
+
+        List<List<Integer>> result = solution.allPathsSourceTarget(graph);
+        result.clear();
+
+        assertPathsEqual(
+                List.of(
+                        List.of(0, 1, 3),
+                        List.of(0, 2, 3)
+                ),
+                solution.allPathsSourceTarget(graph)
+        );
+    }
+
+    @Test
     void testMaximumNumberOfPathsForFifteenNodes() {
         int nodeCount = 15;
         int[][] graph = completeForwardGraph(nodeCount);
@@ -265,6 +362,21 @@ class AllPathsSourceTarget_797Test {
             assertEquals(nodeCount - 1, path.getLast());
             assertStrictlyIncreasing(path);
         }
+    }
+
+    @Test
+    void testMaximumNodeCountWithOneLongPath() {
+        int nodeCount = 15;
+        int[][] graph = new int[nodeCount][];
+        for (int node = 0; node < nodeCount - 1; node++) {
+            graph[node] = new int[]{node + 1};
+        }
+        graph[nodeCount - 1] = new int[0];
+
+        assertPathsEqual(
+                List.of(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)),
+                solution.allPathsSourceTarget(graph)
+        );
     }
 
     @Test
@@ -284,6 +396,21 @@ class AllPathsSourceTarget_797Test {
             Set<List<Integer>> expected = expectedPathsBottomUp(graph);
 
             assertPathsEqual(expected, solution.allPathsSourceTarget(graph));
+        }
+    }
+
+    @Test
+    void testSeededForwardDagsAgainstIndependentDfsOracle() {
+        Random random = new Random(797_2026L);
+
+        for (int sample = 0; sample < 250; sample++) {
+            int nodeCount = 1 + random.nextInt(10);
+            int[][] graph = randomForwardDag(nodeCount, random);
+
+            assertPathsEqual(
+                    expectedPathsByDfsOracle(graph),
+                    solution.allPathsSourceTarget(graph)
+            );
         }
     }
 
@@ -309,6 +436,20 @@ class AllPathsSourceTarget_797Test {
             for (int index = 0; index < graph[from].length; index++) {
                 graph[from][index] = from + index + 1;
             }
+        }
+        return graph;
+    }
+
+    private static int[][] randomForwardDag(int nodeCount, Random random) {
+        int[][] graph = new int[nodeCount][];
+        for (int from = 0; from < nodeCount; from++) {
+            List<Integer> neighbors = new ArrayList<>();
+            for (int to = from + 1; to < nodeCount; to++) {
+                if (random.nextBoolean()) {
+                    neighbors.add(to);
+                }
+            }
+            graph[from] = neighbors.stream().mapToInt(Integer::intValue).toArray();
         }
         return graph;
     }
@@ -357,6 +498,37 @@ class AllPathsSourceTarget_797Test {
         }
 
         return pathsFrom.getFirst();
+    }
+
+    /**
+     * Independent recursive oracle used only by seeded tests. It intentionally builds a
+     * fresh path for each completed route instead of sharing the solution's result logic.
+     */
+    private static Set<List<Integer>> expectedPathsByDfsOracle(int[][] graph) {
+        Set<List<Integer>> expected = new HashSet<>();
+        if (graph.length == 0) {
+            return expected;
+        }
+        collectOraclePaths(0, graph.length - 1, graph, new ArrayList<>(), expected);
+        return expected;
+    }
+
+    private static void collectOraclePaths(
+            int node,
+            int target,
+            int[][] graph,
+            List<Integer> current,
+            Set<List<Integer>> expected
+    ) {
+        current.add(node);
+        if (node == target) {
+            expected.add(List.copyOf(current));
+        } else {
+            for (int next : graph[node]) {
+                collectOraclePaths(next, target, graph, current, expected);
+            }
+        }
+        current.removeLast();
     }
 
     private static void assertStrictlyIncreasing(List<Integer> path) {

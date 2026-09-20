@@ -30,12 +30,15 @@ public class CountPairs_1530 {
      */
     public int countPairs(TreeNode root, int distance) {
 
+        // A solver instance may be reused; each invocation must count only this tree.
+        count = 0;
+        this.distance = distance;
+
         /* Corner case */
         if (root == null) {
             return 0;
         }
 
-        this.distance = distance;
         dfs(root);
         return count;
     }

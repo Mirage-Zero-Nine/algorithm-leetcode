@@ -131,6 +131,17 @@ public class FindOrder_210Test {
         }
     }
 
+    @Test public void testSinglePrerequisiteReverseInput() { assertArrayEquals(new int[]{0,1}, test.findOrder(2, new int[][]{{1,0}})); }
+    @Test public void testMultipleIndependentCoursesAreAllIncluded() { assertEquals(5, test.findOrder(5, new int[][]{}).length); }
+    @Test public void testTwoBranchesMerge() { int[] r = test.findOrder(5, new int[][]{{2,0},{2,1},{3,2},{4,2}}); assertValid(r, new int[][]{{2,0},{2,1},{3,2},{4,2}}, 5); }
+    @Test public void testCycleWithTailReturnsEmpty() { assertArrayEquals(new int[]{}, test.findOrder(4, new int[][]{{1,0},{2,1},{0,2},{3,2}})); }
+    @Test public void testDuplicateEdgeImplementationBehavior() { int[] r = test.findOrder(2, new int[][]{{1,0},{1,0}}); assertValid(r, new int[][]{{1,0}}, 2); }
+    @Test public void testRepeatedInvocation() { assertEquals(2, test.findOrder(2, new int[][]{{1,0}}).length); assertArrayEquals(new int[]{}, test.findOrder(2, new int[][]{{0,1},{1,0}})); }
+    @Test public void testLongIndependentThenDependent() { int n=50; int[][] p=new int[n-1][2]; for(int i=1;i<n;i++) p[i-1]=new int[]{i,i-1}; assertValid(test.findOrder(n,p),p,n); }
+    @Test public void testPrerequisiteOrderProperty() { int[][] p={{1,0},{2,0},{3,1},{4,2},{5,3},{5,4}}; assertValid(test.findOrder(6,p),p,6); }
+
+    private void assertValid(int[] order, int[][] prerequisites, int n) { assertEquals(n, order.length); int[] pos=new int[n]; for(int i=0;i<n;i++) pos[order[i]]=i; for(int[] p:prerequisites) assertTrue(pos[p[1]]<pos[p[0]]); }
+
     private int indexOf(int[] arr, int val) {
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] == val) return i;

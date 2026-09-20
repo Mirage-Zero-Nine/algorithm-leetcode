@@ -80,4 +80,15 @@ public class NumUniqueEmails_929Test {
         }
         assertEquals(100, test.numUniqueEmails(emails));
     }
+
+    @Test public void testPlusBeforeDots() { assertEquals(1, test.numUniqueEmails(new String[]{"a.b+tag@x.com", "ab@x.com"})); }
+    @Test public void testMultiplePlusesOnlyFirstMatters() { assertEquals(1, test.numUniqueEmails(new String[]{"ab+one+two@x.com", "a.b@x.com"})); }
+    @Test public void testSameLocalDifferentSubdomains() { assertEquals(2, test.numUniqueEmails(new String[]{"a@mail.x.com", "a@mail.y.com"})); }
+    @Test public void testEmptyLocalNotInContractButDistinctDomain() { assertEquals(2, test.numUniqueEmails(new String[]{"@x.com", "@y.com"})); }
+    @Test public void testDotsRemainInDomain() { assertEquals(2, test.numUniqueEmails(new String[]{"a@x.y.com", "a@xy.com"})); }
+    @Test public void testDotPlacementAllNormalize() { assertEquals(1, test.numUniqueEmails(new String[]{"a.b.c@x.com", "ab.c@x.com", "abc@x.com"})); }
+    @Test public void testPlusTagsAllNormalize() { assertEquals(1, test.numUniqueEmails(new String[]{"abc+1@x.com", "abc+2@x.com", "a.b.c+3@x.com"})); }
+    @Test public void testCaseSensitiveAddresses() { assertEquals(2, test.numUniqueEmails(new String[]{"A@x.com", "a@x.com"})); }
+    @Test public void testSeveralNormalizedGroups() { assertEquals(3, test.numUniqueEmails(new String[]{"a.b+1@x.com","ab@x.com","c+d@x.com","c@x.com","d@x.com"})); }
+    @Test public void testNoSpecialCharacters() { assertEquals(3, test.numUniqueEmails(new String[]{"a@x.com","b@x.com","c@x.com"})); }
 }

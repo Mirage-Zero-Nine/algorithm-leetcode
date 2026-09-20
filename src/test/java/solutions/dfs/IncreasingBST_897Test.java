@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class IncreasingBST_897Test {
 
@@ -124,5 +126,30 @@ public class IncreasingBST_897Test {
             cur = cur.right;
         }
         assertNull(cur);
+    }
+
+    @Test
+    public void testRepeatedCallsResetTraversalState() {
+        IncreasingBST_897 solution = new IncreasingBST_897();
+        TreeNode first = new TreeNode(2);
+        first.left = new TreeNode(1);
+        assertEquals(1, solution.increasingBST(first).val);
+        TreeNode second = new TreeNode(5);
+        second.right = new TreeNode(6);
+        TreeNode result = solution.increasingBST(second);
+        assertEquals(5, result.val);
+        assertEquals(6, result.right.val);
+        assertNull(result.right.right);
+    }
+
+    @ParameterizedTest(name = "increasing chain size {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testChainSizes(int size) {
+        TreeNode root = new TreeNode(1); TreeNode current = root;
+        for (int i = 2; i <= size; i++) { current.right = new TreeNode(i); current = current.right; }
+        TreeNode result = new IncreasingBST_897().increasingBST(root);
+        current = result;
+        for (int i = 1; i <= size; i++) { assertEquals(i, current.val); assertNull(current.left); current = current.right; }
+        assertNull(current);
     }
 }

@@ -41,6 +41,8 @@ public class SmallestSufficientTeam_1125 {
      * @return any sufficient team of the smallest possible size, represented by the index of each person
      */
     public int[] smallestSufficientTeam(String[] req_skills, List<List<String>> people) {
+        // A solver instance may be reused for independent projects.
+        min = new ArrayList<>();
         int[] skill = new int[people.size()];
         HashMap<String, Integer> skillMap = new HashMap<>();
 

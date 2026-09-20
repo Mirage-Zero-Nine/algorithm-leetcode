@@ -74,4 +74,37 @@ public class NumMatchingSubseq_792Test {
     @Test public void testIteratorEmptyWords() {
         assertEquals(0, solver.numMatchingSubseqIterator("abc", new String[]{}));
     }
+
+    private void assertBoth(String s, String[] words, int expected) {
+        assertEquals(expected, solver.numMatchingSubseq(s, words));
+        assertEquals(expected, solver.numMatchingSubseqIterator(s, words));
+    }
+
+    @Test public void testBothApproachesHandleInterleaving() {
+        assertBoth("abracadabra", new String[]{"abra", "ada", "aaa", "bar", "cad", "ra"}, 6);
+    }
+
+    @Test public void testBothApproachesCountDuplicateAndRepeatedWords() {
+        assertBoth("aaaa", new String[]{"a", "a", "aa", "aa", "aaa", "aaaa", "aaaaa"}, 6);
+    }
+
+    @Test public void testBothApproachesHandleOrderFailures() {
+        assertBoth("abc", new String[]{"ac", "ba", "ca", "abc", "cba", "ab"}, 3);
+    }
+
+    @Test public void testBothApproachesHandleLongRepeatedSource() {
+        String source = "a".repeat(50_000);
+        assertBoth(source, new String[]{"a", "a".repeat(50), "a".repeat(50_000), "a".repeat(50_001), "b"}, 3);
+    }
+
+    @Test public void testBothApproachesHandleEverySingleLetter() {
+        assertBoth("abcdefghijklmnopqrstuvwxyz", new String[]{"a", "m", "z", "aa", "za", "zy", "abc", "az"}, 5);
+    }
+
+    @Test public void testBothApproachesHandleRepeatedCalls() {
+        String[] first = {"a", "abc", "d"};
+        String[] second = {"x", "xx", "yx"};
+        assertBoth("abcd", first, 3);
+        assertBoth("xyz", second, 1);
+    }
 }

@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * @author BorisMirage
@@ -74,5 +76,17 @@ public class MaximumDifference_2016Test {
     @Test
     public void testLargeValues() {
         assertEquals(Integer.MAX_VALUE - 1, test.maximumDifference(new int[]{1, Integer.MAX_VALUE}));
+    }
+
+    @ParameterizedTest(name = "maximum difference {0}")
+    @CsvSource({"'1,3',2", "'3,1,4',3", "'8,6,7,9',3", "'2,2,3',1", "'4,2,1,8',7", "'10,1,2,3',2", "'5,4,6,1,9',8", "'1,9,2,8',8", "'9,8,7,6',-1", "'2,5,1,5,3',4"})
+    public void testAdditionalOrderedPairs(String encoded, int expected) {
+        assertEquals(expected, test.maximumDifference(parse(encoded)));
+    }
+
+    private static int[] parse(String encoded) {
+        String[] values = encoded.split(","); int[] result = new int[values.length];
+        for (int i = 0; i < values.length; i++) result[i] = Integer.parseInt(values[i]);
+        return result;
     }
 }

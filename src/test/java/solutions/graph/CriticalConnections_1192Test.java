@@ -140,4 +140,68 @@ public class CriticalConnections_1192Test {
         List<List<Integer>> result = test.criticalConnections(n, connections);
         assertEquals(n - 1, result.size());
     }
+
+    @Test
+    public void testBridgeSetIsExactInGraphWithSeveralCycles() {
+        List<List<Integer>> result = new CriticalConnections_1192().criticalConnections(8,
+                List.of(List.of(0, 1), List.of(1, 2), List.of(2, 0), List.of(2, 3),
+                        List.of(3, 4), List.of(4, 5), List.of(5, 3), List.of(5, 6), List.of(6, 7)));
+        Set<Set<Integer>> actual = new HashSet<>();
+        for (List<Integer> edge : result) actual.add(new HashSet<>(edge));
+        assertEquals(Set.of(Set.of(2, 3), Set.of(5, 6), Set.of(6, 7)), actual);
+    }
+
+    @Test
+    public void testConnectedTreeWithDifferentTraversalOrder() {
+        List<List<Integer>> result = new CriticalConnections_1192().criticalConnections(5,
+                List.of(List.of(2, 0), List.of(4, 2), List.of(1, 4), List.of(3, 1)));
+        assertEquals(Set.of(Set.of(0, 2), Set.of(2, 4), Set.of(1, 4), Set.of(1, 3)), normalize(result));
+    }
+
+    @Test
+    public void testCompleteFiveNodeGraphHasNoBridges() {
+        List<List<Integer>> edges = new ArrayList<>();
+        for (int i = 0; i < 5; i++) for (int j = i + 1; j < 5; j++) edges.add(List.of(i, j));
+        assertEquals(List.of(), new CriticalConnections_1192().criticalConnections(5, edges));
+    }
+
+    @Test
+    public void testBridgeAtRootIsReported() {
+        List<List<Integer>> result = new CriticalConnections_1192().criticalConnections(5,
+                List.of(List.of(0, 1), List.of(1, 2), List.of(2, 3), List.of(3, 4), List.of(2, 4)));
+        assertEquals(Set.of(Set.of(0, 1), Set.of(1, 2)), normalize(result));
+    }
+
+    @Test
+    public void testRepeatedInvocationUsesFreshTimestamps() {
+        CriticalConnections_1192 solution = new CriticalConnections_1192();
+        assertEquals(Set.of(Set.of(0, 1)), normalize(solution.criticalConnections(2, List.of(List.of(0, 1)))));
+        assertEquals(Set.of(), normalize(solution.criticalConnections(3,
+                List.of(List.of(0, 1), List.of(1, 2), List.of(2, 0)))));
+    }
+
+    @Test
+    public void testLongCycleWithOneTail() {
+        List<List<Integer>> edges = new ArrayList<>();
+        for (int i = 0; i < 10; i++) edges.add(List.of(i, (i + 1) % 10));
+        edges.add(List.of(9, 10));
+        assertEquals(Set.of(Set.of(9, 10)), normalize(new CriticalConnections_1192().criticalConnections(11, edges)));
+    }
+
+    @Test
+    public void testTwoVertexParallelEdgesAreNotBridges() {
+        assertEquals(Set.of(Set.of(0, 1)), normalize(new CriticalConnections_1192().criticalConnections(2,
+                List.of(List.of(0, 1), List.of(0, 1)))));
+    }
+
+    @Test
+    public void testSingleVertexHasNoConnections() {
+        assertEquals(List.of(), new CriticalConnections_1192().criticalConnections(1, List.of()));
+    }
+
+    private Set<Set<Integer>> normalize(List<List<Integer>> edges) {
+        Set<Set<Integer>> out = new HashSet<>();
+        for (List<Integer> edge : edges) out.add(new HashSet<>(edge));
+        return out;
+    }
 }

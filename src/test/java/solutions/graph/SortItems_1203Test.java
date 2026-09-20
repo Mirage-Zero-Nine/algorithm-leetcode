@@ -200,6 +200,14 @@ public class SortItems_1203Test {
         assertValidOrder(n, group, beforeItems, actual);
     }
 
+    @Test public void testSingleItem() { assertArrayEquals(new int[]{0}, test.sortItems(1,0,new int[]{-1},List.of(List.of()))); }
+    @Test public void testAllItemsOneGroupNoDependencies() { assertValidOrder(5,new int[]{0,0,0,0,0},List.of(List.of(),List.of(),List.of(),List.of(),List.of()),test.sortItems(5,1,new int[]{0,0,0,0,0},List.of(List.of(),List.of(),List.of(),List.of(),List.of()))); }
+    @Test public void testCrossGroupChainWithUnrelatedGroup() { int[] g={0,1,2}; List<List<Integer>> b=List.of(List.of(),List.of(0),List.of(1)); assertValidOrder(3,g,b,test.sortItems(3,3,g.clone(),b)); }
+    @Test public void testDirectSelfDependencyReturnsEmpty() { assertEquals(0,test.sortItems(1,1,new int[]{0},List.of(List.of(0))).length); }
+    @Test public void testDuplicateDependencyIsOutsideContract() { int[] g={0,0}; List<List<Integer>> b=List.of(List.of(),List.of(0,0)); assertEquals(0,test.sortItems(2,1,g,b).length); }
+    @Test public void testRepeatedInvocationWithUngroupedItems() { int[] first=test.sortItems(2,0,new int[]{-1,-1},List.of(List.of(),List.of(0))); assertArrayEquals(new int[]{0,1},first); assertArrayEquals(new int[]{0},test.sortItems(1,0,new int[]{-1},List.of(List.of()))); }
+    @Test public void testTwoIndependentGroupsRemainContiguous() { int[] g={0,0,1,1}; List<List<Integer>> b=List.of(List.of(),List.of(),List.of(),List.of()); assertValidOrder(4,g,b,test.sortItems(4,2,g.clone(),b)); }
+
     private void assertValidOrder(int n, int[] group, List<List<Integer>> beforeItems, int[] actual) {
         assertEquals(n, actual.length);
 

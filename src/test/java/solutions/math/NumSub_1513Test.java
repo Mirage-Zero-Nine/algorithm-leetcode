@@ -83,4 +83,44 @@ public class NumSub_1513Test {
             assertEquals(test.numSub(input), test.numSubOptimized(input));
         }
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0, test.numSub("0"));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(1, test.numSub("1"));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(3, test.numSub("11"));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(6, test.numSub("111"));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(2, test.numSub("101"));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(2, test.numSub("1001"));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(10, test.numSub("1111"));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(6, test.numSub("001110"));
+    }
 }

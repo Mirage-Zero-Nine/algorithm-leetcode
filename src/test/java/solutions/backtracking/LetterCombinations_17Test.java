@@ -192,6 +192,63 @@ class LetterCombinations_17Test {
         assertEquals(List.of(), new LetterCombinations_17().letterCombinations("912"));
     }
 
+    @Test
+    void testEverySingleDigitMappingExactContent() {
+        Map<String, Set<String>> expectedByDigit = Map.of(
+                "2", Set.of("a", "b", "c"),
+                "3", Set.of("d", "e", "f"),
+                "4", Set.of("g", "h", "i"),
+                "5", Set.of("j", "k", "l"),
+                "6", Set.of("m", "n", "o"),
+                "7", Set.of("p", "q", "r", "s"),
+                "8", Set.of("t", "u", "v"),
+                "9", Set.of("w", "x", "y", "z"));
+
+        for (Map.Entry<String, Set<String>> entry : expectedByDigit.entrySet()) {
+            assertEquals(entry.getValue(), new HashSet<>(solution.letterCombinations(entry.getKey())),
+                    "wrong mapping for digit " + entry.getKey());
+        }
+    }
+
+    @Test
+    void testMaximumOfficialLengthWithMixedThreeAndFourLetterDigits() {
+        assertMatchesOracle("2799");
+        assertMatchesOracle("7779");
+        assertMatchesOracle("2347");
+    }
+
+    @Test
+    void testRepeatedCallsDoNotShareTraversalState() {
+        List<String> first = solution.letterCombinations("23");
+        Set<String> firstSnapshot = new HashSet<>(first);
+
+        List<String> second = solution.letterCombinations("7");
+
+        assertEquals(Set.of("ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"),
+                firstSnapshot);
+        assertEquals(Set.of("p", "q", "r", "s"), new HashSet<>(second));
+        assertEquals(firstSnapshot, new HashSet<>(first), "a later call changed an earlier result");
+    }
+
+    @Test
+    void testReturnedListMutationDoesNotAffectLaterCalls() {
+        List<String> discarded = solution.letterCombinations("23");
+        discarded.clear();
+        discarded.add("not-a-phone-combination");
+
+        List<String> regenerated = solution.letterCombinations("23");
+        assertEquals(new HashSet<>(oracle("23")), new HashSet<>(regenerated));
+    }
+
+    @Test
+    void testEmptyResultsAreFreshAndMutable() {
+        List<String> first = solution.letterCombinations("");
+        first.add("caller-owned");
+
+        List<String> second = solution.letterCombinations("");
+        assertEquals(List.of(), second);
+    }
+
     private void assertAllDigitStrings(String prefix, int remainingLength) {
         if (remainingLength == 0) {
             assertMatchesOracle(prefix);

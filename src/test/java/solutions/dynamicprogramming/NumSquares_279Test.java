@@ -6,6 +6,8 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class NumSquares_279Test {
 
@@ -105,5 +107,11 @@ public class NumSquares_279Test {
             }
         }
         return distance;
+    }
+
+    @ParameterizedTest(name = "minimum squares for {0}")
+    @CsvSource({"11,3", "14,3", "17,2", "19,3", "21,3", "22,3", "23,4", "26,2", "27,3", "28,4"})
+    public void testAdditionalNonSquareValues(int input, int expected) {
+        assertEquals(expected, test.numSquares(input));
     }
 }

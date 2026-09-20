@@ -121,4 +121,41 @@ public class CanConvert_1153Test {
         }
         assertTrue(test.canConvert(s1.toString(), s2.toString()));
     }
+
+    @Test
+    public void testEmptyAndOneCharacterIdentity() {
+        assertTrue(test.canConvert("", ""));
+        assertTrue(test.canConvert("z", "z"));
+    }
+
+    @Test
+    public void testConflictingMappingAfterDifferentLetters() {
+        assertFalse(test.canConvert("abab", "bcbd"));
+    }
+
+    @Test
+    public void testCycleWithoutSpareCharacterIsImpossible() {
+        assertFalse(test.canConvert("abcdefghijklmnopqrstuvwxyz", "bcdefghijklmnopqrstuvwxyza"));
+    }
+
+    @Test
+    public void testCycleWithUnusedCharacterIsPossible() {
+        assertTrue(test.canConvert("abcd", "bcda"));
+    }
+
+    @Test
+    public void testManyToOneMapping() {
+        assertTrue(test.canConvert("abcdabcd", "zzzzzzzz"));
+    }
+
+    @Test
+    public void testTargetUsesAllLettersButSourceHasSpare() {
+        assertTrue(test.canConvert("abcdefghijklmnopqrstuvwxy", "zabcdefghijklmnopqrstuvwx"));
+    }
+
+    @Test
+    public void testRepeatedInvocationDoesNotRetainMappings() {
+        assertFalse(test.canConvert("aa", "bc"));
+        assertTrue(test.canConvert("aa", "bb"));
+    }
 }

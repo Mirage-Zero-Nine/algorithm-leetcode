@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class MaxDotProduct_1458Test {
 
@@ -130,5 +132,21 @@ public class MaxDotProduct_1458Test {
             result.append(values[i]);
         }
         return result.append(']').toString();
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctArrays() {
+        return Stream.of(
+                DynamicTest.dynamicTest("single negative pair", () -> assertEquals(2, test.maxDotProduct(new int[]{-1}, new int[]{-2}))),
+                DynamicTest.dynamicTest("single zero pair", () -> assertEquals(0, test.maxDotProduct(new int[]{0}, new int[]{5}))),
+                DynamicTest.dynamicTest("choose positive pair", () -> assertEquals(20, test.maxDotProduct(new int[]{1, 4}, new int[]{5, 2}))),
+                DynamicTest.dynamicTest("all zeros", () -> assertEquals(0, test.maxDotProduct(new int[]{0, 0}, new int[]{0, 0}))),
+                DynamicTest.dynamicTest("mixed pair", () -> assertEquals(14, test.maxDotProduct(new int[]{-2, 4}, new int[]{-3, 2}))),
+                DynamicTest.dynamicTest("unequal lengths", () -> assertEquals(15, test.maxDotProduct(new int[]{1, 2, 3}, new int[]{5, 1}))),
+                DynamicTest.dynamicTest("negative dominance", () -> assertEquals(-1, test.maxDotProduct(new int[]{-1, -2}, new int[]{1, 2}))),
+                DynamicTest.dynamicTest("select one of many", () -> assertEquals(39, test.maxDotProduct(new int[]{1, 10, 2}, new int[]{3, 3, 3}))),
+                DynamicTest.dynamicTest("large negative product", () -> assertEquals(100000000, test.maxDotProduct(new int[]{-10000}, new int[]{-10000}))),
+                DynamicTest.dynamicTest("positive signs", () -> assertEquals(50, test.maxDotProduct(new int[]{5, 6}, new int[]{4, 5}))),
+                DynamicTest.dynamicTest("one element from each", () -> assertEquals(14, test.maxDotProduct(new int[]{3, 1}, new int[]{4, 2}))));
     }
 }

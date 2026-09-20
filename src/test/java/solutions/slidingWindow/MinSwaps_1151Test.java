@@ -69,4 +69,11 @@ public class MinSwaps_1151Test {
         int result = solution.minSwaps(data);
         assertEquals(25000, result);
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"0,0", "1,0", "10,0", "01,0", "101,1", "1001,1", "1100,0", "1010,1", "10001,1", "101010,1"})
+    void additionalBoundaryCases(String values, int expected) {
+        int[] nums = values.chars().map(c -> c - '0').toArray();
+        assertEquals(expected, solution.minSwaps(nums));
+    }
 }

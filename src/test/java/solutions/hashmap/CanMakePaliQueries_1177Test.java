@@ -89,4 +89,14 @@ public class CanMakePaliQueries_1177Test {
         List<Boolean> result = test.canMakePaliQueries(s, new int[][]{{0, s.length() - 1, 0}});
         assertEquals(List.of(true), result);
     }
+    @Test void extra01() { assertEquals(List.of(true), test.canMakePaliQueries("a", new int[][]{{0,0,0}})); }
+    @Test void extra02() { assertEquals(List.of(false), test.canMakePaliQueries("ab", new int[][]{{0,1,0}})); }
+    @Test void extra03() { assertEquals(List.of(true), test.canMakePaliQueries("ab", new int[][]{{0,1,1}})); }
+    @Test void extra04() { assertEquals(List.of(true,false), test.canMakePaliQueries("abc", new int[][]{{0,2,1},{0,2,0}})); }
+    @Test void extra05() { assertEquals(List.of(true), test.canMakePaliQueries("aabb", new int[][]{{0,3,0}})); }
+    @Test void extra06() { assertEquals(List.of(false), test.canMakePaliQueries("abcd", new int[][]{{0,3,1}})); }
+    @Test void extra07() { assertEquals(List.of(true), test.canMakePaliQueries("abcba", new int[][]{{0,4,0}})); }
+    @Test void extra08() { assertEquals(List.of(true), test.canMakePaliQueries("abcde", new int[][]{{1,3,1}})); }
+    @Test void extra09() { assertEquals(List.of(false), test.canMakePaliQueries("abcdef", new int[][]{{0,5,2}})); }
+    @Test void extra10() { assertEquals(List.of(true,true), test.canMakePaliQueries("aaaa", new int[][]{{0,3,0},{1,2,0}})); }
 }

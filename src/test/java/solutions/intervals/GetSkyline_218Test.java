@@ -135,4 +135,55 @@ public class GetSkyline_218Test {
         }
         assertEquals(expected, solver.getSkyline(buildings));
     }
+
+    @Test public void testAllVariantsEmptyAndNull() {
+        assertTrue(solver.getSkyline(null).isEmpty());
+        assertTrue(solver.maxHeap(null).isEmpty());
+        assertTrue(solver.getSkyline(new int[][]{}).isEmpty());
+        assertTrue(solver.maxHeap(new int[][]{}).isEmpty());
+        assertTrue(solver.heap(new int[][]{}).isEmpty());
+    }
+
+    @Test public void testAllVariantsNestedSameEdges() {
+        int[][] buildings = {{0, 5, 4}, {0, 5, 9}, {2, 3, 7}};
+        List<List<Integer>> expected = List.of(List.of(0, 9), List.of(5, 0));
+        assertEquals(expected, solver.getSkyline(buildings));
+        assertEquals(expected, solver.maxHeap(buildings));
+        assertEquals(expected, solver.heap(buildings));
+    }
+
+    @Test public void testAllVariantsAdjacentDifferentHeights() {
+        int[][] buildings = {{0, 2, 3}, {2, 4, 8}};
+        List<List<Integer>> expected = List.of(List.of(0, 3), List.of(2, 8), List.of(4, 0));
+        assertEquals(expected, solver.getSkyline(buildings));
+        assertEquals(expected, solver.maxHeap(buildings));
+        assertEquals(expected, solver.heap(buildings));
+    }
+
+    @Test public void testAllVariantsTallBuildingEndsBeforeShortBuilding() {
+        int[][] buildings = {{1, 3, 10}, {2, 5, 4}};
+        List<List<Integer>> expected = List.of(List.of(1, 10), List.of(3, 4), List.of(5, 0));
+        assertEquals(expected, solver.getSkyline(buildings));
+        assertEquals(expected, solver.maxHeap(buildings));
+        assertEquals(expected, solver.heap(buildings));
+    }
+
+    @Test public void testAllVariantsBuildingsAtCoordinateBounds() {
+        int max = Integer.MAX_VALUE;
+        int[][] buildings = {{0, 1, 1}, {max - 2, max, 2}};
+        List<List<Integer>> expected = List.of(List.of(0, 1), List.of(1, 0),
+                List.of(max - 2, 2), List.of(max, 0));
+        assertEquals(expected, solver.getSkyline(buildings));
+        assertEquals(expected, solver.maxHeap(buildings));
+        assertEquals(expected, solver.heap(buildings));
+    }
+
+    @Test public void testAllVariantsOverlappingDifferentHeights() {
+        int[][] buildings = {{1, 6, 5}, {2, 4, 10}, {3, 5, 7}};
+        List<List<Integer>> expected = List.of(List.of(1, 5), List.of(2, 10),
+                List.of(4, 7), List.of(5, 5), List.of(6, 0));
+        assertEquals(expected, solver.getSkyline(buildings));
+        assertEquals(expected, solver.maxHeap(buildings));
+        assertEquals(expected, solver.heap(buildings));
+    }
 }

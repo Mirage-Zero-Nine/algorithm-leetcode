@@ -62,4 +62,54 @@ public class CheckRecord_551Test {
         String s = "P".repeat(10000);
         assertTrue(test.checkRecord(s));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertTrue(test.checkRecord(""));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertTrue(test.checkRecord("LLP"));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertFalse(test.checkRecord("LLLP"));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertTrue(test.checkRecord("APLP"));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertFalse(test.checkRecord("AAL"));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertTrue(test.checkRecord("PLPL"));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertTrue(test.checkRecord("PPLLA"));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertFalse(test.checkRecord("LALAL"));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertFalse(test.checkRecord("PPALLLL"));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertFalse(test.checkRecord("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP"));
+    }
 }

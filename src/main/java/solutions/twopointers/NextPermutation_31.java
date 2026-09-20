@@ -40,7 +40,7 @@ public class NextPermutation_31 {
 
         if (i > -1) {       // if there exist an decreasing element
             int j = nums.length - 1;
-            while (j > 0 && nums[i] >= nums[j]) {
+            while (j > i && nums[i] >= nums[j]) {
                 j--;        // find smallest value in increasing array that is larger than decreasing element
             }
             swap(nums, i, j);       // swap them

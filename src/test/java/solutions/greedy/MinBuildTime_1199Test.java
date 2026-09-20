@@ -62,4 +62,14 @@ public class MinBuildTime_1199Test {
         // poll 2,4 -> 4+3=7; poll 6,7 -> 7+3=10; poll 8,10 -> 10+3=13; poll 10,13 -> 13+3=16
         assertEquals(16, solver.minBuildTime(new int[]{10, 8, 6, 4, 2}, 3));
     }
+    @Test public void testAdditionalSingle() { assertEquals(5, solver.minBuildTime(new int[]{5}, 10)); }
+    @Test public void testAdditionalPairZero() { assertEquals(2, solver.minBuildTime(new int[]{1, 2}, 0)); }
+    @Test public void testAdditionalPairTwo() { assertEquals(4, solver.minBuildTime(new int[]{1, 2}, 2)); }
+    @Test public void testAdditionalThreeZero() { assertEquals(3, solver.minBuildTime(new int[]{1, 2, 3}, 0)); }
+    @Test public void testAdditionalThreeTwo() { assertEquals(6, solver.minBuildTime(new int[]{1, 2, 3}, 2)); }
+    @Test public void testAdditionalFourZero() { assertEquals(4, solver.minBuildTime(new int[]{1, 2, 3, 4}, 0)); }
+    @Test public void testAdditionalEqual() { assertEquals(4, solver.minBuildTime(new int[]{2, 2}, 2)); }
+    @Test public void testAdditionalLargeSplit() { assertEquals(101, solver.minBuildTime(new int[]{1, 100}, 1)); }
+    @Test public void testAdditionalFive() { assertEquals(5, solver.minBuildTime(new int[]{1, 1, 1, 1}, 2)); }
+    @Test public void testAdditionalDescending() { assertEquals(11, solver.minBuildTime(new int[]{10, 9}, 1)); }
 }

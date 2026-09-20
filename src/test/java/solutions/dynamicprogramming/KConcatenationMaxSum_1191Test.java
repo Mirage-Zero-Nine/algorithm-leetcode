@@ -115,4 +115,12 @@ public class KConcatenationMaxSum_1191Test {
         // Expected: 10^14 % (10^9+7) = 999300007
         assertEquals(999300007, solver.kConcatenationMaxSum(new int[]{1000000000}, 100000));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"'1',2,2","'2',3,6","'1,1',4,8","'-1',5,0","'1,-1',2,1","'2,-1',3,4","'3,-3',2,3","'1,2,-1',2,5","'-2,1',4,1","'5,-1',3,13"})
+    public void testAdditionalConcatenatedKadaneCases(String encoded, int repeats, int expected) {
+        String[] values = encoded.split(","); int[] nums = new int[values.length];
+        for (int i = 0; i < values.length; i++) nums[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, solver.kConcatenationMaxSum(nums, repeats));
+    }
 }

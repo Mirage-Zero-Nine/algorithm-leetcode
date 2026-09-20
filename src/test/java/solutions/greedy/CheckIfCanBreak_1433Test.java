@@ -72,4 +72,14 @@ public class CheckIfCanBreak_1433Test {
         }
         assertTrue(test.checkIfCanBreak(sb1.toString(), sb2.toString()));
     }
+    @Test public void testAdditionalEqual() { assertTrue(test.checkIfCanBreak("abc", "abc")); }
+    @Test public void testAdditionalAscending() { assertTrue(test.checkIfCanBreak("abc", "bcd")); }
+    @Test public void testAdditionalDescending() { assertTrue(test.checkIfCanBreak("bcd", "abc")); }
+    @Test public void testAdditionalImpossible() { assertTrue(test.checkIfCanBreak("abc", "abd")); }
+    @Test public void testAdditionalRepeated() { assertTrue(test.checkIfCanBreak("aab", "abb")); }
+    @Test public void testAdditionalRepeatedFalse() { assertTrue(test.checkIfCanBreak("aab", "bbc")); }
+    @Test public void testAdditionalOne() { assertTrue(test.checkIfCanBreak("z", "a")); }
+    @Test public void testAdditionalTwo() { assertFalse(test.checkIfCanBreak("az", "by")); }
+    @Test public void testAdditionalMixed() { assertTrue(test.checkIfCanBreak("cba", "abc")); }
+    @Test public void testAdditionalLong() { assertTrue(test.checkIfCanBreak("aabbcc", "ddeeff")); }
 }

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class TwoSumBSTs_1214Test {
 
@@ -96,5 +98,14 @@ public class TwoSumBSTs_1214Test {
 
         assertTrue(test.hashSet(t1, t2, 200)); // 100 + 100
         assertFalse(test.hashSet(t1, t2, 201)); // max is 200
+    }
+
+    @ParameterizedTest(name = "sum target {0}")
+    @ValueSource(ints = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+    public void testTargetsAcrossSingletonTrees(int target) {
+        TreeNode first = new TreeNode(1);
+        TreeNode second = new TreeNode(target - 1);
+        assertTrue(test.twoSumBSTs(first, second, target));
+        assertTrue(test.hashSet(first, second, target));
     }
 }

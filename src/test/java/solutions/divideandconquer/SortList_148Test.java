@@ -182,4 +182,12 @@ public class SortList_148Test {
             assertEquals(i + 1, list.get(i));
         }
     }
+
+    @Test
+    public void testIntegerBoundaryValues() {
+        ListNode result = test.sortList(build(Integer.MAX_VALUE, 0, Integer.MIN_VALUE));
+        assertEquals(Integer.MIN_VALUE, result.val);
+        assertEquals(0, result.next.val);
+        assertEquals(Integer.MAX_VALUE, result.next.next.val);
+    }
 }

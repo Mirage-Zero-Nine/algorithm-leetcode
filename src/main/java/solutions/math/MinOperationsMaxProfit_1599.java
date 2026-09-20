@@ -31,30 +31,22 @@ public class MinOperationsMaxProfit_1599 {
      * @return the minimum number of rotations you need to perform to maximize profit
      */
     public int minOperationsMaxProfit(int[] customers, int boardingCost, int runningCost) {
-        int rotate = 0, waiting = 0, profit = 0, boarding;
+        int rotate = 0, waiting = 0, profit = 0;
+        int bestProfit = 0, bestRotate = -1;
+        int arrival = 0;
 
-        /* Corner case */
-        if (boardingCost * 4 - runningCost < 0) {
-            return -1;
-        }
-
-        for (int customer : customers) {
-            waiting += customer;
-            boarding = Math.min(waiting, 4);
-            profit += boardingCost * boarding - runningCost;
+        // Continue until all arrivals have entered the queue and the queue is empty.
+        while (arrival < customers.length || waiting > 0) {
+            if (arrival < customers.length) waiting += customers[arrival++];
+            int boarding = Math.min(waiting, 4);
             waiting -= boarding;
-            rotate++;       // the wheel will rotate even though there is no customer
-        }
-
-        rotate += (waiting / 4);
-        int last = waiting % 4;
-        profit += (boardingCost * (waiting - last) - runningCost * waiting / 4);
-
-        if (last * boardingCost - runningCost > 0) {
+            profit += boardingCost * boarding - runningCost;
             rotate++;
-            profit += (last * boardingCost - runningCost);
+            if (profit > bestProfit) {
+                bestProfit = profit;
+                bestRotate = rotate;
+            }
         }
-
-        return profit > 0 ? rotate : -1;
+        return bestRotate;
     }
 }

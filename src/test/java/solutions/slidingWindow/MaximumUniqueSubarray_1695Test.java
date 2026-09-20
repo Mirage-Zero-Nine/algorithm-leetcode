@@ -89,4 +89,11 @@ public class MaximumUniqueSubarray_1695Test {
         int result = test.maximumUniqueSubarray(nums);
         assertEquals(10000, result);
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"1,1", "1|2|3,6", "5|5,5", "1|2|1,3", "4|2|4|5|6,17", "0|1|0,1", "-1|-2,-1", "7|8|9|7,24", "2|3|4|2|5,14", "10|20|30,60"})
+    void additionalBoundaryCases(String encoded, int expected) {
+        int[] nums = java.util.Arrays.stream(encoded.split("\\|" )).mapToInt(Integer::parseInt).toArray();
+        assertEquals(expected, test.maximumUniqueSubarray(nums));
+    }
 }

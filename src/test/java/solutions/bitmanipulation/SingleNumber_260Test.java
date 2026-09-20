@@ -2,164 +2,253 @@ package solutions.bitmanipulation;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
+/** Tests the two-singleton XOR partition contract for LeetCode 260. */
 public class SingleNumber_260Test {
     private final SingleNumber_260 solver = new SingleNumber_260();
 
-    private int[] sorted(int[] arr) {
-        int[] copy = arr.clone();
+    private int[] sorted(int[] values) {
+        int[] copy = values.clone();
         Arrays.sort(copy);
         return copy;
     }
 
-    @Test public void testBasic() {
-        int[] result = solver.singleNumber(new int[]{1, 2, 1, 3, 2, 5});
-        assertArrayEquals(new int[]{3, 5}, sorted(result));
-    }
-
-    @Test public void testNegative() {
-        int[] result = solver.singleNumber(new int[]{-1, 0});
-        assertArrayEquals(new int[]{-1, 0}, sorted(result));
-    }
-
-    @Test public void testTwoElements() {
-        int[] result = solver.singleNumber(new int[]{7, 13});
-        assertArrayEquals(new int[]{7, 13}, sorted(result));
-    }
-
-    @Test public void testMixed() {
-        int[] result = solver.singleNumber(new int[]{1, 1, 2, 2, 3, 3, 4, 5});
-        assertArrayEquals(new int[]{4, 5}, sorted(result));
-    }
-
-    @Test public void testWithZero() {
-        int[] result = solver.singleNumber(new int[]{0, 1, 2, 2});
-        assertArrayEquals(new int[]{0, 1}, sorted(result));
-    }
-
-    @Test public void testLargeNumbers() {
-        int[] result = solver.singleNumber(new int[]{1000000, 999999, 1000000, 888888});
-        assertArrayEquals(new int[]{888888, 999999}, sorted(result));
-    }
-
-    @Test public void testBothNegative() {
-        int[] result = solver.singleNumber(new int[]{-3, -5, 1, 1});
-        assertArrayEquals(new int[]{-5, -3}, sorted(result));
-    }
-
-    @Test public void testMixedNegativePositive() {
-        int[] result = solver.singleNumber(new int[]{-1, 2, -1, 3, 2, 5});
-        assertArrayEquals(new int[]{3, 5}, sorted(result));
-    }
-
-    @Test public void testPowersOfTwo() {
-        int[] result = solver.singleNumber(new int[]{4, 8, 4, 16, 8, 32});
-        assertArrayEquals(new int[]{16, 32}, sorted(result));
-    }
-
-    @Test public void testGiantCase() {
-        // large array: pairs from 1 to 5000, plus two singles 0 and 10001
-        int[] nums = new int[10002];
-        int idx = 0;
-        for (int i = 1; i <= 5000; i++) {
-            nums[idx++] = i;
-            nums[idx++] = i;
+    private int[] singlesByFrequency(int[] nums) {
+        Map<Integer, Integer> frequencies = new HashMap<>();
+        for (int num : nums) {
+            frequencies.merge(num, 1, Integer::sum);
         }
-        nums[idx++] = 0;
-        nums[idx] = 10001;
-        int[] result = solver.singleNumber(nums);
-        assertArrayEquals(new int[]{0, 10001}, sorted(result));
-    }
-
-    @Test public void testTwoUniquesOnly() {
-        // Two unique with no pairs at all
-        int[] result = solver.singleNumber(new int[]{42, 99});
-        assertEquals(Set.of(42, 99), Set.of(result[0], result[1]));
-    }
-
-    @Test public void testNegativePositiveUniques() {
-        // Negative + positive uniques among pairs
-        int[] result = solver.singleNumber(new int[]{-7, 3, 5, 5, 3, 100});
-        assertEquals(Set.of(-7, 100), Set.of(result[0], result[1]));
-    }
-
-    @Test public void testTwoNegativeUniques() {
-        int[] result = solver.singleNumber(new int[]{-10, -20, 4, 4, 7, 7});
-        assertEquals(Set.of(-10, -20), Set.of(result[0], result[1]));
-    }
-
-    @Test public void testAdjacentValues() {
-        // Adjacent values [1,2] both unique
-        int[] result = solver.singleNumber(new int[]{1, 2, 9, 9, 8, 8});
-        assertEquals(Set.of(1, 2), Set.of(result[0], result[1]));
-    }
-
-    @Test public void testIntMaxMin() {
-        int[] result = solver.singleNumber(new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE, 5, 5});
-        assertEquals(Set.of(Integer.MAX_VALUE, Integer.MIN_VALUE), Set.of(result[0], result[1]));
-    }
-
-    @Test public void testZeroAmongUniques() {
-        int[] result = solver.singleNumber(new int[]{0, 77, 3, 3, 9, 9});
-        assertEquals(Set.of(0, 77), Set.of(result[0], result[1]));
-    }
-
-    @Test public void testLargeArray1000PairsSeed42() {
-        Random rng = new Random(42L);
-        int unique1 = 1_000_001, unique2 = -1_000_001;
-        int[] nums = new int[2002];
-        for (int i = 0; i < 1000; i++) {
-            int v = rng.nextInt(1_000_000);
-            nums[2 * i] = v;
-            nums[2 * i + 1] = v;
+        List<Integer> singles = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : frequencies.entrySet()) {
+            if (entry.getValue() == 1) {
+                singles.add(entry.getKey());
+            }
         }
-        nums[2000] = unique1;
-        nums[2001] = unique2;
-        int[] result = solver.singleNumber(nums);
-        assertEquals(Set.of(unique1, unique2), Set.of(result[0], result[1]));
+        assertEquals(2, singles.size(), "fixture must contain exactly two singletons");
+        return new int[]{singles.get(0), singles.get(1)};
     }
 
-    @Test public void testPropertyTwoDistinctValues() {
-        int[] result = solver.singleNumber(new int[]{10, 20, 3, 3, 4, 4});
-        assertEquals(2, result.length);
+    private void assertSingles(int[] nums, int first, int second) {
+        int[] before = nums.clone();
+        int[] result = solver.singleNumber(nums);
+        assertNotSame(nums, result, "result must be a separate two-element array");
+        assertArrayEquals(sorted(new int[]{first, second}), sorted(result));
+        assertArrayEquals(before, nums, "the input array must not be modified");
+    }
+
+    private void assertMatchesFrequencyOracle(int[] nums) {
+        int[] before = nums.clone();
+        int[] expected = singlesByFrequency(nums);
+        int[] actual = solver.singleNumber(nums);
+        assertEquals(2, actual.length);
+        assertArrayEquals(sorted(expected), sorted(actual));
+        assertArrayEquals(before, nums, "the input array must not be modified");
+    }
+
+    private int[] shuffledPairs(int[] pairValues, int first, int second, long seed) {
+        int[] values = new int[pairValues.length * 2 + 2];
+        int index = 0;
+        for (int value : pairValues) {
+            values[index++] = value;
+            values[index++] = value;
+        }
+        values[index++] = first;
+        values[index] = second;
+        Random random = new Random(seed);
+        for (int i = values.length - 1; i > 0; i--) {
+            int swapIndex = random.nextInt(i + 1);
+            int temporary = values[i];
+            values[i] = values[swapIndex];
+            values[swapIndex] = temporary;
+        }
+        return values;
+    }
+
+    @Test
+    public void officialExampleOne() {
+        assertSingles(new int[]{1, 2, 1, 3, 2, 5}, 3, 5);
+    }
+
+    @Test
+    public void officialExampleTwo() {
+        assertSingles(new int[]{-1, 0}, -1, 0);
+    }
+
+    @Test
+    public void officialExampleThree() {
+        assertSingles(new int[]{0, 1}, 0, 1);
+    }
+
+    @Test
+    public void pairsMayBeAbsent() {
+        assertSingles(new int[]{42, 99}, 42, 99);
+    }
+
+    @Test
+    public void zeroCanBeAUniqueValue() {
+        assertSingles(new int[]{0, 1, 2, 2}, 0, 1);
+    }
+
+    @Test
+    public void bothUniqueValuesCanBeNegative() {
+        assertSingles(new int[]{-10, -20, 4, 4, 7, 7}, -10, -20);
+    }
+
+    @Test
+    public void oneNegativeAndOnePositiveCanBeUnique() {
+        assertSingles(new int[]{-7, 3, 5, 5, 3, 100}, -7, 100);
+    }
+
+    @Test
+    public void adjacentUniqueValues() {
+        assertSingles(new int[]{1, 2, 9, 9, 8, 8}, 1, 2);
+    }
+
+    @Test
+    public void powersOfTwoExerciseSparseBits() {
+        assertSingles(new int[]{4, 8, 4, 16, 8, 32}, 16, 32);
+    }
+
+    @Test
+    public void signedIntegerExtremesAreSupported() {
+        assertSingles(new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE, 5, 5},
+                Integer.MAX_VALUE, Integer.MIN_VALUE);
+    }
+
+    @Test
+    public void uniquesDifferOnlyInTheSignBit() {
+        for (int value : new int[]{0, 1, 42, 0x55555555, Integer.MAX_VALUE}) {
+            int other = value ^ Integer.MIN_VALUE;
+            assertSingles(new int[]{value, other, -7, -7}, value, other);
+        }
+    }
+
+    @Test
+    public void everyBitCanBeThePartitionBit() {
+        for (int bit = 0; bit < Integer.SIZE; bit++) {
+            int other = 1 << bit;
+            assertSingles(new int[]{-1, other, 42, 0, -1, 42}, 0, other);
+        }
+    }
+
+    @Test
+    public void alternatingAndDenseBitPatterns() {
+        assertSingles(new int[]{0xAAAAAAAA, 0x55555555, 0xAAAAAAAA, 0x13579BDF, 0x13579BDF, 0x2468ACE0},
+                0x55555555, 0x2468ACE0);
+        assertSingles(new int[]{0x7FFFFFFE, 0x80000001, 0x7FFFFFFE, 0x80000001, 0, -1}, 0, -1);
+    }
+
+    @Test
+    public void resultXorMatchesTheIndependentInputXor() {
+        int[] nums = {-31, 17, 17, Integer.MIN_VALUE, 99, -31, 99, Integer.MAX_VALUE};
+        int inputXor = 0;
+        for (int num : nums) {
+            inputXor ^= num;
+        }
+        int[] result = solver.singleNumber(nums);
+        assertEquals(inputXor, result[0] ^ result[1]);
         assertNotEquals(result[0], result[1]);
     }
 
-    @Test public void testPropertyXorOfResultEqualsXorOfInput() {
-        int[] nums = {1, 1, 2, 2, 3, 3, 7, 11};
-        int xorAll = 0;
-        for (int n : nums) xorAll ^= n;
-        int[] result = solver.singleNumber(nums);
-        assertEquals(xorAll, result[0] ^ result[1]);
+    @Test
+    public void unorderedInputAndInterleavedPairs() {
+        assertMatchesFrequencyOracle(new int[]{11, -4, 7, 11, Integer.MIN_VALUE, 7, 0, -4, Integer.MAX_VALUE, 0});
     }
 
-    @Test public void testUniquesDifferOnlyInTheSignBit() {
-        for (int value : new int[]{0, 1, 42, 0x55555555, Integer.MAX_VALUE}) {
-            int[] actual = solver.singleNumber(new int[]{value, value ^ Integer.MIN_VALUE, -7, -7});
-            assertArrayEquals(sorted(new int[]{value, value ^ Integer.MIN_VALUE}), sorted(actual));
+    @Test
+    public void largeValuesAndRepeatedCallRemainIndependent() {
+        int[] first = {1_000_000, 999_999, 1_000_000, 888_888};
+        assertSingles(first, 999_999, 888_888);
+        int[] second = {-1_000_001, 12, 12, 77, 77, 1_000_001};
+        assertSingles(second, -1_000_001, 1_000_001);
+    }
+
+    @Test
+    public void returnedArrayMutationDoesNotContaminateLaterCalls() {
+        int[] input = {8, 8, 13, 21, 21, 34};
+        int[] first = solver.singleNumber(input);
+        first[0] = Integer.MIN_VALUE;
+        first[1] = Integer.MAX_VALUE;
+        assertSingles(input, 13, 34);
+    }
+
+    @Test
+    public void generatedSmallFixturesUseIndependentFrequencyOracle() {
+        Random random = new Random(260L);
+        for (int trial = 0; trial < 250; trial++) {
+            int pairCount = random.nextInt(25);
+            int first = random.nextInt();
+            int second;
+            do {
+                second = random.nextInt();
+            } while (second == first);
+            int[] pairValues = new int[pairCount];
+            Map<Integer, Boolean> used = new HashMap<>();
+            used.put(first, true);
+            used.put(second, true);
+            for (int i = 0; i < pairValues.length; i++) {
+                int pair;
+                do {
+                    pair = random.nextInt();
+                } while (used.containsKey(pair));
+                used.put(pair, true);
+                pairValues[i] = pair;
+            }
+            assertMatchesFrequencyOracle(shuffledPairs(pairValues, first, second, random.nextLong()));
         }
     }
 
-    @Test public void testEveryDistinguishingBit() {
-        for (int bit = 0; bit < 32; bit++) {
-            int other = 1 << bit;
-            assertArrayEquals(sorted(new int[]{0, other}),
-                    sorted(solver.singleNumber(new int[]{-1, other, 42, 0, -1, 42})));
-        }
+    @Test
+    public void generatedSignedBoundaryFixturesUseIndependentFrequencyOracle() {
+        int[] pairValues = {Integer.MIN_VALUE + 1, -1, 0, 1, Integer.MAX_VALUE - 1, 0x40000000, 0x40000001};
+        assertMatchesFrequencyOracle(shuffledPairs(pairValues, Integer.MIN_VALUE, Integer.MAX_VALUE, 260260L));
     }
 
-    @Test public void testInterleavedLargePairsWithOppositeBoundaryUniques() {
-        int[] values = new int[30000];
-        for (int i = 0; i < 14999; i++) values[i] = values[i + 14999] = i;
-        values[29998] = Integer.MIN_VALUE;
-        values[29999] = Integer.MAX_VALUE;
-        assertArrayEquals(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE}, sorted(solver.singleNumber(values)));
+    @Test
+    public void maximumLengthFixtureWithUniquePairs() {
+        int[] pairValues = new int[14_999];
+        for (int i = 0; i < pairValues.length; i++) {
+            pairValues[i] = i - 7_000;
+        }
+        int[] nums = shuffledPairs(pairValues, Integer.MIN_VALUE, Integer.MAX_VALUE, 260_300L);
+        assertEquals(30_000, nums.length);
+        assertMatchesFrequencyOracle(nums);
+    }
+
+    @Test
+    public void deterministicLargeRandomFixtureUsesIndependentFrequencyOracle() {
+        Random random = new Random(42L);
+        int[] pairValues = new int[1_000];
+        Map<Integer, Boolean> used = new HashMap<>();
+        for (int i = 0; i < pairValues.length; i++) {
+            int value;
+            do {
+                value = random.nextInt(1_000_000);
+            } while (used.containsKey(value));
+            used.put(value, true);
+            pairValues[i] = value;
+        }
+        assertMatchesFrequencyOracle(shuffledPairs(pairValues, 1_000_001, -1_000_001, 42L));
+    }
+
+    @Test
+    public void manyPairsWithOppositeBoundaryUniques() {
+        int[] pairValues = new int[14_999];
+        for (int i = 0; i < pairValues.length; i++) {
+            pairValues[i] = i;
+        }
+        assertSingles(shuffledPairs(pairValues, Integer.MIN_VALUE, Integer.MAX_VALUE, 123L),
+                Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 }

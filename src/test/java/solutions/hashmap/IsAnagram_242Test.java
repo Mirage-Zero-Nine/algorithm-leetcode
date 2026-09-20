@@ -2,6 +2,7 @@ package solutions.hashmap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -201,4 +202,14 @@ public class IsAnagram_242Test {
         Arrays.sort(second);
         return Arrays.equals(first, second);
     }
+    @Test void extra01() { assertTrue(anagram.isAnagram("a", "a")); assertTrue(anagram.isAnagramWithHashMap("a", "a")); }
+    @Test void extra02() { assertFalse(anagram.isAnagram("a", "b")); assertFalse(anagram.isAnagramWithHashMap("a", "b")); }
+    @Test void extra03() { assertTrue(anagram.isAnagram("ab", "ba")); assertTrue(anagram.isAnagramWithHashMap("ab", "ba")); }
+    @Test void extra04() { assertFalse(anagram.isAnagram("ab", "aa")); assertFalse(anagram.isAnagramWithHashMap("ab", "aa")); }
+    @Test void extra05() { assertTrue(anagram.isAnagram("listen", "silent")); assertTrue(anagram.isAnagramWithHashMap("listen", "silent")); }
+    @Test void extra06() { assertFalse(anagram.isAnagram("rat", "car")); assertFalse(anagram.isAnagramWithHashMap("rat", "car")); }
+    @Test void extra07() { assertTrue(anagram.isAnagram("aabbcc", "ccbbaa")); assertTrue(anagram.isAnagramWithHashMap("aabbcc", "ccbbaa")); }
+    @Test void extra08() { assertFalse(anagram.isAnagram("abc", "ab")); assertFalse(anagram.isAnagramWithHashMap("abc", "ab")); }
+    @Test void extra09() { assertTrue(anagram.isAnagram("", "")); assertTrue(anagram.isAnagramWithHashMap("", "")); }
+    @Test void extra10() { assertFalse(anagram.isAnagram("x", "xx")); assertFalse(anagram.isAnagramWithHashMap("x", "xx")); }
 }

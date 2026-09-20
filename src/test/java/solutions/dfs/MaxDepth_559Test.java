@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import library.tree.narytree.Node;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MaxDepth_559Test {
 
@@ -184,5 +186,13 @@ public class MaxDepth_559Test {
     private void assertBoth(int expected, Node root) {
         assertEquals(expected, solution.maxDepth(root));
         assertEquals(expected, solution.maxDepthIterative(root));
+    }
+
+    @ParameterizedTest(name = "N-ary chain depth {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testChainDepths(int depth) {
+        Node root = new Node(0); Node current = root;
+        for (int i = 1; i < depth; i++) { Node child = new Node(i); current.children = Collections.singletonList(child); current = child; }
+        assertBoth(depth, root);
     }
 }

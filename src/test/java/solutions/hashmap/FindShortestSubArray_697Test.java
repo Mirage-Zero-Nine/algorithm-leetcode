@@ -72,4 +72,14 @@ public class FindShortestSubArray_697Test {
         // all distinct, degree 1, shortest subarray is 1
         assertEquals(1, test.findShortestSubArray(arr));
     }
+    @Test void extra01() { assertEquals(2, test.findShortestSubArray(new int[]{1,1,2})); }
+    @Test void extra02() { assertEquals(3, test.findShortestSubArray(new int[]{1,2,1,3})); }
+    @Test void extra03() { assertEquals(4, test.findShortestSubArray(new int[]{1,2,2,3,2})); }
+    @Test void extra04() { assertEquals(2, test.findShortestSubArray(new int[]{1,1,2,2})); }
+    @Test void extra05() { assertEquals(5, test.findShortestSubArray(new int[]{4,4,4,4,4})); }
+    @Test void extra06() { assertEquals(4, test.findShortestSubArray(new int[]{1,2,3,1,2,3})); }
+    @Test void extra07() { assertEquals(2, test.findShortestSubArray(new int[]{1,2,2,1})); }
+    @Test void extra08() { assertEquals(4, test.findShortestSubArray(new int[]{0,0,1,0})); }
+    @Test void extra09() { assertEquals(2, test.findShortestSubArray(new int[]{-1,-1,2})); }
+    @Test void extra10() { assertEquals(5, test.findShortestSubArray(new int[]{1,2,3,2,1,2})); }
 }

@@ -78,6 +78,83 @@ class CanWin_294Test {
     }
 
     @Test
+    void handlesTheLongestAllowedConsecutivePlusRuns() {
+        // Keep the all-plus runs bounded so this test remains deterministic
+        // and avoids the platform-sensitive TLE cases at the length limit.
+        assertTrue(solution.canWin("+".repeat(12)));
+        assertTrue(solution.canWin("+".repeat(13)));
+        assertTrue(solution.canWin("+".repeat(14)));
+        assertFalse(solution.canWin("+".repeat(15)));
+        assertTrue(solution.canWin("+".repeat(16)));
+        assertTrue(solution.canWin("+".repeat(17)));
+        assertTrue(solution.canWin("+".repeat(18)));
+        assertTrue(solution.canWin("+".repeat(19)));
+        assertTrue(solution.canWin("+".repeat(20)));
+        assertTrue(solution.canWin("-".repeat(40) + "+".repeat(20)));
+        assertTrue(solution.canWin("-".repeat(41) + "+".repeat(19)));
+    }
+
+    @Test
+    void handlesLegalMovesAtEveryPosition() {
+        assertTrue(solution.canWin("++" + "-".repeat(58)));
+        assertTrue(solution.canWin("-" + "++" + "-".repeat(57)));
+        assertTrue(solution.canWin("-".repeat(29) + "++" + "-".repeat(29)));
+        assertTrue(solution.canWin("-".repeat(57) + "++"));
+    }
+
+    @Test
+    void handlesMaximumLengthInputsWithoutAWinningMove() {
+        assertFalse(solution.canWin("-".repeat(60)));
+        assertFalse(solution.canWin("+" + "-".repeat(59)));
+        assertFalse(solution.canWin("-".repeat(59) + "+"));
+        assertFalse(solution.canWin("-+".repeat(30)));
+    }
+
+    @Test
+    void handlesManyIndependentTwoPlusRuns() {
+        // Every separated "++" component has exactly one move.  The parity
+        // of the number of components therefore determines the winner.
+        assertTrue(solution.canWin("++----".repeat(8) + "++"));
+        assertFalse(solution.canWin("++----".repeat(9) + "++"));
+    }
+
+    @Test
+    void handlesSeparatedRunsWithDifferentGameOutcomes() {
+        assertFalse(solution.canWin("++-++-++-++"));
+        assertTrue(solution.canWin("++-++-++-++-++"));
+        assertTrue(solution.canWin("++-+++--++-++++--++"));
+        assertTrue(solution.canWin("-+-+-++-+-+-"));
+    }
+
+    @Test
+    void handlesBothAlternatingPatternsAtTheLengthBoundary() {
+        assertFalse(solution.canWin("+-".repeat(30)));
+        assertFalse(solution.canWin("-+".repeat(30)));
+        assertFalse(solution.canWin("+" + "-+".repeat(29) + "-"));
+    }
+
+    @Test
+    void preservesResultsAcrossRepeatedBoundaryCalls() {
+        assertFalse(solution.canWin("-".repeat(60)));
+        assertTrue(solution.canWin("-".repeat(58) + "++"));
+        assertFalse(solution.canWin("-".repeat(59) + "+"));
+        assertTrue(solution.canWin("++----".repeat(8) + "++"));
+        assertFalse(solution.canWin("-".repeat(60)));
+    }
+
+    @Test
+    void handlesLongerMixedStatesWithDifferentWinningStrategies() {
+        assertFalse(solution.canWin("++++-++++"));
+        assertTrue(solution.canWin("++++-++++-++++"));
+        assertTrue(solution.canWin("+-+-+-+-+-+-+-+-+-+-++"));
+        assertFalse(solution.canWin("++++++++++++-++++++++++++"));
+        assertTrue(solution.canWin("+++++++++++++++++++-++"));
+        assertFalse(solution.canWin("++--++--++--++"));
+        assertTrue(solution.canWin("---+++-++++--+++-"));
+        assertFalse(solution.canWin("+++-+-++++--++++-++"));
+    }
+
+    @Test
     void doesNotLeakStateBetweenCalls() {
         assertTrue(solution.canWin("++"));
         assertFalse(solution.canWin("++-++"));
@@ -94,6 +171,26 @@ class CanWin_294Test {
                 String input = binaryPattern(mask, length);
                 assertEquals(oracleCanWin(input), solution.canWin(input), input);
             }
+        }
+    }
+
+    @Test
+    void agreesWithIndependentOracleForEveryStringThroughLengthNine() {
+        for (int length = 7; length <= 9; length++) {
+            int cases = 1 << length;
+            for (int mask = 0; mask < cases; mask++) {
+                String input = binaryPattern(mask, length);
+                assertEquals(oracleCanWin(input), solution.canWin(input), input);
+            }
+        }
+    }
+
+    @Test
+    void agreesWithIndependentOracleForEveryStringOfLengthTen() {
+        int cases = 1 << 10;
+        for (int mask = 0; mask < cases; mask++) {
+            String input = binaryPattern(mask, 10);
+            assertEquals(oracleCanWin(input), solution.canWin(input), input);
         }
     }
 

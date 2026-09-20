@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class RecoverTree_99Test {
 
@@ -89,6 +91,18 @@ public class RecoverTree_99Test {
         test.recoverTree(root);
         assertEquals(1, root.left.left.val);
         assertEquals(5, root.right.right.val);
+    }
+
+    @ParameterizedTest(name = "already valid BST root {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testValidTreesRemainUnchanged(int rootValue) {
+        TreeNode root = new TreeNode(rootValue);
+        root.left = new TreeNode(rootValue - 1);
+        root.right = new TreeNode(rootValue + 1);
+        new RecoverTree_99().recoverTree(root);
+        assertEquals(rootValue, root.val);
+        assertEquals(rootValue - 1, root.left.val);
+        assertEquals(rootValue + 1, root.right.val);
     }
 
     @Test

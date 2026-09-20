@@ -58,4 +58,14 @@ public class RemoveDuplicates_1047Test {
         String s = "a".repeat(10000);
         assertEquals("", solver.removeDuplicates(s));
     }
+    @Test public void testTwoCharsDifferent() { assertEquals("ab",solver.removeDuplicates("ab")); }
+    @Test public void testTwoEqual() { assertEquals("",solver.removeDuplicates("aa")); }
+    @Test public void testAlternating() { assertEquals("abab",solver.removeDuplicates("abab")); }
+    @Test public void testThreePairsChain() { assertEquals("",solver.removeDuplicates("aabbcc")); }
+    @Test public void testBoundaryChain() { assertEquals("",solver.removeDuplicates("abccba")); }
+    @Test public void testRepeatedLettersRemain() { assertEquals("",solver.removeDuplicates("aabbaa")); }
+    @Test public void testLongOddRun() { assertEquals("a",solver.removeDuplicates("a".repeat(9999))); }
+    @Test public void testNoMutationByRepeatCall() { assertEquals("ca",solver.removeDuplicates("abbaca")); assertEquals("ab",solver.removeDuplicates("aaab")); }
+    @Test public void testDifferentAlphabet() { assertEquals("z",solver.removeDuplicates("zz"+"z")); }
+    @Test public void testChainAcrossBoundary() { assertEquals("a",solver.removeDuplicates("abbccaa")); }
 }

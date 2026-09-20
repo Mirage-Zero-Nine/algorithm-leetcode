@@ -151,4 +151,14 @@ public class ArraysIntersection_1213Test {
         List<Integer> result = solver.arraysIntersection(arr1, arr2, arr3);
         assertEquals(n, result.size());
     }
+    @Test void extra01() { assertEquals(List.of(1), solver.arraysIntersection(new int[]{1},new int[]{1},new int[]{1})); }
+    @Test void extra02() { assertEquals(List.of(), solver.arraysIntersection(new int[]{1},new int[]{2},new int[]{3})); }
+    @Test void extra03() { assertEquals(List.of(2,3), solver.arraysIntersection(new int[]{1,2,3},new int[]{2,3,4},new int[]{0,2,3})); }
+    @Test void extra04() { assertEquals(List.of(5), solver.arraysIntersection(new int[]{5,6},new int[]{5,7},new int[]{5,8})); }
+    @Test void extra05() { assertEquals(List.of(1,2,3), solver.arraysIntersection(new int[]{1,2,3},new int[]{1,2,3},new int[]{1,2,3})); }
+    @Test void extra06() { assertEquals(List.of(), solver.arraysIntersection(new int[]{},new int[]{},new int[]{})); }
+    @Test void extra07() { assertEquals(List.of(0), solver.arraysIntersection(new int[]{0,1},new int[]{0,2},new int[]{0,3})); }
+    @Test void extra08() { assertEquals(List.of(10), solver.arraysIntersection(new int[]{10,20},new int[]{10,30},new int[]{10,40})); }
+    @Test void extra09() { assertEquals(List.of(2,4), solver.arraysIntersection(new int[]{1,2,4},new int[]{2,4,5},new int[]{0,2,4})); }
+    @Test void extra10() { assertEquals(List.of(100), solver.arraysIntersection(new int[]{100},new int[]{100},new int[]{100})); }
 }

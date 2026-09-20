@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import library.tree.TreeParser;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
@@ -168,5 +170,19 @@ public class VerticalTraversal_987Test {
         assertIterableEquals(List.of(1), result.get(0));
         // rightmost column has node 15
         assertIterableEquals(List.of(15), result.get(6));
+    }
+
+    @ParameterizedTest(name = "right chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testRightChainLengths(int length) {
+        TreeNode root = new TreeNode(0);
+        TreeNode current = root;
+        for (int i = 1; i < length; i++) {
+            current.right = new TreeNode(i);
+            current = current.right;
+        }
+        List<List<Integer>> result = test.verticalTraversal(root);
+        assertEquals(length, result.size());
+        for (int i = 0; i < length; i++) assertIterableEquals(List.of(i), result.get(i));
     }
 }

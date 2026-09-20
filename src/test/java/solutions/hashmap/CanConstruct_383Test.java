@@ -76,4 +76,15 @@ public class CanConstruct_383Test {
         String magazine = "z".repeat(999) + "a".repeat(1000);
         assertFalse(test.canConstruct(ransomNote, magazine));
     }
+
+    @Test void extra01() { assertTrue(test.canConstruct("a", "a")); }
+    @Test void extra02() { assertFalse(test.canConstruct("b", "a")); }
+    @Test void extra03() { assertTrue(test.canConstruct("abc", "cba")); }
+    @Test void extra04() { assertFalse(test.canConstruct("abcd", "abc")); }
+    @Test void extra05() { assertTrue(test.canConstruct("zz", "zzz")); }
+    @Test void extra06() { assertTrue(test.canConstruct("aab", "aba")); }
+    @Test void extra07() { assertTrue(test.canConstruct("xyz", "xzyw")); }
+    @Test void extra08() { assertFalse(test.canConstruct("hello", "helo")); }
+    @Test void extra09() { assertTrue(test.canConstruct("", "anything")); }
+    @Test void extra10() { assertTrue(test.canConstruct("long", "loong")); }
 }

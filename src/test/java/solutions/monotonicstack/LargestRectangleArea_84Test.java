@@ -94,4 +94,17 @@ public class LargestRectangleArea_84Test {
         }
         return max;
     }
+
+    @Test
+    public void testSlowApproachMatchesIndependentOracle() {
+        int[][] cases = {{1, 1}, {1, 3, 2}, {2, 2, 1, 2}, {0, 4, 4, 0},
+                {6, 2, 5, 4, 5, 1, 6}, {10, 9, 8, 7}, {1, 0, 1, 0, 1},
+                {3, 1, 3, 1, 3}, {2, 1, 2, 1, 2}, {4, 3, 2, 1, 4}};
+        for (int[] values : cases) {
+            int expected = bruteForce(values);
+            assertEquals(expected, l.largestRectangleArea(values.clone()));
+            assertEquals(expected, l.largestRectangleAreaSlow(values.clone()));
+        }
+    }
+    @Test public void testSingleTwo() { assertEquals(2,l.largestRectangleArea(new int[]{2})); }
 }

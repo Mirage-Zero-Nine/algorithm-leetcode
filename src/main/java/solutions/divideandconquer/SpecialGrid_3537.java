@@ -32,6 +32,8 @@ public class SpecialGrid_3537 {
      * @return grid following the rule
      */
     public int[][] specialGrid(int n) {
+        // A solver instance may be reused; numbering must start at zero for every grid.
+        value = 0;
         int size = 1 << n;
         int[][] output = new int[size][size];
 

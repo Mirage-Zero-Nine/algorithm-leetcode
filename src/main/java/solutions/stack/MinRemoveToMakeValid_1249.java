@@ -26,7 +26,7 @@ public class MinRemoveToMakeValid_1249 {
     public String minRemoveToMakeValid(String s) {
 
         /* Corner case */
-        if (s == null || s.length() < 2) {
+        if (s == null) {
             return "";
         }
 

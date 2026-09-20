@@ -7,9 +7,6 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -123,6 +120,21 @@ public class FirstMissingPositive_41Test {
     }
 
     @Test
+    public void testMissingAtBeginningDespiteLaterConsecutiveValues() {
+        assertEquals(1, solver.firstMissingPositive(new int[]{2, 3, 4, 5}));
+    }
+
+    @Test
+    public void testMissingAtEndAfterCompletePrefix() {
+        assertEquals(5, solver.firstMissingPositive(new int[]{4, 2, 1, 3}));
+    }
+
+    @Test
+    public void testMissingImmediatelyAfterArrayLength() {
+        assertEquals(4, solver.firstMissingPositive(new int[]{3, 1, 2}));
+    }
+
+    @Test
     public void testDuplicatesConsecutive() {
         // [1,2,2,3] → missing 4
         assertEquals(4, solver.firstMissingPositive(new int[]{1, 2, 2, 3}));
@@ -132,6 +144,12 @@ public class FirstMissingPositive_41Test {
     public void testAllZeros() {
         // [0,0,0,0] → missing 1
         assertEquals(1, solver.firstMissingPositive(new int[]{0, 0, 0, 0}));
+    }
+
+    @Test
+    public void testOnlyNegativeAndZeroValues() {
+        assertEquals(1, solver.firstMissingPositive(
+                new int[]{Integer.MIN_VALUE, -100, -1, 0, Integer.MIN_VALUE + 1}));
     }
 
     @Test
@@ -146,6 +164,17 @@ public class FirstMissingPositive_41Test {
     public void testMixPositiveZeroNegative() {
         // [-3, 0, 5, -2, 1, 4, 3] → missing 2
         assertEquals(2, solver.firstMissingPositive(new int[]{-3, 0, 5, -2, 1, 4, 3}));
+    }
+
+    @Test
+    public void testSignedExtremesDoNotOverflowMarking() {
+        assertEquals(2, solver.firstMissingPositive(new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE, 1, 0}));
+        assertEquals(1, solver.firstMissingPositive(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE, -1}));
+    }
+
+    @Test
+    public void testManyDuplicatesWithInteriorGap() {
+        assertEquals(4, solver.firstMissingPositive(new int[]{2, 1, 2, 3, 3, 1, 2}));
     }
 
     @Test
@@ -167,6 +196,37 @@ public class FirstMissingPositive_41Test {
     }
 
     @Test
+    public void testSeededRandomArraysAgainstIndependentOracle() {
+        Random rng = new Random(20260919L);
+        for (int trial = 0; trial < 400; trial++) {
+            int length = rng.nextInt(40);
+            int[] values = new int[length];
+            for (int i = 0; i < length; i++) {
+                values[i] = rng.nextInt(31) - 10;
+            }
+            assertEquals(expectedMissingPositive(values), solver.firstMissingPositive(values.clone()),
+                    "trial=" + trial);
+        }
+    }
+
+    @Test
+    public void testIndependentOracleCoversAllArraysOfSmallDomain() {
+        // Exhaust every length-4 array over {-2,-1,0,1,2,3,4,5}; this includes
+        // all combinations of duplicates and every possible first gap through 6.
+        int domainSize = 8;
+        for (int encoded = 0; encoded < domainSize * domainSize * domainSize * domainSize; encoded++) {
+            int remaining = encoded;
+            int[] values = new int[4];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = remaining % domainSize - 2;
+                remaining /= domainSize;
+            }
+            assertEquals(expectedMissingPositive(values), solver.firstMissingPositive(values),
+                    "encoded=" + encoded);
+        }
+    }
+
+    @Test
     public void testPropertyResultBounds() {
         // Property: result >= 1 and result <= n+1 for various inputs
         int[][] inputs = {
@@ -179,7 +239,7 @@ public class FirstMissingPositive_41Test {
             assertTrue(result <= nums.length + 1, "Result must be <= n+1, got " + result);
         }
     }
-@Test
+    @Test
     public void testEverySmallArrayAgainstPositiveSet() {
         for (int encoded = 0; encoded < 46656; encoded++) {
             int[] values = new int[6];
@@ -203,10 +263,57 @@ public class FirstMissingPositive_41Test {
     }
 
     @Test
+    public void testFreshInputsPreventMutationStateLeakage() {
+        int[] first = {1, 2, 0};
+        assertEquals(3, solver.firstMissingPositive(first));
+
+        // The first call mutates its own array while marking presence. A later
+        // call must depend only on this fresh input, not on prior marker values.
+        assertEquals(1, solver.firstMissingPositive(new int[]{2, 2, 3, 4}));
+        assertEquals(2, solver.firstMissingPositive(new int[]{1, 3, 1, 4}));
+    }
+
+    @Test
+    public void testExactMaximumLengthWithMissingInteriorValue() {
+        int length = 100_000;
+        int missing = 54_321;
+        int[] values = new int[length];
+        for (int i = 0; i < length; i++) {
+            values[i] = i + 1;
+        }
+        values[missing - 1] = Integer.MIN_VALUE;
+
+        // A deterministic Fisher-Yates shuffle exercises arbitrary ordering
+        // while retaining exactly one missing positive in the legal maximum.
+        Random rng = new Random(41L);
+        for (int i = values.length - 1; i > 0; i--) {
+            int swap = rng.nextInt(i + 1);
+            int temporary = values[i];
+            values[i] = values[swap];
+            values[swap] = temporary;
+        }
+        assertEquals(missing, solver.firstMissingPositive(values));
+    }
+
+    @Test
     public void testGiantReversedSequenceWithInteriorGap() {
         int[] values = new int[20000];
         for (int i = 0; i < values.length; i++) values[i] = values.length - i;
         values[7654] = Integer.MIN_VALUE;
         assertEquals(12346, solver.firstMissingPositive(values));
+    }
+
+    private int expectedMissingPositive(int[] values) {
+        Set<Integer> present = new HashSet<>();
+        for (int value : values) {
+            if (value > 0) {
+                present.add(value);
+            }
+        }
+        int candidate = 1;
+        while (present.contains(candidate)) {
+            candidate++;
+        }
+        return candidate;
     }
 }

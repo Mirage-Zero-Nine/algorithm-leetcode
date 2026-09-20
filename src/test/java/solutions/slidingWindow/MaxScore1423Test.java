@@ -67,4 +67,11 @@ public class MaxScore1423Test {
         cards[99999] = 1000;
         assertEquals(2998, test.maxScore(cards, 1000));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"1|2|3,1,3", "1|2|3,2,5", "5|1|1|5,2,10", "9|1|1|9,2,18", "1|1|1|1,3,3", "10|9|8|7,2,19", "7|8|9|1,2,15", "100|1|1,1,100", "2|4|6|8,3,18", "5|5|5|5|5,4,20"})
+    void additionalBoundaryCases(String encoded, int k, int expected) {
+        int[] cards = java.util.Arrays.stream(encoded.split("\\|" )).mapToInt(Integer::parseInt).toArray();
+        assertEquals(expected, test.maxScore(cards, k));
+    }
 }

@@ -67,4 +67,14 @@ public class LengthLongestPath_388Test {
         int result = solver.lengthLongestPath(sb.toString());
         assertTrue(result > 0);
     }
+    @Test public void testRootDotFile() { assertEquals(3,solver.lengthLongestPath("a.b")); }
+    @Test public void testSiblingDirectories() { assertEquals(7,solver.lengthLongestPath("a\n\tb.txt\nc\n\td.txt")); }
+    @Test public void testFileAtSecondLevel() { assertEquals(10,solver.lengthLongestPath("root\n\ta.txt")); }
+    @Test public void testDirectoryNameWithDotIsFileByContract() { assertEquals(3,solver.lengthLongestPath("a.b")); }
+    @Test public void testLongRootDirectory() { assertEquals(13,solver.lengthLongestPath("dirname\n\tx.txt")); }
+    @Test public void testMultipleNestedFiles() { assertEquals(13,solver.lengthLongestPath("a\n\tb\n\t\tx.txt\n\t\tyyyyy.txt")); }
+    @Test public void testSingleCharacterFile() { assertEquals(3,solver.lengthLongestPath("a.b")); }
+    @Test public void testRepeatedInvocation() { assertEquals(5,solver.lengthLongestPath("a.txt")); assertEquals(0,solver.lengthLongestPath("dir")); }
+    @Test public void testDeepFileBranch() { assertTrue(solver.lengthLongestPath("r\n\ta\n\t\tb\n\t\t\tc.txt") > 0); }
+    @Test public void testManyRootFiles() { assertEquals(6,solver.lengthLongestPath("aa.txt\nbb.txt\ncc.txt")); }
 }

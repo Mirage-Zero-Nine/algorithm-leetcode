@@ -37,6 +37,12 @@ public class FindSubstring_30 {
             return output;
         }
 
+        // A solution object may be reused by callers.  The trie and counts are
+        // per invocation; retaining them would make a later call accept words
+        // from an earlier call.
+        wordCount.clear();
+        clearTrie(root);
+
         for (String w : words) {
             wordCount.put(w, wordCount.getOrDefault(w, 0) + 1);
         }
@@ -52,6 +58,16 @@ public class FindSubstring_30 {
         }
 
         return output;
+    }
+
+    /** Remove all nodes from the trie before constructing the next invocation's dictionary. */
+    private void clearTrie(TrieNode node) {
+        for (int i = 0; i < node.next.length; i++) {
+            if (node.next[i] != null) {
+                clearTrie(node.next[i]);
+                node.next[i] = null;
+            }
+        }
     }
 
     /**

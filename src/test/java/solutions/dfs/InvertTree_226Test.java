@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import library.tree.TreeParser;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -274,5 +276,15 @@ public class InvertTree_226Test {
         node.left = buildBalancedTree(val * 2, depth - 1);
         node.right = buildBalancedTree(val * 2 + 1, depth - 1);
         return node;
+    }
+
+    @ParameterizedTest(name = "invert chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testLeftChainBecomesRightChain(int length) {
+        TreeNode root = new TreeNode(0); TreeNode current = root;
+        for (int i = 1; i < length; i++) { current.left = new TreeNode(i); current = current.left; }
+        TreeNode result = test.invertTree(root); current = result;
+        for (int i = 0; i < length; i++) { assertEquals(i, current.val); assertNull(current.left); current = current.right; }
+        assertNull(current);
     }
 }

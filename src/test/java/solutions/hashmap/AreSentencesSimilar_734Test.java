@@ -105,4 +105,14 @@ public class AreSentencesSimilar_734Test {
         }
         assertTrue(test.areSentencesSimilar(words1, words2, pairs));
     }
+    @Test void extra01() { assertTrue(test.areSentencesSimilar(new String[]{"a"}, new String[]{"b"}, List.of(List.of("a","b")))); }
+    @Test void extra02() { assertFalse(test.areSentencesSimilar(new String[]{"a"}, new String[]{"c"}, List.of())); }
+    @Test void extra03() { assertTrue(test.areSentencesSimilar(new String[]{"a","b"}, new String[]{"a","b"}, List.of())); }
+    @Test void extra04() { assertFalse(test.areSentencesSimilar(new String[]{"a"}, new String[]{"a","b"}, List.of())); }
+    @Test void extra05() { assertTrue(test.areSentencesSimilar(new String[]{}, new String[]{}, List.of())); }
+    @Test void extra06() { assertTrue(test.areSentencesSimilar(new String[]{"a","b"}, new String[]{"x","b"}, List.of(List.of("a","x")))); }
+    @Test void extra07() { assertFalse(test.areSentencesSimilar(new String[]{"a","b"}, new String[]{"x","y"}, List.of(List.of("a","x")))); }
+    @Test void extra08() { assertTrue(test.areSentencesSimilar(new String[]{"great"}, new String[]{"fine"}, List.of(List.of("great","fine")))); }
+    @Test void extra09() { assertFalse(test.areSentencesSimilar(new String[]{"great"}, new String[]{"fine"}, List.of(List.of("great","good")))); }
+    @Test void extra10() { assertTrue(test.areSentencesSimilar(new String[]{"a","b","c"}, new String[]{"x","y","z"}, List.of(List.of("a","x"),List.of("b","y"),List.of("c","z")))); }
 }

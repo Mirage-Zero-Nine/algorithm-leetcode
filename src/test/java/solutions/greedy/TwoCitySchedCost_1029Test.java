@@ -58,12 +58,21 @@ public class TwoCitySchedCost_1029Test {
     @Test public void testGiant() {
         int n = 500;
         int[][] costs = new int[n][2];
-        int expected = 0;
         for (int i = 0; i < n; i++) {
             costs[i][0] = i + 1;
             costs[i][1] = n - i;
         }
-        int result = solver.twoCitySchedCost(costs);
-        assertTrue(result > 0);
+        // The first 250 people are cheaper for A and the remaining 250 for B.
+        assertEquals(62750, solver.twoCitySchedCost(costs));
     }
+    @Test public void testAdditionalTwo() { assertEquals(4, solver.twoCitySchedCost(new int[][]{{2, 3}, {3, 2}})); }
+    @Test public void testAdditionalFour() { assertEquals(60, solver.twoCitySchedCost(new int[][]{{10, 100}, {20, 100}, {100, 20}, {100, 10}})); }
+    @Test public void testAdditionalEqual() { assertEquals(40, solver.twoCitySchedCost(new int[][]{{10, 10}, {10, 10}, {10, 10}, {10, 10}})); }
+    @Test public void testAdditionalPreferA() { assertEquals(10, solver.twoCitySchedCost(new int[][]{{1, 100}, {2, 100}, {100, 3}, {100, 4}})); }
+    @Test public void testAdditionalPreferB() { assertEquals(10, solver.twoCitySchedCost(new int[][]{{100, 1}, {100, 2}, {3, 100}, {4, 100}})); }
+    @Test public void testAdditionalMixed() { assertEquals(34, solver.twoCitySchedCost(new int[][]{{5, 6}, {7, 8}, {9, 10}, {11, 12}})); }
+    @Test public void testAdditionalSix() { assertEquals(60, solver.twoCitySchedCost(new int[][]{{10, 20}, {10, 20}, {10, 20}, {20, 10}, {20, 10}, {20, 10}})); }
+    @Test public void testAdditionalNegativeDiff() { assertEquals(2, solver.twoCitySchedCost(new int[][]{{1, 2}, {2, 1}})); }
+    @Test public void testAdditionalLarger() { assertEquals(12, solver.twoCitySchedCost(new int[][]{{1, 10}, {2, 9}, {3, 8}, {8, 3}, {9, 2}, {10, 1}})); }
+    @Test public void testAdditionalDPReuse() { assertEquals(110, solver.dynamicProgramming(new int[][]{{10, 20}, {30, 200}, {400, 50}, {30, 20}})); }
 }

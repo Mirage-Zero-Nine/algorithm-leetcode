@@ -71,4 +71,14 @@ public class ConnectSticks_1167Test {
     public void testDescendingOrder() {
         assertEquals(25, test.connectSticks(new int[]{8, 4, 2, 1}));
     }
+
+    @Test public void testTwoZeroSticks() { assertEquals(0, test.connectSticks(new int[]{0, 0})); }
+    @Test public void testZerosAndPositive() { assertEquals(5, test.connectSticks(new int[]{0, 0, 5})); }
+    @Test public void testFourUnequalSticks() { assertEquals(25, test.connectSticks(new int[]{1, 2, 3, 10})); }
+    @Test public void testFiveOnes() { assertEquals(12, test.connectSticks(new int[]{1, 1, 1, 1, 1})); }
+    @Test public void testSixOnes() { assertEquals(16, test.connectSticks(new int[]{1, 1, 1, 1, 1, 1})); }
+    @Test public void testLargeSingleValue() { assertEquals(0, test.connectSticks(new int[]{100000})); }
+    @Test public void testTwoMaximumValues() { assertEquals(200000, test.connectSticks(new int[]{100000, 100000})); }
+    @Test public void testInputOrderDoesNotMatter() { assertEquals(test.connectSticks(new int[]{1, 7, 3, 5}), test.connectSticks(new int[]{5, 3, 7, 1})); }
+    @Test public void testSevenSticks() { assertEquals(74, test.connectSticks(new int[]{1, 2, 3, 4, 5, 6, 7})); }
 }

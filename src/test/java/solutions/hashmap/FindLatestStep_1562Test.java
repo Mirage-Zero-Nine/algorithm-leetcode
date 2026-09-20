@@ -107,4 +107,21 @@ public class FindLatestStep_1562Test {
         int[] arr = {3, 2, 1, 4, 5};
         assertEquals(3, solver.findLatestStep(arr, 3));
     }
+
+    @Test
+    public void testGroupCreatedOnFinalStep() {
+        // The length-two group is created at step 2 and remains present at
+        // step 3 even though that insertion does not touch it.
+        assertEquals(3, solver.findLatestStep(new int[]{1, 2, 4, 3}, 2));
+    }
+    @Test void extra01() { assertEquals(1, solver.findLatestStep(new int[]{1},1)); }
+    @Test void extra02() { assertEquals(-1, solver.findLatestStep(new int[]{1},2)); }
+    @Test void extra03() { assertEquals(1, solver.findLatestStep(new int[]{1,2,3},1)); }
+    @Test void extra04() { assertEquals(1, solver.findLatestStep(new int[]{2,1,3},1)); }
+    @Test void extra05() { assertEquals(-1, solver.findLatestStep(new int[]{3,1,2},2)); }
+    @Test void extra06() { assertEquals(3, solver.findLatestStep(new int[]{1,2,3,4},3)); }
+    @Test void extra07() { assertEquals(4, solver.findLatestStep(new int[]{1,2,3,4},4)); }
+    @Test void extra08() { assertEquals(1, solver.findLatestStep(new int[]{2,1},1)); }
+    @Test void extra09() { assertEquals(1, solver.findLatestStep(new int[]{5,4,3,2,1},1)); }
+    @Test void extra10() { assertEquals(-1, solver.findLatestStep(new int[]{1,2,3},4)); }
 }

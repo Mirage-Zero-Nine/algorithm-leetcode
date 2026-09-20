@@ -28,11 +28,19 @@ public class HasPathSum_112 {
      * {@code false}
      */
     public boolean hasPathSum(TreeNode root, int sum) {
+        return hasPathSum(root, (long) sum);
+    }
+
+    /**
+     * Carries the remaining sum in a wider type so full Java {@code int} node
+     * values cannot wrap around during subtraction.
+     */
+    private boolean hasPathSum(TreeNode root, long sum) {
         if (root == null) {
             return false;
         }
 
-        int current = sum - root.val;
+        long current = sum - root.val;
 
         // Only a leaf can complete a valid root-to-leaf path. Matching at an
         // internal node is not sufficient, even when its remaining sum is 0.

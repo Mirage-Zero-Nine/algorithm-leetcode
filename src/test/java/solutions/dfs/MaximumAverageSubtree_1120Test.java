@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MaximumAverageSubtree_1120Test {
 
@@ -59,6 +61,20 @@ public class MaximumAverageSubtree_1120Test {
     }
 
     @Test
+    public void testAllNegativeValues() {
+        TreeNode root = new TreeNode(-5);
+        root.left = new TreeNode(-10); root.right = new TreeNode(-3);
+        assertEquals(-3.0, new MaximumAverageSubtree_1120().maximumAverageSubtree(root), 0.0001);
+    }
+
+    @Test
+    public void testRepeatedCallsResetMaximum() {
+        MaximumAverageSubtree_1120 solution = new MaximumAverageSubtree_1120();
+        assertEquals(10.0, solution.maximumAverageSubtree(new TreeNode(10)), 0.0001);
+        assertEquals(-4.0, solution.maximumAverageSubtree(new TreeNode(-4)), 0.0001);
+    }
+
+    @Test
     public void testSubtreeAverageBetterThanLeaf() {
         TreeNode root = new TreeNode(1);
         root.left = new TreeNode(9); root.right = new TreeNode(8);
@@ -94,5 +110,13 @@ public class MaximumAverageSubtree_1120Test {
         }
         // Max leaf value is 127
         assertEquals(127.0, new MaximumAverageSubtree_1120().maximumAverageSubtree(nodes[1]), 0.0001);
+    }
+
+    @ParameterizedTest(name = "increasing chain endpoint {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testIncreasingChainAverages(int endpoint) {
+        TreeNode root = new TreeNode(0); TreeNode current = root;
+        for (int i = 1; i <= endpoint; i++) { current.right = new TreeNode(i); current = current.right; }
+        assertEquals((double) endpoint, new MaximumAverageSubtree_1120().maximumAverageSubtree(root), 0.0001);
     }
 }

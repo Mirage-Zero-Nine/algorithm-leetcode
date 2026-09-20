@@ -91,4 +91,54 @@ public class DistanceBetweenBusStops_1184Test {
         int[] distance = {5, 5, 5, 5};
         assertEquals(0, solver.distanceBetweenBusStops(distance, 2, 2));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, solver.distanceBetweenBusStops(new int[]{1,2,3,4}, 0, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(5, solver.distanceBetweenBusStops(new int[]{1,2,3,4}, 1, 3));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(4, solver.distanceBetweenBusStops(new int[]{1,2,3,4}, 3, 0));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(0, solver.distanceBetweenBusStops(new int[]{5}, 0, 0));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(2, solver.distanceBetweenBusStops(new int[]{2,2}, 0, 1));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(11, solver.distanceBetweenBusStops(new int[]{10,1,1,10}, 0, 2));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(6, solver.distanceBetweenBusStops(new int[]{3,7,4,2,6}, 2, 4));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(300, solver.distanceBetweenBusStops(new int[]{100,200,300}, 0, 2));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(2, solver.distanceBetweenBusStops(new int[]{1,1,1,1,1}, 1, 4));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(18, solver.distanceBetweenBusStops(new int[]{9,8,7,6,5,4}, 5, 2));
+    }
 }

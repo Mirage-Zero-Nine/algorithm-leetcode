@@ -14,7 +14,8 @@ public class ClosestValue_270 {
     /**
      * Traverse of tree until find the closest value in tree.
      * If the absolute difference between target and node value is less than 0.5, then the closest node is found.
-     * Otherwise, keep searching in BST until the iteration is ended.
+     * Otherwise, keep searching in BST until the iteration is ended. If two values are equally close,
+     * the smaller value is retained as required by the problem contract.
      *
      * @param root   root node
      * @param target target double number
@@ -26,10 +27,13 @@ public class ClosestValue_270 {
 
         while (root != null) {
 
-            if (Math.abs(target - root.val) < Math.abs(target - remain)) {
+            double candidateDistance = Math.abs(target - root.val);
+            double remainingDistance = Math.abs(target - remain);
+            if (candidateDistance < remainingDistance
+                    || (candidateDistance == remainingDistance && root.val < remain)) {
                 remain = root.val;      // find min value
 
-                if (Math.abs(target - root.val) < 0.5) {
+                if (candidateDistance < 0.5) {
                     break;      // no other numbers can be closer than 0.5
                 }
             }

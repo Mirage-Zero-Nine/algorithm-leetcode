@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class NumDistinct_115Test {
 
@@ -61,5 +63,11 @@ public class NumDistinct_115Test {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 20; i++) sb.append('a');
         assertEquals(190, test.numDistinct(sb.toString(), "aa"));
+    }
+
+    @ParameterizedTest(name = "distinct subsequences {0} -> {1}")
+    @CsvSource({"aaa,aa,3", "abcd,bd,1", "abab,ab,3", "banana,ban,3", "rabbbit,rab,3", "babgbag,bg,5", "abc,ac,1", "abcd,ef,0", "aaaa,a,4", "aab,aab,1"})
+    public void testAdditionalSubsequenceShapes(String source, String target, int expected) {
+        assertEquals(expected, test.numDistinct(source, target));
     }
 }

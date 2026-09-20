@@ -96,4 +96,15 @@ public class FourSum_18Test {
             .thenComparing(quad -> quad.get(3));
         assertEquals(expected.stream().sorted(cmp).toList(), actual.stream().sorted(cmp).toList());
     }
+
+    @Test public void testFourNegativeValues() { assertQuadrupletsEqual(List.of(List.of(-4,-3,-2,-1)), test.fourSum(new int[]{-4,-3,-2,-1}, -10)); }
+    @Test public void testFourPositiveValues() { assertQuadrupletsEqual(List.of(List.of(1,2,3,4)), test.fourSum(new int[]{1,2,3,4}, 10)); }
+    @Test public void testNoQuadrupletDespiteLength() { assertEquals(0, test.fourSum(new int[]{1,2,4,8}, 0).size()); }
+    @Test public void testMixedDuplicateQuadruplets() { assertQuadrupletsEqual(List.of(List.of(0,0,1,1)), test.fourSum(new int[]{0,0,0,1,1,1}, 2)); }
+    @Test public void testExtremeTarget() { assertQuadrupletsEqual(List.of(List.of(-2,-1,1,2)), test.fourSum(new int[]{-2,-1,1,2}, 0)); }
+    @Test public void testInputIsSortedForSearch() { assertQuadrupletsEqual(List.of(List.of(-1,0,1,2)), test.fourSum(new int[]{2,-1,0,1}, 2)); }
+    @Test public void testManyZerosAndOne() { assertQuadrupletsEqual(List.of(List.of(0,0,0,0)), test.fourSum(new int[]{0,0,0,0,0,1}, 0)); }
+    @Test public void testNegativeAndPositiveTarget() { assertQuadrupletsEqual(List.of(List.of(-5,-1,2,4)), test.fourSum(new int[]{-5,-1,2,4,7}, 0)); }
+    @Test public void testShortThreeElements() { assertEquals(0, test.fourSum(new int[]{-1,0,1}, 0).size()); }
+    @Test public void testNoDuplicateOutput() { List<List<Integer>> r=test.fourSum(new int[]{1,1,1,1,2,2,2,2},6); assertEquals(1,r.size()); assertEquals(List.of(1,1,2,2),r.get(0)); }
 }

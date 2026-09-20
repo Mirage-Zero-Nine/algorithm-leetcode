@@ -140,6 +140,49 @@ public class GenerateTrees_95Test {
         assertEquals(429, result.size());
     }
 
+    @Test public void nEqualsSixReturnsCatalan132() { assertEquals(132, solver.generateTrees(6).size()); }
+    @Test public void nEqualsEightReturnsCatalan1430() { assertEquals(1430, solver.generateTrees(8).size()); }
+
+    @Test public void everyN3TreeHasAllValuesExactlyOnce() {
+        for (TreeNode root : solver.generateTrees(3)) {
+            List<Integer> values = new ArrayList<>();
+            inorderCollect(root, values);
+            assertEquals(List.of(1, 2, 3), values);
+        }
+    }
+
+    @Test public void eachN4TreeHasUniqueSerialization() {
+        Set<String> serializations = new HashSet<>();
+        for (TreeNode root : solver.generateTrees(4)) serializations.add(serialize(root));
+        assertEquals(14, serializations.size());
+    }
+
+    @Test public void negativeNUsesSingleEmptyTreeImplementationExtension() {
+        assertEquals(1, solver.generateTrees(-1).size());
+        assertNull(solver.generateTrees(-1).get(0));
+    }
+    @Test public void generatedTreesAreNonNullForPositiveN() {
+        for (TreeNode root : solver.generateTrees(5)) assertNotNull(root);
+    }
+    @Test public void repeatedInvocationReturnsFreshRoots() {
+        TreeNode first = solver.generateTrees(2).get(0);
+        TreeNode second = solver.generateTrees(2).get(0);
+        assertTrue(first != second);
+    }
+    @Test public void n5RootValuesAllAppear() {
+        Set<Integer> roots = new HashSet<>();
+        for (TreeNode root : solver.generateTrees(5)) roots.add(root.val);
+        assertEquals(Set.of(1, 2, 3, 4, 5), roots);
+    }
+    @Test public void n2TreesHaveExpectedRootExtremes() {
+        Set<Integer> roots = new HashSet<>();
+        for (TreeNode root : solver.generateTrees(2)) roots.add(root.val);
+        assertEquals(Set.of(1, 2), roots);
+    }
+    @Test public void n4EveryTreeHasFourNodes() {
+        for (TreeNode root : solver.generateTrees(4)) assertEquals(4, count(root));
+    }
+
     private void inorderCollect(TreeNode node, List<Integer> out) {
         if (node == null) return;
         inorderCollect(node.left, out);

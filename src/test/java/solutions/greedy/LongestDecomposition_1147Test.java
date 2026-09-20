@@ -60,4 +60,14 @@ public class LongestDecomposition_1147Test {
         int result = solver.longestDecomposition(sb.toString());
         assertEquals(500, result);
     }
+    @Test public void testAdditionalEmpty() { assertEquals(0, solver.longestDecomposition("")); }
+    @Test public void testAdditionalThreeDifferent() { assertEquals(1, solver.longestDecomposition("abc")); }
+    @Test public void testAdditionalFourDifferent() { assertEquals(1, solver.longestDecomposition("abcd")); }
+    @Test public void testAdditionalAbba() { assertEquals(4, solver.longestDecomposition("abba")); }
+    @Test public void testAdditionalAbccba() { assertEquals(6, solver.longestDecomposition("abccba")); }
+    @Test public void testAdditionalAlternating() { assertEquals(3, solver.longestDecomposition("ababab")); }
+    @Test public void testAdditionalPairs() { assertEquals(1, solver.longestDecomposition("aabb")); }
+    @Test public void testAdditionalRepeatedPair() { assertEquals(2, solver.longestDecomposition("abcabc")); }
+    @Test public void testAdditionalPalindrome() { assertEquals(13, solver.longestDecomposition("abcdefgfedcba")); }
+    @Test public void testAdditionalLongSame() { assertEquals(10, solver.longestDecomposition("aaaaaaaaaa")); }
 }

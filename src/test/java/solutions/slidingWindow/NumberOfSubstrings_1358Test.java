@@ -69,4 +69,10 @@ public class NumberOfSubstrings_1358Test {
         // pattern "abcabc..." of length 100000, should have many valid substrings
         assert result > 0;
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"abc,1", "aab,0", "abbc,1", "abca,3", "bcab,3", "abcabc,10", "aaabc,3", "aabbcc,4", "acbac,6", "cbacba,10"})
+    void additionalBoundaryCases(String value, int expected) {
+        assertEquals(expected, solution.numberOfSubstrings(value));
+    }
 }

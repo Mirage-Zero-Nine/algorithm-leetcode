@@ -12,10 +12,13 @@ import org.junit.jupiter.api.Test;
  */
 
 public class Search_704Test {
+    private static final int MIN_PROBLEM_VALUE = -10_000;
+    private static final int MAX_PROBLEM_VALUE = 10_000;
+
     private final Search_704 test = new Search_704();
 
     @Test
-    public void testTargetExistsInMiddle() {
+    public void testTargetExistsNearEnd() {
         int[] nums = {-1, 0, 3, 5, 9, 12};
         int target = 9;
         assertEquals(4, test.search(nums, target));
@@ -72,11 +75,11 @@ public class Search_704Test {
 
 
     @Test
-    public void testLargeArrayNoOverflow() {
+    public void testMaximumLengthArrayFindsLastValue() {
         int size = 10_000;
         int[] nums = new int[size];
         for (int i = 0; i < size; i++) {
-            nums[i] = i - 10_000;
+            nums[i] = i + MIN_PROBLEM_VALUE;
         }
 
         int target = -1;
@@ -91,21 +94,21 @@ public class Search_704Test {
 
     @Test
     public void testTargetLessThanMinimum() {
-        int[] nums = {2, 4, 6, 8, 10};
-        assertEquals(-1, test.search(nums, 1));
+        int[] nums = {MIN_PROBLEM_VALUE + 2, -8, 0, 4, 10};
+        assertEquals(-1, test.search(nums, MIN_PROBLEM_VALUE));
     }
 
     @Test
     public void testTargetGreaterThanMaximum() {
-        int[] nums = {-8, -3, 0, 4, 11};
-        assertEquals(-1, test.search(nums, 12));
+        int[] nums = {-8, -3, 0, 4, MAX_PROBLEM_VALUE - 2};
+        assertEquals(-1, test.search(nums, MAX_PROBLEM_VALUE));
     }
 
     @Test
-    public void testEveryValueAndGapInGiantArray() {
+    public void testMaximumLengthArrayExhaustivelyChecksValuesAndGaps() {
         int[] values = new int[10_000];
         for (int i = 0; i < values.length; i++) {
-            values[i] = 2 * i - 10_000;
+            values[i] = 2 * i + MIN_PROBLEM_VALUE;
         }
 
         for (int i = 0; i < values.length; i++) {
@@ -115,7 +118,7 @@ public class Search_704Test {
     }
 
     @Test
-    public void testIntegerExtremesCanBeFoundWithoutArithmeticOverflow() {
+    public void testIntegerExtremesCanBeFound() {
         int[] values = {Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE};
         for (int i = 0; i < values.length; i++) {
             assertEquals(i, test.search(values, values[i]));

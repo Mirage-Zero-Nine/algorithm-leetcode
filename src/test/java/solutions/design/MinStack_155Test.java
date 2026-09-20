@@ -242,4 +242,152 @@ class MinStack_155Test {
             }
         }
     }
+
+    @Test
+    public void testOfficialLeetCodeSequence() {
+        minStack.push(-2);
+        minStack.push(0);
+        minStack.push(-3);
+        assertEquals(-3, minStack.getMin());
+        minStack.pop();
+        assertEquals(0, minStack.top());
+        assertEquals(-2, minStack.getMin());
+    }
+
+    @Test
+    public void testPoppingCurrentMinimumRevealsPreviousMinimum() {
+        minStack.push(8);
+        minStack.push(3);
+        minStack.push(6);
+        minStack.push(1);
+        minStack.push(4);
+        assertEquals(1, minStack.getMin());
+        minStack.pop();
+        assertEquals(1, minStack.top());
+        assertEquals(1, minStack.getMin());
+        minStack.pop();
+        assertEquals(3, minStack.getMin());
+        assertEquals(6, minStack.top());
+    }
+
+    @Test
+    public void testSeparatedDuplicateMinimaSurviveOneAtATime() {
+        int[] values = {4, 2, 7, 2, 9, 2};
+        for (int value : values) {
+            minStack.push(value);
+        }
+        for (int i = 0; i < 3; i++) {
+            assertEquals(2, minStack.getMin());
+            minStack.pop();
+        }
+        assertEquals(2, minStack.getMin());
+        assertEquals(7, minStack.top());
+        minStack.pop();
+        assertEquals(2, minStack.top());
+        assertEquals(2, minStack.getMin());
+        minStack.pop();
+        assertEquals(4, minStack.getMin());
+    }
+
+    @Test
+    public void testSignedValuesDoNotRequireArithmeticOrOverflow() {
+        int[] values = {Integer.MAX_VALUE, 0, -1, Integer.MIN_VALUE, 1, Integer.MAX_VALUE};
+        for (int value : values) {
+            minStack.push(value);
+        }
+        assertEquals(Integer.MIN_VALUE, minStack.getMin());
+        assertEquals(Integer.MAX_VALUE, minStack.top());
+        minStack.pop();
+        minStack.pop();
+        assertEquals(Integer.MIN_VALUE, minStack.getMin());
+        minStack.pop();
+        assertEquals(-1, minStack.getMin());
+        assertEquals(-1, minStack.top());
+    }
+
+    @Test
+    public void testReuseAfterDrainingStack() {
+        minStack.push(4);
+        minStack.push(2);
+        minStack.pop();
+        minStack.pop();
+        assertEquals(-1, minStack.top());
+        assertEquals(-1, minStack.getMin());
+
+        minStack.push(-9);
+        assertEquals(-9, minStack.top());
+        assertEquals(-9, minStack.getMin());
+    }
+
+    @Test
+    public void testRepeatedEmptyOperationsKeepDocumentedSentinels() {
+        for (int i = 0; i < 5; i++) {
+            minStack.pop();
+            assertEquals(-1, minStack.top());
+            assertEquals(-1, minStack.getMin());
+        }
+    }
+
+    @Test
+    public void testIndependentInstancesDoNotShareValuesOrMinimums() {
+        MinStack_155 second = new MinStack_155();
+        minStack.push(-10);
+        minStack.push(5);
+        second.push(20);
+        second.push(-2);
+
+        assertEquals(5, minStack.top());
+        assertEquals(-10, minStack.getMin());
+        assertEquals(-2, second.top());
+        assertEquals(-2, second.getMin());
+
+        minStack.pop();
+        assertEquals(-10, minStack.top());
+        assertEquals(-2, second.top());
+    }
+
+    @Test
+    public void testExactlyMaximumLegalCallCountWithValidOperations() {
+        for (int i = 0; i < 9998; i++) {
+            minStack.push(i - 4999);
+        }
+        assertEquals(-4999, minStack.getMin());
+        assertEquals(4998, minStack.top());
+        for (int i = 0; i < 9998; i++) {
+            minStack.pop();
+        }
+        for (int i = 0; i < 10000; i++) {
+            minStack.push(i - 10000);
+        }
+        assertEquals(-10000, minStack.getMin());
+        assertEquals(-1, minStack.top());
+    }
+
+    @Test
+    public void testSeededStatefulOracleAcrossFiveThousandOperations() {
+        Random random = new Random(155L);
+        List<Integer> reference = new ArrayList<>();
+        for (int operation = 0; operation < 5000; operation++) {
+            if (reference.isEmpty() || random.nextInt(4) != 0) {
+                int value = random.nextInt();
+                minStack.push(value);
+                reference.add(value);
+            } else {
+                minStack.pop();
+                reference.removeLast();
+            }
+            assertStackMatches(reference, operation);
+        }
+    }
+
+    private void assertStackMatches(List<Integer> reference, int operation) {
+        if (reference.isEmpty()) {
+            assertEquals(-1, minStack.top(), "top mismatch at operation " + operation);
+            assertEquals(-1, minStack.getMin(), "minimum mismatch at operation " + operation);
+        } else {
+            assertEquals(reference.getLast(), minStack.top(), "top mismatch at operation " + operation);
+            assertEquals(Collections.min(reference), minStack.getMin(),
+                    "minimum mismatch at operation " + operation);
+        }
+    }
 }

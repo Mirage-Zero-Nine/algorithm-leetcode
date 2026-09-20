@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -469,6 +470,120 @@ public class FindLadders_126Test {
                     graph.begin(), graph.end(), graph.dictionary());
             assertAllApproaches(expected, graph.begin(), graph.end(), graph.dictionary());
         }
+    }
+
+    @Test
+    public void testSeededSmallDictionariesAgainstIndependentOracle() {
+        // The solution implementations are not used to derive the expected result.
+        // Sampling the three-letter graph with a fixed seed exercises both reachable
+        // and unreachable targets, alternate shortest paths, and distracting cycles.
+        List<String> universe = new ArrayList<>();
+        for (char first = 'a'; first <= 'c'; first++) {
+            for (char second = 'a'; second <= 'c'; second++) {
+                for (char third = 'a'; third <= 'c'; third++) {
+                    universe.add("" + first + second + third);
+                }
+            }
+        }
+
+        Random random = new Random(126_2026L);
+        for (int sample = 0; sample < 160; sample++) {
+            List<String> dictionary = new ArrayList<>();
+            for (String word : universe) {
+                if (!word.equals("aaa") && random.nextInt(4) == 0) {
+                    dictionary.add(word);
+                }
+            }
+            // Keep the target eligible while still allowing the sampled graph to
+            // decide whether any shortest route actually exists.
+            if (!dictionary.contains("ccc")) {
+                dictionary.add("ccc");
+            }
+
+            List<List<String>> expected = shortestPathsByIndependentBfs("aaa", "ccc", dictionary);
+            assertAllApproaches(expected, "aaa", "ccc", dictionary);
+        }
+    }
+
+    @Test
+    public void testMaximumDictionaryWithAllShortestFiveLetterRoutes() {
+        List<String> dictionary = new ArrayList<>();
+        for (int mask = 1; mask < 32; mask++) {
+            StringBuilder word = new StringBuilder(5);
+            for (int bit = 0; bit < 5; bit++) {
+                word.append((mask & (1 << bit)) == 0 ? 'a' : 'b');
+            }
+            dictionary.add(word.toString());
+        }
+
+        Set<String> used = new HashSet<>(dictionary);
+        for (int value = 0; dictionary.size() < 500; value++) {
+            String candidate = "zz" + threeLetterBase26(value);
+            if (used.add(candidate)) {
+                dictionary.add(candidate);
+            }
+        }
+
+        List<List<String>> expected = shortestPathsByIndependentBfs("aaaaa", "bbbbb", dictionary);
+        assertEquals(500, dictionary.size());
+        assertEquals(120, expected.size());
+        assertAllApproaches(expected, "aaaaa", "bbbbb", dictionary);
+    }
+
+    @Test
+    public void testValidPathSurvivesNullWrongLengthAndDuplicateEntries() {
+        List<String> dictionary = new ArrayList<>(List.of(
+                "hot", "hot", "dot", "dog", "cog", "hit", "co", "zzz"));
+        dictionary.add(null);
+        List<List<String>> expected = List.of(
+                List.of("hit", "hot", "dot", "dog", "cog"));
+
+        assertAllApproaches(expected, "hit", "cog", dictionary);
+    }
+
+    @Test
+    public void testCyclesAndDeadEndsDoNotBecomeShortestPaths() {
+        List<String> dictionary = List.of(
+                "hot", "hog", "hag", "hat", "dot", "lot", "log", "cog", "cot", "cat");
+        List<List<String>> expected = List.of(
+                List.of("hit", "hot", "hog", "cog"),
+                List.of("hit", "hot", "cot", "cog"));
+
+        // The hot-hat-hag-hog and hot-dot/lot/log branches are valid but longer
+        // or dead-end alternatives; only the shortest route belongs in the answer.
+        assertAllApproaches(expected, "hit", "cog", dictionary);
+    }
+
+    @Test
+    public void testReturnedListsAreFreshAcrossCallsAndApproaches() {
+        List<String> dictionary = List.of("hot", "dot", "dog", "lot", "log", "cog");
+        List<List<String>> expected = List.of(
+                List.of("hit", "hot", "dot", "dog", "cog"),
+                List.of("hit", "hot", "lot", "log", "cog"));
+
+        List<List<String>> direct = test.findLadders("hit", "cog", dictionary);
+        List<List<String>> indexed = test.findLaddersWithPatternIndexing("hit", "cog", dictionary);
+        List<List<String>> bidirectional = test.findLaddersBidirectional("hit", "cog", dictionary);
+        direct.get(0).set(0, "changed");
+        indexed.clear();
+        bidirectional.get(0).clear();
+
+        assertPaths(expected, test.findLadders("hit", "cog", dictionary));
+        assertPaths(expected, test.findLaddersWithPatternIndexing("hit", "cog", dictionary));
+        assertPaths(expected, test.findLaddersBidirectional("hit", "cog", dictionary));
+    }
+
+    @Test
+    public void testInputListOrderAndCallerMutationDoNotAffectLaterCalls() {
+        List<String> dictionary = new ArrayList<>(List.of("hot", "dot", "dog", "lot", "log", "cog"));
+        List<List<String>> expected = List.of(
+                List.of("hit", "hot", "dot", "dog", "cog"),
+                List.of("hit", "hot", "lot", "log", "cog"));
+
+        assertAllApproaches(expected, "hit", "cog", dictionary);
+        dictionary.clear();
+        dictionary.addAll(List.of("cog", "log", "lot", "dog", "dot", "hot"));
+        assertAllApproaches(expected, "hit", "cog", dictionary);
     }
 
     private void assertAllApproaches(

@@ -55,4 +55,14 @@ public class NextGreaterElement_496Test {
         int[] nums1 = new int[]{1, 500, 999, 1000};
         assertArrayEquals(new int[]{2, 501, 1000, -1}, solver.nextGreaterElement(nums1, nums2));
     }
+    @Test public void testQueryOrder() { assertArrayEquals(new int[]{3,5,2}, solver.nextGreaterElement(new int[]{2,4,1}, new int[]{1,2,3,4,5})); }
+    @Test public void testNoGreaterMixed() { assertArrayEquals(new int[]{-1,-1}, solver.nextGreaterElement(new int[]{5,3}, new int[]{5,4,3,2,1})); }
+    @Test public void testNegativeNumbers() { assertArrayEquals(new int[]{-1,-1}, solver.nextGreaterElement(new int[]{-2,0}, new int[]{-2,-1,0})); }
+    @Test public void testFirstAndLastQueries() { assertArrayEquals(new int[]{2,-1}, solver.nextGreaterElement(new int[]{1,3}, new int[]{1,2,3})); }
+    @Test public void testTwoElementUniverse() { assertArrayEquals(new int[]{2,-1}, solver.nextGreaterElement(new int[]{1,2}, new int[]{1,2})); }
+    @Test public void testQuerySubset() { assertArrayEquals(new int[]{4,5}, solver.nextGreaterElement(new int[]{2,4}, new int[]{2,4,5,6})); }
+    @Test public void testNegativeOrdering() { assertArrayEquals(new int[]{-1,-1}, solver.nextGreaterElement(new int[]{1,-2}, new int[]{-2,-1,1})); }
+    @Test public void testRepeatedCall() { solver.nextGreaterElement(new int[]{1},new int[]{1,2}); assertArrayEquals(new int[]{3},solver.nextGreaterElement(new int[]{2},new int[]{1,2,3})); }
+    @Test public void testQuerySingleMiddle() { assertArrayEquals(new int[]{7}, solver.nextGreaterElement(new int[]{6},new int[]{4,6,7,5})); }
+    @Test public void testMaximumQuery() { assertArrayEquals(new int[]{-1}, solver.nextGreaterElement(new int[]{9},new int[]{1,3,9})); }
 }

@@ -54,4 +54,14 @@ public class Jump_45Test {
         java.util.Arrays.fill(arr, 10000);
         assertEquals(1, solver.jump(arr));
     }
+    @Test public void testAdditionalZero() { assertEquals(0, solver.jump(new int[]{0})); }
+    @Test public void testAdditionalTwoJump() { assertEquals(1, solver.jump(new int[]{2, 0})); }
+    @Test public void testAdditionalThree() { assertEquals(1, solver.jump(new int[]{3, 0, 0})); }
+    @Test public void testAdditionalFour() { assertEquals(2, solver.jump(new int[]{1, 2, 1, 0})); }
+    @Test public void testAdditionalAlternating() { assertEquals(3, solver.jump(new int[]{1, 1, 2, 1, 1})); }
+    @Test public void testAdditionalLarge() { assertEquals(2, solver.jump(new int[]{2, 0, 2, 0, 1})); }
+    @Test public void testAdditionalExact() { assertEquals(2, solver.jump(new int[]{1, 2, 3, 0})); }
+    @Test public void testAdditionalFive() { assertEquals(1, solver.jump(new int[]{5, 1, 1, 1, 1, 0})); }
+    @Test public void testAdditionalGreedy() { assertEquals(2, solver.jump(new int[]{2, 4, 1, 1, 0, 1})); }
+    @Test public void testAdditionalSix() { assertEquals(4, solver.jump(new int[]{1, 2, 1, 1, 1, 1})); }
 }

@@ -28,4 +28,14 @@ public class Calculate_224Test {
         for (int i = 1; i < 1000; i++) sb.append("+1");
         assertEquals(1000, c.calculate(sb.toString()));
     }
+    @Test public void testLeadingPlus() { assertEquals(3, c.calculate("+1+2")); }
+    @Test public void testUnaryMinus() { assertEquals(-3, c.calculate("-1-2")); }
+    @Test public void testNestedNegative() { assertEquals(-6, c.calculate("-(1+2)-3")); }
+    @Test public void testEmptyParenthesesContractExtension() { assertEquals(0, c.calculate("(0)")); }
+    @Test public void testDeepUnaryParentheses() { assertEquals(-1, c.calculate("(((((0-1)))))")); }
+    @Test public void testLargeSum() { assertEquals(100000, c.calculate("50000+50000")); }
+    @Test public void testWhitespaceInside() { assertEquals(7, c.calculate(" ( 3 + 4 ) ")); }
+    @Test public void testSubtractionAssociativity() { assertEquals(-4, c.calculate("1-2-3")); }
+    @Test public void testSignedParenthesizedTerms() { assertEquals(4, c.calculate("2-(3-5)")); }
+    @Test public void testRepeatedInvocation() { assertEquals(1, c.calculate("1")); assertEquals(2, c.calculate("2")); }
 }

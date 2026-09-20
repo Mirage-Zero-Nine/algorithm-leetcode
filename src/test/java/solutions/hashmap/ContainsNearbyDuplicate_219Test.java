@@ -73,4 +73,14 @@ public class ContainsNearbyDuplicate_219Test {
         for (int i = 0; i < 100000; i++) arr[i] = i;
         assertFalse(test.containsNearbyDuplicate(arr, 5));
     }
+    @Test void extra01() { assertTrue(test.containsNearbyDuplicate(new int[]{1,1}, 1)); }
+    @Test void extra02() { assertFalse(test.containsNearbyDuplicate(new int[]{1,1}, 0)); }
+    @Test void extra03() { assertTrue(test.containsNearbyDuplicate(new int[]{1,2,1}, 2)); }
+    @Test void extra04() { assertFalse(test.containsNearbyDuplicate(new int[]{1,2,1}, 1)); }
+    @Test void extra05() { assertTrue(test.containsNearbyDuplicate(new int[]{0,0,0}, 1)); }
+    @Test void extra06() { assertFalse(test.containsNearbyDuplicate(new int[]{-1,2,-1}, 1)); }
+    @Test void extra07() { assertTrue(test.containsNearbyDuplicate(new int[]{1,2,3,4,1}, 4)); }
+    @Test void extra08() { assertFalse(test.containsNearbyDuplicate(new int[]{}, 0)); }
+    @Test void extra09() { assertTrue(test.containsNearbyDuplicate(new int[]{5,4,3,2,1,5}, 5)); }
+    @Test void extra10() { assertFalse(test.containsNearbyDuplicate(new int[]{7}, 100)); }
 }

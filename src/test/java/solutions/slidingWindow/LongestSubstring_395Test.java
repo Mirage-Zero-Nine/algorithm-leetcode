@@ -66,4 +66,10 @@ public class LongestSubstring_395Test {
         }
         assertEquals(40000, solution.longestSubstring(sb.toString(), 2));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"a,1,1", "ab,1,2", "ab,2,0", "aabbcc,2,6", "aabbcc,3,0", "aaabbb,2,6", "abcabc,2,6", "aabbbc,2,5", "ababab,3,6", "zzzzx,4,4"})
+    void additionalBoundaryCases(String value, int k, int expected) {
+        assertEquals(expected, solution.longestSubstring(value, k));
+    }
 }

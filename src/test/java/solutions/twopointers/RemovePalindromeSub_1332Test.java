@@ -72,4 +72,15 @@ public class RemovePalindromeSub_1332Test {
         // first='a', last='b' -> not palindrome
         assertEquals(2, test.removePalindromeSub(sb.toString()));
     }
+
+    @Test public void testAlternatingLong() { assertEquals(2,test.removePalindromeSub("abababab")); }
+    @Test public void testSingleBRun() { assertEquals(1,test.removePalindromeSub("bbbbbbbb")); }
+    @Test public void testPalindromeWithMixedRuns() { assertEquals(1,test.removePalindromeSub("aabbbbaa")); }
+    @Test public void testTwoCharsAtEnds() { assertEquals(2,test.removePalindromeSub("aabb")); }
+    @Test public void testReverseAlternating() { assertEquals(2,test.removePalindromeSub("baba")); }
+    @Test public void testSingleCharacterRepeatedCall() { assertEquals(1,test.removePalindromeSub("a")); assertEquals(0,test.removePalindromeSub("")); }
+    @Test public void testLongPalindrome() { assertEquals(1,test.removePalindromeSub("a"+"b".repeat(20)+"a")); }
+    @Test public void testLongNonPalindrome() { assertEquals(2,test.removePalindromeSub("a".repeat(20)+"b")); }
+    @Test public void testBinaryPalindrome() { assertEquals(1,test.removePalindromeSub("abababa")); }
+    @Test public void testBinaryNonPalindrome() { assertEquals(2,test.removePalindromeSub("abbab")); }
 }

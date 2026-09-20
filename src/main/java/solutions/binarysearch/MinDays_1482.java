@@ -34,7 +34,7 @@ public class MinDays_1482 {
         int n = bloomDay.length;
 
         /* Corner case */
-        if (n < m * k) {
+        if ((long) n < (long) m * k) {
             return -1;
         }
 

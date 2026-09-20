@@ -124,6 +124,16 @@ public class LongestValidParentheses_32Test {
         assertEquals(2, test.longestValidParenthesesDP("(()"));
     }
 
+    @Test
+    public void testSeparatedInvalidRuns() {
+        assertAllApproaches("((", 0);
+    }
+
+    @Test
+    public void testLongValidRunAfterInvalidPrefix() {
+        assertAllApproaches(")()()()()(", 8);
+    }
+
     private void assertAllApproaches(String input, int expected) {
         assertEquals(expected, test.longestValidParentheses(input),
                 "two-pass approach: " + input);

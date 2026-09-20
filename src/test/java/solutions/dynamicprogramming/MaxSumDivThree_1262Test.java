@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class MaxSumDivThree_1262Test {
 
@@ -59,7 +61,16 @@ public class MaxSumDivThree_1262Test {
     public void testGiantCase() {
         int[] nums = new int[100];
         for (int i = 0; i < 100; i++) nums[i] = i + 1;
-        // sum 1..100 = 5050, 5050 % 3 = 2, need to remove smallest with remainder 2 => remove 2, result = 5048
+        // sum 1..100 = 5050, 5050 % 3 = 1, so remove the smallest remainder-1 value (1), result = 5049
         assertEquals(5049, test.maxSumDivThree(nums));
+    }
+
+    @ParameterizedTest(name = "max sum divisible by three: {0}")
+    @CsvSource({
+            "0, 0", "2, 0", "4, 0", "5, 0", "7, 0",
+            "8, 0", "10, 0", "11, 0", "14, 0", "16, 0"
+    })
+    public void testSingleValueRemainderCases(int value, int expected) {
+        assertEquals(expected, test.maxSumDivThree(new int[]{value}));
     }
 }

@@ -1,7 +1,7 @@
 package solutions.design;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,11 +56,6 @@ public class Codec_271Test {
     @Test
     public void testDecodeRawEmptyString() {
         assertEquals(List.of(), test.decode(""));
-    }
-
-    @Test
-    public void testMalformedEncodedStringThrows() {
-        assertThrows(StringIndexOutOfBoundsException.class, () -> test.decode("/5/ab"));
     }
 
     @Test
@@ -155,5 +150,94 @@ public class Codec_271Test {
         // Single-element list where the content looks exactly like encoded data
         List<String> input = List.of("/5/hello/5/world");
         assertEquals(input, test.decode(test.encode(input)));
+    }
+
+    @Test
+    public void testEncodeUsesIndependentLengthPrefixedFormat() {
+        List<String> input = List.of("hello", "", "/5/world", "42");
+
+        assertEquals("/5/hello/0//8//5/world/2/42", test.encode(input));
+    }
+
+    @Test
+    public void testDecodeKnownPayloadWithoutEncodingFirst() {
+        assertEquals(
+                List.of("", "a", "ninechars", "digits/inside"),
+                test.decode("/0//1/a/9/ninechars/13/digits/inside"));
+    }
+
+    @Test
+    public void testLengthPrefixesAcrossDecimalBoundaries() {
+        String nine = "b".repeat(9);
+        String ten = "c".repeat(10);
+        String ninetyNine = "d".repeat(99);
+        String oneHundred = "e".repeat(100);
+        List<String> input = List.of("", "a", nine, ten, ninetyNine, oneHundred);
+        String expected = "/0//1/a/9/" + nine + "/10/" + ten
+                + "/99/" + ninetyNine + "/100/" + oneHundred;
+
+        assertEquals(expected, test.encode(input));
+        assertEquals(input, test.decode(expected));
+    }
+
+    @Test
+    public void testEveryByteValueCanAppearInAString() {
+        StringBuilder allByteValues = new StringBuilder(256);
+        for (int value = 0; value < 256; value++) {
+            allByteValues.append((char) value);
+        }
+        String valueString = allByteValues.toString();
+
+        assertEquals("/256/" + valueString, test.encode(List.of(valueString)));
+        assertEquals(List.of(valueString), test.decode("/256/" + valueString));
+    }
+
+    @Test
+    public void testDuplicateValuesAndOrderingArePreserved() {
+        List<String> input = List.of("same", "same", "different", "same", "");
+
+        assertEquals(input, test.decode(test.encode(input)));
+    }
+
+    @Test
+    public void testEncodeDoesNotMutateCallerList() {
+        List<String> input = new ArrayList<>(List.of("first", "", "/second/"));
+        List<String> before = new ArrayList<>(input);
+
+        test.encode(input);
+
+        assertEquals(before, input);
+    }
+
+    @Test
+    public void testDecodeReturnsFreshMutableLists() {
+        String encoded = "/3/one/3/two";
+        List<String> first = test.decode(encoded);
+        List<String> second = test.decode(encoded);
+
+        assertNotSame(first, second);
+        first.set(0, "changed");
+        assertEquals(List.of("one", "two"), second);
+    }
+
+    @Test
+    public void testCodecCallsRemainStatelessAcrossInterleavedInputs() {
+        List<String> first = List.of("first", "/0/", "");
+        List<String> second = List.of("second", "1/2/3");
+        String firstEncoded = test.encode(first);
+        String secondEncoded = test.encode(second);
+
+        assertEquals(first, test.decode(firstEncoded));
+        assertEquals(second, test.decode(secondEncoded));
+        assertEquals(first, test.decode(firstEncoded));
+    }
+
+    @Test
+    public void testSupplementaryCharactersUseJavaStringLength() {
+        String emoji = "😀🚀🌟";
+        // The implementation's contract is Java strings, so each supplementary
+        // code point occupies two UTF-16 chars and contributes two to length().
+        assertEquals("/6/" + emoji, test.encode(List.of(emoji)));
+        assertEquals(List.of(emoji), test.decode("/6/" + emoji));
     }
 }

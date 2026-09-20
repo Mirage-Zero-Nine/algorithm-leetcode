@@ -100,4 +100,15 @@ public class KthSmallest_378Test {
         };
         assertEquals(1, solver.kthSmallest(matrix, 4));
     }
+
+    @Test public void testMinHeapDuplicates() { int[][] m = {{1, 1}, {1, 2}}; assertEquals(1, solver.kthSmallestMinHeap(m, 3)); }
+    @Test public void testNegativeMinHeap() { int[][] m = {{-5, -4}, {-3, -2}}; assertEquals(-3, solver.kthSmallestMinHeap(m, 3)); }
+    @Test public void testAllEqual() { int[][] m = {{7, 7}, {7, 7}}; assertEquals(7, solver.kthSmallest(m, 3)); assertEquals(7, solver.kthSmallestMinHeap(m, 3)); }
+    @Test public void testDescendingMagnitude() { int[][] m = {{-10, -5}, {-4, 0}}; assertEquals(-5, solver.kthSmallest(m, 2)); }
+    @Test public void testTwoByTwoLastBothMethods() { int[][] m = {{1, 2}, {3, 4}}; assertEquals(4, solver.kthSmallest(m, 4)); assertEquals(4, solver.kthSmallestMinHeap(m, 4)); }
+    @Test public void testFourByFourMiddle() { int[][] m = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}}; assertEquals(8, solver.kthSmallest(m, 8)); assertEquals(8, solver.kthSmallestMinHeap(m, 8)); }
+    @Test public void testLargeNegativeValues() { int[][] m = {{-1000000000, -5}, {-3, 1000000000}}; assertEquals(-5, solver.kthSmallest(m, 2)); }
+    @Test public void testDuplicateBoundaryValue() { int[][] m = {{1, 2, 2}, {2, 3, 4}, {5, 6, 7}}; assertEquals(2, solver.kthSmallest(m, 4)); }
+    @Test public void testBothMethodsAgree() { int[][] m = {{-3, 0, 8}, {-1, 2, 9}, {4, 6, 10}}; assertEquals(solver.kthSmallest(m, 5), solver.kthSmallestMinHeap(m, 5)); }
+    @Test public void testRepeatedInvocation() { solver.kthSmallest(new int[][]{{1}}, 1); assertEquals(9, solver.kthSmallestMinHeap(new int[][]{{9}}, 1)); }
 }

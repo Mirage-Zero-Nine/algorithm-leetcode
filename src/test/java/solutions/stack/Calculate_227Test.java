@@ -21,4 +21,14 @@ public class Calculate_227Test {
     @Test public void testNull() { assertEquals(0, c.calculate(null)); }
     @Test public void testSubtract() { assertEquals(1, c.calculate("3-2")); }
     @Test public void testMultiply() { assertEquals(6, c.calculate("3*2")); }
+    @Test public void testSubtractChain() { assertEquals(-4, c.calculate("1-2-3")); }
+    @Test public void testDivisionTruncatesNegative() { assertEquals(-3, c.calculate("-7/2")); }
+    @Test public void testMultiplyBeforeSubtract() { assertEquals(-5, c.calculate("1-2*3")); }
+    @Test public void testDivideThenMultiply() { assertEquals(8, c.calculate("20/5*2")); }
+    @Test public void testLeadingZeros() { assertEquals(15, c.calculate("00012+003")); }
+    @Test public void testSpacesEverywhere() { assertEquals(9, c.calculate(" 10 - 3 + 2 ")); }
+    @Test public void testLargeProduct() { assertEquals(2147395600, c.calculate("46340*46340")); }
+    @Test public void testZeroMultiplication() { assertEquals(0, c.calculate("999*0+0")); }
+    @Test public void testRepeatedInvocation() { assertEquals(3, c.calculate("1+2")); assertEquals(4, c.calculate("2+2")); }
+    @Test public void testNegativeIntermediate() { assertEquals(-6, c.calculate("0-2*3")); }
 }

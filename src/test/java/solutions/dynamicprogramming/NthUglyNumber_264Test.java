@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class NthUglyNumber_264Test {
 
@@ -58,5 +60,11 @@ public class NthUglyNumber_264Test {
     @Test
     public void testGiantCase() {
         assertEquals(2123366400, test.nthUglyNumber(1690));
+    }
+
+    @ParameterizedTest(name = "ugly number {0}")
+    @CsvSource({"8,9", "9,10", "11,15", "12,16", "13,18", "14,20", "16,25", "17,27", "18,30", "19,32"})
+    public void testAdditionalSequencePositions(int index, int expected) {
+        assertEquals(expected, test.nthUglyNumber(index));
     }
 }

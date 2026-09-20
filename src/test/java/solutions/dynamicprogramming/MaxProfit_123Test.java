@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class MaxProfit_123Test {
 
@@ -94,5 +96,21 @@ public class MaxProfit_123Test {
             }
         }
         return best;
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctCases() {
+        return Stream.of(
+                DynamicTest.dynamicTest("empty", () -> assertEquals(0, test.maxProfit(new int[]{}))),
+                DynamicTest.dynamicTest("single peak", () -> assertEquals(4, test.maxProfit(new int[]{2, 6}))),
+                DynamicTest.dynamicTest("two separated rises", () -> assertEquals(6, test.maxProfit(new int[]{1, 4, 2, 5}))),
+                DynamicTest.dynamicTest("three rises", () -> assertEquals(7, test.maxProfit(new int[]{1, 3, 2, 4, 1, 5}))),
+                DynamicTest.dynamicTest("plateau then rise", () -> assertEquals(5, test.maxProfit(new int[]{2, 2, 2, 7}))),
+                DynamicTest.dynamicTest("late second transaction", () -> assertEquals(7, test.maxProfit(new int[]{5, 1, 4, 2, 6}))),
+                DynamicTest.dynamicTest("all equal", () -> assertEquals(0, test.maxProfit(new int[]{3, 3, 3}))),
+                DynamicTest.dynamicTest("descending", () -> assertEquals(0, test.maxProfit(new int[]{9, 7, 5, 3}))),
+                DynamicTest.dynamicTest("best one trade", () -> assertEquals(10, test.maxProfit(new int[]{1, 10, 2, 3}))),
+                DynamicTest.dynamicTest("two sharp trades", () -> assertEquals(18, test.maxProfit(new int[]{1, 10, 1, 10}))),
+                DynamicTest.dynamicTest("state machine agrees", () -> assertEquals(test.maxProfit(new int[]{3, 8, 2, 9}), test.stateMachine(new int[]{3, 8, 2, 9}))));
     }
 }

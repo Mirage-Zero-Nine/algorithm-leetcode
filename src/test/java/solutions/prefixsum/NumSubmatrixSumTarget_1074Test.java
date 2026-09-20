@@ -47,7 +47,7 @@ class NumSubmatrixSumTarget_1074Test {
 
     @Test
     void testNoMatch() {
-        assertEquals(1, solution.numSubmatrixSumTarget(new int[][]{{1, 2}, {3, 4}}, 10));
+        assertEquals(0, solution.numSubmatrixSumTarget(new int[][]{{1, 2}, {3, 4}}, 11));
     }
 
     @Test

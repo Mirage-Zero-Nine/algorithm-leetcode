@@ -64,4 +64,11 @@ public class NumberOfSubarrays1248Test {
         int result = test.numberOfSubarrays(arr, 1);
         assertTrue(result > 0);
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"1,1,1", "2,1,0", "11,1,2", "111,2,2", "111,1,3", "222,1,0", "121,2,1", "21212,2,4", "135,3,1", "2468,1,0"})
+    void additionalBoundaryCases(String values, int k, int expected) {
+        int[] nums = java.util.Arrays.stream(values.split("" )).mapToInt(Integer::parseInt).toArray();
+        assertEquals(expected, test.numberOfSubarrays(nums, k));
+    }
 }

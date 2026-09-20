@@ -109,17 +109,17 @@ public class MyHashSet_705Test {
 
     @Test
     public void testGiantOperationSequence() {
-        for (int i = 0; i < 10_000; i++) {
+        // Exactly 10,000 calls: 6,000 adds, 3,000 removes, and 1,000 contains.
+        for (int i = 0; i < 6_000; i++) {
             test.add(i);
         }
-        for (int i = 0; i < 10_000; i += 2) {
+        for (int i = 0; i < 6_000; i += 2) {
             test.remove(i);
         }
 
-        assertFalse(test.contains(0));
-        assertTrue(test.contains(1));
-        assertFalse(test.contains(9_998));
-        assertTrue(test.contains(9_999));
+        for (int i = 0; i < 1_000; i++) {
+            assertEquals(i % 2 != 0, test.contains(i), "Mismatch for key " + i);
+        }
     }
 
     @Test
@@ -167,6 +167,26 @@ public class MyHashSet_705Test {
     }
 
     @Test
+    public void testMinimumAndMaximumKeysRemainIndependentFromNeighbors() {
+        test.add(0);
+        test.add(1_000_000);
+
+        assertTrue(test.contains(0));
+        assertTrue(test.contains(1_000_000));
+        assertFalse(test.contains(1));
+        assertFalse(test.contains(999_999));
+
+        test.remove(0);
+        assertFalse(test.contains(0));
+        assertTrue(test.contains(1_000_000));
+
+        test.add(0);
+        test.remove(1_000_000);
+        assertTrue(test.contains(0));
+        assertFalse(test.contains(1_000_000));
+    }
+
+    @Test
     public void testManyCollisionsSameBucket() {
         // All keys map to bucket 0 with initial capacity 256
         int[] keys = {0, 256, 512, 768, 1024, 1280, 1536, 1792, 2048, 2304};
@@ -187,7 +207,9 @@ public class MyHashSet_705Test {
         Random rng = new Random(42L);
         HashSet<Integer> expected = new HashSet<>();
 
-        for (int i = 0; i < 10_000; i++) {
+        // Reserve the final 1,000 calls for deterministic contains checks so this
+        // workload stays within the problem's total-call limit.
+        for (int i = 0; i < 9_000; i++) {
             int op = rng.nextInt(3);
             int key = rng.nextInt(1_000_001);
             switch (op) {
@@ -203,11 +225,9 @@ public class MyHashSet_705Test {
                 }
             }
         }
-        // Final cross-check on a sample of keys
+        // The final 1,000 calls complete the exact 10,000-call workload.
         for (int key = 0; key < 1000; key++) {
-            if (expected.contains(key) != test.contains(key)) {
-                throw new AssertionError("Final mismatch at key=" + key);
-            }
+            assertEquals(expected.contains(key), test.contains(key), "Final mismatch at key=" + key);
         }
     }
 
@@ -256,6 +276,40 @@ public class MyHashSet_705Test {
     }
 
     @Test
+    public void testMultipleRehashesPreserveAllKeys() {
+        HashSet<Integer> expected = new HashSet<>();
+        for (int key = 0; key < 2_048; key++) {
+            test.add(key);
+            expected.add(key);
+        }
+
+        for (int key = 0; key < 2_048; key++) {
+            assertEquals(expected.contains(key), test.contains(key), "Mismatch for key " + key);
+        }
+        assertFalse(test.contains(2_048));
+    }
+
+    @Test
+    public void testIndependentInstancesDoNotShareKeys() {
+        MyHashSet_705 first = new MyHashSet_705();
+        MyHashSet_705 second = new MyHashSet_705();
+
+        first.add(0);
+        first.add(256);
+        second.add(1_000_000);
+
+        assertTrue(first.contains(0));
+        assertTrue(first.contains(256));
+        assertFalse(first.contains(1_000_000));
+        assertTrue(second.contains(1_000_000));
+        assertFalse(second.contains(0));
+
+        first.remove(256);
+        assertFalse(first.contains(256));
+        assertTrue(second.contains(1_000_000));
+    }
+
+    @Test
     public void testDuplicateAddsRemainIdempotentAcrossRehash() {
         for (int key = 0; key <= 192; key++) {
             test.add(key);
@@ -300,26 +354,32 @@ public class MyHashSet_705Test {
 
     @Test
     public void testGiantMixedOperationsAgainstReferenceSet() {
+        Random rng = new Random(705L);
         HashSet<Integer> expected = new HashSet<>();
 
         for (int step = 0; step < 10_000; step++) {
-            int key = (step * 997) % 1_000_001;
-            if (step % 5 == 0) {
-                test.remove(key);
-                expected.remove(key);
-            } else {
-                test.add(key);
-                expected.add(key);
+            int key;
+            // Include both bucket collisions and the documented boundaries.
+            switch (step % 7) {
+                case 0 -> key = (step / 7) % 3_907 * 256;
+                case 1 -> key = 0;
+                case 2 -> key = 1_000_000;
+                default -> key = rng.nextInt(1_000_001);
             }
 
-            if (step % 97 == 0) {
-                assertEquals(expected.contains(key), test.contains(key), "Mismatch at step " + step);
+            switch (rng.nextInt(3)) {
+                case 0 -> {
+                    test.add(key);
+                    expected.add(key);
+                }
+                case 1 -> {
+                    test.remove(key);
+                    expected.remove(key);
+                }
+                case 2 -> assertEquals(expected.contains(key), test.contains(key),
+                        "Mismatch at step " + step + " for key " + key);
+                default -> throw new AssertionError("unreachable");
             }
-        }
-
-        for (int step = 0; step < 10_000; step += 113) {
-            int key = (step * 997) % 1_000_001;
-            assertEquals(expected.contains(key), test.contains(key), "Final mismatch for key " + key);
         }
     }
 

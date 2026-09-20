@@ -1,9 +1,12 @@
 package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class CanCross_403Test {
 
@@ -76,5 +79,13 @@ public class CanCross_403Test {
         int[] stones = new int[100];
         for (int i = 0; i < 100; i++) stones[i] = i;
         assertTrue(test.canCross(stones));
+    }
+
+    @ParameterizedTest(name = "stones {0}")
+    @CsvSource({"'0,1,2',true", "'0,1,3',true", "'0,1,4',false", "'0,1,3,6,10',true", "'0,1,3,6,7,9',true", "'0,1,2,4,7',true", "'0,1,3,7',false", "'0,1,2,3,5,8,12',true", "'0,1,3,4,8,9',false", "'0,1,3,5,6,8,12,17,21',true"})
+    public void testAdditionalGapAndReachabilityCases(String encoded, boolean expected) {
+        String[] values = encoded.split(","); int[] stones = new int[values.length];
+        for (int i = 0; i < values.length; i++) stones[i] = Integer.parseInt(values[i]);
+        assertEquals(expected, test.canCross(stones));
     }
 }

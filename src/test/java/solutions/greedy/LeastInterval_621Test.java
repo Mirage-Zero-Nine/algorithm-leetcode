@@ -63,4 +63,14 @@ public class LeastInterval_621Test {
         // A with n=100: just 1
         assertEquals(1, solver.leastInterval(new char[]{'A'}, 100));
     }
+    @Test public void testAdditionalEmpty() { assertEquals(0, solver.leastInterval(new char[]{}, 2)); }
+    @Test public void testAdditionalOneType() { assertEquals(1, solver.leastInterval(new char[]{'A'}, 0)); }
+    @Test public void testAdditionalAB() { assertEquals(5, solver.leastInterval(new char[]{'A','A','B','B'}, 2)); }
+    @Test public void testAdditionalABC() { assertEquals(3, solver.leastInterval(new char[]{'A','B','C'}, 3)); }
+    @Test public void testAdditionalAAAA() { assertEquals(10, solver.leastInterval(new char[]{'A','A','A','A'}, 2)); }
+    @Test public void testAdditionalBalanced() { assertEquals(8, solver.leastInterval(new char[]{'A','A','A','B','B','B','C','C'}, 2)); }
+    @Test public void testAdditionalGap() { assertEquals(7, solver.leastInterval(new char[]{'A','A','A','B'}, 2)); }
+    @Test public void testAdditionalNOne() { assertEquals(5, solver.leastInterval(new char[]{'A','A','B','B','C'}, 1)); }
+    @Test public void testAdditionalMany() { assertEquals(8, solver.leastInterval(new char[]{'A','A','A','B','B','C','C','D'}, 2)); }
+    @Test public void testAdditionalZeroTasks() { assertEquals(0, solver.leastInterval(new char[]{}, 0)); }
 }

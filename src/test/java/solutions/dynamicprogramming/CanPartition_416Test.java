@@ -160,4 +160,13 @@ public class CanPartition_416Test {
         assertTrue(test.canPartition(new int[]{0, 0}));
         assertTrue(test.canPartitionDFS(new int[]{0, 0}));
     }
+
+    @Test
+    public void testRepeatedValuesRequireExactSubset() {
+        int[] values = {2, 2, 2, 2, 2, 2};
+        assertTrue(test.canPartition(values));
+        assertTrue(test.canPartitionDFS(values));
+        assertFalse(test.canPartition(new int[]{2, 2, 2, 2, 2}));
+        assertFalse(test.canPartitionDFS(new int[]{2, 2, 2, 2, 2}));
+    }
 }

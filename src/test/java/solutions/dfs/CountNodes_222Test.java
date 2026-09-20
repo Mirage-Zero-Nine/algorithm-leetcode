@@ -1,183 +1,274 @@
 package solutions.dfs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.function.IntUnaryOperator;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
 
+/** Tests for counting nodes in complete binary trees. */
 public class CountNodes_222Test {
 
-    private final CountNodes_222 test = new CountNodes_222();
+    private final CountNodes_222 solution = new CountNodes_222();
 
     @Test
-    public void testHappyCases() {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2); root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4); root.left.right = new TreeNode(5);
-        root.right.left = new TreeNode(6);
-        assertEquals(6, test.countNodes(root));
+    public void officialSparseExampleHasSixNodes() {
+        TreeNode root = buildCompleteTree(6, i -> i);
+
+        assertEquals(6, solution.countNodes(root));
     }
 
     @Test
-    public void testNegativeAndEdgeCases() {
-        assertEquals(0, test.countNodes(null));
-        assertEquals(1, test.countNodes(new TreeNode(1)));
+    public void nullTreeHasZeroNodes() {
+        assertEquals(0, solution.countNodes(null));
     }
 
     @Test
-    public void testLargeCase() {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2); root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4); root.left.right = new TreeNode(5);
-        root.right.left = new TreeNode(6); root.right.right = new TreeNode(7);
-        assertEquals(7, test.countNodes(root));
+    public void singletonTreeHasOneNode() {
+        assertEquals(1, solution.countNodes(buildCompleteTree(1, i -> 0)));
     }
 
     @Test
-    public void testNullTree() {
-        assertEquals(0, test.countNodes(null));
+    public void twoNodeTreeUsesOnlyTheLeftChild() {
+        assertEquals(2, solution.countNodes(buildCompleteTree(2, i -> i)));
     }
 
     @Test
-    public void testSingleNode() {
-        assertEquals(1, test.countNodes(new TreeNode(1)));
-    }
-
-    @Test
-    public void testPerfectTreeDepth2() {
-        // 3 nodes
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        assertEquals(3, test.countNodes(root));
-    }
-
-    @Test
-    public void testPerfectTreeDepth3() {
-        // 7 nodes
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2); root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4); root.left.right = new TreeNode(5);
-        root.right.left = new TreeNode(6); root.right.right = new TreeNode(7);
-        assertEquals(7, test.countNodes(root));
-    }
-
-    @Test
-    public void testCompleteTreeLastLevelPartialLeft() {
-        // 4 nodes: complete tree with only left child on last level
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2); root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4);
-        assertEquals(4, test.countNodes(root));
-    }
-
-    @Test
-    public void testCompleteTreeLastLevelPartialBoth() {
-        // 5 nodes
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2); root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4); root.left.right = new TreeNode(5);
-        assertEquals(5, test.countNodes(root));
-    }
-
-    @Test
-    public void testLeftOnlyChain() {
-        // 2 nodes (still a complete tree)
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        assertEquals(2, test.countNodes(root));
-    }
-
-    @Test
-    public void testGiantPerfectTree() {
-        // Build a perfect binary tree of depth 10 (1023 nodes)
-        TreeNode root = buildPerfectTree(10);
-        assertEquals(1023, test.countNodes(root));
-    }
-
-    @Test
-    public void testGiantCompleteTree() {
-        // Build a complete tree with 1000 nodes
-        TreeNode root = buildCompleteTree(1000);
-        assertEquals(1000, test.countNodes(root));
-    }
-
-    @Test
-    public void testPerfectTreeDepth4() {
-        // 15 nodes
-        TreeNode root = buildPerfectTree(4);
-        assertEquals(15, test.countNodes(root));
-    }
-
-    @Test
-    public void testPerfectTreeDepth5() {
-        // 31 nodes
-        TreeNode root = buildPerfectTree(5);
-        assertEquals(31, test.countNodes(root));
-    }
-
-    @Test
-    public void testLastLevelOnlyOneNodeDeep() {
-        // Depth 4 perfect (15 nodes) + 1 node on last level = 16
-        TreeNode root = buildCompleteTree(16);
-        assertEquals(16, test.countNodes(root));
-    }
-
-    @Test
-    public void testLastLevelFullMinusOne() {
-        // Depth 4 perfect = 15, full last level = 31, minus one = 30
-        TreeNode root = buildCompleteTree(30);
-        assertEquals(30, test.countNodes(root));
-    }
-
-    @Test
-    public void testCompleteNotPerfectVariousSizes() {
-        // Test several complete-but-not-perfect trees
-        for (int n : new int[]{5, 6, 9, 10, 12, 20, 25}) {
-            TreeNode root = buildCompleteTree(n);
-            assertEquals(n, test.countNodes(root));
+    public void everySmallPerfectTreeHeightHasExpectedCount() {
+        for (int height = 1; height <= 8; height++) {
+            int expected = (1 << height) - 1;
+            assertEquals(expected, solution.countNodes(buildPerfectTree(height)),
+                    "height=" + height);
         }
     }
 
     @Test
-    public void testPropertyCrossCheckWithRecursiveCount() {
-        // Cross-check countNodes against a naive recursive count for various sizes
-        for (int n = 0; n <= 100; n++) {
-            TreeNode root = buildCompleteTree(n);
-            assertEquals(naiveCount(root), test.countNodes(root), "Failed for n=" + n);
+    public void largestPerfectTreeWithinProblemLimitDoesNotOverflow() {
+        // Height 15 has 32,767 nodes; the next perfect tree has 65,535 nodes,
+        // which is outside the problem's 50,000-node contract.
+        assertEquals(32_767, solution.countNodes(buildPerfectTree(15)));
+    }
+
+    @Test
+    public void everyLastLevelCutoffAtHeightFourIsCounted() {
+        // Counts 8..15 contain the first through all eight nodes of level 4.
+        for (int nodeCount = 8; nodeCount <= 15; nodeCount++) {
+            assertEquals(nodeCount, solution.countNodes(buildCompleteTree(nodeCount, i -> i)),
+                    "nodeCount=" + nodeCount);
         }
     }
 
     @Test
-    public void testPerfectTreeAllDepths() {
-        // depth 1->1, 2->3, 3->7, 4->15, 5->31
-        int[] expected = {1, 3, 7, 15, 31};
-        for (int d = 1; d <= 5; d++) {
-            TreeNode root = buildPerfectTree(d);
-            assertEquals(expected[d - 1], test.countNodes(root), "Failed for depth=" + d);
+    public void everyLastLevelCutoffAtHeightFiveIsCounted() {
+        // Counts 16..31 contain every possible cutoff of the fifth level.
+        for (int nodeCount = 16; nodeCount <= 31; nodeCount++) {
+            assertEquals(nodeCount, solution.countNodes(buildCompleteTree(nodeCount, i -> i)),
+                    "nodeCount=" + nodeCount);
         }
     }
 
-    private int naiveCount(TreeNode node) {
-        if (node == null) return 0;
-        return 1 + naiveCount(node.left) + naiveCount(node.right);
+    @Test
+    public void lastLevelCutoffsAtHigherHeightTransitionsAreCounted() {
+        int[] counts = {32, 33, 40, 47, 48, 55, 62, 63, 64, 65, 96, 127, 128, 129};
+        for (int nodeCount : counts) {
+            assertEquals(nodeCount, solution.countNodes(buildCompleteTree(nodeCount, i -> i)),
+                    "nodeCount=" + nodeCount);
+        }
     }
 
-    private TreeNode buildPerfectTree(int depth) {
-        if (depth == 0) return null;
-        TreeNode node = new TreeNode(1);
-        node.left = buildPerfectTree(depth - 1);
-        node.right = buildPerfectTree(depth - 1);
-        return node;
+    @Test
+    public void allSmallCompleteTreeSizesAgreeWithIndependentBreadthFirstOracle() {
+        for (int nodeCount = 0; nodeCount <= 256; nodeCount++) {
+            TreeNode root = buildCompleteTree(nodeCount, i -> i % 17);
+
+            assertEquals(countByBreadthFirstTraversal(root), solution.countNodes(root),
+                    "nodeCount=" + nodeCount);
+        }
     }
 
-    private TreeNode buildCompleteTree(int n) {
-        if (n <= 0) return null;
-        TreeNode[] nodes = new TreeNode[n + 1];
-        for (int i = 1; i <= n; i++) nodes[i] = new TreeNode(i);
-        for (int i = 1; i <= n; i++) {
-            if (2 * i <= n) nodes[i].left = nodes[2 * i];
-            if (2 * i + 1 <= n) nodes[i].right = nodes[2 * i + 1];
+    @Test
+    public void irregularCompleteTreeSizesAgreeWithIndependentOracle() {
+        int[] counts = {3, 9, 10, 12, 20, 25, 37, 58, 99, 127, 130, 255, 300, 511, 777};
+        for (int nodeCount : counts) {
+            TreeNode root = buildCompleteTree(nodeCount, i -> (i * 31) % 50_001);
+
+            assertEquals(countByBreadthFirstTraversal(root), solution.countNodes(root),
+                    "nodeCount=" + nodeCount);
+        }
+    }
+
+    @Test
+    public void maximumAllowedNodeCountIsReturned() {
+        TreeNode root = buildCompleteTree(50_000, i -> i);
+
+        assertEquals(50_000, solution.countNodes(root));
+    }
+
+    @Test
+    public void maximumAllowedCountWithAllDuplicateValuesIsReturned() {
+        TreeNode root = buildCompleteTree(50_000, i -> 42);
+
+        assertEquals(50_000, solution.countNodes(root));
+    }
+
+    @Test
+    public void zeroAndMaximumAllowedValuesDoNotAffectCount() {
+        TreeNode root = buildCompleteTree(2_047, i -> (i & 1) == 0 ? 0 : 50_000);
+
+        assertEquals(2_047, solution.countNodes(root));
+    }
+
+    @Test
+    public void duplicateValuesAtEveryPositionDoNotAffectCount() {
+        TreeNode root = buildCompleteTree(63, i -> 7);
+
+        assertEquals(63, solution.countNodes(root));
+    }
+
+    @Test
+    public void valuesInReverseOrderDoNotAffectCount() {
+        TreeNode root = buildCompleteTree(1_023, i -> 1_023 - i);
+
+        assertEquals(1_023, solution.countNodes(root));
+    }
+
+    @Test
+    public void repeatedCallsOnTheSameTreeAreIndependent() {
+        TreeNode root = buildCompleteTree(4_095, i -> i);
+
+        assertEquals(4_095, solution.countNodes(root));
+        assertEquals(4_095, solution.countNodes(root));
+        root.val = 50_000;
+        assertEquals(4_095, solution.countNodes(root));
+    }
+
+    @Test
+    public void oneSolutionInstanceCanCountDifferentTreesSequentially() {
+        assertEquals(6, solution.countNodes(buildCompleteTree(6, i -> i)));
+        assertEquals(31, solution.countNodes(buildCompleteTree(31, i -> 0)));
+        assertEquals(0, solution.countNodes(null));
+        assertEquals(127, solution.countNodes(buildCompleteTree(127, i -> 50_000)));
+    }
+
+    @Test
+    public void countingDoesNotMutateTreeTopologyOrValues() {
+        TreeNode root = buildCompleteTree(15, i -> i * 2);
+        TreeNode originalLeft = root.left;
+        TreeNode originalRight = root.right;
+        int originalRootValue = root.val;
+        int originalLeftValue = root.left.val;
+
+        assertEquals(15, solution.countNodes(root));
+
+        assertSame(originalLeft, root.left);
+        assertSame(originalRight, root.right);
+        assertEquals(originalRootValue, root.val);
+        assertEquals(originalLeftValue, root.left.val);
+    }
+
+    @Test
+    public void completeTreesAtEachPerfectToPartialTransitionAreCounted() {
+        int[] counts = {1, 2, 3, 4, 7, 8, 15, 16, 31, 32, 63, 64, 127, 128,
+                255, 256, 511, 512, 1_023, 1_024, 2_047, 2_048, 4_095, 4_096};
+        for (int nodeCount : counts) {
+            assertEquals(nodeCount, solution.countNodes(buildCompleteTree(nodeCount, i -> i % 2)),
+                    "nodeCount=" + nodeCount);
+        }
+    }
+
+    @Test
+    public void exactLastLevelOneNodeCasesAcrossHeightsAreCounted() {
+        int[] counts = {2, 4, 8, 16, 32, 64, 128, 256, 512, 1_024, 2_048, 4_096};
+        for (int nodeCount : counts) {
+            assertEquals(nodeCount, solution.countNodes(buildCompleteTree(nodeCount, i -> i)));
+        }
+    }
+
+    @Test
+    public void exactLastLevelFullCasesAcrossHeightsAreCounted() {
+        int[] counts = {3, 7, 15, 31, 63, 127, 255, 511, 1_023, 2_047, 4_095};
+        for (int nodeCount : counts) {
+            assertEquals(nodeCount, solution.countNodes(buildCompleteTree(nodeCount, i -> i)));
+        }
+    }
+
+    @Test
+    public void independentOracleChecksMaximumTree() {
+        TreeNode root = buildCompleteTree(50_000, i -> (i * 17) % 50_001);
+
+        assertEquals(countByBreadthFirstTraversal(root), solution.countNodes(root));
+    }
+
+    @Test
+    public void smallTreesWithBoundaryAndDuplicateValuesAgreeWithOracle() {
+        int[] values = {0, 50_000, 0, 50_000, 50_000, 0};
+        for (int nodeCount = 0; nodeCount <= values.length; nodeCount++) {
+            TreeNode root = buildCompleteTree(nodeCount, i -> values[(i - 1) % values.length]);
+
+            assertEquals(countByBreadthFirstTraversal(root), solution.countNodes(root),
+                    "nodeCount=" + nodeCount);
+        }
+    }
+
+    @Test
+    public void partialLastLevelContainsExactlyTheRequestedNodes() {
+        TreeNode root = buildCompleteTree(30, i -> i);
+
+        assertEquals(30, solution.countNodes(root));
+        assertEquals(30, countByBreadthFirstTraversal(root));
+        assertNull(root.right.right.right.right);
+    }
+
+    private int countByBreadthFirstTraversal(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        int count = 0;
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.remove();
+            count++;
+            if (node.left != null) {
+                queue.add(node.left);
+            }
+            if (node.right != null) {
+                queue.add(node.right);
+            }
+        }
+        return count;
+    }
+
+    private TreeNode buildPerfectTree(int height) {
+        if (height == 0) {
+            return null;
+        }
+        return buildCompleteTree((1 << height) - 1, i -> i);
+    }
+
+    private TreeNode buildCompleteTree(int nodeCount, IntUnaryOperator valueForIndex) {
+        if (nodeCount == 0) {
+            return null;
+        }
+
+        TreeNode[] nodes = new TreeNode[nodeCount + 1];
+        for (int index = 1; index <= nodeCount; index++) {
+            nodes[index] = new TreeNode(valueForIndex.applyAsInt(index));
+        }
+        for (int index = 1; index <= nodeCount; index++) {
+            int leftIndex = index * 2;
+            int rightIndex = leftIndex + 1;
+            if (leftIndex <= nodeCount) {
+                nodes[index].left = nodes[leftIndex];
+            }
+            if (rightIndex <= nodeCount) {
+                nodes[index].right = nodes[rightIndex];
+            }
         }
         return nodes[1];
     }

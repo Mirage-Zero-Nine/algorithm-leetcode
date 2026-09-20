@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class TilingRectangle_1240Test {
 
@@ -67,5 +69,11 @@ public class TilingRectangle_1240Test {
     @Test
     public void testGiantCase() {
         assertEquals(6, new TilingRectangle_1240().tilingRectangle(13, 11));
+    }
+
+    @ParameterizedTest(name = "tile {0}x{1}")
+    @CsvSource({"1,5,5", "1,6,6", "2,5,4", "2,6,3", "3,4,4", "3,6,2", "4,5,5", "4,7,5", "5,6,5", "6,8,4"})
+    public void testAdditionalSmallRectangles(int height, int width, int expected) {
+        assertEquals(expected, new TilingRectangle_1240().tilingRectangle(height, width));
     }
 }

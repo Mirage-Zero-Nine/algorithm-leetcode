@@ -26,7 +26,7 @@ public class FindTarget_653 {
      * @return if the tree contains 2 elements that their sum is equal to k
      */
     public boolean findTarget_Set(TreeNode root, int k) {
-        Set<Integer> temp = new HashSet<>();
+        Set<Long> temp = new HashSet<>();
         return dfs(root, k, temp);
     }
 
@@ -38,14 +38,14 @@ public class FindTarget_653 {
      * @param s set that store previously visited value
      * @return true if find sum
      */
-    private boolean dfs(TreeNode r, int k, Set<Integer> s) {
+    private boolean dfs(TreeNode r, int k, Set<Long> s) {
         if (r == null) {
             return false;
         }
-        if (s.contains(k - r.val)) {
+        if (s.contains((long) k - r.val)) {
             return true;
         }
-        s.add(r.val);
+        s.add((long) r.val);
         return dfs(r.left, k, s) || dfs(r.right, k, s);
     }
 }

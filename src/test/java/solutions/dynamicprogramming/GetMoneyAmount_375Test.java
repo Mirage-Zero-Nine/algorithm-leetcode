@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class GetMoneyAmount_375Test {
 
@@ -88,5 +90,21 @@ public class GetMoneyAmount_375Test {
 
         memo[low][high] = minimumWorstCaseCost;
         return minimumWorstCaseCost;
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctRanges() {
+        return Stream.of(
+                DynamicTest.dynamicTest("n6", () -> assertEquals(8, test.bottomUp(6))),
+                DynamicTest.dynamicTest("n7", () -> assertEquals(10, test.bottomUp(7))),
+                DynamicTest.dynamicTest("n8", () -> assertEquals(12, test.bottomUp(8))),
+                DynamicTest.dynamicTest("n9", () -> assertEquals(14, test.bottomUp(9))),
+                DynamicTest.dynamicTest("n11 top down", () -> assertEquals(18, test.getMoneyAmount(11))),
+                DynamicTest.dynamicTest("n11 bottom up", () -> assertEquals(18, test.bottomUp(11))),
+                DynamicTest.dynamicTest("n12 top down", () -> assertEquals(21, test.getMoneyAmount(12))),
+                DynamicTest.dynamicTest("n12 bottom up", () -> assertEquals(21, test.bottomUp(12))),
+                DynamicTest.dynamicTest("n15", () -> assertEquals(30, test.bottomUp(15))),
+                DynamicTest.dynamicTest("n25", () -> assertEquals(64, test.bottomUp(25))),
+                DynamicTest.dynamicTest("n30 top down", () -> assertEquals(79, test.getMoneyAmount(30))));
     }
 }

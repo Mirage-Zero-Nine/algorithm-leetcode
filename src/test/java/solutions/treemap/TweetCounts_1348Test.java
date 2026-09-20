@@ -103,4 +103,82 @@ public class TweetCounts_1348Test {
         int sum = result.stream().mapToInt(Integer::intValue).sum();
         assertEquals(10000, sum);
     }
+
+    @Test
+    public void testTweetsExactlyAtAllFrequencyBoundaries() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("x", 0);
+        test.recordTweet("x", 59);
+        test.recordTweet("x", 60);
+        test.recordTweet("x", 3599);
+        test.recordTweet("x", 3600);
+        assertEquals(List.of(2, 1), test.getTweetCountsPerFrequency("minute", "x", 0, 60));
+        assertEquals(List.of(4, 1), test.getTweetCountsPerFrequency("hour", "x", 0, 3600));
+    }
+
+    @Test
+    public void testDifferentTweetNamesAreIndependent() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("a", 10);
+        test.recordTweet("b", 10);
+        assertEquals(List.of(1), test.getTweetCountsPerFrequency("minute", "a", 0, 59));
+        assertEquals(List.of(1), test.getTweetCountsPerFrequency("minute", "b", 0, 59));
+    }
+
+    @Test
+    public void testQueryExcludesOutsideEndpoints() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("x", 9);
+        test.recordTweet("x", 10);
+        test.recordTweet("x", 20);
+        assertEquals(List.of(2), test.getTweetCountsPerFrequency("minute", "x", 10, 20));
+    }
+
+    @Test
+    public void testLastPartialChunk() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("x", 69);
+        test.recordTweet("x", 70);
+        assertEquals(List.of(1, 1), test.getTweetCountsPerFrequency("minute", "x", 10, 70));
+    }
+
+    @Test
+    public void testLargeTimeValues() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("x", 1_000_000_000);
+        assertEquals(List.of(1), test.getTweetCountsPerFrequency("day", "x", 1_000_000_000, 1_000_000_000));
+    }
+
+    @Test
+    public void testRepeatedQueryDoesNotConsumeTweets() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("x", 10);
+        assertEquals(List.of(1), test.getTweetCountsPerFrequency("minute", "x", 0, 59));
+        assertEquals(List.of(1), test.getTweetCountsPerFrequency("minute", "x", 0, 59));
+    }
+
+    @Test
+    public void testHourRangeCreatesEmptyIntermediateBuckets() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("x", 0);
+        test.recordTweet("x", 7200);
+        assertEquals(List.of(1, 0, 1), test.getTweetCountsPerFrequency("hour", "x", 0, 7200));
+    }
+
+    @Test
+    public void testMinuteOffsetStartsAtArbitraryTime() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("x", 10);
+        test.recordTweet("x", 69);
+        test.recordTweet("x", 70);
+        assertEquals(List.of(2, 1), test.getTweetCountsPerFrequency("minute", "x", 10, 70));
+    }
+
+    @Test
+    public void testDayRangeWithEmptySecondBucket() {
+        TweetCounts_1348 test = new TweetCounts_1348();
+        test.recordTweet("x", 0);
+        test.recordTweet("x", 172800);
+        assertEquals(List.of(1, 0, 1), test.getTweetCountsPerFrequency("day", "x", 0, 172800));
+    }
 }

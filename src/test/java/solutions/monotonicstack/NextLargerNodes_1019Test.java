@@ -73,4 +73,13 @@ public class NextLargerNodes_1019Test {
         int[] result = solver.nextLargerNodes(head);
         assertEquals(1000, result.length);
     }
+    @Test public void testTwoEqual() { assertArrayEquals(new int[]{0,0},solver.nextLargerNodes(buildList(4,4))); }
+    @Test public void testValley() { assertArrayEquals(new int[]{0,5,0},solver.nextLargerNodes(buildList(5,1,5))); }
+    @Test public void testNegativeValues() { assertArrayEquals(new int[]{-1,0,0},solver.nextLargerNodes(buildList(-2,-1,-3))); }
+    @Test public void testPeakThenRise() { assertArrayEquals(new int[]{4,0,4,0},solver.nextLargerNodes(buildList(1,4,2,4))); }
+    @Test public void testLateMaximum() { assertArrayEquals(new int[]{2,3,3,0},solver.nextLargerNodes(buildList(1,2,1,3))); }
+    @Test public void testTwoDecreasing() { assertArrayEquals(new int[]{0,0},solver.nextLargerNodes(buildList(2,1))); }
+    @Test public void testAlternating() { assertArrayEquals(new int[]{5,0,5,0},solver.nextLargerNodes(buildList(1,5,1,5))); }
+    @Test public void testIntegerBounds() { assertArrayEquals(new int[]{Integer.MAX_VALUE,0},solver.nextLargerNodes(buildList(Integer.MIN_VALUE,Integer.MAX_VALUE))); }
+    @Test public void testRepeatedCall() { solver.nextLargerNodes(buildList(1,2)); assertArrayEquals(new int[]{2,0},solver.nextLargerNodes(buildList(1,2))); }
 }

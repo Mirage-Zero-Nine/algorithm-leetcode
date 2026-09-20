@@ -2,8 +2,11 @@ package solutions.dfs;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Random;
 
 /**
  * @author BorisMirage
@@ -264,5 +267,202 @@ public class Exist_79Test {
         for (int i = 0; i < board.length; i++) {
             assertArrayEquals(original[i], board[i], "Row " + i + " was mutated");
         }
+    }
+
+    @Test
+    public void testMaximumDocumentedBoardAndWordLength() {
+        // LeetCode permits a 6x6 board and a word of length 15.  A path can
+        // be selected without relying on an accidental diagonal adjacency.
+        char[][] board = new char[6][6];
+        for (int row = 0; row < board.length; row++) {
+            for (int column = 0; column < board[row].length; column++) {
+                board[row][column] = (char) ('A' + (row + column) % 2);
+            }
+        }
+        assertTrue(test.exist(board, "ABABABABABABABA"));
+    }
+
+    @Test
+    public void testLowerAndUpperCaseLettersRemainDistinct() {
+        char[][] board = {
+                {'Z', 'a', 'z'},
+                {'x', 'Y', 'b'}
+        };
+
+        assertTrue(test.exist(board, "Z"));
+        assertTrue(test.exist(board, "Za"));
+        assertTrue(test.exist(board, "zb"));
+        assertFalse(test.exist(board, "ZA"));
+        assertFalse(test.exist(board, "Zb"));
+    }
+
+    @Test
+    public void testDeepFailedSearchRestoresBoardForLaterCalls() {
+        char[][] board = {
+                {'A', 'A', 'A'},
+                {'A', 'A', 'A'},
+                {'A', 'A', 'A'}
+        };
+        char[][] original = copy(board);
+
+        assertFalse(test.exist(board, "AAAAAB"));
+        assertBoardEquals(original, board);
+        assertTrue(test.exist(board, "AAAAAAAAA"));
+        assertBoardEquals(original, board);
+    }
+
+    @Test
+    public void testSuccessfulSearchAlsoRestoresBoardAndSupportsReuse() {
+        char[][] board = {
+                {'C', 'A', 'A'},
+                {'A', 'B', 'A'},
+                {'A', 'A', 'D'}
+        };
+        char[][] original = copy(board);
+
+        assertTrue(test.exist(board, "CAB"));
+        assertBoardEquals(original, board);
+        assertTrue(test.exist(board, "DAB"));
+        assertBoardEquals(original, board);
+        assertFalse(test.exist(board, "CDA"));
+        assertBoardEquals(original, board);
+    }
+
+    @Test
+    public void testFreshInstancesDoNotShareSearchState() {
+        char[][] board = {
+                {'A', 'B'},
+                {'C', 'D'}
+        };
+
+        assertFalse(new Exist_79().exist(copy(board), "ABCDZ"));
+        assertTrue(new Exist_79().exist(copy(board), "AB"));
+        assertTrue(new Exist_79().exist(copy(board), "CD"));
+    }
+
+    @Test
+    public void testExhaustiveTwoByTwoBoardsAgainstIndependentOracle() {
+        // Enumerating every A/B board and every short A/B word exercises
+        // starts, turns, revisits, and the four-neighbor boundary rules.
+        for (int boardMask = 0; boardMask < 1 << 4; boardMask++) {
+            char[][] board = boardFromMask(boardMask, 2, 2);
+            for (int length = 1; length <= 5; length++) {
+                for (int wordMask = 0; wordMask < 1 << length; wordMask++) {
+                    String word = binaryWord(wordMask, length);
+                    boolean expected = referenceExist(board, word);
+                    boolean actual = test.exist(copy(board), word);
+                    assertEquals(expected, actual,
+                            "board=" + boardText(board) + ", word=" + word);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testSeededRandomSmallBoardsAgainstIndependentOracle() {
+        Random random = new Random(79_2026L);
+        String alphabet = "ABab";
+
+        for (int caseNumber = 0; caseNumber < 250; caseNumber++) {
+            int rows = 1 + random.nextInt(4);
+            int columns = 1 + random.nextInt(4);
+            char[][] board = new char[rows][columns];
+            for (int row = 0; row < rows; row++) {
+                for (int column = 0; column < columns; column++) {
+                    board[row][column] = alphabet.charAt(random.nextInt(alphabet.length()));
+                }
+            }
+
+            int length = 1 + random.nextInt(Math.min(8, rows * columns + 2));
+            StringBuilder word = new StringBuilder(length);
+            for (int index = 0; index < length; index++) {
+                word.append(alphabet.charAt(random.nextInt(alphabet.length())));
+            }
+
+            boolean expected = referenceExist(board, word.toString());
+            boolean actual = test.exist(copy(board), word.toString());
+            assertEquals(expected, actual,
+                    "random case " + caseNumber + ": board=" + boardText(board)
+                            + ", word=" + word);
+        }
+    }
+
+    private static boolean referenceExist(char[][] board, String word) {
+        if (board == null || board.length == 0 || word == null || word.isEmpty()) {
+            return false;
+        }
+        for (int row = 0; row < board.length; row++) {
+            for (int column = 0; column < board[row].length; column++) {
+                boolean[][] used = new boolean[board.length][board[0].length];
+                if (referenceDfs(board, word, 0, row, column, used)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean referenceDfs(char[][] board, String word, int index,
+                                        int row, int column, boolean[][] used) {
+        if (row < 0 || row >= board.length || column < 0 || column >= board[0].length
+                || used[row][column] || board[row][column] != word.charAt(index)) {
+            return false;
+        }
+        if (index == word.length() - 1) {
+            return true;
+        }
+
+        used[row][column] = true;
+        boolean found = referenceDfs(board, word, index + 1, row + 1, column, used)
+                || referenceDfs(board, word, index + 1, row - 1, column, used)
+                || referenceDfs(board, word, index + 1, row, column + 1, used)
+                || referenceDfs(board, word, index + 1, row, column - 1, used);
+        used[row][column] = false;
+        return found;
+    }
+
+    private static char[][] boardFromMask(int mask, int rows, int columns) {
+        char[][] board = new char[rows][columns];
+        for (int row = 0; row < rows; row++) {
+            for (int column = 0; column < columns; column++) {
+                int bit = row * columns + column;
+                board[row][column] = ((mask >> bit) & 1) == 0 ? 'A' : 'B';
+            }
+        }
+        return board;
+    }
+
+    private static String binaryWord(int mask, int length) {
+        StringBuilder word = new StringBuilder(length);
+        for (int bit = 0; bit < length; bit++) {
+            word.append(((mask >> bit) & 1) == 0 ? 'A' : 'B');
+        }
+        return word.toString();
+    }
+
+    private static char[][] copy(char[][] board) {
+        char[][] result = new char[board.length][];
+        for (int row = 0; row < board.length; row++) {
+            result[row] = board[row].clone();
+        }
+        return result;
+    }
+
+    private static void assertBoardEquals(char[][] expected, char[][] actual) {
+        assertEquals(expected.length, actual.length);
+        for (int row = 0; row < expected.length; row++) {
+            assertArrayEquals(expected[row], actual[row]);
+        }
+    }
+
+    private static String boardText(char[][] board) {
+        StringBuilder text = new StringBuilder("[");
+        for (int row = 0; row < board.length; row++) {
+            if (row > 0) {
+                text.append(';');
+            }
+            text.append(board[row]);
+        }
+        return text.append(']').toString();
     }
 }

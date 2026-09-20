@@ -53,4 +53,15 @@ public class FindMinMoves_517Test {
         // avg = 5, machines[0] excess = n*5 - 5 = 49995
         assertEquals(49995, solver.findMinMoves(machines));
     }
+
+    @Test public void testBalancedFour() { assertEquals(0, solver.findMinMoves(new int[]{1, 1, 1, 1})); }
+    @Test public void testTransferRight() { assertEquals(1, solver.findMinMoves(new int[]{0, 2, 2, 0})); }
+    @Test public void testTransferLeft() { assertEquals(2, solver.findMinMoves(new int[]{2, 2, 0, 0})); }
+    @Test public void testThreeMachines() { assertEquals(2, solver.findMinMoves(new int[]{0, 3, 0})); }
+    @Test public void testFiveMachines() { assertEquals(4, solver.findMinMoves(new int[]{0, 5, 0, 0, 0})); }
+    @Test public void testUniformLarge() { assertEquals(0, solver.findMinMoves(new int[]{100, 100, 100})); }
+    @Test public void testOddDistribution() { assertEquals(0, solver.findMinMoves(new int[]{1, 1})); }
+    @Test public void testTwoTransfers() { assertEquals(3, solver.findMinMoves(new int[]{0, 0, 4, 0})); }
+    @Test public void testFourBalanced() { assertEquals(2, solver.findMinMoves(new int[]{0, 4, 4, 0})); }
+    @Test public void testRepeatedCall() { assertEquals(1, solver.findMinMoves(new int[]{0, 2})); }
 }

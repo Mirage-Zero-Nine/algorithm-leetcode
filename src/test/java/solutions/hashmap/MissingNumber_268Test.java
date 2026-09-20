@@ -179,4 +179,14 @@ class MissingNumber_268Test {
             assertEquals(missing, result);
         }
     }
+    @Test void extra01() { assertEquals(0, solution.missingNumber(new int[]{1})); }
+    @Test void extra02() { assertEquals(1, solution.missingNumber(new int[]{0})); }
+    @Test void extra03() { assertEquals(2, solution.missingNumber(new int[]{0,1,3})); }
+    @Test void extra04() { assertEquals(3, solution.missingNumber(new int[]{0,1,2})); }
+    @Test void extra05() { assertEquals(0, solution.missingNumber(new int[]{1,2,3})); }
+    @Test void extra06() { assertEquals(4, solution.missingNumber(new int[]{0,1,2,3,5})); }
+    @Test void extra07() { assertEquals(1, solution.missingNumber(new int[]{3,0,2})); }
+    @Test void extra08() { assertEquals(2, solution.missingNumber(new int[]{3,0,1})); }
+    @Test void extra09() { assertEquals(5, solution.missingNumber(new int[]{0,1,2,3,4,6})); }
+    @Test void extra10() { assertEquals(7, solution.missingNumber(new int[]{0,1,2,3,4,5,6,8})); }
 }

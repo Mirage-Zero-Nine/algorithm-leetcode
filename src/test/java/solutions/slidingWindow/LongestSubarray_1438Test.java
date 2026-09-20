@@ -67,4 +67,11 @@ public class LongestSubarray_1438Test {
         int result = solution.longestSubarray(nums, 50);
         assert result > 0;
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"1|0,0,1", "1|2|3,1,2", "5|5|5,0,3", "1|10|1,4,1", "10|8|6|4,4,3", "1|3|5|7,6,4", "2|2|2|2,0,4", "1|100|2,1,1", "9|1|8|2,7,3", "0|9|18,10,2"})
+    void additionalBoundaryCases(String encoded, int limit, int expected) {
+        int[] nums = java.util.Arrays.stream(encoded.split("\\|" )).mapToInt(Integer::parseInt).toArray();
+        assertEquals(expected, solution.longestSubarray(nums, limit));
+    }
 }

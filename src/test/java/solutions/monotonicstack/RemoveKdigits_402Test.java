@@ -25,4 +25,14 @@ public class RemoveKdigits_402Test {
         String num = "1".repeat(10000);
         assertEquals("1".repeat(5000), r.removeKdigits(num, 5000));
     }
+    @Test public void testRemoveOneMiddle() { assertEquals("1234", r.removeKdigits("12345",1)); }
+    @Test public void testRemoveLeadingCascade() { assertEquals("0", r.removeKdigits("1002",2)); }
+    @Test public void testAscendingRemoveTwo() { assertEquals("123", r.removeKdigits("12345",2)); }
+    @Test public void testDescendingRemoveTwo() { assertEquals("321", r.removeKdigits("54321",2)); }
+    @Test public void testInternalZero() { assertEquals("0", r.removeKdigits("1010",2)); }
+    @Test public void testTrailingZeros() { assertEquals("0", r.removeKdigits("1000",2)); }
+    @Test public void testKeepSingleMinimum() { assertEquals("1", r.removeKdigits("987654321",8)); }
+    @Test public void testKOneAtDrop() { assertEquals("12", r.removeKdigits("132",1)); }
+    @Test public void testLeadingZeroNormalization() { assertEquals("0", r.removeKdigits("10001",2)); }
+    @Test public void testRepeatedCall() { r.removeKdigits("999",1); assertEquals("12",r.removeKdigits("312",1)); }
 }

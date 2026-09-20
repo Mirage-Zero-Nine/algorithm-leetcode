@@ -301,4 +301,54 @@ public class IslandPerimeter_463Test {
             assertArrayEquals(expected[i], actual[i]);
         }
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(4, test.islandPerimeter(new int[][]{{1}}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(0, test.islandPerimeter(new int[][]{{0}}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(6, test.islandPerimeter(new int[][]{{1,1}}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(6, test.islandPerimeter(new int[][]{{1},{1}}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(8, test.islandPerimeter(new int[][]{{1,0},{1,1}}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(8, test.islandPerimeter(new int[][]{{1,1},{1,1}}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(12, test.islandPerimeter(new int[][]{{0,1,0},{1,1,1},{0,1,0}}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(8, test.islandPerimeter(new int[][]{{1,0,1}}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(8, test.islandPerimeter(new int[][]{{1},{0},{1}}));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(12, test.islandPerimeter(new int[][]{{1,1,1},{1,1,1},{1,1,1}}));
+    }
 }

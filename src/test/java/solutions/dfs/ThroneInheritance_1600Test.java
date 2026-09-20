@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class ThroneInheritance_1600Test {
 
@@ -100,5 +102,16 @@ public class ThroneInheritance_1600Test {
         List<String> order = ti.getInheritanceOrder();
         assertEquals(201, order.size());
         assertEquals("king", order.get(0));
+    }
+
+    @ParameterizedTest(name = "family width {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testBirthOrderForEveryWidth(int width) {
+        ThroneInheritance_1600 ti = new ThroneInheritance_1600("king");
+        for (int i = 0; i < width; i++) ti.birth("king", "child" + i);
+        List<String> order = ti.getInheritanceOrder();
+        assertEquals(width + 1, order.size());
+        assertEquals("king", order.get(0));
+        for (int i = 0; i < width; i++) assertEquals("child" + i, order.get(i + 1));
     }
 }

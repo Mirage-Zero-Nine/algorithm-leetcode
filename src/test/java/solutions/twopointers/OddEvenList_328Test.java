@@ -109,4 +109,15 @@ public class OddEvenList_328Test {
         assertEquals(999, cur.val);
         assertEquals(2, cur.next.val);
     }
+
+    @Test public void testFiveUnorderedValues() { ListNode r=test.oddEvenList(build(9,1,8,2,7)); assertEquals(9,r.val);assertEquals(8,r.next.val);assertEquals(7,r.next.next.val);assertEquals(1,r.next.next.next.val); }
+    @Test public void testSixSequentialValues() { ListNode r=test.oddEvenList(build(1,2,3,4,5,6)); assertEquals(5,r.next.next.val);assertEquals(2,r.next.next.next.val); }
+    @Test public void testSevenSequentialValues() { ListNode r=test.oddEvenList(build(1,2,3,4,5,6,7)); assertEquals(7,r.next.next.next.val); }
+    @Test public void testAllNegative() { ListNode r=test.oddEvenList(build(-1,-2,-3,-4)); assertEquals(-3,r.next.val);assertEquals(-2,r.next.next.val); }
+    @Test public void testZeroValues() { ListNode r=test.oddEvenList(build(0,0,1,1)); assertEquals(1,r.next.val); }
+    @Test public void testRepeatedCall() { assertEquals(3,test.oddEvenList(build(1,2,3)).next.val); assertEquals(1,test.oddEvenList(build(2,1)).next.val); }
+    @Test public void testEightValuesTail() { ListNode r=test.oddEvenList(build(1,2,3,4,5,6,7,8)); assertEquals(2,r.next.next.next.next.val); }
+    @Test public void testNineValues() { ListNode r=test.oddEvenList(build(1,2,3,4,5,6,7,8,9)); assertEquals(9,r.next.next.next.next.val); }
+    @Test public void testNullAgain() { assertNull(test.oddEvenList(null)); }
+    @Test public void testTwoDuplicateValues() { ListNode r=test.oddEvenList(build(4,4)); assertEquals(4,r.val);assertEquals(4,r.next.val); }
 }

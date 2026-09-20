@@ -68,4 +68,11 @@ public class PartitionLabels763Test {
         // The string has all 26 letters repeating, so it's one big partition
         assertEquals(List.of(1000), result);
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"a,1", "ab,1|1", "aba,3", "abc,1|1|1", "aabb,2|2", "abca,4", "eccbbbbdec,10", "abab,4", "xyzxyz,6", "qwerty,1|1|1|1|1|1"})
+    void additionalBoundaryCases(String value, String encodedExpected) {
+        List<Integer> expected = java.util.Arrays.stream(encodedExpected.split("\\|" )).map(Integer::valueOf).toList();
+        assertEquals(expected, test.partitionLabels(value));
+    }
 }

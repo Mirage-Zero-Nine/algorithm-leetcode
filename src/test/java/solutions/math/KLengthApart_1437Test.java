@@ -75,4 +75,44 @@ class KLengthApart_1437Test {
         assertTrue(solution.kLengthApart(nums, 9));
         assertFalse(solution.kLengthApart(nums, 10));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertTrue(solution.kLengthApart(new int[]{1}, 0));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertTrue(solution.kLengthApart(new int[]{0,0}, 1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertTrue(solution.kLengthApart(new int[]{1,0,1}, 1));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertFalse(solution.kLengthApart(new int[]{1,0,1}, 2));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertTrue(solution.kLengthApart(new int[]{1,0,0,1}, 2));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertFalse(solution.kLengthApart(new int[]{1,0,0,1}, 3));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertTrue(solution.kLengthApart(new int[]{1,0,0,0,1}, 3));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertTrue(solution.kLengthApart(new int[]{0,0,0}, 5));
+    }
 }

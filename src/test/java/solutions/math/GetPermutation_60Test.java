@@ -61,4 +61,54 @@ public class GetPermutation_60Test {
         // n=9, k=362880 (9!) is the last permutation "987654321"
         assertEquals("987654321", test.getPermutation(9, 362880));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("1", test.getPermutation(1, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("12", test.getPermutation(2, 1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals("21", test.getPermutation(2, 2));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals("123", test.getPermutation(3, 1));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals("321", test.getPermutation(3, 6));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals("1234", test.getPermutation(4, 1));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals("2431", test.getPermutation(4, 12));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals("12345", test.getPermutation(5, 1));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals("54321", test.getPermutation(5, 120));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals("134652", test.getPermutation(6, 36));
+    }
 }

@@ -137,4 +137,6 @@ class MaxNumber_321Test {
             assertEquals(k, result.length, "Result length should equal k=" + k);
         }
     }
+
+    @Test void testAdditionalInterleaving() { assertArrayEquals(new int[]{9, 8, 7}, solution.maxNumber(new int[]{9, 1}, new int[]{8, 7}, 3)); }
 }

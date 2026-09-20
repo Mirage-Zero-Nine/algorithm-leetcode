@@ -70,4 +70,14 @@ class LargestNumber_179Test {
         for (int i = 0; i < 1000; i++) expected.append("9");
         assertEquals(expected.toString(), solution.largestNumber(nums));
     }
+    @Test void testAdditional12() { assertEquals("121", solution.largestNumber(new int[]{12, 1})); }
+    @Test void testAdditional121() { assertEquals("12121", solution.largestNumber(new int[]{12, 121})); }
+    @Test void testAdditional34() { assertEquals("343", solution.largestNumber(new int[]{3, 34})); }
+    @Test void testAdditional830() { assertEquals("830", solution.largestNumber(new int[]{8, 30})); }
+    @Test void testAdditionalFive() { assertEquals("544", solution.largestNumber(new int[]{5, 44})); }
+    @Test void testAdditionalLarge() { assertEquals("9999991", solution.largestNumber(new int[]{9, 99, 999, 1})); }
+    @Test void testAdditionalZeros() { assertEquals("0", solution.largestNumber(new int[]{0, 0})); }
+    @Test void testAdditionalComparator() { assertEquals("605", solution.largestNumberComparator(new int[]{60, 5})); }
+    @Test void testAdditionalSingle() { assertEquals("10", solution.largestNumber(new int[]{10})); }
+    @Test void testAdditionalRepeated() { assertEquals("222222", solution.largestNumber(new int[]{2, 22, 222})); }
 }

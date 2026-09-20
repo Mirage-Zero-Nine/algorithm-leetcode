@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class LargestDivisibleSubset_368Test {
 
@@ -76,5 +78,18 @@ public class LargestDivisibleSubset_368Test {
     public void testLargeNonPowerOf2() {
         List<Integer> result = test.largestDivisibleSubset(new int[]{1, 3, 6, 12, 24, 48});
         assertEquals(6, result.size());
+    }
+
+    @ParameterizedTest(name = "divisible subset {0}")
+    @CsvSource({"'2,4,8',3", "'3,6,12,24',4", "'2,3,5,7',1", "'1,2,3,6',3", "'4,6,8,12',2", "'5,10,20,25',3", "'2,6,18,54',4", "'7,14,28,9',3", "'1,11,121',3", "'6,10,15,30',2"})
+    public void testAdditionalDivisibilityChains(String encoded, int expectedSize) {
+        String[] values = encoded.split(","); int[] nums = new int[values.length];
+        for (int i = 0; i < values.length; i++) nums[i] = Integer.parseInt(values[i]);
+        List<Integer> result = test.largestDivisibleSubset(nums);
+        assertEquals(expectedSize, result.size());
+        for (int i = 0; i < result.size(); i++) for (int j = i + 1; j < result.size(); j++) {
+            int a = result.get(i), b = result.get(j);
+            assertTrue(a % b == 0 || b % a == 0);
+        }
     }
 }

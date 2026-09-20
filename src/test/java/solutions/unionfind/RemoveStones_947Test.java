@@ -61,4 +61,26 @@ public class RemoveStones_947Test {
         for (int i = 0; i < 100; i++) stones[i] = new int[]{0, i};
         assertEquals(99, new RemoveStones_947().removeStones(stones));
     }
+
+    @Test
+    public void testSameInstanceCanBeReusedWithoutRetainingComponents() {
+        RemoveStones_947 solution = new RemoveStones_947();
+        assertEquals(1, solution.removeStones(new int[][]{{0, 0}, {0, 1}}));
+        assertEquals(0, solution.removeStones(new int[][]{{10, 20}}));
+    }
+
+    @Test
+    public void testCoordinateBoundaryValuesRemainDistinct() {
+        assertEquals(1, new RemoveStones_947().removeStones(
+                new int[][]{{0, 10000}, {10000, 10000}}));
+    }
+
+    @Test public void testTwoByTwoGrid() { assertEquals(3, new RemoveStones_947().removeStones(new int[][]{{0, 0}, {0, 1}, {1, 0}, {1, 1}})); }
+    @Test public void testTwoSeparatePairs() { assertEquals(2, new RemoveStones_947().removeStones(new int[][]{{0, 0}, {0, 1}, {2, 2}, {3, 2}})); }
+    @Test public void testBridgeJoinsComponents() { assertEquals(4, new RemoveStones_947().removeStones(new int[][]{{0, 0}, {0, 1}, {1, 1}, {1, 2}, {2, 2}})); }
+    @Test public void testDisconnectedRowsAndColumns() { assertEquals(0, new RemoveStones_947().removeStones(new int[][]{{1, 1}, {2, 2}, {3, 3}, {4, 4}})); }
+    @Test public void testNegativeCoordinates() { assertEquals(1, new RemoveStones_947().removeStones(new int[][]{{-1, 4}, {-1, 9}})); }
+    @Test public void testManyComponentsWithOneLargeComponent() { assertEquals(2, new RemoveStones_947().removeStones(new int[][]{{0, 0}, {0, 1}, {1, 1}, {5, 5}})); }
+    @Test public void testSameColumnWithGaps() { assertEquals(2, new RemoveStones_947().removeStones(new int[][]{{1, 9}, {4, 9}, {100, 9}})); }
+    @Test public void testCoordinateZeroAndLargeCoordinate() { assertEquals(1, new RemoveStones_947().removeStones(new int[][]{{0, 0}, {10000, 0}})); }
 }

@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class NumRollsToTarget_1155Test {
 
@@ -79,5 +81,11 @@ public class NumRollsToTarget_1155Test {
             ways += countWays(dice - 1, faces, target - face);
         }
         return ways;
+    }
+
+    @ParameterizedTest(name = "dice {0} faces {1} target {2}")
+    @CsvSource({"1,6,1,1", "2,6,2,1", "2,6,4,3", "2,6,10,3", "3,2,4,3", "3,3,5,6", "4,2,5,4", "2,3,6,1", "3,4,7,12", "4,3,8,19"})
+    public void testAdditionalSmallExactCounts(int dice, int faces, int target, int expected) {
+        assertEquals(expected, test.numRollsToTarget(dice, faces, target));
     }
 }

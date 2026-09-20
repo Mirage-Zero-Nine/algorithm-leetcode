@@ -1,6 +1,8 @@
 package solutions.dynamicprogramming;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -128,5 +130,13 @@ public class ShortestToChar_821Test {
             expected[i] = Math.min(i, 999 - i);
         }
         assertArrayEquals(expected, solver.shortestToChar(sb.toString(), 'a'));
+    }
+
+    @ParameterizedTest(name = "distance string {0}")
+    @CsvSource({"'abc','a','0;1;2'", "'abc','c','2;1;0'", "'abca','a','0;1;1;0'", "'abcb','b','1;0;1;0'", "'hello','l','2;1;0;0;1'", "'xyzxyz','x','0;1;1;0;1;2'", "'zzazz','z','0;0;1;0;0'", "'abcdef','d','3;2;1;0;1;2'", "'aabaa','b','2;1;0;1;2'", "'miss','s','2;1;0;0'"})
+    public void testAdditionalNearestOccurrenceCases(String input, char target, String encodedExpected) {
+        String[] values = encodedExpected.split(";"); int[] expected = new int[values.length];
+        for (int i = 0; i < values.length; i++) expected[i] = Integer.parseInt(values[i]);
+        assertArrayEquals(expected, solver.shortestToChar(input, target));
     }
 }

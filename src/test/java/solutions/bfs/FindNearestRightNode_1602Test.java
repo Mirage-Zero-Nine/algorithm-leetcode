@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -118,6 +119,31 @@ public class FindNearestRightNode_1602Test {
         assertNull(test.findNearestRightNode(root, right));
     }
 
+    @Test
+    public void testOfficialExamplesReturnTheExpectedNodeReferences() {
+        TreeNode root = new TreeNode(1);
+        TreeNode n2 = new TreeNode(2);
+        TreeNode n3 = new TreeNode(3);
+        TreeNode n4 = new TreeNode(4);
+        TreeNode n5 = new TreeNode(5);
+        TreeNode n6 = new TreeNode(6);
+        root.left = n2;
+        root.right = n3;
+        n2.right = n4;
+        n3.left = n5;
+        n3.right = n6;
+
+        assertSame(n5, test.findNearestRightNode(root, n4));
+        assertNull(test.findNearestRightNode(root, n6));
+
+        TreeNode secondRoot = new TreeNode(3);
+        TreeNode secondRight = new TreeNode(4);
+        TreeNode secondLeaf = new TreeNode(2);
+        secondRoot.right = secondRight;
+        secondRight.left = secondLeaf;
+        assertNull(test.findNearestRightNode(secondRoot, secondLeaf));
+    }
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("representativeTrees")
     public void testRepresentativeTreesUseIndependentLevelOrderOracle(
@@ -183,6 +209,69 @@ public class FindNearestRightNode_1602Test {
         assertSame(expected, test.findNearestRightNode(nodes[0], nodes[50_000]));
         assertNull(test.findNearestRightNode(nodes[0], nodes[nodeCount - 1]));
         snapshot.assertUnchanged();
+    }
+
+    @Test
+    public void testEveryTargetInSeededArbitraryTrees() {
+        for (int seed = 0; seed < 64; seed++) {
+            int nodeCount = 1 + (seed * 37 % 64);
+            TreeNode[] nodes = seededTree(seed, nodeCount);
+            Snapshot snapshot = Snapshot.capture(nodes);
+
+            for (TreeNode target : nodes) {
+                TreeNode expected = expectedNeighbor(nodes[0], target);
+                TreeNode actual = test.findNearestRightNode(nodes[0], target);
+                assertSame(expected, actual,
+                        "seed=" + seed + ", target=" + target.val);
+            }
+            snapshot.assertUnchanged();
+        }
+    }
+
+    @Test
+    public void testRepeatedCallsAcrossTargetsAndTreesRemainIndependent() {
+        TreeNode[] firstTree = seededTree(100, 63);
+        TreeNode[] secondTree = seededTree(101, 63);
+        TreeNode firstTarget = firstTree[17];
+        TreeNode secondTarget = secondTree[42];
+
+        TreeNode firstExpected = expectedNeighbor(firstTree[0], firstTarget);
+        TreeNode secondExpected = expectedNeighbor(secondTree[0], secondTarget);
+        assertSame(firstExpected, test.findNearestRightNode(firstTree[0], firstTarget));
+        assertSame(secondExpected, test.findNearestRightNode(secondTree[0], secondTarget));
+        assertSame(firstExpected, test.findNearestRightNode(firstTree[0], firstTarget));
+        assertSame(secondExpected, test.findNearestRightNode(secondTree[0], secondTarget));
+    }
+
+    private static TreeNode[] seededTree(int seed, int nodeCount) {
+        Random random = new Random(seed);
+        TreeNode[] nodes = new TreeNode[nodeCount];
+        List<TreeNode> openParents = new ArrayList<>();
+        nodes[0] = new TreeNode(1);
+        openParents.add(nodes[0]);
+
+        for (int i = 1; i < nodeCount; i++) {
+            int parentIndex = random.nextInt(openParents.size());
+            TreeNode parent = openParents.get(parentIndex);
+            TreeNode child = new TreeNode(i + 1);
+            nodes[i] = child;
+            if (parent.left == null && parent.right == null) {
+                if (random.nextBoolean()) {
+                    parent.left = child;
+                } else {
+                    parent.right = child;
+                }
+            } else if (parent.left == null) {
+                parent.left = child;
+            } else {
+                parent.right = child;
+            }
+            openParents.add(child);
+            if (parent.left != null && parent.right != null) {
+                openParents.remove(parentIndex);
+            }
+        }
+        return nodes;
     }
 
     private static TreeNode expectedNeighbor(TreeNode root, TreeNode target) {

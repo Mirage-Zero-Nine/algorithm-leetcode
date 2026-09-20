@@ -81,4 +81,30 @@ public class CanAttendMeetings_252Test {
         assertTrue(solver.canAttendMeetings(
                 new int[][]{{Integer.MAX_VALUE - 1, Integer.MAX_VALUE}, {0, 1}, {1, 2}}));
     }
+
+    @Test public void testTwoDisjointUnsortedMeetings() {
+        assertTrue(solver.canAttendMeetings(new int[][]{{10, 11}, {-5, -1}}));
+    }
+
+    @Test public void testOverlapAtLaterBoundary() {
+        assertFalse(solver.canAttendMeetings(new int[][]{{0, 2}, {5, 8}, {7, 9}}));
+    }
+
+    @Test public void testLongChainOfAdjacentMeetings() {
+        int[][] meetings = new int[100][2];
+        for (int i = 0; i < meetings.length; i++) meetings[i] = new int[]{i, i + 1};
+        assertTrue(solver.canAttendMeetings(meetings));
+    }
+
+    @Test public void testDuplicateIntervalsOverlap() {
+        assertFalse(solver.canAttendMeetings(new int[][]{{2, 4}, {2, 4}}));
+    }
+
+    @Test public void testOverlapDetectedAfterSorting() {
+        assertFalse(solver.canAttendMeetings(new int[][]{{20, 30}, {0, 1}, {15, 25}, {5, 10}}));
+    }
+
+    @Test public void testNegativeAndZeroAdjacentMeetings() {
+        assertTrue(solver.canAttendMeetings(new int[][]{{-4, -2}, {-2, 0}, {0, 3}}));
+    }
 }

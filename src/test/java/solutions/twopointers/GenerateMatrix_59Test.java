@@ -75,4 +75,15 @@ public class GenerateMatrix_59Test {
         assertEquals(100, result[0][99]);
         assertEquals(9998, result[49][50]);
     }
+
+    @Test public void testZeroHasNoRows() { assertEquals(0, test.generateMatrix(0).length); }
+    @Test public void testOneCenter() { assertEquals(1, test.generateMatrix(1)[0][0]); }
+    @Test public void testTwoOppositeCorners() { int[][] m=test.generateMatrix(2); assertEquals(1,m[0][0]);assertEquals(4,m[1][0]); }
+    @Test public void testThreeCenter() { assertEquals(9,test.generateMatrix(3)[1][1]); }
+    @Test public void testFiveCorners() { int[][] m=test.generateMatrix(5);assertEquals(5,m[0][4]);assertEquals(13,m[4][0]); }
+    @Test public void testSixCenterValues() { int[][] m=test.generateMatrix(6);assertEquals(33,m[2][2]);assertEquals(36,m[3][2]); }
+    @Test public void testSevenLastColumn() { int[][] m=test.generateMatrix(7);assertEquals(7,m[0][6]);assertEquals(13,m[6][6]); }
+    @Test public void testEightBottomRight() { assertEquals(15,test.generateMatrix(8)[7][7]); }
+    @Test public void testMatrixContainsMaximum() { int[][] m=test.generateMatrix(9); boolean found=false;for(int[] row:m)for(int v:row)if(v==81)found=true;assertEquals(true,found); }
+    @Test public void testTenDimensionsAndSequence() { int[][] m=test.generateMatrix(10);assertEquals(10,m.length);assertEquals(10,m[0][9]); }
 }

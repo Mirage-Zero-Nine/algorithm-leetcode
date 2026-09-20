@@ -31,6 +31,11 @@ public class CanIWin_464 {
      */
     public boolean canIWin(int maxChoosableInteger, int desiredTotal) {
 
+        // A position's mask is only sufficient as a memo key within one game:
+        // changing the target changes the result for the same set of chosen
+        // numbers.  Clear state so one solution instance can safely be reused.
+        m.clear();
+
         /* Corner case */
         if (desiredTotal <= maxChoosableInteger) {
             return true;

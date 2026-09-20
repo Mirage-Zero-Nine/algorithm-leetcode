@@ -43,7 +43,7 @@ public class SuperEggDrop_887 {
              * 2. Egg remains safe: F is in upper floor, with m-1 moves and k eggs can find final F.
              * The sum of conditions are the maximum number of floor can be checked. */
             for (int k = 1; k <= K; ++k) {
-                dp[m][K] = dp[m - 1][k - 1] + dp[m - 1][k] + 1;
+                dp[m][k] = dp[m - 1][k - 1] + dp[m - 1][k] + 1;
             }
         }
 

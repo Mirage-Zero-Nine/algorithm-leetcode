@@ -2,6 +2,8 @@ package solutions.binarysearch;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
+import java.util.Arrays;
+import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 public class SearchRange_34Test {
@@ -118,11 +120,116 @@ public class SearchRange_34Test {
     @Test
     public void testGiantSingleRunBesideSingletons() {
         int[] values = new int[100000];
-        java.util.Arrays.fill(values, 7);
+        Arrays.fill(values, 7);
         values[0] = 6;
         values[values.length - 1] = 8;
         assertArrayEquals(new int[]{1, 99998}, test.searchRange(values, 7));
         assertArrayEquals(new int[]{0, 0}, test.searchRange(values, 6));
         assertArrayEquals(new int[]{99999, 99999}, test.searchRange(values, 8));
+    }
+
+    @Test
+    public void testNullArrayReturnsAbsentRange() {
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(null, 0));
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(null, Integer.MAX_VALUE));
+    }
+
+    @Test
+    public void testTargetAbsentAdjacentToDuplicateRuns() {
+        int[] values = {-4, -4, -2, -2, 5, 5};
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(values, -3));
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(values, 0));
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(values, 6));
+    }
+
+    @Test
+    public void testOfficialValueBoundaries() {
+        int[] values = {-1_000_000_000, -1_000_000_000, 0, 1_000_000_000, 1_000_000_000};
+        assertArrayEquals(new int[]{0, 1}, test.searchRange(values, -1_000_000_000));
+        assertArrayEquals(new int[]{2, 2}, test.searchRange(values, 0));
+        assertArrayEquals(new int[]{3, 4}, test.searchRange(values, 1_000_000_000));
+    }
+
+    @Test
+    public void testRunsAroundOddAndEvenMidpoints() {
+        int[] values = {-3, -3, -3, -2, -1, -1, 0, 1, 1, 1, 1, 2};
+        assertArrayEquals(new int[]{0, 2}, test.searchRange(values, -3));
+        assertArrayEquals(new int[]{4, 5}, test.searchRange(values, -1));
+        assertArrayEquals(new int[]{7, 10}, test.searchRange(values, 1));
+        assertArrayEquals(new int[]{11, 11}, test.searchRange(values, 2));
+    }
+
+    @Test
+    public void testInputAndReturnedArrayAreIndependent() {
+        int[] values = {-2, -1, -1, 0, 3};
+        int[] original = values.clone();
+        int[] result = test.searchRange(values, -1);
+        result[0] = 999;
+        result[1] = 999;
+
+        assertArrayEquals(original, values);
+        assertArrayEquals(new int[]{1, 2}, test.searchRange(values, -1));
+    }
+
+    @Test
+    public void testRepeatedCallsDoNotLeakPreviousRange() {
+        int[] values = {1, 1, 2, 3, 3, 3, 8};
+        assertArrayEquals(new int[]{0, 1}, test.searchRange(values, 1));
+        assertArrayEquals(new int[]{2, 2}, test.searchRange(values, 2));
+        assertArrayEquals(new int[]{-1, -1}, test.searchRange(values, 7));
+        assertArrayEquals(new int[]{3, 5}, test.searchRange(values, 3));
+        assertArrayEquals(new int[]{6, 6}, test.searchRange(values, 8));
+    }
+
+    @Test
+    public void testExhaustiveSmallSortedArraysAgainstDirectOracle() {
+        for (int length = 0; length <= 7; length++) {
+            enumerateSortedArrays(new int[length], 0, -2);
+        }
+    }
+
+    @Test
+    public void testSeededRandomSortedArraysAgainstDirectOracle() {
+        Random random = new Random(34_2026L);
+        for (int caseNumber = 0; caseNumber < 250; caseNumber++) {
+            int[] values = new int[random.nextInt(151)];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = random.nextInt(41) - 20;
+            }
+            Arrays.sort(values);
+            for (int target = -22; target <= 22; target++) {
+                assertArrayEquals(expectedRange(values, target), test.searchRange(values, target),
+                        "case=" + caseNumber + ", target=" + target);
+            }
+        }
+    }
+
+    /** Enumerates each non-decreasing array over {-2,-1,0,1,2} and checks every target. */
+    private void enumerateSortedArrays(int[] values, int index, int nextValue) {
+        if (index == values.length) {
+            for (int target = -3; target <= 3; target++) {
+                assertArrayEquals(expectedRange(values, target), test.searchRange(values, target));
+            }
+            return;
+        }
+        for (int value = nextValue; value <= 2; value++) {
+            values[index] = value;
+            enumerateSortedArrays(values, index + 1, value);
+        }
+    }
+
+    /** Independent linear reference implementation used only to derive test expectations. */
+    private int[] expectedRange(int[] values, int target) {
+        int first = -1;
+        int last = -1;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] == target) {
+                if (first == -1) {
+                    first = i;
+                }
+                last = i;
+            }
+        }
+        return new int[]{first, last};
     }
 }

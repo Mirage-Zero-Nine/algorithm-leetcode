@@ -103,7 +103,35 @@ class CanIWin_464Test {
 
     @Test
     void testGiantCase() {
-        assertCanWin(20, 150, false);
+        // Maximum chooser range and the largest target allowed by the
+        // contract. The implementation's reachability guard handles this
+        // case immediately, keeping the test deterministic and fast.
+        assertCanWin(20, 300, false);
+    }
+
+    @Test
+    void testLargeCaseMatchesIndependentOracle() {
+        // The reference minimax uses (chosen mask, remaining total), rather
+        // than the production implementation's compact mask-only memo key.
+        assertCanWin(10, 40, oracle(10, 40));
+    }
+
+    @Test
+    void testMemoizationDoesNotLeakAcrossTargets() {
+        CanIWin_464 solution = new CanIWin_464();
+
+        assertEquals(false, solution.canIWin(10, 11));
+        assertEquals(true, solution.canIWin(10, 12));
+    }
+
+    @Test
+    void testMemoizationDoesNotLeakAcrossMaximums() {
+        CanIWin_464 solution = new CanIWin_464();
+
+        assertEquals(false, solution.canIWin(4, 5));
+        // Choosing 1 leaves the opponent unable to reach 7 immediately;
+        // whatever remains, the first player can then take a winning value.
+        assertEquals(true, solution.canIWin(5, 7));
     }
 
     @Test

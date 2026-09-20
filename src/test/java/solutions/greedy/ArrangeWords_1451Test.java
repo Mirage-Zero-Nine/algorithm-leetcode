@@ -72,4 +72,15 @@ public class ArrangeWords_1451Test {
     private void assertTrue(boolean condition) {
         org.junit.jupiter.api.Assertions.assertTrue(condition);
     }
+
+    @Test public void testAdditionalSentenceOrders() { assertEquals("A bc def", test.arrangeWords("Def A bc")); }
+    @Test public void testAdditionalTwo() { assertEquals("Hi go", test.arrangeWords("Hi go")); }
+    @Test public void testAdditionalLengths() { assertEquals("I am code tests", test.arrangeWords("Tests I code am")); }
+    @Test public void testAdditionalStable() { assertEquals("Six one two", test.arrangeWords("Six One two")); }
+    @Test public void testAdditionalMixedCase() { assertEquals("A bb cccc", test.arrangeWords("CCCC bb A")); }
+    @Test public void testAdditionalLongWord() { assertEquals("A be seven three", test.arrangeWords("Seven be three A")); }
+    @Test public void testAdditionalFive() { assertEquals("A bb ccc dddd eeeee", test.arrangeWords("Eeeee dddd ccc bb A")); }
+    @Test public void testAdditionalRepeated() { assertEquals("A aa aa bbb", test.arrangeWords("Aa bbb Aa A")); }
+    @Test public void testAdditionalSingleLower() { assertEquals("X", test.arrangeWords("x")); }
+    @Test public void testAdditionalOrder() { assertEquals("A at cat house", test.arrangeWords("House cat at A")); }
 }

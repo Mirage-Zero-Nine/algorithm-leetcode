@@ -4,9 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SingleNumber_136Test {
@@ -62,6 +65,19 @@ public class SingleNumber_136Test {
         assertEquals(7, solver.singleNumber(new int[]{3, 3, 7}));
     }
 
+    @Test public void testSingletonAtFirstPosition() {
+        assertEquals(-17, solver.singleNumber(new int[]{-17, 4, 9, 4, 9}));
+    }
+
+    @Test public void testSingletonInMiddlePosition() {
+        assertEquals(30000, solver.singleNumber(new int[]{-8, -8, 30000, 12, 12}));
+    }
+
+    @Test public void testSingletonAtLastPosition() {
+        assertEquals(23, solver.singleNumber(new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE,
+                Integer.MIN_VALUE, Integer.MAX_VALUE, 23}));
+    }
+
     @Test public void testAllNegative() {
         assertEquals(-3, solver.singleNumber(new int[]{-1, -2, -1, -2, -3}));
     }
@@ -91,6 +107,63 @@ public class SingleNumber_136Test {
         Collections.shuffle(list, new Random(42L));
         int[] nums = list.stream().mapToInt(Integer::intValue).toArray();
         assertEquals(unique, solver.singleNumber(nums));
+    }
+
+    @Test public void testIndependentFrequencyOracleOnGeneratedArrays() {
+        Random rng = new Random(136L);
+        for (int scenario = 0; scenario < 120; scenario++) {
+            int unique = 25000 + scenario;
+            List<Integer> values = new ArrayList<>();
+            for (int pair = 0; pair < 40 + scenario % 20; pair++) {
+                int value = -12000 + scenario * 67 + pair * 31;
+                values.add(value);
+                values.add(value);
+            }
+            values.add(unique);
+            Collections.shuffle(values, rng);
+            int[] nums = values.stream().mapToInt(Integer::intValue).toArray();
+            assertEquals(frequencyOracle(nums), solver.singleNumber(nums));
+        }
+    }
+
+    @Test public void testExhaustiveSmallPairConfigurations() {
+        int[] domain = {-2, -1, 0, 1, 2};
+        for (int unique : domain) {
+            for (int first = 0; first < domain.length; first++) {
+                if (domain[first] == unique) continue;
+                for (int second = first + 1; second < domain.length; second++) {
+                    if (domain[second] == unique) continue;
+                    int[] nums = {domain[first], domain[first], unique,
+                            domain[second], domain[second]};
+                    assertEquals(frequencyOracle(nums), solver.singleNumber(nums));
+                }
+            }
+        }
+    }
+
+    @Test public void testMaximumLeetCodeLength() {
+        int[] nums = new int[29999];
+        for (int i = 0; i < 14999; i++) {
+            nums[2 * i] = i - 14999;
+            nums[2 * i + 1] = i - 14999;
+        }
+        nums[nums.length - 1] = 30000;
+        assertEquals(30000, solver.singleNumber(nums));
+    }
+
+    @Test public void testInputArrayIsNotMutated() {
+        int[] nums = {9, -3, 9, -3, Integer.MIN_VALUE, Integer.MIN_VALUE, 27};
+        int[] before = nums.clone();
+        assertEquals(27, solver.singleNumber(nums));
+        assertArrayEquals(before, nums);
+    }
+
+    @Test public void testSameInstanceCanBeReusedWithoutStateLeakage() {
+        int[] first = {1, 1, 2, 2, -30000};
+        int[] second = {Integer.MAX_VALUE, 4, 4, Integer.MAX_VALUE, 0};
+        assertEquals(-30000, solver.singleNumber(first));
+        assertEquals(0, solver.singleNumber(second));
+        assertEquals(-30000, solver.singleNumber(first));
     }
 
     @Test public void testXorPropertyEqualsUnique() {
@@ -129,9 +202,18 @@ public class SingleNumber_136Test {
     }
 
     @Test public void testInterleavedPairsAtLargeSize() {
-        int[] values = new int[30001];
-        for (int i = 0; i < 15000; i++) values[i] = values[i + 15000] = i;
-        values[30000] = Integer.MIN_VALUE;
+        int[] values = new int[29999];
+        for (int i = 0; i < 14999; i++) values[i] = values[i + 14999] = i;
+        values[29998] = Integer.MIN_VALUE;
         assertEquals(Integer.MIN_VALUE, solver.singleNumber(values));
+    }
+
+    private int frequencyOracle(int[] nums) {
+        Map<Integer, Integer> frequencies = new HashMap<>();
+        for (int num : nums) frequencies.merge(num, 1, Integer::sum);
+        for (Map.Entry<Integer, Integer> entry : frequencies.entrySet()) {
+            if (entry.getValue() == 1) return entry.getKey();
+        }
+        throw new AssertionError("The test input must contain one singleton");
     }
 }

@@ -54,4 +54,14 @@ public class RemoveDuplicateLetters_316Test {
         assertEquals(26, result.length());
         assertEquals("abcdefghijklmnopqrstuvwxyz", result);
     }
+    @Test public void testInterleavedDuplicates() { assertEquals("acdb", solver.removeDuplicateLetters("bcacdb")); }
+    @Test public void testAllAlphabetReverse() { assertEquals("zyxwvutsrqponmlkjihgfedcba", solver.removeDuplicateLetters("zyxwvutsrqponmlkjihgfedcba")); }
+    @Test public void testNestedRepeats() { assertEquals("abc", solver.removeDuplicateLetters("abacbabc")); }
+    @Test public void testLateSmallCharacter() { assertEquals("bac", solver.removeDuplicateLetters("cbac")); }
+    @Test public void testTwoDistinctRepeated() { assertEquals("ab", solver.removeDuplicateLetters("baba")); }
+    @Test public void testAlphabetWithReturns() { assertEquals("abc", solver.removeDuplicateLetters("abccba")); }
+    @Test public void testEarliestLexicographicChoice() { assertEquals("abc", solver.removeDuplicateLetters("acbac")); }
+    @Test public void testRepeatedCall() { solver.removeDuplicateLetters("zaza"); assertEquals("ba",solver.removeDuplicateLetters("bbaa")); }
+    @Test public void testThreeLettersManyRepeats() { assertEquals("cba", solver.removeDuplicateLetters("ccbbaa")); }
+    @Test public void testSingleLateLetter() { assertEquals("z", solver.removeDuplicateLetters("zzzz")); }
 }

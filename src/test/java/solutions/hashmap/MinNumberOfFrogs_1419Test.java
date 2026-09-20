@@ -65,4 +65,14 @@ public class MinNumberOfFrogs_1419Test {
         }
         assertEquals(1, test.minNumberOfFrogs(sb.toString()));
     }
+    @Test void extra01() { assertEquals(0, test.minNumberOfFrogs("")); }
+    @Test void extra02() { assertEquals(1, test.minNumberOfFrogs("croak")); }
+    @Test void extra03() { assertEquals(2, test.minNumberOfFrogs("ccrrooaakk")); }
+    @Test void extra04() { assertEquals(-1, test.minNumberOfFrogs("croakcro")); }
+    @Test void extra05() { assertEquals(1, test.minNumberOfFrogs("croak")); }
+    @Test void extra06() { assertEquals(3, test.minNumberOfFrogs("cccrrroooaaakkk")); }
+    @Test void extra07() { assertEquals(-1, test.minNumberOfFrogs("croakcroakcro")); }
+    @Test void extra08() { assertEquals(1, test.minNumberOfFrogs("croak".repeat(5))); }
+    @Test void extra09() { assertEquals(-1, test.minNumberOfFrogs("crocak")); }
+    @Test void extra10() { assertEquals(2, test.minNumberOfFrogs("ccrrooaakkcroak")); }
 }

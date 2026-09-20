@@ -115,4 +115,14 @@ public class FirstUniqChar_387Test {
         actual = firstUniqueChar.linkedHashMap(str);
         assertEquals(expected, actual);
     }
+    @Test void extra01() { assertEquals(0, firstUniqueChar.firstUniqChar("a")); assertEquals(0, firstUniqueChar.linkedHashMap("a")); }
+    @Test void extra02() { assertEquals(-1, firstUniqueChar.firstUniqChar("aa")); assertEquals(-1, firstUniqueChar.linkedHashMap("aa")); }
+    @Test void extra03() { assertEquals(4, firstUniqueChar.firstUniqChar("aabbc")); assertEquals(4, firstUniqueChar.linkedHashMap("aabbc")); }
+    @Test void extra04() { assertEquals(0, firstUniqueChar.firstUniqChar("leetcode")); assertEquals(0, firstUniqueChar.linkedHashMap("leetcode")); }
+    @Test void extra05() { assertEquals(2, firstUniqueChar.firstUniqChar("loveleetcode")); assertEquals(2, firstUniqueChar.linkedHashMap("loveleetcode")); }
+    @Test void extra06() { assertEquals(4, firstUniqueChar.firstUniqChar("aabbcdd")); assertEquals(4, firstUniqueChar.linkedHashMap("aabbcdd")); }
+    @Test void extra07() { assertEquals(1, firstUniqueChar.firstUniqChar("abac")); assertEquals(1, firstUniqueChar.linkedHashMap("abac")); }
+    @Test void extra08() { assertEquals(-1, firstUniqueChar.firstUniqChar("zzzz")); assertEquals(-1, firstUniqueChar.linkedHashMap("zzzz")); }
+    @Test void extra09() { assertEquals(6, firstUniqueChar.firstUniqChar("aabbccd")); assertEquals(6, firstUniqueChar.linkedHashMap("aabbccd")); }
+    @Test void extra10() { assertEquals(1, firstUniqueChar.firstUniqChar("unique")); assertEquals(1, firstUniqueChar.linkedHashMap("unique")); }
 }

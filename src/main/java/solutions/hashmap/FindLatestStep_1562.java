@@ -28,18 +28,30 @@ public class FindLatestStep_1562 {
     public int findLatestStep(int[] arr, int m) {
         int out = -1, n = arr.length;
 
+        if (m < 1 || m > n) {
+            return out;
+        }
         if (m == n) {       // all elements will be set to 1 eventually
             return m;
         }
 
         int[] length = new int[n + 2];      // left most and right most are always 0
+        int[] groups = new int[n + 1];      // groups[size] is the number of current groups of that size
         for (int i = 0; i < n; i++) {
             int index = arr[i], left = length[index - 1], right = length[index + 1], sum = left + right + 1;
+            if (left > 0) {
+                groups[left]--;
+            }
+            if (right > 0) {
+                groups[right]--;
+            }
+            groups[sum]++;
             length[index - left] = sum;         // move to the start of subarray and set the new size
             length[index + right] = sum;        // move to the end of subarray and set the new size
 
-            if (left == m || right == m) {
-                out = i;
+            // The target group may be newly formed, preserved, or merged away.
+            if (groups[m] > 0) {
+                out = i + 1;
             }
         }
 

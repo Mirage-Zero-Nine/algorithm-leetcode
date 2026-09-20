@@ -66,4 +66,54 @@ public class NumberToWords_273Test {
     public void testGiantMixed() {
         assertEquals("One Billion Two Hundred Thirty Four Million Five Hundred Sixty Seven Thousand Eight Hundred Ninety", test.numberToWords(1234567890));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("Zero", test.numberToWords(0));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("One", test.numberToWords(1));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals("Ten", test.numberToWords(10));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals("Eleven", test.numberToWords(11));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals("Twenty", test.numberToWords(20));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals("One Hundred", test.numberToWords(100));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals("One Thousand", test.numberToWords(1000));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals("One Million", test.numberToWords(1000000));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals("One Billion", test.numberToWords(1000000000));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals("Two Billion One Hundred Forty Seven Million Four Hundred Eighty Three Thousand Six Hundred Forty Seven", test.numberToWords(2147483647));
+    }
 }

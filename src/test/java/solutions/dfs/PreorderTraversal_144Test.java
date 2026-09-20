@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import library.tree.TreeParser;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
@@ -135,5 +137,15 @@ public class PreorderTraversal_144Test {
     public void testLargeNegativeValues() {
         TreeNode root = TreeParser.deserialize("-100,-200,300,-400,null,null,500");
         assertBothApproaches(Lists.newArrayList(-100, -200, -400, 300, 500), root);
+    }
+
+    @ParameterizedTest(name = "right chain size {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testBothApproachesOnRightChains(int size) {
+        TreeNode root = new TreeNode(1); TreeNode current = root;
+        for (int i = 2; i <= size; i++) { current.right = new TreeNode(i); current = current.right; }
+        List<Integer> expected = new java.util.ArrayList<>();
+        for (int i = 1; i <= size; i++) expected.add(i);
+        assertBothApproaches(expected, root);
     }
 }

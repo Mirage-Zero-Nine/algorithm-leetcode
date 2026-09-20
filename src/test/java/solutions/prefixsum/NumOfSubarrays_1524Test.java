@@ -87,8 +87,8 @@ public class NumOfSubarrays_1524Test {
     public void testGiantCase() {
         int[] arr = new int[1000];
         for (int i = 0; i < 1000; i++) arr[i] = i + 1;
-        // Run the implementation to get expected value
-        int expected = test.numOfSubarrays(arr);
+        // There are 501 even and 500 odd prefix parities (including the empty prefix).
+        int expected = 501 * 500;
         assertEquals(expected, test.numOfSubarrays(arr));
     }
 }

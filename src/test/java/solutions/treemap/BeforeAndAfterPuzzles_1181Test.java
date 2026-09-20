@@ -101,4 +101,61 @@ public class BeforeAndAfterPuzzles_1181Test {
         assertTrue(result.contains("word0 word1 word2"));
         assertTrue(result.size() > 0);
     }
+
+    @Test
+    public void testBothOrdersAreConsidered() {
+        assertEquals(List.of("a b a", "b a b"),
+            test.beforeAndAfterPuzzles(new String[]{"a b", "b a"}));
+    }
+
+    @Test
+    public void testLexicographicOrdering() {
+        assertEquals(List.of("a x y", "a x z", "b x y", "b x z"),
+            test.beforeAndAfterPuzzles(new String[]{"b x", "x y", "a x", "x z"}));
+    }
+
+    @Test
+    public void testRepeatedPhraseCanPairWithDifferentPhrase() {
+        assertEquals(List.of("a b c", "a b d"),
+            test.beforeAndAfterPuzzles(new String[]{"a b", "a b", "b c", "b d"}));
+    }
+
+    @Test
+    public void testSingleWordCanMergeIntoMultiwordPhrase() {
+        assertEquals(List.of("go home", "go home now"),
+            test.beforeAndAfterPuzzles(new String[]{"go", "home now", "go home"}));
+    }
+
+    @Test
+    public void testPrefixWordDoesNotMatchWholeWord() {
+        assertTrue(test.beforeAndAfterPuzzles(new String[]{"cat", "catalog item"}).isEmpty());
+    }
+
+    @Test
+    public void testDuplicateInputStillProducesDistinctOutput() {
+        assertEquals(List.of("x y z"),
+            test.beforeAndAfterPuzzles(new String[]{"x y", "y z", "x y", "y z"}));
+    }
+
+    @Test
+    public void testLongPhraseMerge() {
+        assertEquals(List.of("one two three four five"),
+            test.beforeAndAfterPuzzles(new String[]{"one two three", "three four five"}));
+    }
+
+    @Test
+    public void testNoMatchWhenOnlyInteriorWordAgrees() {
+        assertTrue(test.beforeAndAfterPuzzles(new String[]{"a b c", "b c d"}).isEmpty());
+    }
+
+    @Test
+    public void testExactSamePhraseIsNotReusedOnce() {
+        assertTrue(test.beforeAndAfterPuzzles(new String[]{"same phrase"}).isEmpty());
+    }
+
+    @Test
+    public void testMultipleWordOverlapRemovesOnlyOneBoundaryWord() {
+        assertEquals(List.of("red blue green"),
+            test.beforeAndAfterPuzzles(new String[]{"red blue", "blue green"}));
+    }
 }

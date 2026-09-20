@@ -6,6 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
 public class HasPathSum_112Test {
 
     private final HasPathSum_112 test = new HasPathSum_112();
@@ -318,6 +322,113 @@ public class HasPathSum_112Test {
     }
 
     @Test
+    public void testOfficialExamples() {
+        // LeetCode's first example: 5 -> 4 -> 11 -> 2 is the only matching
+        // root-to-leaf path for 22.
+        TreeNode root = new TreeNode(5);
+        root.left = new TreeNode(4);
+        root.right = new TreeNode(8);
+        root.left.left = new TreeNode(11);
+        root.left.left.left = new TreeNode(7);
+        root.left.left.right = new TreeNode(2);
+        root.right.left = new TreeNode(13);
+        root.right.right = new TreeNode(4);
+        root.right.right.right = new TreeNode(1);
+
+        assertTrue(test.hasPathSum(root, 22));
+        assertFalse(test.hasPathSum(root, 5));
+    }
+
+    @Test
+    public void testOverflowDoesNotTurnAnImpossiblePathIntoAMatch() {
+        // The public target is an int, but the mathematical path sum can be
+        // outside that range. These paths must not be accepted because their
+        // long sums are not equal to the target; int wraparound would make
+        // each pair below appear to match.
+        TreeNode maxThenOne = new TreeNode(Integer.MAX_VALUE);
+        maxThenOne.left = new TreeNode(1);
+        assertFalse(test.hasPathSum(maxThenOne, Integer.MIN_VALUE));
+
+        TreeNode minThenNegativeOne = new TreeNode(Integer.MIN_VALUE);
+        minThenNegativeOne.right = new TreeNode(-1);
+        assertFalse(test.hasPathSum(minThenNegativeOne, Integer.MAX_VALUE));
+
+        TreeNode maxTwice = new TreeNode(Integer.MAX_VALUE);
+        maxTwice.right = new TreeNode(Integer.MAX_VALUE);
+        assertFalse(test.hasPathSum(maxTwice, -2));
+
+        TreeNode minTwice = new TreeNode(Integer.MIN_VALUE);
+        minTwice.left = new TreeNode(Integer.MIN_VALUE);
+        assertFalse(test.hasPathSum(minTwice, 0));
+    }
+
+    @Test
+    public void testBoundaryValuesCanStillCancelExactly() {
+        TreeNode root = new TreeNode(Integer.MAX_VALUE);
+        root.left = new TreeNode(Integer.MIN_VALUE);
+        assertTrue(test.hasPathSum(root, -1));
+
+        TreeNode otherRoot = new TreeNode(Integer.MIN_VALUE);
+        otherRoot.right = new TreeNode(Integer.MAX_VALUE);
+        assertTrue(test.hasPathSum(otherRoot, -1));
+    }
+
+    @Test
+    public void testMaximumDocumentedNodeCountOnADeepPath() {
+        int nodeCount = 5_000;
+        TreeNode root = new TreeNode(1);
+        TreeNode current = root;
+        for (int i = 1; i < nodeCount; i++) {
+            current.right = new TreeNode(1);
+            current = current.right;
+        }
+
+        assertTrue(test.hasPathSum(root, nodeCount));
+        assertFalse(test.hasPathSum(root, nodeCount - 1));
+        assertFalse(test.hasPathSum(root, nodeCount + 1));
+    }
+
+    @Test
+    public void testSeededTreesAgainstIndependentLeafPathOracle() {
+        Random random = new Random(112_2026L);
+        for (int caseNumber = 0; caseNumber < 150; caseNumber++) {
+            TreeNode root = randomTree(random, 6);
+            Set<Long> leafSums = new HashSet<>();
+            collectLeafSums(root, 0L, leafSums);
+
+            // Compare both matches and misses over a fixed target window. The
+            // oracle uses long addition and does not share the implementation's
+            // remaining-sum recurrence.
+            for (int target = -180; target <= 180; target++) {
+                boolean expected = leafSums.contains((long) target);
+                boolean actual = test.hasPathSum(root, target);
+                if (expected) {
+                    assertTrue(actual, "Expected a path in generated case " + caseNumber
+                            + " for target=" + target);
+                } else {
+                    assertFalse(actual, "Did not expect a path in generated case " + caseNumber
+                            + " for target=" + target);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testSameInstanceCanBeReusedWithIndependentTrees() {
+        TreeNode first = new TreeNode(1);
+        first.left = new TreeNode(2);
+        first.right = new TreeNode(3);
+        assertTrue(test.hasPathSum(first, 3));
+        assertFalse(test.hasPathSum(first, 5));
+
+        TreeNode second = new TreeNode(-10);
+        second.right = new TreeNode(5);
+        second.right.left = new TreeNode(5);
+        assertTrue(test.hasPathSum(second, 0));
+        assertFalse(test.hasPathSum(second, -5));
+    }
+
+    @Test
     public void testEveryLeafSumInAnUnevenTree() {
         TreeNode root = new TreeNode(3);
         root.left = new TreeNode(-2);
@@ -346,5 +457,34 @@ public class HasPathSum_112Test {
         node.left = buildCompleteTree(depth - 1, val);
         node.right = buildCompleteTree(depth - 1, val);
         return node;
+    }
+
+    private TreeNode randomTree(Random random, int remainingDepth) {
+        if (remainingDepth == 0) {
+            return null;
+        }
+
+        TreeNode node = new TreeNode(random.nextInt(41) - 20);
+        if (random.nextBoolean()) {
+            node.left = randomTree(random, remainingDepth - 1);
+        }
+        if (random.nextBoolean()) {
+            node.right = randomTree(random, remainingDepth - 1);
+        }
+        return node;
+    }
+
+    private void collectLeafSums(TreeNode node, long prefix, Set<Long> leafSums) {
+        if (node == null) {
+            return;
+        }
+
+        long sum = prefix + node.val;
+        if (node.left == null && node.right == null) {
+            leafSums.add(sum);
+            return;
+        }
+        collectLeafSums(node.left, sum, leafSums);
+        collectLeafSums(node.right, sum, leafSums);
     }
 }

@@ -202,7 +202,7 @@ public class MyCircularQueue_622Test {
         ArrayDeque<Integer> ref = new ArrayDeque<>();
         Random rng = new Random(42L);
 
-        for (int i = 0; i < 10_000; i++) {
+        for (int i = 0; i < 3_000; i++) {
             int op = rng.nextInt(4);
             if (op == 0) { // enQueue
                 int val = rng.nextInt(1000);
@@ -235,5 +235,249 @@ public class MyCircularQueue_622Test {
             assertEquals(ref.isEmpty(), q.isEmpty());
             assertEquals(ref.size() == capacity, q.isFull());
         }
+    }
+
+    @Test
+    public void testStoredMinusOneIsNotAnEmptyQueue() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(2);
+
+        assertTrue(q.enQueue(-1));
+        assertFalse(q.isEmpty());
+        assertFalse(q.isFull());
+        assertEquals(-1, q.Front());
+        assertEquals(-1, q.Rear());
+        assertTrue(q.deQueue());
+        assertTrue(q.isEmpty());
+        assertEquals(-1, q.Front());
+        assertEquals(-1, q.Rear());
+    }
+
+    @Test
+    public void testDuplicateValuesRemainFifo() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(4);
+
+        assertTrue(q.enQueue(7));
+        assertTrue(q.enQueue(7));
+        assertTrue(q.enQueue(8));
+        assertTrue(q.deQueue());
+        assertEquals(7, q.Front());
+        assertEquals(8, q.Rear());
+        assertTrue(q.enQueue(7));
+        assertTrue(q.enQueue(7));
+        assertTrue(q.isFull());
+        assertEquals(7, q.Front());
+        assertEquals(7, q.Rear());
+        assertTrue(q.deQueue());
+        assertTrue(q.deQueue());
+        assertEquals(7, q.Front());
+        assertEquals(7, q.Rear());
+    }
+
+    @Test
+    public void testZeroAndMaximumLegalValues() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(3);
+
+        assertTrue(q.enQueue(0));
+        assertTrue(q.enQueue(1000));
+        assertEquals(0, q.Front());
+        assertEquals(1000, q.Rear());
+        assertTrue(q.enQueue(0));
+        assertTrue(q.isFull());
+        assertTrue(q.deQueue());
+        assertEquals(1000, q.Front());
+        assertEquals(0, q.Rear());
+    }
+
+    @Test
+    public void testWrapAroundReusesEveryFreedSlotInOrder() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(4);
+        ArrayDeque<Integer> ref = new ArrayDeque<>();
+
+        for (int value = 1; value <= 4; value++) {
+            assertTrue(q.enQueue(value));
+            ref.addLast(value);
+        }
+        for (int i = 0; i < 2; i++) {
+            assertTrue(q.deQueue());
+            ref.removeFirst();
+        }
+        for (int value = 5; value <= 6; value++) {
+            assertTrue(q.enQueue(value));
+            ref.addLast(value);
+        }
+        assertQueueState(q, ref, 4);
+
+        while (!ref.isEmpty()) {
+            assertEquals(ref.removeFirst(), q.Front());
+            assertTrue(q.deQueue());
+        }
+        assertQueueState(q, ref, 4);
+    }
+
+    @Test
+    public void testRejectedEnqueueDoesNotChangeFullState() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(3);
+        assertTrue(q.enQueue(10));
+        assertTrue(q.enQueue(20));
+        assertTrue(q.enQueue(30));
+
+        assertTrue(q.isFull());
+        assertFalse(q.enQueue(40));
+        assertFalse(q.enQueue(50));
+        assertEquals(10, q.Front());
+        assertEquals(30, q.Rear());
+        assertTrue(q.isFull());
+    }
+
+    @Test
+    public void testRejectedDequeueDoesNotChangeEmptyState() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(3);
+
+        assertTrue(q.isEmpty());
+        assertFalse(q.deQueue());
+        assertFalse(q.deQueue());
+        assertEquals(-1, q.Front());
+        assertEquals(-1, q.Rear());
+        assertTrue(q.isEmpty());
+        assertFalse(q.isFull());
+    }
+
+    @Test
+    public void testEveryOccupancyTransitionUpdatesFrontAndRear() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(3);
+
+        assertTrue(q.enQueue(11));
+        assertEquals(11, q.Front());
+        assertEquals(11, q.Rear());
+        assertTrue(q.enQueue(22));
+        assertEquals(11, q.Front());
+        assertEquals(22, q.Rear());
+        assertTrue(q.enQueue(33));
+        assertEquals(11, q.Front());
+        assertEquals(33, q.Rear());
+        assertTrue(q.deQueue());
+        assertEquals(22, q.Front());
+        assertEquals(33, q.Rear());
+        assertTrue(q.deQueue());
+        assertEquals(33, q.Front());
+        assertEquals(33, q.Rear());
+        assertTrue(q.deQueue());
+        assertEquals(-1, q.Front());
+        assertEquals(-1, q.Rear());
+    }
+
+    @Test
+    public void testIndependentInstancesDoNotShareStorageOrState() {
+        MyCircularQueue_622 first = new MyCircularQueue_622(2);
+        MyCircularQueue_622 second = new MyCircularQueue_622(2);
+
+        assertTrue(first.enQueue(1));
+        assertTrue(first.enQueue(2));
+        assertTrue(second.enQueue(9));
+        assertEquals(1, first.Front());
+        assertEquals(2, first.Rear());
+        assertEquals(9, second.Front());
+        assertEquals(9, second.Rear());
+        assertTrue(first.deQueue());
+        assertEquals(2, first.Front());
+        assertEquals(9, second.Front());
+        assertFalse(second.isFull());
+    }
+
+    @Test
+    public void testCapacityTwoRepeatedFullEmptyCycles() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(2);
+
+        for (int cycle = 0; cycle < 100; cycle++) {
+            int first = cycle * 2;
+            int second = first + 1;
+            assertTrue(q.isEmpty());
+            assertTrue(q.enQueue(first));
+            assertTrue(q.enQueue(second));
+            assertFalse(q.enQueue(second + 1000));
+            assertEquals(first, q.Front());
+            assertEquals(second, q.Rear());
+            assertTrue(q.deQueue());
+            assertEquals(second, q.Front());
+            assertEquals(second, q.Rear());
+            assertTrue(q.deQueue());
+            assertTrue(q.isEmpty());
+        }
+    }
+
+    @Test
+    public void testMaximumCapacityAndMaximumValues() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(1000);
+
+        for (int i = 0; i < 1000; i++) {
+            assertTrue(q.enQueue(1000));
+        }
+        assertTrue(q.isFull());
+        assertEquals(1000, q.Front());
+        assertEquals(1000, q.Rear());
+        assertFalse(q.enQueue(0));
+        for (int i = 0; i < 1000; i++) {
+            assertTrue(q.deQueue());
+        }
+        assertTrue(q.isEmpty());
+    }
+
+    @Test
+    public void testMaximumOperationBudgetWithLegalCalls() {
+        MyCircularQueue_622 q = new MyCircularQueue_622(1000);
+
+        // Exactly 3,000 queue operations: the documented LeetCode call limit.
+        for (int i = 0; i < 1000; i++) {
+            assertTrue(q.enQueue(i));
+        }
+        for (int i = 0; i < 1000; i++) {
+            assertTrue(q.deQueue());
+        }
+        for (int i = 0; i < 1000; i++) {
+            assertTrue(q.enQueue(1000 - i));
+        }
+    }
+
+    @Test
+    public void testSeededStatefulOracleWithAllPublicOperations() {
+        int capacity = 17;
+        MyCircularQueue_622 q = new MyCircularQueue_622(capacity);
+        ArrayDeque<Integer> ref = new ArrayDeque<>();
+        Random random = new Random(622_2026L);
+
+        for (int i = 0; i < 3_000; i++) {
+            switch (random.nextInt(6)) {
+                case 0 -> {
+                    int value = random.nextInt(2001) - 1000;
+                    boolean expected = ref.size() < capacity;
+                    assertEquals(expected, q.enQueue(value));
+                    if (expected) {
+                        ref.addLast(value);
+                    }
+                }
+                case 1 -> {
+                    boolean expected = !ref.isEmpty();
+                    assertEquals(expected, q.deQueue());
+                    if (expected) {
+                        ref.removeFirst();
+                    }
+                }
+                case 2 -> assertEquals(ref.isEmpty() ? -1 : ref.peekFirst(), q.Front());
+                case 3 -> assertEquals(ref.isEmpty() ? -1 : ref.peekLast(), q.Rear());
+                case 4 -> assertEquals(ref.isEmpty(), q.isEmpty());
+                case 5 -> assertEquals(ref.size() == capacity, q.isFull());
+                default -> throw new AssertionError("unreachable");
+            }
+            assertQueueState(q, ref, capacity);
+        }
+    }
+
+    private static void assertQueueState(MyCircularQueue_622 queue,
+                                         ArrayDeque<Integer> reference,
+                                         int capacity) {
+        assertEquals(reference.isEmpty(), queue.isEmpty());
+        assertEquals(reference.size() == capacity, queue.isFull());
+        assertEquals(reference.isEmpty() ? -1 : reference.peekFirst(), queue.Front());
+        assertEquals(reference.isEmpty() ? -1 : reference.peekLast(), queue.Rear());
     }
 }

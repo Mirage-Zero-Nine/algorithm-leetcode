@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class LongestConsecutive_549Test {
 
@@ -99,5 +101,17 @@ public class LongestConsecutive_549Test {
             cur = cur.left;
         }
         assertEquals(100, test.longestConsecutive(root));
+    }
+
+    @ParameterizedTest(name = "bidirectional chain length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testDescendingLeftChains(int length) {
+        TreeNode root = new TreeNode(length);
+        TreeNode current = root;
+        for (int value = length - 1; value >= 1; value--) {
+            current.left = new TreeNode(value);
+            current = current.left;
+        }
+        assertEquals(length, test.longestConsecutive(root));
     }
 }

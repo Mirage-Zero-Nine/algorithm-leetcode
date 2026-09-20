@@ -63,4 +63,14 @@ public class NextGreaterElements_503Test {
         // first element -> 1
         assertEquals(1, result[0]);
     }
+    @Test public void testWrapToFirst() { assertArrayEquals(new int[]{3,3,-1}, solver.nextGreaterElements(new int[]{2,1,3})); }
+    @Test public void testNegativeMixed() { assertArrayEquals(new int[]{-1,-1,-2}, solver.nextGreaterElements(new int[]{-2,-1,-3})); }
+    @Test public void testPeakAndDuplicates() { assertArrayEquals(new int[]{5,-1,4,5}, solver.nextGreaterElements(new int[]{1,5,3,4})); }
+    @Test public void testTwoEqual() { assertArrayEquals(new int[]{-1,-1}, solver.nextGreaterElements(new int[]{7,7})); }
+    @Test public void testMinimumAndMaximum() { assertArrayEquals(new int[]{2147483647,-1}, solver.nextGreaterElements(new int[]{Integer.MIN_VALUE,Integer.MAX_VALUE})); }
+    @Test public void testValley() { assertArrayEquals(new int[]{2,3,4,-1}, solver.nextGreaterElements(new int[]{1,2,3,4})); }
+    @Test public void testWrapAfterPeak() { assertArrayEquals(new int[]{-1,2,3}, solver.nextGreaterElements(new int[]{3,1,2})); }
+    @Test public void testAlternating() { assertArrayEquals(new int[]{-1,5,-1,5,-1}, solver.nextGreaterElements(new int[]{5,1,5,1,5})); }
+    @Test public void testNegativeDescending() { assertArrayEquals(new int[]{-1,-1,-1}, solver.nextGreaterElements(new int[]{-1,-2,-3})); }
+    @Test public void testRepeatedCall() { solver.nextGreaterElements(new int[]{1,2}); assertArrayEquals(new int[]{-1},solver.nextGreaterElements(new int[]{4})); }
 }

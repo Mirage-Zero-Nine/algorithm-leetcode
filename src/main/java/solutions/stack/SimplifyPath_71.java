@@ -28,9 +28,9 @@ public class SimplifyPath_71 {
 
         for (String s : path.split("/")) {      // split path string by "/", "/" will not show in spilt string
 
-            if (s.equals("src/main") && !stack.isEmpty()) {       // one folder back in path
+            if (s.equals("..") && !stack.isEmpty()) {       // one folder back in path
                 stack.pop();
-            } else if (!s.equals("src/main") && !s.equals(".") && !s.isEmpty()) {        // find valid folder path
+            } else if (!s.equals("..") && !s.equals(".") && !s.isEmpty()) {        // find valid folder path
                 stack.push(s);
             }
         }

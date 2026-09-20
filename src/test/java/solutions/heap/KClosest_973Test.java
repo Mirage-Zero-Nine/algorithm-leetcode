@@ -181,4 +181,9 @@ public class KClosest_973Test {
         }
         return set;
     }
+
+    @Test public void testKOneFromTwo() { assertEquals(1, test.kClosest(new int[][]{{1, 2}, {3, 4}}, 1).length); }
+    @Test public void testAllPointsReturned() { assertEquals(3, test.kClosest(new int[][]{{-1, 0}, {0, 2}, {3, 4}}, 3).length); }
+    @Test public void testNegativeAndZeroDistance() { assertPointSetEquals(Set.of("0,0", "-1,0"), test.kClosest(new int[][]{{0, 0}, {-1, 0}, {2, 2}}, 2)); }
+    @Test public void testNoInputMutation() { int[][] p = {{3, 4}, {1, 1}}; int[][] before = {{3, 4}, {1, 1}}; test.kClosest(p, 1); assertEquals(toPointSet(before), toPointSet(p)); }
 }

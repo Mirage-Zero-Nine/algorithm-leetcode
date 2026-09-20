@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class MaximumSum_1186Test {
 
@@ -64,5 +66,17 @@ public class MaximumSum_1186Test {
         arr[5000] = -100;
         // Delete the -100, sum = 9999
         assertEquals(9999, test.maximumSum(arr));
+    }
+
+    @ParameterizedTest(name = "maximum sum {0}")
+    @CsvSource({"'2,-1,2',4", "'-2,3,-1',3", "'5,-10,5,5',15", "'-3,-2,-1',-1", "'1,-1,1,-1,1',2", "'10,-20,30,-5',40", "'-1,4,-2,4',8", "'6,-1,-1,6',11", "'2,-5,2,-5,2',4", "'1,2,-10,3,4',10"})
+    public void testAdditionalDeletionChoices(String encoded, int expected) {
+        assertEquals(expected, test.maximumSum(parse(encoded)));
+    }
+
+    private static int[] parse(String encoded) {
+        String[] values = encoded.split(","); int[] result = new int[values.length];
+        for (int i = 0; i < values.length; i++) result[i] = Integer.parseInt(values[i]);
+        return result;
     }
 }

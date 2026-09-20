@@ -86,4 +86,22 @@ public class ReorganizeString_767Test {
             assertNotEquals(result.charAt(i), result.charAt(i - 1));
         }
     }
+
+    @Test public void testTwoDifferentCharacters() { assertValidReorganization("ab"); }
+    @Test public void testExactlyFeasibleFrequency() { assertValidReorganization("aaabc"); }
+    @Test public void testExactlyBalancedMaximumFrequency() { assertValidReorganization("aaaabbb"); }
+    @Test public void testAllDistinct() { assertValidReorganization("abcdef"); }
+    @Test public void testThreePairs() { assertValidReorganization("aabbcc"); }
+    @Test public void testSingleCharacterImpossiblePair() { assertEquals("", test.reorganizeString("bbbbb")); }
+    @Test public void testPreservesCharacterCounts() { String input = "aaabbccdde"; String output = test.reorganizeString(input); assertNotEquals("", output); assertEquals(input.length(), output.length()); for (char c = 'a'; c <= 'z'; c++) { int expected = 0, actual = 0; for (int i = 0; i < input.length(); i++) if (input.charAt(i) == c) expected++; for (int i = 0; i < output.length(); i++) if (output.charAt(i) == c) actual++; assertEquals(expected, actual); } }
+    @Test public void testManyUnequalFrequencies() { assertValidReorganization("aaaabbccdde"); }
+    @Test public void testRepeatedInvocation() { test.reorganizeString("aab"); assertValidReorganization("vvvlo"); }
+    @Test public void testBalancedFourCharacters() { assertValidReorganization("aabbccdd"); }
+
+    private void assertValidReorganization(String input) {
+        String result = test.reorganizeString(input);
+        assertNotEquals("", result);
+        assertEquals(input.length(), result.length());
+        for (int i = 1; i < result.length(); i++) assertNotEquals(result.charAt(i), result.charAt(i - 1));
+    }
 }

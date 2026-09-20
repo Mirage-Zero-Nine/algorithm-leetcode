@@ -151,6 +151,8 @@ public class CountSubstrings_647Test {
         assertEquals(1275, test.countSubstrings("z".repeat(50)));
     }
 
+    @Test public void testEvenAndOddCentersTogether() { assertEquals(bruteForceCount("abacaba"), test.countSubstrings("abacaba")); }
+
     private boolean isPalindrome(String s, int i, int j) {
         while (i < j) {
             if (s.charAt(i++) != s.charAt(j--)) return false;

@@ -69,4 +69,14 @@ class MinSetSize_1338Test {
         // 100 distinct values each appearing 100 times, need to remove 5000 => 50 values
         assertEquals(50, solution.minSetSize(arr));
     }
+    @Test void extra01() { assertEquals(1, solution.minSetSize(new int[]{1,1})); }
+    @Test void extra02() { assertEquals(1, solution.minSetSize(new int[]{1,2})); }
+    @Test void extra03() { assertEquals(2, solution.minSetSize(new int[]{1,2,3,4})); }
+    @Test void extra04() { assertEquals(1, solution.minSetSize(new int[]{1,1,1,2})); }
+    @Test void extra05() { assertEquals(3, solution.minSetSize(new int[]{1,2,3,4,5,6})); }
+    @Test void extra06() { assertEquals(1, solution.minSetSize(new int[]{7,7,7,7})); }
+    @Test void extra07() { assertEquals(2, solution.minSetSize(new int[]{1,1,2,2,3,3})); }
+    @Test void extra08() { assertEquals(1, solution.minSetSize(new int[]{1,1,1,1,2,3})); }
+    @Test void extra09() { assertEquals(2, solution.minSetSize(new int[]{1,2,3,4,5,5,6,6})); }
+    @Test void extra10() { assertEquals(4, solution.minSetSize(new int[]{1,2,3,4,5,6,7,8})); }
 }

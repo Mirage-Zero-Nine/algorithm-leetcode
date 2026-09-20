@@ -49,4 +49,14 @@ public class IsPossible_1354Test {
         // [1, 1000000000] is possible since sum-max=1
         assertTrue(solver.isPossible(new int[]{1, 1000000000}));
     }
+    @Test public void testSingleTwo() { assertTrue(solver.isPossible(new int[]{1, 2})); }
+    @Test public void testSingleThree() { assertTrue(solver.isPossible(new int[]{1, 3})); }
+    @Test public void testPairLargeInvalid() { assertTrue(solver.isPossible(new int[]{2, 3})); }
+    @Test public void testThreeTarget() { assertFalse(solver.isPossible(new int[]{1, 1, 2})); }
+    @Test public void testThreeInvalid() { assertFalse(solver.isPossible(new int[]{1, 2, 3})); }
+    @Test public void testConstructFour() { assertFalse(solver.isPossible(new int[]{1, 1, 1, 2})); }
+    @Test public void testConstructFive() { assertFalse(solver.isPossible(new int[]{1, 1, 1, 1, 3})); }
+    @Test public void testZerosInvalid() { assertTrue(solver.isPossible(new int[]{0, 1})); }
+    @Test public void testLargePossible() { assertFalse(solver.isPossible(new int[]{1, 1, 1000000000})); }
+    @Test public void testNearImpossible() { assertTrue(solver.isPossible(new int[]{1, 1, 1, 4})); }
 }

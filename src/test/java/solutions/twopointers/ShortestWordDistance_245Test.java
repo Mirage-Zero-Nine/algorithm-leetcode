@@ -76,4 +76,15 @@ public class ShortestWordDistance_245Test {
         assertEquals(1, test.shortestWordDistance(
             new String[]{"a", "b", "a", "b", "a"}, "a", "b"));
     }
+
+    @Test public void testAdjacentAtStart() { assertEquals(1,test.shortestWordDistance(new String[]{"a","b","x"},"a","b")); }
+    @Test public void testSeparatedByOne() { assertEquals(2,test.shortestWordDistance(new String[]{"a","x","b"},"a","b")); }
+    @Test public void testSameWordThreeOccurrences() { assertEquals(1,test.shortestWordDistance(new String[]{"a","x","a","a"},"a","a")); }
+    @Test public void testSameWordSeparated() { assertEquals(3,test.shortestWordDistance(new String[]{"a","x","y","a"},"a","a")); }
+    @Test public void testReverseOrder() { assertEquals(1,test.shortestWordDistance(new String[]{"b","a"},"a","b")); }
+    @Test public void testLongGap() { assertEquals(4,test.shortestWordDistance(new String[]{"a","x","x","x","b"},"a","b")); }
+    @Test public void testMultipleCandidates() { assertEquals(1,test.shortestWordDistance(new String[]{"a","b","x","a","b"},"a","b")); }
+    @Test public void testSameWordAdjacentAtEnd() { assertEquals(1,test.shortestWordDistance(new String[]{"x","a","a"},"a","a")); }
+    @Test public void testUniqueWordsAtEnds() { assertEquals(2,test.shortestWordDistance(new String[]{"a","x","b"},"a","b")); }
+    @Test public void testRepeatedReuse() { assertEquals(1,test.shortestWordDistance(new String[]{"a","b"},"a","b")); }
 }

@@ -73,4 +73,54 @@ public class CanWinNim_292Test {
         assertTrue(test.canWinNim(Integer.MAX_VALUE)); // 2147483647 % 4 = 3 => true
         assertFalse(test.canWinNim(Integer.MAX_VALUE - 3)); // 2147483644 % 4 = 0 => false
     }
+
+    @Test
+    public void testAdditional1() {
+        assertTrue(test.canWinNim(21));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertTrue(test.canWinNim(22));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertTrue(test.canWinNim(23));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertFalse(test.canWinNim(24));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertTrue(test.canWinNim(25));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertFalse(test.canWinNim(28));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertFalse(test.canWinNim(32));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertTrue(test.canWinNim(33));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertFalse(test.canWinNim(40));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertTrue(test.canWinNim(2147483647));
+    }
 }

@@ -61,4 +61,14 @@ public class ScheduleCourse_630Test {
         }
         assertEquals(n, solver.scheduleCourse(courses));
     }
+    @Test public void testAdditionalExact() { assertEquals(1, solver.scheduleCourse(new int[][]{{2, 2}})); }
+    @Test public void testAdditionalTwoFit() { assertEquals(2, solver.scheduleCourse(new int[][]{{1, 2}, {2, 3}})); }
+    @Test public void testAdditionalReplace() { assertEquals(2, solver.scheduleCourse(new int[][]{{5, 5}, {2, 2}, {2, 4}})); }
+    @Test public void testAdditionalDeadline() { assertEquals(3, solver.scheduleCourse(new int[][]{{1, 3}, {1, 3}, {1, 3}})); }
+    @Test public void testAdditionalLate() { assertEquals(2, solver.scheduleCourse(new int[][]{{2, 2}, {3, 10}, {5, 5}})); }
+    @Test public void testAdditionalOne() { assertEquals(1, solver.scheduleCourse(new int[][]{{10, 10}})); }
+    @Test public void testAdditionalImpossible() { assertEquals(0, solver.scheduleCourse(new int[][]{{2, 1}, {3, 2}})); }
+    @Test public void testAdditionalFour() { assertEquals(4, solver.scheduleCourse(new int[][]{{1, 10}, {1, 10}, {1, 10}, {1, 10}})); }
+    @Test public void testAdditionalOrder() { assertEquals(2, solver.scheduleCourse(new int[][]{{3, 4}, {1, 2}, {2, 5}})); }
+    @Test public void testAdditionalZeroDuration() { assertEquals(2, solver.scheduleCourse(new int[][]{{0, 0}, {1, 1}})); }
 }

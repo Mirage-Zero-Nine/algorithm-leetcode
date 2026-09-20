@@ -72,4 +72,14 @@ class MinCost_1578Test {
         // keep the max cost (10000), delete all others: sum(1..9999) = 9999*10000/2 = 49995000
         assertEquals(49995000, solution.minCost(sb.toString(), cost));
     }
+    @Test void testAdditionalPair() { assertEquals(4, solution.minCost("aa", new int[]{4, 5})); }
+    @Test void testAdditionalTriple() { assertEquals(0, solution.minCost("aba", new int[]{1, 2, 3})); }
+    @Test void testAdditionalRuns() { assertEquals(6, solution.minCost("aaaa", new int[]{1, 2, 3, 4})); }
+    @Test void testAdditionalTwoRuns() { assertEquals(4, solution.minCost("aabb", new int[]{1, 2, 3, 4})); }
+    @Test void testAdditionalAlternating() { assertEquals(0, solution.minCost("abab", new int[]{1, 2, 3, 4})); }
+    @Test void testAdditionalHigh() { assertEquals(1, solution.minCost("aa", new int[]{100, 1})); }
+    @Test void testAdditionalKeepFirst() { assertEquals(1, solution.minCost("aa", new int[]{1, 2})); }
+    @Test void testAdditionalKeepLast() { assertEquals(1, solution.minCost("aa", new int[]{2, 1})); }
+    @Test void testAdditionalLong() { assertEquals(10, solution.minCost("aaaaa", new int[]{1, 2, 3, 4, 5})); }
+    @Test void testAdditionalMixed() { assertEquals(5, solution.minCost("aabcc", new int[]{1, 2, 3, 4, 5})); }
 }

@@ -76,4 +76,14 @@ public class MaxPerformance_1383Test {
         int result = solver.maxPerformance(n, speed, efficiency, n / 2);
         assertTrue(result >= 0);
     }
+    @Test public void testAdditionalSingle() { assertEquals(10, solver.maxPerformance(1, new int[]{2}, new int[]{5}, 1)); }
+    @Test public void testAdditionalTwoOne() { assertEquals(15, solver.maxPerformance(2, new int[]{2, 3}, new int[]{5, 5}, 1)); }
+    @Test public void testAdditionalTwoBoth() { assertEquals(25, solver.maxPerformance(2, new int[]{2, 3}, new int[]{5, 5}, 2)); }
+    @Test public void testAdditionalChooseEfficiency() { assertEquals(20, solver.maxPerformance(3, new int[]{10, 1, 1}, new int[]{1, 10, 10}, 2)); }
+    @Test public void testAdditionalChooseSpeed() { assertEquals(10, solver.maxPerformance(3, new int[]{10, 1, 1}, new int[]{1, 10, 10}, 1)); }
+    @Test public void testAdditionalEqual() { assertEquals(12, solver.maxPerformance(3, new int[]{2, 2, 2}, new int[]{2, 2, 2}, 3)); }
+    @Test public void testAdditionalKOne() { assertEquals(100, solver.maxPerformance(2, new int[]{10, 100}, new int[]{5, 1}, 1)); }
+    @Test public void testAdditionalKTwo() { assertEquals(110, solver.maxPerformance(2, new int[]{10, 100}, new int[]{5, 1}, 2)); }
+    @Test public void testAdditionalThree() { assertEquals(12, solver.maxPerformance(3, new int[]{3, 3, 3}, new int[]{2, 2, 2}, 2)); }
+    @Test public void testAdditionalLargeEfficiency() { assertEquals(1000, solver.maxPerformance(2, new int[]{10, 20}, new int[]{100, 50}, 1)); }
 }

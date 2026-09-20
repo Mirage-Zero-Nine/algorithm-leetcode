@@ -66,4 +66,14 @@ public class MCTFromLeafValues_1130Test {
         int result = solver.mctFromLeafValues(arr);
         assertTrue(result > 0);
     }
+
+    @Test public void testThreeEqual() { assertEquals(50, solver.mctFromLeafValues(new int[]{5,5,5})); }
+    @Test public void testIncreasingFive() { assertEquals(40, solver.mctFromLeafValues(new int[]{1,2,3,4,5})); }
+    @Test public void testDecreasingFive() { assertEquals(40, solver.mctFromLeafValues(new int[]{5,4,3,2,1})); }
+    @Test public void testPeak() { assertEquals(32, solver.mctFromLeafValues(new int[]{2,8,2})); }
+    @Test public void testOneAndLarge() { assertEquals(100, solver.mctFromLeafValues(new int[]{1,100})); }
+    @Test public void testMixedLeaves() { assertEquals(113, solver.mctFromLeafValues(new int[]{7,2,9,4})); }
+    @Test public void testAlternating() { assertEquals(45, solver.mctFromLeafValues(new int[]{2,5,2,5})); }
+    @Test public void testLargeUniform() { assertEquals(81, solver.mctFromLeafValues(new int[]{3,3,3,3,3,3,3,3,3,3})); }
+    @Test public void testMinimumLeaves() { assertEquals(2, solver.mctFromLeafValues(new int[]{1,2})); }
 }

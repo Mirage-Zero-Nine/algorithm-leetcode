@@ -108,4 +108,12 @@ public class MinCostToSupplyWater_1168Test {
         // MST: one well (1000) + 99 pipes (99) = 1099
         assertEquals(1099, test.minCostToSupplyWater(n, wells, pipes));
     }
+
+    @Test public void testZeroCostWell() { assertEquals(2, test.minCostToSupplyWater(2, new int[]{0,5}, new int[][]{{1,2,2}})); }
+    @Test public void testZeroCostPipe() { assertEquals(3, test.minCostToSupplyWater(2, new int[]{3,8}, new int[][]{{1,2,0}})); }
+    @Test public void testPipeChainWithStrategicWell() { assertEquals(4, test.minCostToSupplyWater(4, new int[]{10,10,1,10}, new int[][]{{1,2,1},{2,3,1},{3,4,1}})); }
+    @Test public void testEqualWellAndPipeCosts() { assertEquals(6, test.minCostToSupplyWater(3, new int[]{2,2,2}, new int[][]{{1,2,2},{2,3,2}})); }
+    @Test public void testDuplicatePipeEdgesChooseMinimum() { assertEquals(8, test.minCostToSupplyWater(2, new int[]{5,5}, new int[][]{{1,2,9},{1,2,3}})); }
+    @Test public void testFiveHouseStar() { assertEquals(8, test.minCostToSupplyWater(5, new int[]{4,20,20,20,20}, new int[][]{{1,2,1},{1,3,1},{1,4,1},{1,5,1}})); }
+    @Test public void testRepeatedInvocation() { assertEquals(1, test.minCostToSupplyWater(1,new int[]{1},new int[][]{})); assertEquals(10, test.minCostToSupplyWater(1,new int[]{10},new int[][]{})); }
 }

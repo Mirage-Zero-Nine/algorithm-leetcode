@@ -3,10 +3,15 @@ package solutions.dfs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import library.tree.narytree.Node;
 import org.junit.jupiter.api.Test;
 
@@ -257,6 +262,66 @@ public class Diameter_1522Test {
         assertEquals(14, test.diameter(root));
     }
 
+    @Test
+    public void testNodeValuesDoNotAffectDiameter() {
+        // Values may repeat (and may be negative); only the parent/child topology matters.
+        Node root = new Node(7, Arrays.asList(
+                new Node(7, Collections.singletonList(new Node(-1))),
+                new Node(7, Arrays.asList(new Node(-1), new Node(-1))),
+                new Node(-1)
+        ));
+        assertEquals(4, test.diameter(root));
+    }
+
+    @Test
+    public void testMaximumNodeCountWithShallowVariableArity() {
+        // LeetCode permits up to 10,000 nodes.  Keep the depth small so this checks the
+        // node-count boundary without making recursion depth the only thing under test.
+        List<Node> branches = new ArrayList<>(3333);
+        for (int i = 0; i < 3333; i++) {
+            Node leaf = new Node(i % 5);
+            Node middle = new Node(i % 3, Collections.singletonList(leaf));
+            branches.add(new Node(i % 2, Collections.singletonList(middle)));
+        }
+        Node root = new Node(0, branches); // 1 + (3 * 3333) = 10,000 nodes
+        assertEquals(6, test.diameter(root));
+    }
+
+    @Test
+    public void testRepeatedCallsDoNotRetainPreviousMaximum() {
+        Node longTree = new Node(1, Arrays.asList(
+                new Node(2, Collections.singletonList(new Node(3))),
+                new Node(4, Collections.singletonList(new Node(5)))
+        ));
+        assertEquals(4, test.diameter(longTree));
+        assertEquals(0, test.diameter(null));
+        assertEquals(0, test.diameter(new Node(9)));
+        assertEquals(4, test.diameter(longTree));
+    }
+
+    @Test
+    public void testSeededTreesAgainstIndependentGraphDistanceOracle() {
+        Random random = new Random(1522L);
+        for (int scenario = 0; scenario < 150; scenario++) {
+            int nodeCount = 1 + random.nextInt(80);
+            List<Node> nodes = new ArrayList<>(nodeCount);
+            for (int i = 0; i < nodeCount; i++) {
+                // Duplicate and signed values verify that labels are irrelevant.
+                nodes.add(new Node(random.nextInt(9) - 4));
+            }
+            for (int i = 1; i < nodeCount; i++) {
+                Node parent = nodes.get(random.nextInt(i));
+                if (parent.children == null) {
+                    parent.children = new ArrayList<>();
+                }
+                parent.children.add(nodes.get(i));
+            }
+
+            assertEquals(graphDiameter(nodes.get(0)), test.diameter(nodes.get(0)),
+                    "seeded tree scenario " + scenario);
+        }
+    }
+
     private Node buildChain(int depth) {
         Node cur = new Node(0);
         for (int i = 1; i < depth; i++) {
@@ -273,5 +338,58 @@ public class Diameter_1522Test {
             max = Math.max(max, height(child));
         }
         return max + 1;
+    }
+
+    /**
+     * Computes diameter by treating every parent-child edge as an undirected graph edge
+     * and running BFS from every vertex.  This deliberately does not use the solution's
+     * child-height recurrence, so the randomized checks can detect shared recurrence bugs.
+     */
+    private int graphDiameter(Node root) {
+        if (root == null) {
+            return 0;
+        }
+
+        List<Node> nodes = new ArrayList<>();
+        Map<Node, List<Node>> graph = new IdentityHashMap<>();
+        collectGraph(root, null, nodes, graph);
+
+        int diameter = 0;
+        for (Node source : nodes) {
+            Map<Node, Integer> distances = new IdentityHashMap<>();
+            Deque<Node> queue = new ArrayDeque<>();
+            distances.put(source, 0);
+            queue.add(source);
+            while (!queue.isEmpty()) {
+                Node current = queue.remove();
+                int distance = distances.get(current);
+                diameter = Math.max(diameter, distance);
+                for (Node neighbor : graph.get(current)) {
+                    if (!distances.containsKey(neighbor)) {
+                        distances.put(neighbor, distance + 1);
+                        queue.add(neighbor);
+                    }
+                }
+            }
+        }
+        return diameter;
+    }
+
+    private void collectGraph(Node node, Node parent, List<Node> nodes,
+                              Map<Node, List<Node>> graph) {
+        if (node == null || graph.containsKey(node)) {
+            return;
+        }
+        graph.put(node, new ArrayList<>());
+        nodes.add(node);
+        if (parent != null) {
+            graph.get(node).add(parent);
+            graph.get(parent).add(node);
+        }
+        if (node.children != null) {
+            for (Node child : node.children) {
+                collectGraph(child, node, nodes, graph);
+            }
+        }
     }
 }

@@ -61,4 +61,11 @@ public class IsSubsequence_392Test {
         String s = "aj".repeat(50);
         assertTrue(solver.isSubsequence(s, t));
     }
+    @Test public void testScatteredMatch() { assertTrue(solver.isSubsequence("ace", "abcde")); }
+    @Test public void testWrongOrder() { assertFalse(solver.isSubsequence("ca", "abc")); }
+    @Test public void testRepeatedCharacters() { assertTrue(solver.isSubsequence("aaa", "abacada")); }
+    @Test public void testTooManyRepeatedCharacters() { assertTrue(solver.isSubsequence("aaaa", "abacada")); }
+    @Test public void testBucketScatteredMatch() { assertTrue(solver.bucket("ace", "abcde")); }
+    @Test public void testBucketWrongOrder() { assertFalse(solver.bucket("ca", "abc")); }
+    @Test public void testOneCharacterAtEnd() { assertTrue(solver.isSubsequence("z", "abcdefz")); }
 }

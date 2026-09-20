@@ -23,6 +23,8 @@ public class DistributeCoins_979 {
      * @return number of moves required to make every node have exactly one coin
      */
     public int distributeCoins(TreeNode root) {
+        // A solution object may be reused; each invocation must report only this tree's moves.
+        move = 0;
         dfs(root);
         return move;
     }

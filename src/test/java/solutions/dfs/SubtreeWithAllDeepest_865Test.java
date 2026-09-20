@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class SubtreeWithAllDeepest_865Test {
 
@@ -109,5 +111,13 @@ public class SubtreeWithAllDeepest_865Test {
         node.left = buildBalancedTree(val * 2, depth - 1);
         node.right = buildBalancedTree(val * 2 + 1, depth - 1);
         return node;
+    }
+
+    @ParameterizedTest(name = "deepest chain depth {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testSingleDeepestChains(int depth) {
+        TreeNode root = new TreeNode(0); TreeNode current = root;
+        for (int i = 1; i < depth; i++) { current.left = new TreeNode(i); current = current.left; }
+        assertEquals(depth - 1, new SubtreeWithAllDeepest_865().subtreeWithAllDeepest(root).val);
     }
 }

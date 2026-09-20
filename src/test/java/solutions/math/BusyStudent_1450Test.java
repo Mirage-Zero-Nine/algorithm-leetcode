@@ -107,4 +107,44 @@ public class BusyStudent_1450Test {
     public void testThrowsOnNegativeQueryTime() {
         assertThrows(IllegalArgumentException.class, () -> solver.busyStudent(new int[]{1}, new int[]{2}, -1));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, solver.busyStudent(new int[]{1}, new int[]{1}, 1));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(2, solver.busyStudent(new int[]{1,2}, new int[]{2,3}, 2));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(1, solver.busyStudent(new int[]{1,2}, new int[]{2,3}, 3));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(3, solver.busyStudent(new int[]{0,0,0}, new int[]{0,0,0}, 0));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(1, solver.busyStudent(new int[]{5,10}, new int[]{5,10}, 10));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(0, solver.busyStudent(new int[]{1,5,9}, new int[]{2,6,10}, 7));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(3, solver.busyStudent(new int[]{2,2,2}, new int[]{2,2,2}, 2));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(2, solver.busyStudent(new int[]{0,100}, new int[]{100,200}, 100));
+    }
 }

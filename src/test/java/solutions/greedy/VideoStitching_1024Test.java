@@ -65,4 +65,17 @@ public class VideoStitching_1024Test {
         }
         assertEquals(10, solver.videoStitching(clips, 50));
     }
+
+    @Test public void testBacktrackingReuseResetsMinimum() {
+        assertEquals(1, solver.backtracking(new int[][]{{0, 5}}, 5));
+        assertEquals(-1, solver.backtracking(new int[][]{{1, 5}}, 5));
+    }
+    @Test public void testAdditionalExact() { assertEquals(1, solver.videoStitching(new int[][]{{0, 5}}, 5)); }
+    @Test public void testAdditionalTwo() { assertEquals(2, solver.videoStitching(new int[][]{{0, 2}, {2, 4}}, 4)); }
+    @Test public void testAdditionalOverlap() { assertEquals(2, solver.videoStitching(new int[][]{{0, 3}, {1, 5}}, 5)); }
+    @Test public void testAdditionalBacktrackingTwo() { assertEquals(2, solver.backtracking(new int[][]{{0, 2}, {2, 4}}, 4)); }
+    @Test public void testAdditionalNested() { assertEquals(1, solver.videoStitching(new int[][]{{0, 10}, {1, 2}}, 5)); }
+    @Test public void testAdditionalTooShort() { assertEquals(-1, solver.videoStitching(new int[][]{{0, 4}}, 5)); }
+    @Test public void testAdditionalZeroClip() { assertEquals(0, solver.videoStitching(new int[][]{{0, 0}}, 0)); }
+    @Test public void testAdditionalUnordered() { assertEquals(3, solver.videoStitching(new int[][]{{2, 4}, {0, 2}, {4, 6}}, 6)); }
 }

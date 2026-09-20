@@ -62,4 +62,54 @@ public class DayOfYear_1154Test {
         // Year 2400 is a leap year (divisible by 400)
         assertEquals(61, test.dayOfYear("2400-03-01"));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, test.dayOfYear("2019-01-01"));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(365, test.dayOfYear("2019-12-31"));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(1, test.dayOfYear("2020-01-01"));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(60, test.dayOfYear("2020-02-29"));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(61, test.dayOfYear("2020-03-01"));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(366, test.dayOfYear("2020-12-31"));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(60, test.dayOfYear("1900-03-01"));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(61, test.dayOfYear("2000-03-01"));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(186, test.dayOfYear("2024-07-04"));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(365, test.dayOfYear("2100-12-31"));
+    }
 }

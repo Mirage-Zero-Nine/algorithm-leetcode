@@ -109,4 +109,14 @@ public class MergeKLists_23Test {
         while (cur.next != null) cur = cur.next;
         assertEquals(999, cur.val);
     }
+
+    @Test public void testHeapEmpty() { assertNull(test.mergeKListsHeap(new ListNode[]{})); }
+    @Test public void testHeapNullEntries() { ListNode r = test.mergeKListsHeap(new ListNode[]{null, build(2, 4), null}); assertEquals(2, r.val); assertEquals(4, r.next.val); }
+    @Test public void testSingleListHeap() { ListNode r = test.mergeKListsHeap(new ListNode[]{build(-2, 0, 3)}); assertEquals(-2, r.val); assertEquals(3, r.next.next.val); }
+    @Test public void testSingleListDivide() { ListNode r = test.mergeKLists(new ListNode[]{build(-2, 0, 3)}); assertEquals(0, r.next.val); }
+    @Test public void testAllEqualHeap() { ListNode r = test.mergeKListsHeap(new ListNode[]{build(1, 1), build(1, 1)}); int c = 0; while (r != null) { assertEquals(1, r.val); c++; r = r.next; } assertEquals(4, c); }
+    @Test public void testInterleavedNegatives() { ListNode r = test.mergeKLists(new ListNode[]{build(-5, -1, 4), build(-4, 0, 3), build(-3, 2)}); int[] e = {-5, -4, -3, -1, 0, 2, 3, 4}; for (int v : e) { assertEquals(v, r.val); r = r.next; } }
+    @Test public void testTwoEmptyLists() { assertNull(test.mergeKLists(new ListNode[]{null, null})); }
+    @Test public void testDifferentLengthLists() { ListNode r = test.mergeKListsHeap(new ListNode[]{build(1), build(2, 3, 4, 5)}); int[] e = {1, 2, 3, 4, 5}; for (int v : e) { assertEquals(v, r.val); r = r.next; } }
+    @Test public void testRepeatedInvocation() { test.mergeKLists(new ListNode[]{build(1)}); assertEquals(8, test.mergeKListsHeap(new ListNode[]{build(8)}).val); }
 }

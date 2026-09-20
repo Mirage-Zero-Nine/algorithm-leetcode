@@ -18,7 +18,7 @@ public class MovingAverage_346 {
     private final int size;
     private int head = 0;
     private int count = 0;
-    private int sum = 0;
+    private long sum = 0;
     private final int[] arr;
 
     /**

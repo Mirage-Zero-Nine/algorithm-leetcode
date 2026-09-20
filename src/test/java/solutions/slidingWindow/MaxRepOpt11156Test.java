@@ -66,4 +66,10 @@ public class MaxRepOpt11156Test {
         sb.setCharAt(2500, 'b');
         assertEquals(4999, test.maxRepOpt1_1156(sb.toString()));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"a,1", "ab,1", "aba,2", "aab,2", "baa,2", "aabb,2", "aabba,3", "abcabc,2", "aaabbb,3", "abababa,3"})
+    void additionalBoundaryCases(String value, int expected) {
+        assertEquals(expected, test.maxRepOpt1_1156(value));
+    }
 }

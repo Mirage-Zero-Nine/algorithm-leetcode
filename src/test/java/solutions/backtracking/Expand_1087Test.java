@@ -5,84 +5,156 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Expand_1087Test {
     private final Expand_1087 solution = new Expand_1087();
 
     @Test
     void testBasic() {
-        String[] result = solution.expand("{a,b}c{d,e}f");
-        assertEquals(4, result.length);
+        assertExpansion("{a,b}c{d,e}f", "acdf", "acef", "bcdf", "bcef");
     }
 
     @Test
     void testSingleOption() {
-        String[] result = solution.expand("abcd");
-        assertEquals(1, result.length);
+        assertExpansion("abcd", "abcd");
     }
 
     @Test
     void testMultipleOptions() {
-        String[] result = solution.expand("{a,b}{c,d}");
-        assertEquals(4, result.length);
+        assertExpansion("{a,b}{c,d}", "ac", "ad", "bc", "bd");
     }
 
     @Test
     void testThreeOptions() {
-        String[] result = solution.expand("{a,b,c}");
-        assertEquals(3, result.length);
+        assertExpansion("{a,b,c}", "a", "b", "c");
     }
 
     @Test
     void testComplex() {
-        String[] result = solution.expand("a{b,c}{d,e}f");
-        assertEquals(4, result.length);
+        assertExpansion("a{b,c}{d,e}f", "abdf", "abef", "acdf", "acef");
     }
 
     @Test
     void testLexicographicOrder() {
-        String[] result = solution.expand("{b,a}c");
-        assertEquals("ac", result[0]);
-        assertEquals("bc", result[1]);
+        assertExpansion("{b,a}c", "ac", "bc");
     }
 
     @Test
     void testSingleChar() {
-        String[] result = solution.expand("a");
-        assertEquals(1, result.length);
-        assertEquals("a", result[0]);
+        assertExpansion("a", "a");
     }
 
     @Test
     void testAllBraces() {
-        String[] result = solution.expand("{a,b}{c,d}{e,f}");
-        assertEquals(8, result.length);
+        assertExpansion("{a,b}{c,d}{e,f}",
+                "ace", "acf", "ade", "adf", "bce", "bcf", "bde", "bdf");
     }
 
     @Test
     void testSingleOptionInBraces() {
-        String[] result = solution.expand("{a}b{c}");
-        assertEquals(1, result.length);
-        assertEquals("abc", result[0]);
+        assertExpansion("{a}b{c}", "abc");
     }
 
     @Test
     void testResultContent() {
-        assertArrayEquals(new String[]{"acdf", "acef", "bcdf", "bcef"},
-                solution.expand("{a,b}c{d,e}f"));
+        assertExpansion("{a,b}c{d,e}f", "acdf", "acef", "bcdf", "bcef");
     }
 
     @Test
     void testGiantExpansion() {
         // {a,b,c}{d,e,f}{g,h,i} = 27 combinations
-        String[] result = solution.expand("{a,b,c}{d,e,f}{g,h,i}");
-        assertEquals(27, result.length);
+        assertExpansion("{a,b,c}{d,e,f}{g,h,i}",
+                cartesianProduct(components("abc", "def", "ghi")));
+    }
+
+    @Test
+    void testGroupsAndLiteralsCanBeAdjacent() {
+        assertExpansion("x{a,b}y{c,d}z", "xaycz", "xaydz", "xbycz", "xbydz");
+    }
+
+    @Test
+    void testOptionsAreSortedEvenWhenInputIsReversed() {
+        assertExpansion("{d,c,b,a}{z,y,x,w}",
+                "aw", "ax", "ay", "az", "bw", "bx", "by", "bz",
+                "cw", "cx", "cy", "cz", "dw", "dx", "dy", "dz");
+    }
+
+    @Test
+    void testLexicographicOrderUsesWholeWords() {
+        assertExpansion("{a,b}{b,c}", "ab", "ac", "bb", "bc");
+    }
+
+    @Test
+    void testRepeatedLettersFromDifferentPositionsArePreserved() {
+        assertExpansion("a{a,b}a{a,b}", "aaaa", "aaab", "abaa", "abab");
+    }
+
+    @Test
+    void testFixedPrefixAndSuffix() {
+        assertExpansion("prefix{a,b}suffix", "prefixasuffix", "prefixbsuffix");
+    }
+
+    @Test
+    void testManyOptionsInOneGroup() {
+        assertExpansion("{z,y,x,w,v,u}", "u", "v", "w", "x", "y", "z");
+    }
+
+    @Test
+    void testSeveralOneOptionGroupsBehaveLikeLiterals() {
+        assertExpansion("{a}{b}{c}{d}", "abcd");
+    }
+
+    @Test
+    void testOptionGroupAtEachBoundary() {
+        assertExpansion("{a,b}middle{y,z}", "amiddley", "amiddlez", "bmiddley", "bmiddlez");
+        assertExpansion("left{a,b}", "lefta", "leftb");
+    }
+
+    @Test
+    void testMaximumDistinctOptionsWithinOfficialLengthLimit() {
+        String input = "{x,w,v,u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a}";
+        assertEquals(49, input.length());
+        assertExpansion(input,
+                "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+                "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x");
+    }
+
+    @Test
+    void testMaximumLiteralLengthWithinOfficialLimit() {
+        String input = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx";
+        assertEquals(50, input.length());
+        assertExpansion(input, input);
+    }
+
+    @Test
+    void testMaximumThreeWayCartesianExpansionWithinOfficialLimit() {
+        String input = "{a,b,c}{d,e,f}{g,h,i}{j,k,l}{m,n,o}{p,q,r}{s,t,u}z";
+        assertEquals(50, input.length());
+        String[] expected = cartesianProduct(components("abc", "def", "ghi", "jkl", "mno", "pqr", "stu", "z"));
+        assertEquals(2187, expected.length);
+        assertExpansion(input, expected);
+    }
+
+    @Test
+    void testSameInstanceCanBeReusedAcrossDifferentShapes() {
+        assertExpansion("{b,a}x", "ax", "bx");
+        assertExpansion("yz{d,c}", "yzc", "yzd");
+        assertExpansion("{b,a}x", "ax", "bx");
+    }
+
+    @Test
+    void testEmptyInputReturnsNoWordsAccordingToImplementation() {
+        // Empty input is outside LeetCode's 1-character minimum, but the implementation
+        // deliberately does not emit the empty partial word at its recursion base case.
+        assertArrayEquals(new String[0], solution.expand(""));
     }
 
     /**
@@ -93,7 +165,7 @@ class Expand_1087Test {
     @ParameterizedTest(name = "{index}: {0}")
     @MethodSource("validExpansions")
     void expandsEveryValidShape(String input, String[] expected) {
-        assertArrayEquals(expected, solution.expand(input));
+        assertExpansion(input, expected);
     }
 
     static Stream<Arguments> validExpansions() {
@@ -164,5 +236,18 @@ class Expand_1087Test {
             values = next;
         }
         return values.toArray(String[]::new);
+    }
+
+    private void assertExpansion(String input, String... expected) {
+        String[] actual = solution.expand(input);
+        assertArrayEquals(expected, actual);
+        assertTrue(isStrictlySortedAndUnique(actual), "result must be strictly lexicographically sorted: " + input);
+    }
+
+    private static boolean isStrictlySortedAndUnique(String[] values) {
+        String[] sorted = values.clone();
+        Arrays.sort(sorted);
+        return Arrays.equals(sorted, values)
+                && Arrays.stream(values).distinct().count() == values.length;
     }
 }

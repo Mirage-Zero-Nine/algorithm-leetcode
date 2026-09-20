@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class NumDecodings_639Test {
 
@@ -70,5 +72,11 @@ public class NumDecodings_639Test {
         int result = test.numDecodings(sb.toString());
         // Should be a positive number (Fibonacci-like growth mod 10^9+7)
         assertEquals(true, result > 0);
+    }
+
+    @ParameterizedTest(name = "decode {0}")
+    @CsvSource({"10,1", "11,2", "27,1", "101,1", "111,3", "123,3", "2*,15", "*2,11", "30,0", "100,0"})
+    public void testAdditionalDigitAndWildcardBoundaries(String input, int expected) {
+        assertEquals(expected, test.numDecodings(input));
     }
 }

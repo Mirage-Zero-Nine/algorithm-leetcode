@@ -122,6 +122,27 @@ class FindStrobogrammatic_247Test {
     }
 
     @Test
+    void eachLengthHasEveryAllowedNonzeroOuterPair() {
+        Set<String> outerPairs = Set.of("11", "69", "88", "96");
+        for (int n = 2; n <= 14; n++) {
+            Set<String> actual = new HashSet<>(new FindStrobogrammatic_247().findStrobogrammatic(n));
+            Set<String> observed = new HashSet<>();
+            for (String value : actual) {
+                observed.add(value.substring(0, 1) + value.substring(value.length() - 1));
+            }
+            assertEquals(outerPairs, observed, "missing outer pair at n=" + n);
+        }
+    }
+
+    @Test
+    void mutatingOneReturnedListDoesNotAffectLaterCalls() {
+        FindStrobogrammatic_247 solution = new FindStrobogrammatic_247();
+        List<String> first = solution.findStrobogrammatic(4);
+        first.clear();
+        assertEquals(bruteForceExpected(4), new HashSet<>(solution.findStrobogrammatic(4)));
+    }
+
+    @Test
     void outputIsNonNullForEveryValidLength() {
         for (int n = 1; n <= 14; n++) {
             assertNotNull(new FindStrobogrammatic_247().findStrobogrammatic(n));

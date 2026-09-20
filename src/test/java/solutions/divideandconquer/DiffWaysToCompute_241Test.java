@@ -99,4 +99,39 @@ public class DiffWaysToCompute_241Test {
         List<Integer> result = solver.diffWaysToCompute("");
         assertTrue(result.isEmpty());
     }
+
+    @Test public void testExample2PreservesDuplicateResults() {
+        List<Integer> result = solver.diffWaysToCompute("2*3-4*5");
+        assertEquals(5, result.size());
+        assertEquals(2, result.stream().filter(v -> v == -10).count());
+    }
+
+    @Test public void testZeroOperands() {
+        assertEquals(List.of(0, 0), solver.diffWaysToCompute("0-0-0"));
+    }
+
+    @Test public void testLongNumberAtContractLimit() {
+        assertEquals(List.of(198), solver.diffWaysToCompute("99+99"));
+    }
+
+    @Test public void testOperatorPrecedenceIsNotAssumed() {
+        List<Integer> result = solver.diffWaysToCompute("2+3*4");
+        assertTrue(result.contains(14));
+        assertTrue(result.contains(20));
+    }
+
+    @Test public void testFourOperatorsHaveCatalanCount() {
+        assertEquals(5, solver.diffWaysToCompute("1+2+3+4").size());
+    }
+
+    @Test public void testNegativeAndZeroIntermediateValues() {
+        List<Integer> result = solver.diffWaysToCompute("0-1-2");
+        assertTrue(result.contains(-3));
+        assertTrue(result.contains(1));
+    }
+
+    @Test public void testRepeatedInvocationIsIndependent() {
+        assertEquals(List.of(3), solver.diffWaysToCompute("1+2"));
+        assertEquals(List.of(7), solver.diffWaysToCompute("3+4"));
+    }
 }

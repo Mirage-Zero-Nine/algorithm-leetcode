@@ -90,6 +90,76 @@ public class FrequencySort_451Test {
         assertTrue(result2.startsWith("x"));
     }
 
+    @Test
+    public void testBothApproachesWithWhitespace() {
+        String input = "  aa bb  ";
+        assertFrequencySorted(input, test.frequencySort(input));
+        assertFrequencySorted(input, test.frequencySortBucketSort(input));
+    }
+
+    @Test
+    public void testBothApproachesWithPunctuation() {
+        String input = "!!??!!.";
+        assertFrequencySorted(input, test.frequencySort(input));
+        assertFrequencySorted(input, test.frequencySortBucketSort(input));
+    }
+
+    @Test
+    public void testBothApproachesWithMixedCase() {
+        String input = "aAaBbBaaa";
+        assertFrequencySorted(input, test.frequencySort(input));
+        assertFrequencySorted(input, test.frequencySortBucketSort(input));
+    }
+
+    @Test
+    public void testTieGroupsRemainValidForBothApproaches() {
+        String input = "aabbccddeeff";
+        assertFrequencySorted(input, test.frequencySort(input));
+        assertFrequencySorted(input, test.frequencySortBucketSort(input));
+    }
+
+    @Test
+    public void testRepeatedCallsDoNotShareState() {
+        assertFrequencySorted("aab", test.frequencySort("aab"));
+        assertEquals("x", test.frequencySort("x"));
+        assertFrequencySorted("aab", test.frequencySortBucketSort("aab"));
+        assertEquals("y", test.frequencySortBucketSort("y"));
+    }
+
+    @Test
+    public void testControlCharactersArePreserved() {
+        String input = "\n\n\tA";
+        assertFrequencySorted(input, test.frequencySort(input));
+        assertFrequencySorted(input, test.frequencySortBucketSort(input));
+    }
+
+    @Test
+    public void testNumericOnlyInput() {
+        String input = "111223333";
+        assertFrequencySorted(input, test.frequencySort(input));
+        assertFrequencySorted(input, test.frequencySortBucketSort(input));
+    }
+
+    @Test
+    public void testSingleCharacterBothApproaches() {
+        assertEquals("!", test.frequencySort("!"));
+        assertEquals("!", test.frequencySortBucketSort("!"));
+    }
+
+    @Test
+    public void testAllCharactersTie() {
+        String input = "abcd";
+        assertFrequencySorted(input, test.frequencySort(input));
+        assertFrequencySorted(input, test.frequencySortBucketSort(input));
+    }
+
+    @Test
+    public void testFrequencyOrderWithThreeGroups() {
+        String input = "aaabbbcccdde";
+        assertFrequencySorted(input, test.frequencySort(input));
+        assertFrequencySorted(input, test.frequencySortBucketSort(input));
+    }
+
     private static void assertFrequencySorted(String input, String output) {
         assertEquals(input.length(), output.length());
 

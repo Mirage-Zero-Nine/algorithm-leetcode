@@ -57,13 +57,33 @@ class AddOperators_282Test {
     }
 
     @Test
+    void testSingleZero() {
+        assertExpressions("0", 0, Set.of("0"));
+    }
+
+    @Test
+    void testTwoDigitsConcatenation() {
+        assertExpressions("12", 12, Set.of("12"));
+    }
+
+    @Test
+    void testTwoDigitsMultiplication() {
+        assertExpressions("12", 2, Set.of("1*2"));
+    }
+
+    @Test
     void testLargeTarget() {
         assertExpressions("123456", 123456, Set.of("123456"));
     }
 
     @Test
     void testGiantInput() {
-        assertExpressions("3456237490", 9191, Set.of());
+        // Ten digits is the maximum contract length. Every operator placement
+        // between zeroes evaluates to zero, so there are 3^9 distinct answers.
+        List<String> actual = solution.addOperators("0000000000", 0);
+        assertEquals(19_683, actual.size());
+        assertEquals(actual.size(), new HashSet<>(actual).size(), "expressions should not be duplicated");
+        assertTrue(actual.stream().allMatch(expression -> evaluate(expression) == 0));
     }
 
     @Test
@@ -155,6 +175,23 @@ class AddOperators_282Test {
     @Test
     void testIntegerMinimumTargetHasNoExpression() {
         assertExpressions("2147483648", Integer.MIN_VALUE, Set.of());
+    }
+
+    @Test
+    void testLongOperandBeyondIntegerRange() {
+        assertExpressions("9999999999", 1, Set.of());
+    }
+
+    @Test
+    void testMinimumTarget() {
+        assertExpressions("10", Integer.MIN_VALUE, Set.of());
+    }
+
+    @Test
+    void testRepeatedCallsDoNotShareResults() {
+        assertExpressions("12", 3, Set.of("1+2"));
+        assertExpressions("12", 2, Set.of("1*2"));
+        assertExpressions("12", 12, Set.of("12"));
     }
 
     @Test

@@ -229,4 +229,21 @@ public class FindWords_212Test {
         // Property: no duplicates in result
         assertEquals(result.size(), resultSet.size(), "Result should have no duplicates");
     }
+
+    @Test
+    public void testBoardIsRestoredForRepeatedCalls() {
+        char[][] board = {{'a', 'b'}, {'c', 'd'}};
+        char[][] original = {{'a', 'b'}, {'c', 'd'}};
+        assertEquals(Set.of("ab", "ac", "bd", "cd"),
+            new HashSet<>(test.findWords(board, new String[]{"ab", "ac", "bd", "cd"})));
+        assertTrue(Arrays.deepEquals(original, board), "DFS must restore every visited cell");
+        assertEquals(Set.of("ab"), new HashSet<>(test.findWords(board, new String[]{"ab"})));
+    }
+
+    @Test
+    public void testOneCellAndMaximumUsefulPathLength() {
+        char[][] board = {{'a', 'b', 'c', 'd'}};
+        assertEquals(Set.of("a", "ab", "abc", "abcd"),
+            new HashSet<>(test.findWords(board, new String[]{"a", "ab", "abc", "abcd", "abcde"})));
+    }
 }

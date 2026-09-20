@@ -62,4 +62,54 @@ public class DaysBetweenDates_1360Test {
         int result = test.daysBetweenDates("1971-01-01", "2100-12-31");
         assertEquals(47481, result);
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0, test.daysBetweenDates("1971-01-01", "1971-01-01"));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(1, test.daysBetweenDates("1971-01-01", "1971-01-02"));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(1, test.daysBetweenDates("2019-12-31", "2020-01-01"));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(2, test.daysBetweenDates("2020-02-28", "2020-03-01"));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(1, test.daysBetweenDates("2019-02-28", "2019-03-01"));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(7305, test.daysBetweenDates("2000-01-01", "2020-01-01"));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(364, test.daysBetweenDates("1900-01-01", "1900-12-31"));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(1, test.daysBetweenDates("2020-12-31", "2021-01-01"));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(30, test.daysBetweenDates("2021-05-10", "2021-04-10"));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(47481, test.daysBetweenDates("1971-01-01", "2100-12-31"));
+    }
 }

@@ -32,7 +32,7 @@ public class FindFarmland_1992 {
         List<int[]> output = new ArrayList<>();
 
         /* Corner case */
-        if (land == null | land.length == 0 || land[0] == null || land[0].length == 0) {
+        if (land == null || land.length == 0 || land[0] == null || land[0].length == 0) {
             return new int[0][0];
         }
 

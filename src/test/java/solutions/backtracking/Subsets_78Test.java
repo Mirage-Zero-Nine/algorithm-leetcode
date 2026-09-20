@@ -110,6 +110,35 @@ class Subsets_78Test {
         );
     }
 
+    /**
+     * Enumerates every distinct input array formed from a small value domain.  This supplies an
+     * independent exhaustive check for all subset sizes without relying on either implementation's
+     * traversal order.  The empty input is included because the implementation documents it even
+     * though LeetCode's official minimum length is one.
+     */
+    private static Stream<Arguments> exhaustiveSmallDistinctInputs() {
+        int[] domain = {-2, -1, 0, 1, 2};
+        List<Arguments> cases = new ArrayList<>();
+        for (int length = 0; length <= domain.length; length++) {
+            addCombinations(domain, 0, new int[length], 0, cases);
+        }
+        return cases.stream();
+    }
+
+    private static void addCombinations(int[] domain, int nextIndex, int[] current,
+                                        int depth, List<Arguments> cases) {
+        if (depth == current.length) {
+            cases.add(Arguments.of("length " + current.length + " " + Arrays.toString(current),
+                    current.clone()));
+            return;
+        }
+
+        for (int index = nextIndex; index <= domain.length - (current.length - depth); index++) {
+            current[depth] = domain[index];
+            addCombinations(domain, index + 1, current, depth + 1, cases);
+        }
+    }
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("implementations")
     void nullInputReturnsEmptyResult(String name, Function<int[], List<List<Integer>>> implementation) {
@@ -181,6 +210,21 @@ class Subsets_78Test {
                 assertEquals(subset.size(), new HashSet<>(subset).size(),
                         caseName + ": subset repeats an input value: " + subset);
             }
+        }
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("exhaustiveSmallDistinctInputs")
+    void everySmallDistinctInputMatchesIndependentOracle(String caseName, int[] nums) {
+        Set<List<Integer>> expected = bitmaskOracle(nums);
+
+        for (Function<int[], List<List<Integer>>> implementation : implementationFunctions()) {
+            List<List<Integer>> actual = implementation.apply(nums.clone());
+
+            assertEquals(expected, canonicalize(actual), caseName);
+            assertEquals(1 << nums.length, actual.size(), caseName + ": incorrect count");
+            assertEquals(actual.size(), canonicalize(actual).size(),
+                    caseName + ": duplicate subset");
         }
     }
 

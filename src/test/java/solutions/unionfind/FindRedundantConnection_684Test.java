@@ -2,6 +2,10 @@ package solutions.unionfind;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.Test;
 
 public class FindRedundantConnection_684Test {
@@ -108,5 +112,33 @@ public class FindRedundantConnection_684Test {
         }
         edges[99] = new int[]{50, 100};
         assertArrayEquals(new int[]{50, 100}, test.findRedundantConnection(edges));
+    }
+
+    @ParameterizedTest(name = "graph {index}")
+    @MethodSource("additionalGraphs")
+    public void testAdditionalLegalGraphShapes(int[][] edges, int[] expected) {
+        int[][] input = java.util.Arrays.stream(edges)
+                .map(int[]::clone)
+                .toArray(int[][]::new);
+        assertArrayEquals(expected, test.findRedundantConnection(input));
+        assertArrayEquals(edges, input,
+                "finding the redundant edge must not mutate the caller's graph");
+    }
+
+    private static Stream<Arguments> additionalGraphs() {
+        return Stream.of(
+                Arguments.of(new int[][]{{1, 2}, {2, 3}, {1, 3}}, new int[]{1, 3}),
+                Arguments.of(new int[][]{{1, 2}, {1, 3}, {1, 4}, {3, 4}}, new int[]{3, 4}),
+                Arguments.of(new int[][]{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {2, 5}}, new int[]{2, 5}),
+                Arguments.of(new int[][]{{1, 2}, {1, 3}, {3, 4}, {3, 5}, {5, 6}, {4, 6}}, new int[]{4, 6}),
+                Arguments.of(new int[][]{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {2, 6}, {6, 7}}, new int[]{2, 6}),
+                Arguments.of(new int[][]{{1, 2}, {1, 3}, {2, 4}, {2, 5}, {3, 6}, {3, 7}, {4, 5}}, new int[]{4, 5}),
+                Arguments.of(new int[][]{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {3, 8}}, new int[]{3, 8}),
+                Arguments.of(new int[][]{{1, 2}, {1, 3}, {1, 4}, {4, 5}, {5, 6}, {2, 6}}, new int[]{2, 6}),
+                Arguments.of(new int[][]{{1, 2}, {2, 3}, {2, 4}, {4, 5}, {5, 6}, {3, 6}}, new int[]{3, 6}),
+                Arguments.of(new int[][]{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {1, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 9}, {9, 10}, {10, 11}, {11, 12}, {12, 13}, {13, 14}, {14, 15}, {4, 15}}, new int[]{1, 5}),
+                Arguments.of(new int[][]{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 9}, {9, 10}, {10, 11}, {11, 12}, {12, 13}, {13, 14}, {14, 15}, {15, 16}, {16, 17}, {17, 18}, {18, 19}, {19, 20}, {1, 20}}, new int[]{1, 20}),
+                Arguments.of(new int[][]{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 9}, {9, 10}, {10, 11}, {11, 12}, {12, 13}, {13, 14}, {14, 15}, {15, 16}, {16, 17}, {17, 18}, {18, 19}, {19, 20}, {10, 20}}, new int[]{10, 20})
+        );
     }
 }

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GenerateParenthesis_22Test {
@@ -210,6 +212,81 @@ class GenerateParenthesis_22Test {
             for (String value : solution.generateParenthesis(n)) {
                 assertEquals(n, value.chars().filter(c -> c == '(').count());
                 assertEquals(n, value.chars().filter(c -> c == ')').count());
+            }
+        }
+    }
+
+    @Test
+    void testCatalanCountsIncludeTheOfficialMaximum() {
+        // C(7)=429 and C(8)=1430 are the two largest official result sets.
+        int[] expected = {429, 1430};
+        for (int n = 7; n <= 8; n++) {
+            assertEquals(expected[n - 7], solution.generateParenthesis(n).size(),
+                    "Catalan mismatch for n=" + n);
+        }
+    }
+
+    @Test
+    void testMaximumInputContainsBothCanonicalExtremes() {
+        Set<String> result = new HashSet<>(solution.generateParenthesis(8));
+        assertTrue(result.contains("(((((((())))))))"));
+        assertTrue(result.contains("()()()()()()()()"));
+    }
+
+    @Test
+    void testEveryOfficialInputHasNonEmptyCompleteResults() {
+        for (int n = 1; n <= 8; n++) {
+            List<String> result = solution.generateParenthesis(n);
+            assertFalse(result.isEmpty(), "No combinations for n=" + n);
+            assertEquals(bruteForceWellFormedParentheses(n), new HashSet<>(result),
+                    "Incomplete result set for n=" + n);
+        }
+    }
+
+    @Test
+    void testEveryOfficialResultHasValidPrefixBalance() {
+        for (int n = 1; n <= 8; n++) {
+            for (String value : solution.generateParenthesis(n)) {
+                int balance = 0;
+                for (int index = 0; index < value.length(); index++) {
+                    balance += value.charAt(index) == '(' ? 1 : -1;
+                    assertTrue(balance >= 0,
+                            "Negative prefix balance at index " + index + ": " + value);
+                }
+                assertEquals(0, balance, "Unclosed result: " + value);
+            }
+        }
+    }
+
+    @Test
+    void testInvalidNegativeInputsUseTheImplementationDefinedEmptyResult() {
+        assertTrue(solution.generateParenthesis(-2).isEmpty());
+    }
+
+    @Test
+    void testEachInvocationReturnsAnIndependentMutableList() {
+        List<String> first = solution.generateParenthesis(2);
+        List<String> second = solution.generateParenthesis(2);
+        assertNotSame(first, second);
+        first.add("not-a-valid-result");
+        assertEquals(Set.of("(())", "()()"), new HashSet<>(second));
+        assertEquals(2, solution.generateParenthesis(2).size());
+    }
+
+    @Test
+    void testChangingPairCountDoesNotReusePreviousResults() {
+        List<String> eight = solution.generateParenthesis(8);
+        List<String> one = solution.generateParenthesis(1);
+        assertEquals(1430, eight.size());
+        assertEquals(List.of("()"), one);
+        assertEquals(5, solution.generateParenthesis(3).size());
+    }
+
+    @Test
+    void testPositiveResultsContainNoNullOrEmptyStrings() {
+        for (int n = 1; n <= 8; n++) {
+            for (String value : solution.generateParenthesis(n)) {
+                assertTrue(value != null && !value.isEmpty());
             }
         }
     }

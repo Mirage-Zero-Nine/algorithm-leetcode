@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class InorderTraversal_94Test {
 
@@ -210,5 +212,16 @@ public class InorderTraversal_94Test {
         for (int i = 0; i < 200; i++) {
             assertEquals(i + 1, result.get(i));
         }
+    }
+
+    @ParameterizedTest(name = "right chain size {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testBothApproachesOnChains(int size) {
+        TreeNode root = new TreeNode(1); TreeNode current = root;
+        for (int i = 2; i <= size; i++) { current.right = new TreeNode(i); current = current.right; }
+        List<Integer> expected = new java.util.ArrayList<>();
+        for (int i = 1; i <= size; i++) expected.add(i);
+        assertEquals(expected, test.inorderTraversal(root));
+        assertEquals(expected, test.inorderTraversalStack(root));
     }
 }

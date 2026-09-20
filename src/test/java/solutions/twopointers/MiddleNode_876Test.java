@@ -80,4 +80,15 @@ public class MiddleNode_876Test {
         for (int i = 0; i < n; i++) vals[i] = i + 1;
         assertEquals(501, test.middleNode(build(vals)).val);
     }
+
+    @Test public void testNineElements() { assertEquals(5,test.middleNode(build(1,2,3,4,5,6,7,8,9)).val); }
+    @Test public void testTenElements() { assertEquals(6,test.middleNode(build(1,2,3,4,5,6,7,8,9,10)).val); }
+    @Test public void testTwoNegativeElements() { assertEquals(-1,test.middleNode(build(-2,-1)).val); }
+    @Test public void testZeroMiddle() { assertEquals(0,test.middleNode(build(-2,-1,0,1,2)).val); }
+    @Test public void testRepeatedCall() { assertEquals(2,test.middleNode(build(1,2,3)).val); assertEquals(6,test.middleNode(build(4,5,6,7,8)).val); }
+    @Test public void testLargeValues() { assertEquals(0,test.middleNode(build(Integer.MIN_VALUE,0,Integer.MAX_VALUE)).val); }
+    @Test public void testSixDuplicates() { assertEquals(9,test.middleNode(build(9,9,9,9,9,9)).val); }
+    @Test public void testElevenElements() { assertEquals(6,test.middleNode(build(1,2,3,4,5,6,7,8,9,10,11)).val); }
+    @Test public void testTwelveElements() { assertEquals(7,test.middleNode(build(1,2,3,4,5,6,7,8,9,10,11,12)).val); }
+    @Test public void testSingletonNegative() { assertEquals(-1,test.middleNode(build(-1)).val); }
 }

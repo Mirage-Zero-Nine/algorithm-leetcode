@@ -24,6 +24,7 @@ public class MaxPathSum_124 {
      * @return max path in tree
      */
     public int maxPathSum(TreeNode root) {
+        max = Integer.MIN_VALUE;
         dfs(root);
         return max;
     }

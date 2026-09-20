@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class PseudoPalindromicPaths_1457Test {
 
@@ -99,5 +101,17 @@ public class PseudoPalindromicPaths_1457Test {
         root.right.right.left = new TreeNode(1); root.right.right.right = new TreeNode(1);
         // 8 leaf nodes, all paths are [1,1,1,1] -> palindromic
         assertEquals(8, test.pseudoPalindromicPaths(root));
+    }
+
+    @ParameterizedTest(name = "all-one tree depth {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testAllOneChainDepths(int depth) {
+        TreeNode root = new TreeNode(1);
+        TreeNode current = root;
+        for (int i = 1; i < depth; i++) {
+            current.left = new TreeNode(1);
+            current = current.left;
+        }
+        assertEquals(1, test.pseudoPalindromicPaths(root));
     }
 }

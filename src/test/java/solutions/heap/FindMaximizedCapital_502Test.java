@@ -68,4 +68,15 @@ public class FindMaximizedCapital_502Test {
         // Each project unlocks the next: profit=1 each, capital=0,1,2,3,4
         assertEquals(5, test.findMaximizedCapital(5, 0, new int[]{1, 1, 1, 1, 1}, new int[]{0, 1, 2, 3, 4}));
     }
+
+    @Test public void testNoProjects() { assertEquals(7, test.findMaximizedCapital(3, 7, new int[]{}, new int[]{})); }
+    @Test public void testZeroProfitProjects() { assertEquals(3, test.findMaximizedCapital(5, 3, new int[]{0, 0}, new int[]{0, 0})); }
+    @Test public void testExactCapitalThreshold() { assertEquals(8, test.findMaximizedCapital(1, 5, new int[]{3}, new int[]{5})); }
+    @Test public void testProjectUnlockedAfterProfit() { assertEquals(6, test.findMaximizedCapital(2, 0, new int[]{2, 4}, new int[]{0, 2})); }
+    @Test public void testChooseLargestImmediateProfit() { assertEquals(12, test.findMaximizedCapital(2, 0, new int[]{1, 10, 2}, new int[]{0, 0, 0})); }
+    @Test public void testKOne() { assertEquals(15, test.findMaximizedCapital(1, 10, new int[]{5, 4}, new int[]{0, 0})); }
+    @Test public void testCapitalOrderingUnsorted() { assertEquals(8, test.findMaximizedCapital(3, 0, new int[]{2, 5, 1}, new int[]{4, 0, 2})); }
+    @Test public void testNegativeProfitStillAtMostK() { assertEquals(7, test.findMaximizedCapital(2, 3, new int[]{-1, 5}, new int[]{0, 3})); }
+    @Test public void testRepeatedIndependentInvocation() { test.findMaximizedCapital(1, 0, new int[]{1}, new int[]{0}); assertEquals(4, test.findMaximizedCapital(1, 2, new int[]{2}, new int[]{2})); }
+    @Test public void testCapitalExactlyUnlocksMultiple() { assertEquals(8, test.findMaximizedCapital(2, 2, new int[]{1, 5}, new int[]{2, 2})); }
 }

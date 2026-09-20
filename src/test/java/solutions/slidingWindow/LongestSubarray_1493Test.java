@@ -67,4 +67,12 @@ public class LongestSubarray_1493Test {
         nums[50000] = 0; // single zero in the middle
         assertEquals(99999, solution.longestSubarray(nums));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"10", "01", "101", "11", "111", "000", "10101", "1101", "1110", "010"})
+    void additionalBoundaryCases(String values) {
+        int[] nums = values.chars().map(c -> c - '0').toArray();
+        int expected = switch (values) { case "10", "01", "010" -> 1; case "000" -> 0; case "101" -> 2; case "11" -> 1; case "111" -> 2; case "10101" -> 2; case "1101" -> 3; default -> 3; };
+        assertEquals(expected, solution.longestSubarray(nums));
+    }
 }

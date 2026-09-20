@@ -87,4 +87,11 @@ public class MinimumSumSubarrayTest {
         output = solution.minimumSumSubarray(nums, 2, 4);
         assertEquals(1, output);
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"1|2,1,1,1", "1|2|3,2,2,3", "-1|-2,1,2,-1", "5|-4|3,1,2,1", "0|0|0,1,3,-1", "4|1|2|3,2,3,3", "-5|10|-2|4,2,4,2", "7,1,1,7", "1|1|1,3,3,3", "2|-1|2|-1,2,4,1"})
+    void additionalBoundaryCases(String encoded, int minSize, int maxSize, int expected) {
+        nums = java.util.Arrays.stream(encoded.split("\\|" )).map(Integer::valueOf).toList();
+        assertEquals(expected, solution.minimumSumSubarray(nums, minSize, maxSize));
+    }
 }

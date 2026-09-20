@@ -90,4 +90,15 @@ public class ReverseWords_186Test {
         test.reverseWords(arr);
         assertArrayEquals("go go go".toCharArray(), arr);
     }
+
+    @Test public void testTwoSingleLetters() { char[] a="a b".toCharArray();test.reverseWords(a);assertArrayEquals("b a".toCharArray(),a); }
+    @Test public void testPunctuation() { char[] a="hi! bye?".toCharArray();test.reverseWords(a);assertArrayEquals("bye? hi!".toCharArray(),a); }
+    @Test public void testNumbers() { char[] a="1 22 333".toCharArray();test.reverseWords(a);assertArrayEquals("333 22 1".toCharArray(),a); }
+    @Test public void testLongWords() { char[] a="alpha beta gamma".toCharArray();test.reverseWords(a);assertArrayEquals("gamma beta alpha".toCharArray(),a); }
+    @Test public void testRepeatedCall() { char[] a="a b".toCharArray();test.reverseWords(a);test.reverseWords(a);assertArrayEquals("a b".toCharArray(),a); }
+    @Test public void testWhitespacePreserved() { char[] a="a b".toCharArray();test.reverseWords(a);assertArrayEquals("b a".toCharArray(),a); }
+    @Test public void testFourWords() { char[] a="one two three four".toCharArray();test.reverseWords(a);assertArrayEquals("four three two one".toCharArray(),a); }
+    @Test public void testUnicodeChars() { char[] a="α β".toCharArray();test.reverseWords(a);assertArrayEquals("β α".toCharArray(),a); }
+    @Test public void testFiveWords() { char[] a="one two three four five".toCharArray();test.reverseWords(a);assertArrayEquals("five four three two one".toCharArray(),a); }
+    @Test public void testEmptyAgain() { char[] a={};test.reverseWords(a);assertArrayEquals(new char[]{},a); }
 }

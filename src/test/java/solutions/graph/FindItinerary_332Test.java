@@ -108,4 +108,12 @@ public class FindItinerary_332Test {
         assertEquals("JFK", result.get(0));
         assertEquals("A49", result.get(50));
     }
+
+    @Test public void testTwoDestinationsLexicalChoice() { assertEquals(List.of("JFK", "AAA", "JFK", "BBB"), test.findItinerary(List.of(List.of("JFK", "BBB"), List.of("JFK", "AAA"), List.of("AAA", "JFK")))); }
+    @Test public void testNestedEulerianBranch() { assertEquals(List.of("JFK", "A", "B", "A", "JFK", "B"), test.findItinerary(List.of(List.of("JFK", "B"), List.of("JFK", "A"), List.of("A", "B"), List.of("B", "A"), List.of("A", "JFK")))); }
+    @Test public void testSelfLoopAndTail() { assertEquals(List.of("JFK", "A", "JFK", "JFK"), test.findItinerary(List.of(List.of("JFK", "JFK"), List.of("JFK", "A"), List.of("A", "JFK")))); }
+    @Test public void testRepeatedSameTicketEndpoints() { assertEquals(List.of("JFK", "A", "A", "A"), test.findItinerary(List.of(List.of("JFK", "A"), List.of("A", "A"), List.of("A", "A")))); }
+    @Test public void testLongLinearItinerary() { List<List<String>> t = new ArrayList<>(); List<String> e = new ArrayList<>(List.of("JFK")); for (int i = 0; i < 30; i++) { String next = "X" + i; t.add(List.of(e.get(e.size() - 1), next)); e.add(next); } assertEquals(e, test.findItinerary(t)); }
+    @Test public void testInputOrderDoesNotAffectLexicalResult() { List<List<String>> t = List.of(List.of("JFK", "B"), List.of("B", "JFK"), List.of("JFK", "A"), List.of("A", "JFK")); assertEquals(List.of("JFK", "A", "JFK", "B", "JFK"), test.findItinerary(t)); }
+    @Test public void testSingleSelfLoop() { assertEquals(List.of("JFK", "JFK"), test.findItinerary(List.of(List.of("JFK", "JFK")))); }
 }

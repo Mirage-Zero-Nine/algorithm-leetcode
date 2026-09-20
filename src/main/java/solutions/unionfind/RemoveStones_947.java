@@ -27,6 +27,11 @@ public class RemoveStones_947 {
      */
     public int removeStones(int[][] stones) {
 
+        // A solution instance may be reused by callers (even though LeetCode invokes
+        // the method once).  The component map and count belong to this invocation.
+        m.clear();
+        count = 0;
+
         for (int[] stone : stones) {
             union(stone[0], stone[1] + 10000);     // reverse to avoid duplicated coord x and y
         }

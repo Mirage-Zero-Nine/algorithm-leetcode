@@ -21,12 +21,19 @@ public class IncreasingBST_897 {
      * @return rearranged tree
      */
     public TreeNode increasingBST(TreeNode root) {
+        p = null;
+        r = null;
+        inorder(root);
+        return r;
+    }
 
+    /** Performs the in-order relinking after invocation state has been reset. */
+    private void inorder(TreeNode root) {
         if (root == null) {
-            return null;
+            return;
         }
 
-        increasingBST(root.left);
+        inorder(root.left);
         if (p != null) {
             root.left = null;
             p.right = root;
@@ -35,7 +42,6 @@ public class IncreasingBST_897 {
             r = root;        // init this tree
         }
         p = root;
-        increasingBST(root.right);
-        return r;
+        inorder(root.right);
     }
 }

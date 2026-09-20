@@ -67,4 +67,14 @@ public class ReverseVowels_345Test {
         String input = sb.toString(); // "ababab..." - vowels are all 'a' so reversing them gives same string
         assertEquals(input, test.reverseVowels(input));
     }
+
+    @Test public void testUppercaseAll() { assertEquals("UOIEA",test.reverseVowels("AEIOU")); }
+    @Test public void testVowelsAtEnds() { assertEquals("uiebcdaoa",test.reverseVowels("aoabcdeiu")); }
+    @Test public void testYIsConsonant() { assertEquals("yay",test.reverseVowels("yay")); }
+    @Test public void testConsonantsPreserved() { assertEquals("bacef",test.reverseVowels("becaf")); }
+    @Test public void testSingleUpperVowel() { assertEquals("A",test.reverseVowels("A")); }
+    @Test public void testAlternatingVowels() { assertEquals("uoiea",test.reverseVowels("aeiou")); }
+    @Test public void testPunctuation() { assertEquals("!e?A",test.reverseVowels("!A?e")); }
+    @Test public void testLongVowelString() { assertEquals("u".repeat(100),test.reverseVowels("u".repeat(100))); }
+    @Test public void testRepeatedCall() { assertEquals("holle",test.reverseVowels("hello")); assertEquals("world",test.reverseVowels("world")); }
 }

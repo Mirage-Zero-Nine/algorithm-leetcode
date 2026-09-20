@@ -85,4 +85,15 @@ public class MergeSortedArray_88Test {
         for (int i = 0; i < 1000; i++) expected[i] = i;
         assertArrayEquals(expected, nums1);
     }
+
+    @Test public void testSingleBoth() { int[] a={1,0};test.mergeSortedArray(a,1,new int[]{2},1);assertArrayEquals(new int[]{1,2},a); }
+    @Test public void testAllEqual() { int[] a={2,2,0,0};test.mergeSortedArray(a,2,new int[]{2,2},2);assertArrayEquals(new int[]{2,2,2,2},a); }
+    @Test public void testNegativeOnly() { int[] a={-3,0,0};test.mergeSortedArray(a,1,new int[]{-2},1);assertArrayEquals(new int[]{-3,-2,0},a); }
+    @Test public void testSecondSingleAtFront() { int[] a={5,0};test.mergeSortedArray(a,1,new int[]{1},1);assertArrayEquals(new int[]{1,5},a); }
+    @Test public void testSecondSingleAtBack() { int[] a={1,0};test.mergeSortedArray(a,1,new int[]{9},1);assertArrayEquals(new int[]{1,9},a); }
+    @Test public void testManyDuplicates() { int[] a={1,1,1,0,0,0};test.mergeSortedArray(a,3,new int[]{1,1,1},3);assertArrayEquals(new int[]{1,1,1,1,1,1},a); }
+    @Test public void testInterleavedNegatives() { int[] a={-5,-1,0,0,0};test.mergeSortedArray(a,2,new int[]{-4,-2,3},3);assertArrayEquals(new int[]{-5,-4,-2,-1,3},a); }
+    @Test public void testNoOpWithEmptySecond() { int[] a={-2,-1,0};test.mergeSortedArray(a,3,new int[]{},0);assertArrayEquals(new int[]{-2,-1,0},a); }
+    @Test public void testNoOpWithEmptyFirst() { int[] a={0,0};test.mergeSortedArray(a,0,new int[]{-2,-1},2);assertArrayEquals(new int[]{-2,-1},a); }
+    @Test public void testExtremeInts() { int[] a={Integer.MIN_VALUE,0};test.mergeSortedArray(a,1,new int[]{Integer.MAX_VALUE},1);assertArrayEquals(new int[]{Integer.MIN_VALUE,Integer.MAX_VALUE},a); }
 }

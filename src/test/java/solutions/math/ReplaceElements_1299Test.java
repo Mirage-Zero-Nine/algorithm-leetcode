@@ -114,4 +114,49 @@ public class ReplaceElements_1299Test {
         assertEquals(9999, result[0]);
         assertEquals(-1, result[9999]);
     }
+
+    @Test
+    public void testAdditional1() {
+        assertArrayEquals(new int[]{-1}, solver.replaceElements(new int[]{1}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertArrayEquals(new int[]{2,-1}, solver.replaceElements(new int[]{1,2}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertArrayEquals(new int[]{1,-1}, solver.replaceElements(new int[]{2,1}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertArrayEquals(new int[]{4,3,2,1,-1}, solver.replaceElements(new int[]{5,4,3,2,1}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertArrayEquals(new int[]{5,4,4,-1}, solver.replaceElements(new int[]{1,5,2,4}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertArrayEquals(new int[]{-1,-1,-1}, solver.replaceElements(new int[]{-1,-2,-3}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertArrayEquals(new int[]{0,0,-1}, solver.replaceElements(new int[]{0,0,0}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertArrayEquals(new int[]{10,10,-1}, solver.replaceElements(new int[]{10,1,10}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertArrayEquals(new int[]{8,8,8,2,-1}, solver.replaceElements(new int[]{3,7,1,8,2}));
+    }
 }

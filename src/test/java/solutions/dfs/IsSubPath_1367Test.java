@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import library.listnode.ListNode;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class IsSubPath_1367Test {
 
@@ -109,5 +111,20 @@ public class IsSubPath_1367Test {
         assertTrue(test.isSubPath(buildList(150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160), root));
         // List that doesn't exist
         assertFalse(test.isSubPath(buildList(150, 152), root));
+    }
+
+    @ParameterizedTest(name = "matching path length {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testMatchingAndBrokenChains(int length) {
+        TreeNode root = new TreeNode(1);
+        TreeNode current = root;
+        int[] values = new int[length];
+        for (int i = 0; i < length; i++) {
+            values[i] = i + 1;
+            if (i > 0) { current.left = new TreeNode(values[i]); current = current.left; }
+        }
+        assertTrue(test.isSubPath(buildList(values), root));
+        values[length - 1]++;
+        assertFalse(test.isSubPath(buildList(values), root));
     }
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.math.BigInteger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -58,6 +59,40 @@ public class HammingWeight_191Test {
         assertEquals(10, solver.hammingWeight(1023));
     }
 
+    @Test public void testLeetCodeMaximumExample() {
+        // 2147483645 = 0b01111111111111111111111111111101.
+        assertEquals(30, solver.hammingWeight(2_147_483_645));
+    }
+
+    @Test public void testSignBitWithLowBit() {
+        // The unsigned 32-bit representation is 10000000000000000000000000000001.
+        assertEquals(2, solver.hammingWeight(0x80000001));
+    }
+
+    @Test public void testSeveralSignBitsAndNoLowBits() {
+        assertEquals(3, solver.hammingWeight(0xE0000000));
+        assertEquals(2, solver.hammingWeight(0xC0000000));
+        assertEquals(1, solver.hammingWeight(0x80000000));
+    }
+
+    @Test public void testHighAndLowSparseMask() {
+        assertEquals(3, solver.hammingWeight(0x80010001));
+        assertEquals(2, solver.hammingWeight(0x00010001));
+    }
+
+    @Test public void testAlternatingNibbles() {
+        assertEquals(16, solver.hammingWeight(0x33333333));
+        assertEquals(16, solver.hammingWeight(0xCCCCCCCC));
+    }
+
+    @Test public void testRepeatedCallsDoNotRetainState() {
+        assertEquals(0, solver.hammingWeight(0));
+        assertEquals(32, solver.hammingWeight(-1));
+        assertEquals(1, solver.hammingWeight(Integer.MIN_VALUE));
+        assertEquals(3, solver.hammingWeight(11));
+        assertEquals(0, solver.hammingWeight(0));
+    }
+
     /**
      * Iterable sweep 0..255 cross-checked against {@link Integer#bitCount}
      * (the JDK's intrinsic, used as the trusted oracle).
@@ -106,7 +141,37 @@ public class HammingWeight_191Test {
         java.util.Random random = new java.util.Random(1910906L);
         for (int i = 0; i < 10000; i++) {
             int value = random.nextInt();
-            assertEquals(Integer.bitCount(value), solver.hammingWeight(value));
+            assertEquals(unsignedBitCountOracle(value), solver.hammingWeight(value),
+                    "value=0x" + Integer.toHexString(value));
+        }
+    }
+
+    /**
+     * Exhaust every 16-bit unsigned pattern.  The oracle widens the signed Java
+     * value before counting, so this also checks that leading zeroes are ignored
+     * without relying on the implementation's shift loop.
+     */
+    @Test public void testEverySixteenBitPattern() {
+        for (int value = 0; value <= 0xFFFF; value++) {
+            assertEquals(unsignedBitCountOracle(value), solver.hammingWeight(value),
+                    "value=0x" + Integer.toHexString(value));
+        }
+    }
+
+    @Test public void testComplementPairsHaveThirtyTwoBitsTogether() {
+        int[] values = {0, 1, 2, 0x0000FFFF, 0x12345678, 0x55555555,
+                Integer.MAX_VALUE, Integer.MIN_VALUE, 0x80000001, -1};
+        for (int value : values) {
+            assertEquals(32, solver.hammingWeight(value) + solver.hammingWeight(~value),
+                    "value=0x" + Integer.toHexString(value));
+        }
+    }
+
+    @Test public void testEveryPrefixOfSetBits() {
+        for (int width = 0; width <= 32; width++) {
+            int value = width == 32 ? -1 : (width == 0 ? 0 : (1 << width) - 1);
+            assertEquals(width, solver.hammingWeight(value),
+                    "width=" + width + ", value=0x" + Integer.toHexString(value));
         }
     }
 
@@ -122,5 +187,9 @@ public class HammingWeight_191Test {
                 assertEquals(end - start + 1, solver.hammingWeight(value));
             }
         }
+    }
+
+    private static int unsignedBitCountOracle(int value) {
+        return BigInteger.valueOf(Integer.toUnsignedLong(value)).bitCount();
     }
 }

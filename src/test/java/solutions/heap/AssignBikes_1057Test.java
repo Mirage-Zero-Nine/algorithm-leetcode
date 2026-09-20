@@ -111,4 +111,13 @@ public class AssignBikes_1057Test {
             new int[][]{{999, 999}}
         ));
     }
+
+    @Test public void testEmptyCoordinateDistanceZero() { assertArrayEquals(new int[]{0, 1}, test.assignBikes(new int[][]{{10, 10}, {20, 20}}, new int[][]{{10, 10}, {20, 20}, {0, 0}})); }
+    @Test public void testFourWorkersWithExtraBikes() { assertArrayEquals(new int[]{0, 1, 2, 3}, test.assignBikes(new int[][]{{0, 0}, {10, 0}, {20, 0}, {30, 0}}, new int[][]{{0, 1}, {10, 1}, {20, 1}, {30, 1}, {999, 999}})); }
+    @Test public void testTieChain() { assertArrayEquals(new int[]{0, 1, 2}, test.assignBikes(new int[][]{{0, 0}, {0, 2}, {0, 4}}, new int[][]{{0, 1}, {0, 3}, {0, 5}})); }
+    @Test public void testNegativeCoordinatesImplementationSupport() { assertArrayEquals(new int[]{0, 1}, test.assignBikes(new int[][]{{-5, -5}, {5, 5}}, new int[][]{{-4, -5}, {4, 5}})); }
+    @Test public void testCoordinatesAtUpperBound() { assertArrayEquals(new int[]{1}, test.assignBikes(new int[][]{{999, 999}}, new int[][]{{0, 0}, {998, 999}})); }
+    @Test public void testWorkerOrderAffectsTieBreak() { assertArrayEquals(new int[]{0, 1}, test.assignBikes(new int[][]{{0, 1}, {0, -1}}, new int[][]{{0, 0}, {1, 0}})); }
+    @Test public void testAllWorkersSameLocationMoreBikes() { assertArrayEquals(new int[]{0, 1, 2}, test.assignBikes(new int[][]{{0, 0}, {0, 0}, {0, 0}}, new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}})); }
+    @Test public void testRepeatedInvocation() { test.assignBikes(new int[][]{{0, 0}}, new int[][]{{1, 0}}); assertArrayEquals(new int[]{0}, test.assignBikes(new int[][]{{9, 9}}, new int[][]{{9, 9}})); }
 }

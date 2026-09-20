@@ -28,12 +28,12 @@ public class FindClosestElements_658 {
      * @return the k closest elements to x in the array
      */
     public List<Integer> findClosestElements(int[] arr, int k, int x) {
-        int left = 0, right = arr.length - k - 1;       // range of all possible start of subarray with size k + 1
+        int left = 0, right = arr.length - k;           // every start index of a k-element window is possible
 
         while (left < right) {      // binary search for start index of k elements
             int mid = left + (right - left) / 2;
 
-            if (x - arr[mid] > arr[mid + k] - x) {      // finally, arr[i] should be closer to x compare to arr[i + k]
+            if ((long) x - arr[mid] > (long) arr[mid + k] - x) { // the right boundary is closer, so discard the left edge
                 left = mid + 1;     // arr[mid + 1] ~ arr[mid + k] is closer than arr[mid] ~ arr[mid + k - 1]
             } else {
                 right = mid;        // arr[mid] ~ arr[mid + k - 1] is closer than arr[mid + 1] ~ arr[mid + k]
@@ -54,21 +54,21 @@ public class FindClosestElements_658 {
      */
     public List<Integer> findClosestElementsBasicBinarySearch(int[] arr, int k, int x) {
 
-        int start = 0, end = arr.length - 1;
-
-        while (start < end) {
-            int mid = (start + end) / 2;
-            if (arr[mid] == x) {
-                end = mid;
-                break;
-            } else if (arr[mid] > x) end = mid - 1;
-            else start = mid + 1;
+        int insertionPoint = 0;
+        int searchEnd = arr.length;
+        while (insertionPoint < searchEnd) {
+            int mid = insertionPoint + (searchEnd - insertionPoint) / 2;
+            if (arr[mid] < x) {
+                insertionPoint = mid + 1;
+            } else {
+                searchEnd = mid;
+            }
         }
 
-        start = end;
-        end++;
+        int start = insertionPoint - 1;
+        int end = insertionPoint;
         while (k > 0) {
-            if (end >= arr.length || (start >= 0 && x - arr[start] <= arr[end] - x)) {
+            if (end >= arr.length || (start >= 0 && (long) x - arr[start] <= (long) arr[end] - x)) {
                 start--;
             } else {
                 end++;
@@ -97,7 +97,7 @@ public class FindClosestElements_658 {
         int start = 0, end = arr.length - 1;
 
         while (end - start >= k) {
-            if (Math.abs(arr[start] - x) > Math.abs(arr[end] - x)) {
+            if (Math.abs((long) arr[start] - x) > Math.abs((long) arr[end] - x)) {
                 start++;
             } else {
                 end--;

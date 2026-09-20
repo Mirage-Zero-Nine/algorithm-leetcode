@@ -29,6 +29,11 @@ public class CalcEquation_399 {
      */
     public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
 
+        // Keep state scoped to one equation system so a reusable solution object
+        // cannot leak variables from an earlier invocation.
+        parent.clear();
+        ratio.clear();
+
         if (equations == null || equations.size() == 0) {
             return new double[]{};
         }

@@ -63,4 +63,54 @@ class MinCostToMoveChips_1217Test {
         // 50000 odd, 50000 even
         assertEquals(50000, solution.minCostToMoveChips(chips));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0, solution.minCostToMoveChips(new int[]{1}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(1, solution.minCostToMoveChips(new int[]{1,2}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(0, solution.minCostToMoveChips(new int[]{1,3}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(0, solution.minCostToMoveChips(new int[]{2,4,6}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(2, solution.minCostToMoveChips(new int[]{1,2,3,4}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(2, solution.minCostToMoveChips(new int[]{1,1,2,2}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(0, solution.minCostToMoveChips(new int[]{5,7,9,11}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(1, solution.minCostToMoveChips(new int[]{0,1,2}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(2, solution.minCostToMoveChips(new int[]{100,101,102,103,104}));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(3, solution.minCostToMoveChips(new int[]{2,2,2,3,3,3}));
+    }
 }

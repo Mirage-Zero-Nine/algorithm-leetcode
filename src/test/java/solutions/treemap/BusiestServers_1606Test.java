@@ -84,4 +84,56 @@ public class BusiestServers_1606Test {
         // With load=1 and sequential arrivals, all 10 servers should be equally busy
         assertEquals(10, result.size());
     }
+
+    @Test
+    public void testBusyServerReleasesExactlyAtArrival() {
+        assertEquals(List.of(0), test.busiestServers(1, new int[]{1, 3}, new int[]{2, 1}));
+    }
+
+    @Test
+    public void testWrapAroundChoosesLowestAvailableAfterTarget() {
+        assertEquals(List.of(2), test.busiestServers(3, new int[]{1, 2, 3, 4}, new int[]{10, 10, 1, 1}));
+    }
+
+    @Test
+    public void testOnlyOneServerAvailable() {
+        assertEquals(List.of(2), test.busiestServers(3, new int[]{1, 2, 3, 4}, new int[]{100, 100, 1, 1}));
+    }
+
+    @Test
+    public void testAllRequestsDroppedAfterInitialAssignments() {
+        assertEquals(List.of(0, 1, 2), test.busiestServers(3, new int[]{1, 2, 3, 4}, new int[]{100, 100, 100, 100}));
+    }
+
+    @Test
+    public void testUnequalRequestCounts() {
+        assertEquals(List.of(0), test.busiestServers(2, new int[]{1, 2, 10}, new int[]{1, 10, 1}));
+    }
+
+    @Test
+    public void testManyServersSingleRequestLeavesAllTied() {
+        assertEquals(List.of(0), test.busiestServers(5, new int[]{10}, new int[]{1}));
+    }
+
+    @Test
+    public void testLargeArrivalAndLoadValues() {
+        assertEquals(List.of(0), test.busiestServers(1, new int[]{1_000_000_000}, new int[]{1_000_000_000}));
+    }
+
+    @Test
+    public void testRepeatedReleaseAndWrapAround() {
+        List<Integer> result = test.busiestServers(3,
+            new int[]{1, 2, 3, 10, 11, 12}, new int[]{2, 2, 2, 1, 1, 1});
+        assertEquals(List.of(0, 1, 2), result);
+    }
+
+    @Test
+    public void testSingleServerSequentialRequests() {
+        assertEquals(List.of(0), test.busiestServers(1, new int[]{1, 2, 3}, new int[]{1, 1, 1}));
+    }
+
+    @Test
+    public void testDropDoesNotIncreaseAnyCount() {
+        assertEquals(List.of(0, 1), test.busiestServers(2, new int[]{1, 2, 100}, new int[]{100, 100, 1}));
+    }
 }

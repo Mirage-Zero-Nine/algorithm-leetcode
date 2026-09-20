@@ -70,4 +70,49 @@ class NearestValidPoint_1779Test {
         int result = solution.nearestValidPoint(5, 5, points);
         assertEquals(5, result);
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0, solution.nearestValidPoint(0, 0, new int[][]{{0,1},{1,0}}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(-1, solution.nearestValidPoint(0, 0, new int[][]{{1,1},{2,2}}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(0, solution.nearestValidPoint(5, 5, new int[][]{{5,8},{8,5}}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(0, solution.nearestValidPoint(5, 5, new int[][]{{4,5},{3,5}}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(0, solution.nearestValidPoint(5, 5, new int[][]{{6,5},{5,7}}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(1, solution.nearestValidPoint(2, 3, new int[][]{{2,9},{2,4}}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(0, solution.nearestValidPoint(-1, -1, new int[][]{{-1,2},{3,-1}}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(0, solution.nearestValidPoint(10, 10, new int[][]{{9,10},{10,12}}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(0, solution.nearestValidPoint(1, 2, new int[][]{{0,2},{1,0}}));
+    }
 }

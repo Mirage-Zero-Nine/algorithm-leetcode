@@ -68,4 +68,54 @@ public class MaxAbsValExpr_1131Test {
         // Just verify it runs and returns a positive value
         assertEquals(result, test.maxAbsValExpr(arr1, arr2));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(0, test.maxAbsValExpr(new int[]{1}, new int[]{1}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(3, test.maxAbsValExpr(new int[]{1,2}, new int[]{3,4}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(6, test.maxAbsValExpr(new int[]{1,2,3}, new int[]{4,5,6}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(11, test.maxAbsValExpr(new int[]{1,-2}, new int[]{-3,4}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(2, test.maxAbsValExpr(new int[]{0,0,0}, new int[]{0,0,0}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(3, test.maxAbsValExpr(new int[]{-1,-2}, new int[]{1,2}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(21, test.maxAbsValExpr(new int[]{10,20}, new int[]{30,40}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(199, test.maxAbsValExpr(new int[]{1,100}, new int[]{100,1}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(2, test.maxAbsValExpr(new int[]{5,5,5}, new int[]{-5,-5,-5}));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(4000001, test.maxAbsValExpr(new int[]{1000000,-1000000}, new int[]{-1000000,1000000}));
+    }
 }

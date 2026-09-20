@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class LargestBSTSubtree_333Test {
 
@@ -94,5 +96,26 @@ public class LargestBSTSubtree_333Test {
         root.right.left.left = new TreeNode(9); root.right.left.right = new TreeNode(11);
         root.right.right.left = new TreeNode(13); root.right.right.right = new TreeNode(15);
         assertEquals(15, new LargestBSTSubtree_333().largestBSTSubtree(root));
+    }
+
+    @Test
+    public void testRepeatedCallsResetMaximum() {
+        LargestBSTSubtree_333 solution = new LargestBSTSubtree_333();
+        assertEquals(1, solution.largestBSTSubtree(new TreeNode(1)));
+        TreeNode invalid = new TreeNode(2);
+        invalid.left = new TreeNode(3); invalid.right = new TreeNode(1);
+        assertEquals(1, solution.largestBSTSubtree(invalid));
+    }
+
+    @ParameterizedTest(name = "valid left-chain size {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testValidChainSizes(int size) {
+        TreeNode root = new TreeNode(size);
+        TreeNode current = root;
+        for (int value = size - 1; value >= 1; value--) {
+            current.left = new TreeNode(value);
+            current = current.left;
+        }
+        assertEquals(size, new LargestBSTSubtree_333().largestBSTSubtree(root));
     }
 }

@@ -166,4 +166,7 @@ public class MoveZeroes_283Test {
         test.moveZeroes(arr);
         assertArrayEquals(new int[]{7}, arr);
     }
+
+    @Test public void testSingleZero() { int[] a={0};test.moveZeroes(a);assertArrayEquals(new int[]{0},a); }
+    @Test public void testZerosAtFront() { int[] a={0,0,1,2};test.moveZeroes(a);assertArrayEquals(new int[]{1,2,0,0},a); }
 }

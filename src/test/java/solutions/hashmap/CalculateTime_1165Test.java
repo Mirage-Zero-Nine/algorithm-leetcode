@@ -140,4 +140,14 @@ public class CalculateTime_1165Test {
         int expected = 27;
         assertEquals(expected, solution.calculateTime(keyboard, word));
     }
+    @Test void extra01() { assertEquals(0, solution.calculateTime("abcdefghijklmnopqrstuvwxyz", "a")); }
+    @Test void extra02() { assertEquals(25, solution.calculateTime("abcdefghijklmnopqrstuvwxyz", "z")); }
+    @Test void extra03() { assertEquals(2, solution.calculateTime("abcdefghijklmnopqrstuvwxyz", "abc")); }
+    @Test void extra04() { assertEquals(25, solution.calculateTime("abcdefghijklmnopqrstuvwxyz", "zz")); }
+    @Test void extra05() { assertEquals(4, solution.calculateTime("abcdefghijklmnopqrstuvwxyz", "cba")); }
+    @Test void extra06() { assertEquals(19, solution.calculateTime("qwertyuiopasdfghjklzxcvbnm", "qaz")); }
+    @Test void extra07() { assertEquals(2, solution.calculateTime("abcdefghijklmnopqrstuvwxyz", "ba")); }
+    @Test void extra08() { assertEquals(0, solution.calculateTime("abcdefghijklmnopqrstuvwxyz", "")); }
+    @Test void extra09() { assertEquals(25, solution.calculateTime("zyxwvutsrqponmlkjihgfedcba", "a")); }
+    @Test void extra10() { assertEquals(4, solution.calculateTime("abcdefghijklmnopqrstuvwxyz", "ace")); }
 }

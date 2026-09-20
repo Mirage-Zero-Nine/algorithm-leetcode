@@ -74,4 +74,15 @@ public class ValidTree_261Test {
         }
         assertTrue(test.validTree(n, edges));
     }
+
+    @Test public void testThreeNodeStar() { assertTrue(test.validTree(3, new int[][]{{0, 1}, {0, 2}})); }
+    @Test public void testThreeNodeDisconnectedWithCorrectEdgeCount() { assertFalse(test.validTree(3, new int[][]{{0, 1}, {0, 1}})); }
+    @Test public void testPathWithReversedEdges() { assertTrue(test.validTree(4, new int[][]{{3, 2}, {2, 1}, {1, 0}})); }
+    @Test public void testCycleWithTail() { assertFalse(test.validTree(5, new int[][]{{0, 1}, {1, 2}, {2, 0}, {2, 3}})); }
+    @Test public void testDisconnectedButEdgeCountMatches() { assertFalse(test.validTree(5, new int[][]{{0, 1}, {1, 2}, {3, 4}, {0, 2}})); }
+    @Test public void testFourNodePath() { assertTrue(test.validTree(4, new int[][]{{0, 1}, {1, 2}, {2, 3}})); }
+    @Test public void testSelfLoopRejected() { assertFalse(test.validTree(2, new int[][]{{0, 0}})); }
+    @Test public void testEmptyGraphWithZeroNodes() { assertFalse(test.validTree(0, new int[][]{})); }
+    @Test public void testDenseGraphRejectedByEdgeCount() { assertFalse(test.validTree(4, new int[][]{{0, 1}, {0, 2}, {0, 3}, {1, 2}, {2, 3}})); }
+    @Test public void testRepeatedInvocationIndependent() { assertTrue(test.validTree(2, new int[][]{{0, 1}})); assertFalse(test.validTree(3, new int[][]{{0, 1}})); }
 }

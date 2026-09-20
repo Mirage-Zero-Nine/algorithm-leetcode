@@ -191,4 +191,10 @@ public class MinPathSum_64Test {
         }
         return grid[row][column] + best;
     }
+
+    @Test
+    public void testBoundaryCellValues() {
+        assertEquals(0, test.minPathSum(new int[][]{{0, 0}, {0, 0}}));
+        assertEquals(7, test.minPathSum(new int[][]{{1, 2}, {3, 4}}));
+    }
 }

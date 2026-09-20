@@ -57,4 +57,14 @@ public class CanConstruct_1400Test {
         for (int i = 0; i < 10000; i++) sb.append((char) ('a' + i % 26));
         assertTrue(solver.canConstruct(sb.toString(), 5000));
     }
+    @Test public void testAdditionalPairs() { assertTrue(solver.canConstruct("aabb", 2)); }
+    @Test public void testAdditionalOddOne() { assertTrue(solver.canConstruct("abc", 3)); }
+    @Test public void testAdditionalOddTooMany() { assertFalse(solver.canConstruct("abcde", 2)); }
+    @Test public void testAdditionalKOne() { assertTrue(solver.canConstruct("aabbcc", 1)); }
+    @Test public void testAdditionalKTwo() { assertTrue(solver.canConstruct("aabbccd", 2)); }
+    @Test public void testAdditionalLongPairs() { assertTrue(solver.canConstruct("aabbccdd", 4)); }
+    @Test public void testAdditionalSingleKZero() { assertFalse(solver.canConstruct("a", 0)); }
+    @Test public void testAdditionalExact() { assertTrue(solver.canConstruct("abcde", 5)); }
+    @Test public void testAdditionalRepeatedOdd() { assertTrue(solver.canConstruct("aaabbb", 2)); }
+    @Test public void testAdditionalTooMany() { assertFalse(solver.canConstruct("abcdef", 1)); }
 }

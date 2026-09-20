@@ -37,6 +37,7 @@ public class MaxTurbulenceSize_978 {
                 max = Math.max(count, max);
             } else {
                 count = (A[i - 1] == A[i] && A[i] == A[i + 1]) ? 1 : 2;
+                max = Math.max(count, max);
             }
         }
 

@@ -1,10 +1,13 @@
 package solutions.dfs;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class IsBalanced_110Test {
 
@@ -93,5 +96,17 @@ public class IsBalanced_110Test {
         root.right.left.left = new TreeNode(12); root.right.left.right = new TreeNode(13);
         root.right.right.left = new TreeNode(14); root.right.right.right = new TreeNode(15);
         assertTrue(test.isBalanced(root));
+    }
+
+    @ParameterizedTest(name = "left chain depth {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testChainDepths(int depth) {
+        TreeNode root = new TreeNode(0);
+        TreeNode current = root;
+        for (int i = 1; i < depth; i++) {
+            current.left = new TreeNode(i);
+            current = current.left;
+        }
+        assertEquals(depth <= 2, test.isBalanced(root));
     }
 }

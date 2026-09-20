@@ -77,4 +77,13 @@ public class IsOneEditDistance_161Test {
     public void testInsertAtStart() {
         assertTrue(test.isOneEditDistance("bc", "abc"));
     }
+
+    @Test public void testReplaceStart() { assertTrue(test.isOneEditDistance("abc", "xbc")); }
+    @Test public void testReplaceEnd() { assertTrue(test.isOneEditDistance("abc", "abx")); }
+    @Test public void testDeleteStart() { assertTrue(test.isOneEditDistance("abc", "bc")); }
+    @Test public void testDeleteMiddle() { assertTrue(test.isOneEditDistance("abcd", "acd")); }
+    @Test public void testInsertionMiddle() { assertTrue(test.isOneEditDistance("acd", "abcd")); }
+    @Test public void testEqualEmptyFalse() { assertFalse(test.isOneEditDistance("", "")); }
+    @Test public void testLengthDifferenceTwoFalse() { assertFalse(test.isOneEditDistance("", "ab")); }
+    @Test public void testSameRepeatedLettersFalse() { assertFalse(test.isOneEditDistance("aaaa", "aaaa")); }
 }

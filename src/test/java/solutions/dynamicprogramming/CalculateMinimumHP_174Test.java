@@ -143,4 +143,10 @@ public class CalculateMinimumHP_174Test {
         // 3x3 all -1: optimal path length 5 cells, need 5+1=6
         assertEquals(6, test.calculateMinimumHP(new int[][]{{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}}));
     }
+
+    @Test
+    public void testSingleCellBoundaryValues() {
+        assertEquals(1, test.calculateMinimumHP(new int[][]{{Integer.MAX_VALUE}}));
+        assertEquals(1000000001, test.calculateMinimumHP(new int[][]{{-1000000000}}));
+    }
 }

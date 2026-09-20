@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DynamicTest;
 
 public class LongestPalindromeSubseq_516Test {
 
@@ -65,5 +67,21 @@ public class LongestPalindromeSubseq_516Test {
             sb.append(i % 2 == 0 ? 'a' : 'b');
         }
         assertEquals(999, test.longestPalindromeSubseq(sb.toString()));
+    }
+
+    @org.junit.jupiter.api.TestFactory
+    public Stream<DynamicTest> additionalDistinctStrings() {
+        return Stream.of(
+                DynamicTest.dynamicTest("two different", () -> assertEquals(1, test.longestPalindromeSubseq("xy"))),
+                DynamicTest.dynamicTest("two equal", () -> assertEquals(2, test.longestPalindromeSubseq("xx"))),
+                DynamicTest.dynamicTest("even palindrome", () -> assertEquals(6, test.longestPalindromeSubseq("abccba"))),
+                DynamicTest.dynamicTest("inner palindrome", () -> assertEquals(3, test.longestPalindromeSubseq("aacab"))),
+                DynamicTest.dynamicTest("alternating", () -> assertEquals(5, test.longestPalindromeSubseq("ababab"))),
+                DynamicTest.dynamicTest("one repeated pair", () -> assertEquals(3, test.longestPalindromeSubseq("abca"))),
+                DynamicTest.dynamicTest("long distinct", () -> assertEquals(1, test.longestPalindromeSubseq("hijkl"))),
+                DynamicTest.dynamicTest("palindrome with tail", () -> assertEquals(5, test.longestPalindromeSubseq("abcdeca"))),
+                DynamicTest.dynamicTest("repeated blocks", () -> assertEquals(2, test.longestPalindromeSubseq("aabbcc"))),
+                DynamicTest.dynamicTest("single final", () -> assertEquals(1, test.longestPalindromeSubseq("q"))),
+                DynamicTest.dynamicTest("mixed symmetry", () -> assertEquals(5, test.longestPalindromeSubseq("character"))));
     }
 }

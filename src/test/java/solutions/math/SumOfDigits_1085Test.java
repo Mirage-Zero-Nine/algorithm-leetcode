@@ -110,4 +110,39 @@ public class SumOfDigits_1085Test {
         int[] nums = {199, 200, 300};
         assertEquals(0, solver.sumOfDigits(nums));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, solver.sumOfDigits(new int[]{0}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(1, solver.sumOfDigits(new int[]{2}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(0, solver.sumOfDigits(new int[]{3}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(0, solver.sumOfDigits(new int[]{10,11}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(0, solver.sumOfDigits(new int[]{12,20}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(0, solver.sumOfDigits(new int[]{101,100}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(0, solver.sumOfDigits(new int[]{999,1000}));
+    }
 }

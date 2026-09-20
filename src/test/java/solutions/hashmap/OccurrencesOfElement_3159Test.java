@@ -97,4 +97,15 @@ public class OccurrencesOfElement_3159Test {
                 executeTestWithMeasuringTime(() -> test.occurrencesOfElement(nums, queries, 42), 50)
         );
     }
+
+    @Test public void testTargetAtLastPosition() { assertArrayEquals(new int[]{2}, test.occurrencesOfElement(new int[]{1,2,9}, new int[]{1}, 9)); }
+    @Test public void testQueriesOutOfOrder() { assertArrayEquals(new int[]{4,0,2}, test.occurrencesOfElement(new int[]{7,1,7,2,7}, new int[]{3,1,2}, 7)); }
+    @Test public void testNegativeTarget() { assertArrayEquals(new int[]{0,2,-1}, test.occurrencesOfElement(new int[]{-1,0,-1}, new int[]{1,2,3}, -1)); }
+    @Test public void testZeroBasedValuesDoNotAffectOccurrenceNumber() { assertArrayEquals(new int[]{0,1}, test.occurrencesOfElement(new int[]{0,0}, new int[]{1,2}, 0)); }
+    @Test public void testAllQueriesMissing() { assertArrayEquals(new int[]{-1,-1,-1}, test.occurrencesOfElement(new int[]{3,4}, new int[]{1,2,100}, 2)); }
+    @Test public void testManyRepeatedQueries() { assertArrayEquals(new int[]{0,0,0,0}, test.occurrencesOfElement(new int[]{5,8,5}, new int[]{1,1,1,1}, 5)); }
+    @Test public void testTargetOccursAtAlternatingPositions() { assertArrayEquals(new int[]{0,2,4}, test.occurrencesOfElement(new int[]{6,0,6,0,6}, new int[]{1,2,3}, 6)); }
+    @Test public void testLargeQueryCount() { int[] q = new int[50]; java.util.Arrays.fill(q, 1); int[] expected = new int[50]; java.util.Arrays.fill(expected, 0); assertArrayEquals(expected, test.occurrencesOfElement(new int[]{4}, q, 4)); }
+    @Test public void testEmptyQueriesWithMatches() { assertArrayEquals(new int[0], test.occurrencesOfElement(new int[]{1,1}, new int[0], 1)); }
+    @Test public void testTargetOnlyOnce() { assertArrayEquals(new int[]{3,-1}, test.occurrencesOfElement(new int[]{2,3,4,8}, new int[]{1,2}, 8)); }
 }

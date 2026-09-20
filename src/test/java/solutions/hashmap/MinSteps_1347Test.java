@@ -68,4 +68,14 @@ class MinSteps_1347Test {
         java.util.Arrays.fill(t, 'b');
         assertEquals(50000, solution.minSteps(new String(s), new String(t)));
     }
+    @Test void extra01() { assertEquals(0, solution.minSteps("a","a")); }
+    @Test void extra02() { assertEquals(1, solution.minSteps("a","b")); }
+    @Test void extra03() { assertEquals(2, solution.minSteps("ab","cd")); }
+    @Test void extra04() { assertEquals(1, solution.minSteps("abc","abd")); }
+    @Test void extra05() { assertEquals(3, solution.minSteps("aaa","bbb")); }
+    @Test void extra06() { assertEquals(0, solution.minSteps("listen","silent")); }
+    @Test void extra07() { assertEquals(2, solution.minSteps("abcd","abxy")); }
+    @Test void extra08() { assertEquals(1, solution.minSteps("aabb","abbb")); }
+    @Test void extra09() { assertEquals(4, solution.minSteps("abcd","efgh")); }
+    @Test void extra10() { assertEquals(0, solution.minSteps("zzzz","zzzz")); }
 }

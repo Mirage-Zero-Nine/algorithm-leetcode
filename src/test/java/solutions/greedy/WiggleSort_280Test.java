@@ -85,4 +85,14 @@ public class WiggleSort_280Test {
         solver.wiggleSort(nums);
         assertTrue(isWiggle(nums));
     }
+    @Test public void testAdditionalTwo() { int[] a={2,1}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalSortedEven() { int[] a={1,2,3,4}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalDescendingEven() { int[] a={4,3,2,1}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalDuplicates() { int[] a={1,1,1,2,2}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalNegative() { int[] a={-3,-1,-2,0}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalLarge() { int[] a={100,1,50,2,75,3}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalAlready() { int[] a={1,5,2,4,3}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalEqual() { int[] a={7,7,7,7}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalFive() { int[] a={5,4,3,2,1}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
+    @Test public void testAdditionalSix() { int[] a={6,5,4,3,2,1}; solver.wiggleSort(a); assertTrue(isWiggle(a)); }
 }

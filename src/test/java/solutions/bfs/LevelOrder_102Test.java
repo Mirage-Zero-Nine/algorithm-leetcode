@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import library.tree.TreeParser;
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
@@ -278,5 +279,163 @@ public class LevelOrder_102Test {
                 assertEquals(value++, actual);
             }
         }
+    }
+
+    @Test
+    public void testOfficialMaximumNodeCountWithBoundaryValues() {
+        // LeetCode permits 2,000 nodes and values in [-1000, 1000].  Build a complete
+        // prefix so both the broadest levels and the final partial level are exercised.
+        TreeNode root = new TreeNode(-1000);
+        List<TreeNode> nodes = new ArrayList<>();
+        nodes.add(root);
+        for (int i = 1; i < 2000; i++) {
+            TreeNode node = new TreeNode(i % 2 == 0 ? 1000 : -1000);
+            TreeNode parent = nodes.get((i - 1) / 2);
+            if (i % 2 == 1) {
+                parent.left = node;
+            } else {
+                parent.right = node;
+            }
+            nodes.add(node);
+        }
+
+        List<List<Integer>> actual = test.levelOrder(root);
+        assertEquals(expectedByIndependentBfs(root), actual);
+        assertEquals(2000, actual.stream().mapToInt(List::size).sum());
+        assertEquals(11, actual.size());
+        assertEquals(977, actual.get(10).size());
+    }
+
+    @Test
+    public void testOfficialMaximumDepthLeftSpine() {
+        TreeNode root = new TreeNode(0);
+        TreeNode current = root;
+        for (int i = 1; i < 2000; i++) {
+            current.left = new TreeNode(i - 1000);
+            current = current.left;
+        }
+
+        List<List<Integer>> actual = test.levelOrder(root);
+        assertEquals(expectedByIndependentBfs(root), actual);
+        assertEquals(2000, actual.size());
+        assertEquals(List.of(999), actual.get(1999));
+    }
+
+    @Test
+    public void testSeededArbitraryTreesAgainstIndependentOracle() {
+        Random random = new Random(1022026L);
+        for (int caseNumber = 0; caseNumber < 100; caseNumber++) {
+            int nodeCount = 1 + random.nextInt(150);
+            TreeNode root = randomTree(nodeCount, random);
+            assertEquals(expectedByIndependentBfs(root), test.levelOrder(root),
+                    "seeded tree " + caseNumber + " with " + nodeCount + " nodes");
+        }
+    }
+
+    @Test
+    public void testAllIntegerBoundariesRemainInTheirOriginalLevels() {
+        TreeNode root = new TreeNode(Integer.MIN_VALUE);
+        root.left = new TreeNode(0);
+        root.right = new TreeNode(Integer.MAX_VALUE);
+        root.left.left = new TreeNode(Integer.MAX_VALUE);
+        root.left.right = new TreeNode(Integer.MIN_VALUE);
+        root.right.right = new TreeNode(0);
+        root.left.right.left = new TreeNode(Integer.MAX_VALUE);
+
+        assertEquals(List.of(
+                List.of(Integer.MIN_VALUE),
+                List.of(0, Integer.MAX_VALUE),
+                List.of(Integer.MAX_VALUE, Integer.MIN_VALUE, 0),
+                List.of(Integer.MAX_VALUE)), test.levelOrder(root));
+    }
+
+    @Test
+    public void testFreshResultRowsRemainIndependentAfterNestedMutation() {
+        TreeNode root = TreeParser.deserialize("8,4,12,2,6,10,14");
+        TreeNode originalLeft = root.left;
+        List<List<Integer>> first = test.levelOrder(root);
+        List<List<Integer>> second = test.levelOrder(root);
+
+        first.get(1).set(0, -1);
+        first.add(List.of(99));
+
+        assertEquals(List.of(List.of(8), List.of(4, 12), List.of(2, 6, 10, 14)), second);
+        assertEquals(List.of(List.of(8), List.of(4, 12), List.of(2, 6, 10, 14)),
+                test.levelOrder(root));
+        assertNotSame(first.get(1), second.get(1));
+        assertSame(originalLeft, root.left);
+    }
+
+    @Test
+    public void testNullResultIsEmptyAndIndependentFromLaterNonEmptyCall() {
+        List<List<Integer>> empty = test.levelOrder(null);
+        empty.add(List.of(1));
+
+        assertEquals(List.of(List.of(7)), test.levelOrder(new TreeNode(7)));
+        assertEquals(List.of(List.of(1)), empty);
+    }
+
+    private static List<List<Integer>> expectedByIndependentBfs(TreeNode root) {
+        List<List<Integer>> expected = new ArrayList<>();
+        if (root == null) {
+            return expected;
+        }
+
+        List<TreeNode> frontier = new ArrayList<>();
+        frontier.add(root);
+        while (!frontier.isEmpty()) {
+            List<Integer> values = new ArrayList<>(frontier.size());
+            List<TreeNode> next = new ArrayList<>();
+            for (TreeNode node : frontier) {
+                values.add(node.val);
+                if (node.left != null) {
+                    next.add(node.left);
+                }
+                if (node.right != null) {
+                    next.add(node.right);
+                }
+            }
+            expected.add(values);
+            frontier = next;
+        }
+        return expected;
+    }
+
+    private static TreeNode randomTree(int nodeCount, Random random) {
+        TreeNode root = new TreeNode(randomValue(random));
+        List<TreeNode> availableParents = new ArrayList<>();
+        availableParents.add(root);
+        for (int i = 1; i < nodeCount; i++) {
+            int parentIndex = random.nextInt(availableParents.size());
+            TreeNode parent = availableParents.get(parentIndex);
+            TreeNode child = new TreeNode(randomValue(random));
+            if (parent.left == null && parent.right == null) {
+                if (random.nextBoolean()) {
+                    parent.left = child;
+                } else {
+                    parent.right = child;
+                }
+            } else if (parent.left == null) {
+                parent.left = child;
+            } else {
+                parent.right = child;
+            }
+            if (parent.left != null && parent.right != null) {
+                availableParents.remove(parentIndex);
+            }
+            availableParents.add(child);
+        }
+        return root;
+    }
+
+    private static int randomValue(Random random) {
+        int selector = random.nextInt(20);
+        if (selector == 0) {
+            return Integer.MIN_VALUE;
+        }
+        if (selector == 1) {
+            return Integer.MAX_VALUE;
+        }
+        return random.nextInt(2001) - 1000;
     }
 }

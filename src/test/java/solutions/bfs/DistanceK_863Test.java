@@ -12,6 +12,7 @@ import java.util.Deque;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -180,6 +181,22 @@ public class DistanceK_863Test {
         assertCase(() -> ascendingRightChain(1, 500), 500, 499);
     }
 
+    @Test
+    void seededTreesMatchIndependentOracle() {
+        for (int seed = 0; seed < 24; seed++) {
+            int size = 1 + (seed * 47) % 500;
+            int targetValue = (seed * 83) % size;
+            int k = seed % 13;
+            int treeSeed = seed;
+            assertCase(() -> randomTree(treeSeed, size), targetValue, k);
+        }
+    }
+
+    @Test
+    void zeroValuedRootAtDistanceOne() {
+        assertCase(() -> completeTree(7), 0, 1);
+    }
+
     private void assertCase(Supplier<TreeNode> builder, int targetValue, int k) {
         TreeNode first = builder.get();
         TreeNode firstTarget = find(first, targetValue);
@@ -322,6 +339,37 @@ public class DistanceK_863Test {
             int right = left + 1;
             if (left < size) nodes[i].left = nodes[left];
             if (right < size) nodes[i].right = nodes[right];
+        }
+        return nodes[0];
+    }
+
+    /** Builds a deterministic binary tree with unique values and arbitrary parent/child shape. */
+    private TreeNode randomTree(int seed, int size) {
+        TreeNode[] nodes = new TreeNode[size];
+        for (int value = 0; value < size; value++) {
+            nodes[value] = new TreeNode(value);
+        }
+        Random random = new Random(seed);
+        List<TreeNode> parentsWithSpace = new ArrayList<>();
+        parentsWithSpace.add(nodes[0]);
+        for (int value = 1; value < size; value++) {
+            int parentIndex = random.nextInt(parentsWithSpace.size());
+            TreeNode parent = parentsWithSpace.get(parentIndex);
+            if (parent.left == null && parent.right == null) {
+                if (random.nextBoolean()) {
+                    parent.left = nodes[value];
+                } else {
+                    parent.right = nodes[value];
+                }
+            } else if (parent.left == null) {
+                parent.left = nodes[value];
+            } else {
+                parent.right = nodes[value];
+            }
+            parentsWithSpace.add(nodes[value]);
+            if (parent.left != null && parent.right != null) {
+                parentsWithSpace.remove(parentIndex);
+            }
         }
         return nodes[0];
     }

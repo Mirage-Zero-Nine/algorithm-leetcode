@@ -115,4 +115,15 @@ public class SmallestCommonElement_1198Test {
                 mat[i][j] = j + 1; // all rows identical: 1..100
         assertEquals(1, solver.smallestCommonElement(mat));
     }
+
+    @Test public void testTwoRowsCommonMiddle() { assertEquals(3,solver.smallestCommonElement(new int[][]{{1,3,5},{2,3,4}})); }
+    @Test public void testTwoRowsCommonLargest() { assertEquals(5,solver.smallestCommonElement(new int[][]{{1,5},{3,5}})); }
+    @Test public void testThreeRowsCommonSmallest() { assertEquals(2,solver.smallestCommonElement(new int[][]{{2,4},{2,5},{2,6}})); }
+    @Test public void testThreeRowsNoMatch() { assertEquals(-1,solver.smallestCommonElement(new int[][]{{1,2},{3,4},{5,6}})); }
+    @Test public void testOneValueRows() { assertEquals(9,solver.smallestCommonElement(new int[][]{{9},{9}})); }
+    @Test public void testCommonNegative() { assertEquals(-2,solver.smallestCommonElement(new int[][]{{-2,0},{-3,-2}})); }
+    @Test public void testCommonAtFirstColumn() { assertEquals(1,solver.smallestCommonElement(new int[][]{{1,4},{1,5},{1,6}})); }
+    @Test public void testCommonAtLastColumn() { assertEquals(8,solver.smallestCommonElement(new int[][]{{1,8},{2,8}})); }
+    @Test public void testRowsWithDuplicates() { assertEquals(4,solver.smallestCommonElement(new int[][]{{1,4,4},{2,4,5}})); }
+    @Test public void testFourIdenticalRows() { assertEquals(3,solver.smallestCommonElement(new int[][]{{3,7},{3,8},{3,9},{3,10}})); }
 }

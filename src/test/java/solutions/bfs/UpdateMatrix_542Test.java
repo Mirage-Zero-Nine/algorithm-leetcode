@@ -2,281 +2,321 @@ package solutions.bfs;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for the multi-source BFS implementation of LeetCode 542, 01 Matrix.
+ * Expected distances are calculated independently from the implementation by
+ * taking the minimum Manhattan distance to any zero in the original matrix.
+ */
 public class UpdateMatrix_542Test {
 
-    private final UpdateMatrix_542 test = new UpdateMatrix_542();
-
     @Test
-    public void testHappyCases() {
-        assertArrayEquals(new int[][]{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}},
-            test.updateMatrix(new int[][]{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}}));
-        assertArrayEquals(new int[][]{{0, 0, 0}, {0, 1, 0}, {1, 2, 1}},
-            test.updateMatrix(new int[][]{{0, 0, 0}, {0, 1, 0}, {1, 1, 1}}));
+    public void officialExamples() {
+        assertResult(new int[][]{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}});
+        assertResult(new int[][]{{0, 0, 0}, {0, 1, 0}, {1, 1, 1}});
     }
 
     @Test
-    public void testNegativeAndEdgeCases() {
-        assertArrayEquals(new int[][]{{0}}, test.updateMatrix(new int[][]{{0}}));
+    public void singletonZeroRemainsZero() {
+        assertResult(new int[][]{{0}});
     }
 
     @Test
-    public void testLargeCase() {
-        int[][] result = test.updateMatrix(new int[][]{{1, 1, 1}, {1, 1, 1}, {1, 1, 0}});
-        assertArrayEquals(new int[]{4, 3, 2}, result[0]);
-        assertArrayEquals(new int[]{3, 2, 1}, result[1]);
-        assertArrayEquals(new int[]{2, 1, 0}, result[2]);
+    public void singletonOneHasNoZeroImplementationResult() {
+        assertArrayEquals(new int[][]{{Integer.MAX_VALUE}},
+            new UpdateMatrix_542().updateMatrix(new int[][]{{1}}));
     }
 
     @Test
-    public void testNullAndEmptyInput() {
-        org.junit.jupiter.api.Assertions.assertNull(test.updateMatrix(null));
-        assertArrayEquals(new int[][]{}, test.updateMatrix(new int[][]{}));
-        assertArrayEquals(new int[][]{{}}, test.updateMatrix(new int[][]{{}}));
+    public void allZeroMatricesRemainZero() {
+        assertResult(new int[][]{{0, 0}, {0, 0}});
+        assertResult(new int[][]{{0, 0, 0, 0}});
+        assertResult(new int[][]{{0}, {0}, {0}, {0}});
     }
 
     @Test
-    public void testAllZeroMatrix() {
-        assertArrayEquals(new int[][]{
-                {0, 0},
-                {0, 0}
-        }, test.updateMatrix(new int[][]{
-                {0, 0},
-                {0, 0}
-        }));
+    public void singleRowDistances() {
+        assertResult(new int[][]{{1, 1, 0, 1, 2, 3, 0, 1}});
+        assertResult(new int[][]{{0, 1, 2, 3, 4, 5}});
+        assertResult(new int[][]{{5, 4, 3, 2, 1, 0}});
     }
 
     @Test
-    public void testSingleRow() {
-        assertArrayEquals(new int[][]{
-                {2, 1, 0, 1}
-        }, test.updateMatrix(new int[][]{
-                {1, 1, 0, 1}
-        }));
+    public void singleColumnDistances() {
+        assertResult(new int[][]{{1}, {1}, {0}, {1}, {2}, {3}});
+        assertResult(new int[][]{{0}, {1}, {2}, {3}, {4}});
     }
 
     @Test
-    public void testSingleColumn() {
-        assertArrayEquals(new int[][]{
-                {1},
-                {0},
-                {1},
-                {2}
-        }, test.updateMatrix(new int[][]{
-                {1},
-                {0},
-                {1},
-                {1}
-        }));
-    }
-
-    @Test
-    public void testMultipleZeroSources() {
-        assertArrayEquals(new int[][]{
-                {0, 1, 0},
-                {1, 2, 1},
-                {0, 1, 0}
-        }, test.updateMatrix(new int[][]{
-                {0, 1, 0},
-                {1, 1, 1},
-                {0, 1, 0}
-        }));
-    }
-
-    @Test
-    public void testAllOnesNoZeroRemainsMaxValue() {
-        int[][] result = test.updateMatrix(new int[][]{
-                {1, 1},
-                {1, 1}
+    public void rectangularGridWithCornerSource() {
+        assertResult(new int[][]{
+            {0, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1}
         });
-        assertArrayEquals(new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE}, result[0]);
-        assertArrayEquals(new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE}, result[1]);
+        assertResult(new int[][]{
+            {1, 1},
+            {1, 1},
+            {1, 1},
+            {1, 1},
+            {1, 1},
+            {1, 1},
+            {1, 0}
+        });
     }
 
     @Test
-    public void testGiantGridSpotChecks() {
-        int n = 30;
-        int[][] matrix = new int[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                matrix[i][j] = 1;
-            }
-        }
-        matrix[0][0] = 0;
-        int[][] out = test.updateMatrix(matrix);
-        org.junit.jupiter.api.Assertions.assertEquals(0, out[0][0]);
-        org.junit.jupiter.api.Assertions.assertEquals(10, out[5][5]);
-        org.junit.jupiter.api.Assertions.assertEquals(58, out[n - 1][n - 1]);
+    public void multipleSourcesChooseNearest() {
+        assertResult(new int[][]{
+            {0, 1, 1, 1, 0},
+            {1, 1, 1, 1, 1},
+            {1, 1, 0, 1, 1},
+            {1, 1, 1, 1, 1}
+        });
+        assertResult(new int[][]{
+            {0, 1, 0},
+            {1, 1, 1},
+            {0, 1, 0}
+        });
     }
 
     @Test
-    public void testAllZerosReturnsAllZeros() {
-        int[][] matrix = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-        int[][] expected = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-        assertArrayEquals(expected, test.updateMatrix(matrix));
-    }
-
-    @Test
-    public void testAllOnesNoZeroImplBehavior() {
-        // No zeros in matrix - impossible per problem constraints, but impl leaves MAX_VALUE
-        int[][] matrix = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
-        int[][] result = test.updateMatrix(matrix);
-        for (int[] row : result) {
-            for (int val : row) {
-                assertEquals(Integer.MAX_VALUE, val);
-            }
-        }
-    }
-
-    @Test
-    public void testSingleZeroInCornerWithOnesElsewhere() {
-        int[][] matrix = {
-            {1, 1, 1, 1},
-            {1, 1, 1, 1},
-            {1, 1, 1, 1},
-            {1, 1, 1, 0}
-        };
-        int[][] expected = {
-            {6, 5, 4, 3},
-            {5, 4, 3, 2},
-            {4, 3, 2, 1},
-            {3, 2, 1, 0}
-        };
-        assertArrayEquals(expected, test.updateMatrix(matrix));
-    }
-
-    @Test
-    public void testMultipleZerosTakeMinDistance() {
-        // Two zeros at opposite corners - each cell takes min distance
-        int[][] matrix = {
+    public void diagonalCellsRequireTwoOrthogonalSteps() {
+        assertResult(new int[][]{
+            {1, 1, 1},
+            {1, 0, 1},
+            {1, 1, 1}
+        });
+        assertResult(new int[][]{
             {0, 1, 1, 1},
             {1, 1, 1, 1},
             {1, 1, 1, 1},
             {1, 1, 1, 0}
-        };
-        int[][] expected = {
-            {0, 1, 2, 3},
-            {1, 2, 3, 2},
-            {2, 3, 2, 1},
-            {3, 2, 1, 0}
-        };
-        assertArrayEquals(expected, test.updateMatrix(matrix));
+        });
     }
 
     @Test
-    public void testWallPathStyleGrid() {
-        // Zeros form a wall, ones must go around
-        int[][] matrix = {
+    public void zeroWallAndInteriorSources() {
+        assertResult(new int[][]{
             {0, 0, 0, 0, 0},
             {1, 1, 1, 1, 0},
             {1, 1, 1, 1, 0},
             {1, 1, 1, 1, 0},
             {1, 1, 1, 1, 0}
-        };
-        int[][] expected = {
-            {0, 0, 0, 0, 0},
-            {1, 1, 1, 1, 0},
-            {2, 2, 2, 1, 0},
-            {3, 3, 2, 1, 0},
-            {4, 3, 2, 1, 0}
-        };
-        assertArrayEquals(expected, test.updateMatrix(matrix));
+        });
+        assertResult(new int[][]{
+            {1, 1, 1, 1, 1},
+            {1, 1, 0, 1, 1},
+            {1, 1, 1, 1, 1}
+        });
     }
 
     @Test
-    public void testDiagonalOnlyNoConnectivity() {
-        // Zero at center, diagonal cells are distance 2 (not 1) since no diagonal moves
-        int[][] matrix = {
-            {1, 1, 1},
-            {1, 0, 1},
-            {1, 1, 1}
-        };
-        int[][] expected = {
-            {2, 1, 2},
-            {1, 0, 1},
-            {2, 1, 2}
-        };
-        assertArrayEquals(expected, test.updateMatrix(matrix));
+    public void allOnesHasDocumentedImplementationFallback() {
+        int[][] matrix = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
+        assertArrayEquals(new int[][]{
+            {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE},
+            {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE},
+            {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE}
+        }, new UpdateMatrix_542().updateMatrix(matrix));
     }
 
     @Test
-    public void testLargeGrid50x50Seed42() {
-        Random rand = new Random(42L);
-        int n = 50;
-        int[][] matrix = new int[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                matrix[i][j] = rand.nextInt(2);
+    public void nullAndEmptyInputsUseImplementationGuards() {
+        UpdateMatrix_542 solution = new UpdateMatrix_542();
+        assertEquals(null, solution.updateMatrix(null));
+        assertArrayEquals(new int[][]{}, solution.updateMatrix(new int[][]{}));
+        assertArrayEquals(new int[][]{{}}, solution.updateMatrix(new int[][]{{}}));
+    }
+
+    @Test
+    public void exhaustiveThreeByThreeBinaryMatricesWithAtLeastOneZero() {
+        for (int mask = 0; mask < (1 << 9) - 1; mask++) {
+            int[][] matrix = new int[3][3];
+            for (int index = 0; index < 9; index++) {
+                matrix[index / 3][index % 3] = (mask >> index) & 1;
             }
-        }
-        int[][] result = test.updateMatrix(matrix);
-        assertEquals(n, result.length);
-        assertEquals(n, result[0].length);
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                assertTrue(result[i][j] >= 0, "Distance should be non-negative");
-            }
+            assertArrayEquals(nearestZeroDistances(matrix),
+                new UpdateMatrix_542().updateMatrix(matrix), "mask=" + mask);
         }
     }
 
     @Test
-    public void testPropertyZerosStayZero() {
-        int[][][] grids = {
-            {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}},
-            {{0, 0}, {0, 0}},
-            {{0, 1, 1}, {1, 1, 1}, {1, 1, 0}}
-        };
-        for (int[][] grid : grids) {
-            int rows = grid.length, cols = grid[0].length;
-            int[][] copy = new int[rows][cols];
-            for (int i = 0; i < rows; i++) {
-                copy[i] = grid[i].clone();
-            }
-            int[][] result = test.updateMatrix(copy);
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    if (grid[i][j] == 0) {
-                        assertEquals(0, result[i][j], "Zero cell must remain 0");
-                    }
+    public void seededSmallRectanglesMatchIndependentOracle() {
+        Random random = new Random(542L);
+        for (int sample = 0; sample < 120; sample++) {
+            int rows = 1 + random.nextInt(8);
+            int columns = 1 + random.nextInt(8);
+            int[][] matrix = new int[rows][columns];
+            for (int row = 0; row < rows; row++) {
+                for (int column = 0; column < columns; column++) {
+                    matrix[row][column] = random.nextInt(2);
                 }
             }
+            matrix[random.nextInt(rows)][random.nextInt(columns)] = 0;
+            int[][] expected = nearestZeroDistances(matrix);
+            assertArrayEquals(expected, new UpdateMatrix_542().updateMatrix(matrix),
+                "sample=" + sample + ", dimensions=" + rows + "x" + columns);
         }
     }
 
     @Test
-    public void testPropertyDistanceLeManhattanToNearestZero() {
-        int[][] matrix = {
-            {0, 1, 1, 1},
-            {1, 1, 1, 1},
-            {1, 1, 0, 1},
-            {1, 1, 1, 1}
-        };
-        int rows = matrix.length, cols = matrix[0].length;
-        int[][] copy = new int[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            copy[i] = matrix[i].clone();
+    public void checkerboardHasOnlyZeroOrOneDistances() {
+        int[][] matrix = new int[7][8];
+        for (int row = 0; row < matrix.length; row++) {
+            for (int column = 0; column < matrix[row].length; column++) {
+                matrix[row][column] = (row + column) % 2;
+            }
         }
-        int[][] result = test.updateMatrix(copy);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (matrix[i][j] == 1) {
-                    int minManhattan = Integer.MAX_VALUE;
-                    for (int r = 0; r < rows; r++) {
-                        for (int c = 0; c < cols; c++) {
-                            if (matrix[r][c] == 0) {
-                                minManhattan = Math.min(minManhattan, Math.abs(i - r) + Math.abs(j - c));
+        assertResult(matrix);
+    }
+
+    @Test
+    public void largeSquareAtMaximumCellCountMatchesOracle() {
+        int[][] matrix = new int[100][100];
+        for (int[] row : matrix) {
+            Arrays.fill(row, 1);
+        }
+        matrix[0][0] = 0;
+        assertArrayEquals(nearestZeroDistances(matrix), new UpdateMatrix_542().updateMatrix(matrix));
+        assertEquals(0, matrix[0][0]);
+        assertEquals(198, matrix[99][99]);
+        assertEquals(99, matrix[0][99]);
+    }
+
+    @Test
+    public void maximumOneRowDimensionMatchesOracle() {
+        int[][] matrix = new int[1][10_000];
+        Arrays.fill(matrix[0], 1);
+        matrix[0][4_321] = 0;
+        assertArrayEquals(nearestZeroDistances(matrix), new UpdateMatrix_542().updateMatrix(matrix));
+        assertEquals(5_678, matrix[0][9_999]);
+    }
+
+    @Test
+    public void maximumOneColumnDimensionMatchesOracle() {
+        int[][] matrix = new int[10_000][1];
+        for (int[] row : matrix) {
+            row[0] = 1;
+        }
+        matrix[4_321][0] = 0;
+        assertArrayEquals(nearestZeroDistances(matrix), new UpdateMatrix_542().updateMatrix(matrix));
+        assertEquals(5_678, matrix[9_999][0]);
+    }
+
+    @Test
+    public void inputIsUpdatedInPlaceAndReturnedByIdentity() {
+        int[][] matrix = {{1, 1, 0}, {1, 1, 1}};
+        int[][] returned = new UpdateMatrix_542().updateMatrix(matrix);
+        assertSame(matrix, returned);
+        assertArrayEquals(new int[][]{{2, 1, 0}, {3, 2, 1}}, matrix);
+    }
+
+    @Test
+    public void sameInstanceDoesNotLeakStateBetweenCalls() {
+        UpdateMatrix_542 solution = new UpdateMatrix_542();
+        int[][] first = {{0, 1, 1}, {1, 1, 1}};
+        int[][] second = {{1, 1, 0, 1}, {1, 1, 1, 1}};
+        assertArrayEquals(nearestZeroDistances(first), solution.updateMatrix(first));
+        assertArrayEquals(nearestZeroDistances(second), solution.updateMatrix(second));
+    }
+
+    @Test
+    public void separateResultsRemainIndependentAfterAnotherCall() {
+        UpdateMatrix_542 solution = new UpdateMatrix_542();
+        int[][] first = {{0, 1}, {1, 1}};
+        int[][] second = {{1, 1}, {1, 0}};
+        int[][] firstResult = solution.updateMatrix(first);
+        int[][] secondResult = solution.updateMatrix(second);
+        assertArrayEquals(new int[][]{{0, 1}, {1, 2}}, firstResult);
+        assertArrayEquals(new int[][]{{2, 1}, {1, 0}}, secondResult);
+    }
+
+    @Test
+    public void sourceCellsRemainZeroAcrossShapes() {
+        int[][] matrix = {
+            {0, 1, 1, 0},
+            {1, 1, 1, 1},
+            {0, 1, 1, 0}
+        };
+        int[][] result = new UpdateMatrix_542().updateMatrix(matrix);
+        assertEquals(0, result[0][0]);
+        assertEquals(0, result[0][3]);
+        assertEquals(0, result[2][0]);
+        assertEquals(0, result[2][3]);
+    }
+
+    @Test
+    public void nearestSourceTieIsHandledFromEitherDirection() {
+        assertResult(new int[][]{
+            {1, 1, 0, 1, 1},
+            {1, 1, 1, 1, 1},
+            {0, 1, 1, 1, 0}
+        });
+        assertResult(new int[][]{
+            {0, 1, 1, 1, 0},
+            {1, 1, 1, 1, 1},
+            {1, 1, 0, 1, 1}
+        });
+    }
+
+    @Test
+    public void distancesNearMaximumGridDiameterRemainExact() {
+        int[][] matrix = new int[2][5_000];
+        for (int[] row : matrix) {
+            Arrays.fill(row, 1);
+        }
+        matrix[0][0] = 0;
+        assertArrayEquals(nearestZeroDistances(matrix), new UpdateMatrix_542().updateMatrix(matrix));
+        assertEquals(4_999, matrix[0][4_999]);
+        assertEquals(5_000, matrix[1][4_999]);
+    }
+
+    private void assertResult(int[][] matrix) {
+        int[][] expected = nearestZeroDistances(matrix);
+        assertArrayEquals(expected, new UpdateMatrix_542().updateMatrix(matrix));
+    }
+
+    /**
+     * Computes the exact answer directly from each zero, independently of BFS.
+     * The all-ones fallback mirrors the implementation's documented extension
+     * for inputs outside the LeetCode contract, which requires one zero.
+     */
+    private int[][] nearestZeroDistances(int[][] matrix) {
+        int[][] result = new int[matrix.length][];
+        boolean hasZero = false;
+        for (int[] row : matrix) {
+            for (int value : row) {
+                hasZero |= value == 0;
+            }
+        }
+        for (int row = 0; row < matrix.length; row++) {
+            result[row] = new int[matrix[row].length];
+            for (int column = 0; column < matrix[row].length; column++) {
+                if (!hasZero) {
+                    result[row][column] = Integer.MAX_VALUE;
+                } else if (matrix[row][column] == 0) {
+                    result[row][column] = 0;
+                } else {
+                    int nearest = Integer.MAX_VALUE;
+                    for (int sourceRow = 0; sourceRow < matrix.length; sourceRow++) {
+                        for (int sourceColumn = 0; sourceColumn < matrix[sourceRow].length; sourceColumn++) {
+                            if (matrix[sourceRow][sourceColumn] == 0) {
+                                nearest = Math.min(nearest,
+                                    Math.abs(row - sourceRow) + Math.abs(column - sourceColumn));
                             }
                         }
                     }
-                    assertTrue(result[i][j] <= minManhattan,
-                        "BFS distance at [" + i + "][" + j + "] should be <= manhattan distance to nearest 0");
+                    result[row][column] = nearest;
                 }
             }
         }
+        return result;
     }
 }

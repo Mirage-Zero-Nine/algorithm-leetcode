@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class NumDecodings_91Test {
 
@@ -106,5 +108,11 @@ public class NumDecodings_91Test {
             }
         }
         return count;
+    }
+
+    @ParameterizedTest(name = "decode {0}")
+    @CsvSource({"11,2", "19,2", "21,2", "25,2", "29,1", "110,1", "120,1", "121,3", "1234,3", "301,0"})
+    public void testAdditionalEncodingBoundaries(String input, int expected) {
+        assertEquals(expected, test.numDecodings(input));
     }
 }

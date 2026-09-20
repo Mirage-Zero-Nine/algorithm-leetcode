@@ -172,6 +172,69 @@ class CombinationSum3_216Test {
     }
 
     @Test
+    void testFeasibleBoundsForEveryOfficialK() {
+        // The minimum and maximum sums for k distinct values in [1, 9] are
+        // independently known, so the adjacent targets must have no result.
+        for (int k = 2; k <= 9; k++) {
+            int minimum = k * (k + 1) / 2;
+            int maximum = k * (19 - k) / 2;
+            assertEquals(expected(k, minimum), canonical(solution.combinationSum3(k, minimum)),
+                    "minimum target for k=" + k);
+            assertEquals(expected(k, maximum), canonical(solution.combinationSum3(k, maximum)),
+                    "maximum target for k=" + k);
+            assertTrue(solution.combinationSum3(k, minimum - 1).isEmpty(),
+                    "below minimum target for k=" + k);
+            assertTrue(solution.combinationSum3(k, maximum + 1).isEmpty(),
+                    "above maximum target for k=" + k);
+        }
+    }
+
+    @Test
+    void testManySolutionsAtMiddleTarget() {
+        Set<String> expected = expected(4, 22);
+        assertEquals(Set.of("1,4,8,9", "1,5,7,9", "1,6,7,8", "2,3,8,9",
+                "2,4,7,9", "2,5,6,9", "2,5,7,8", "3,4,6,9", "3,4,7,8",
+                "3,5,6,8", "4,5,6,7"), expected);
+        assertEquals(expected, canonical(solution.combinationSum3(4, 22)));
+    }
+
+    @Test
+    void testStrictlyIncreasingUniqueCombinations() {
+        List<List<Integer>> result = solution.combinationSum3(5, 25);
+        for (List<Integer> combination : result) {
+            for (int i = 1; i < combination.size(); i++) {
+                assertTrue(combination.get(i - 1) < combination.get(i),
+                        "combination must be a strictly increasing set");
+            }
+        }
+    }
+
+    @Test
+    void testReturnedCombinationsHaveIndependentMutableLists() {
+        List<List<Integer>> result = solution.combinationSum3(3, 9);
+        Set<String> before = canonical(result);
+        assertEquals(Set.of("1,2,6", "1,3,5", "2,3,4"), before);
+        String mutatedCombination = canonical(List.of(result.get(0))).iterator().next();
+        result.get(0).set(0, 99);
+        Set<String> after = canonical(result);
+        assertEquals(99, result.get(0).get(0));
+        Set<String> untouched = new HashSet<>(before);
+        untouched.remove(mutatedCombination);
+        assertTrue(after.containsAll(untouched));
+        assertEquals(Set.of("1,2,6", "1,3,5", "2,3,4"),
+                canonical(solution.combinationSum3(3, 9)));
+    }
+
+    @Test
+    void testLargestOfficialNoSolutionTargetsDoNotLeakState() {
+        assertTrue(solution.combinationSum3(2, 60).isEmpty());
+        assertTrue(solution.combinationSum3(8, 60).isEmpty());
+        assertTrue(solution.combinationSum3(9, 44).isEmpty());
+        assertEquals(Set.of("1,2,3,4,5,6,7,8,9"),
+                canonical(solution.combinationSum3(9, 45)));
+    }
+
+    @Test
     void testRepeatedCallsDoNotLeakMutableState() {
         List<List<Integer>> first = solution.combinationSum3(3, 7);
         List<List<Integer>> second = solution.combinationSum3(2, 17);

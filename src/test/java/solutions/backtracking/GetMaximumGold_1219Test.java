@@ -156,6 +156,17 @@ class GetMaximumGold_1219Test {
     }
 
     @Test
+    void maximumGoldValueAndCountWithinOfficialBounds() {
+        int[][] grid = new int[15][15];
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 5; column++) {
+                grid[row][column] = 100;
+            }
+        }
+        assertGold(2_500, grid);
+    }
+
+    @Test
     void safeMaximumDimensionGridWithIsolatedGold() {
         int[][] grid = new int[15][15];
         for (int row = 0; row < 5; row++) for (int column = 0; column < 5; column++) {
@@ -172,6 +183,19 @@ class GetMaximumGold_1219Test {
                 {{8, 0, 1}, {2, 3, 0}, {0, 4, 5}}, {{1, 9}, {8, 2}, {3, 4}}
         };
         for (int[][] grid : grids) assertGold(independentOracle(grid), grid);
+    }
+
+    @Test
+    void exhaustiveThreeByThreeOccupanciesAgreeWithIndependentPathOracle() {
+        for (int mask = 0; mask < (1 << 9); mask++) {
+            int[][] grid = new int[3][3];
+            for (int cell = 0; cell < 9; cell++) {
+                if ((mask & (1 << cell)) != 0) {
+                    grid[cell / 3][cell % 3] = cell + 1;
+                }
+            }
+            assertGold(independentOracle(grid), grid);
+        }
     }
 
     private static void assertGold(int expected, int[][] grid) {

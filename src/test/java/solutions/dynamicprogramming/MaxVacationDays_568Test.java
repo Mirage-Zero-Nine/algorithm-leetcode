@@ -3,6 +3,8 @@ package solutions.dynamicprogramming;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MaxVacationDays_568Test {
 
@@ -71,5 +73,16 @@ public class MaxVacationDays_568Test {
         }
         // Best: always go to city 9 (9 days/week * 10 weeks = 90)
         assertEquals(90, test.maxVacationDays(flights, days));
+    }
+
+    @ParameterizedTest(name = "single-city vacation horizon {0}")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+    public void testSingleCityHorizonLengths(int weeks) {
+        int[][] flights = {{0}};
+        int[][] days = {new int[weeks]};
+        for (int i = 0; i < weeks; i++) days[0][i] = i % 8;
+        int expected = 0;
+        for (int i = 0; i < weeks; i++) expected += i % 8;
+        assertEquals(expected, test.maxVacationDays(flights, days));
     }
 }

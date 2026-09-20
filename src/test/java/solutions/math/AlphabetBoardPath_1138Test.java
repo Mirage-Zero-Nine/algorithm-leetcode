@@ -13,14 +13,14 @@ public class AlphabetBoardPath_1138Test {
     public void testHappyCases() {
         // "a" is at (0,0), just press !
         assertEquals("!", test.alphabetBoardPath("a"));
-        // "b" is at (1,0), move right once then !
-        assertEquals("D!", test.alphabetBoardPath("b"));
+        // "b" is at row 0, column 1, move right once then !
+        assertEquals("R!", test.alphabetBoardPath("b"));
     }
 
     @Test
     public void testEdgeCases() {
-        // "z" is at (0,5), move down 5 then !
-        assertEquals("RRRRR!", test.alphabetBoardPath("z"));
+        // "z" is at row 5, column 0, move down 5 then !
+        assertEquals("DDDDD!", test.alphabetBoardPath("z"));
         // "aa" - two presses at same position
         assertEquals("!!", test.alphabetBoardPath("aa"));
     }
@@ -34,14 +34,14 @@ public class AlphabetBoardPath_1138Test {
 
     @Test
     public void testSingleCharF() {
-        // 'f' is at position (0,1) in the board
+        // 'f' is at row 1, column 0 in the board
         String result = test.alphabetBoardPath("f");
         assertEquals(1, result.chars().filter(c -> c == '!').count());
     }
 
     @Test
     public void testMovingToZ() {
-        // moving from 'a' to 'z': z is at (0,5)
+        // moving from 'a' to 'z': z is at row 5, column 0
         String result = test.alphabetBoardPath("az");
         assertEquals(2, result.chars().filter(c -> c == '!').count());
     }
@@ -55,8 +55,8 @@ public class AlphabetBoardPath_1138Test {
 
     @Test
     public void testSameCharRepeated() {
-        // 'f' is at (0,1), from 'a' at (0,0) move R once, then stay for repeats
-        assertEquals("R!!!!!", test.alphabetBoardPath("fffff"));
+        // 'f' is at row 1, column 0, from 'a' move down once, then stay for repeats
+        assertEquals("D!!!!!", test.alphabetBoardPath("fffff"));
     }
 
     @Test
@@ -88,5 +88,55 @@ public class AlphabetBoardPath_1138Test {
         String result = test.alphabetBoardPath(sb.toString());
         assertEquals(100, result.chars().filter(c -> c == '!').count());
         assertTrue(result.length() > 100);
+    }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals("RR!", test.alphabetBoardPath("c"));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals("RRR!", test.alphabetBoardPath("d"));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals("RRRR!", test.alphabetBoardPath("e"));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals("D!", test.alphabetBoardPath("f"));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals("RD!", test.alphabetBoardPath("g"));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals("RRRRD!", test.alphabetBoardPath("j"));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals("RRRDD!", test.alphabetBoardPath("n"));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals("DDDD!", test.alphabetBoardPath("u"));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals("RRRRDDDD!", test.alphabetBoardPath("y"));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals("DDDDD!!", test.alphabetBoardPath("zz"));
     }
 }

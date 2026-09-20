@@ -70,4 +70,15 @@ public class GeneratePossibleNextMoves_293Test {
         List<String> result = test.generatePossibleNextMoves(s);
         assertEquals(99, result.size());
     }
+
+    @Test public void testThreePluses() { assertEquals(List.of("--+", "+--"), test.generatePossibleNextMoves("+++")); }
+    @Test public void testSeparatedPairs() { assertEquals(2, test.generatePossibleNextMoves("++-++").size()); }
+    @Test public void testPairAtStart() { assertEquals(List.of("--+--", "+----"), test.generatePossibleNextMoves("+++--")); }
+    @Test public void testSinglePairAmongMinus() { assertEquals(List.of("----+", "--+--"), test.generatePossibleNextMoves("--+++")); }
+    @Test public void testFourSeparatedRuns() { assertEquals(2, test.generatePossibleNextMoves("++--++--").size()); }
+    @Test public void testOutputLengthPreserved() { for(String s:test.generatePossibleNextMoves("++++++")) assertEquals(6,s.length()); }
+    @Test public void testOutputContainsNoPlusPair() { assertEquals(3, test.generatePossibleNextMoves("++++").size()); }
+    @Test public void testMixedSymbols() { assertEquals(1, test.generatePossibleNextMoves("-++-").size()); }
+    @Test public void testRepeatedInvocation() { assertEquals(3,test.generatePossibleNextMoves("++++").size()); assertEquals(0,test.generatePossibleNextMoves("----").size()); }
+    @Test public void testFivePlusesCount() { assertEquals(4, test.generatePossibleNextMoves("+++++").size()); }
 }

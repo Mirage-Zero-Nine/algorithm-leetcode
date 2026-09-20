@@ -65,4 +65,14 @@ public class CountCharacters_1160Test {
         // Each word "a" can be formed from chars "a"
         assertEquals(1000, test.countCharacters(words, "a"));
     }
+    @Test void extra01() { assertEquals(0, test.countCharacters(new String[]{"z"}, "a")); }
+    @Test void extra02() { assertEquals(4, test.countCharacters(new String[]{"a", "aa", "b"}, "aab")); }
+    @Test void extra03() { assertEquals(4, test.countCharacters(new String[]{"ab", "ba"}, "ab")); }
+    @Test void extra04() { assertEquals(0, test.countCharacters(new String[]{"abc"}, "ab")); }
+    @Test void extra05() { assertEquals(6, test.countCharacters(new String[]{"abc", "cba"}, "abcabc")); }
+    @Test void extra06() { assertEquals(2, test.countCharacters(new String[]{"a", "b", "c"}, "ab")); }
+    @Test void extra07() { assertEquals(0, test.countCharacters(new String[]{"aaab"}, "aab")); }
+    @Test void extra08() { assertEquals(3, test.countCharacters(new String[]{"zz", "z"}, "zzz")); }
+    @Test void extra09() { assertEquals(0, test.countCharacters(new String[]{}, "")); }
+    @Test void extra10() { assertEquals(5, test.countCharacters(new String[]{"hello"}, "hello")); }
 }

@@ -126,6 +126,15 @@ public class FindCheapestPrice_787Test {
         assertBoth(n, flight, 0, n - 1, n - 2, n - 1);
     }
 
+    @Test public void testZeroStopOnlyDirectRoute() { assertBoth(3, new int[][]{{0, 1, 9}, {1, 2, 1}, {0, 2, 20}}, 0, 2, 0, 20); }
+    @Test public void testExactStopBudgetAllowsRoute() { assertBoth(4, new int[][]{{0, 1, 2}, {1, 2, 3}, {2, 3, 4}}, 0, 3, 2, 9); }
+    @Test public void testDestinationHasNoOutgoingEdges() { assertBoth(3, new int[][]{{0, 1, 4}, {1, 2, 5}}, 0, 2, 1, 9); }
+    @Test public void testParallelFlightsChooseCheapest() { assertBoth(2, new int[][]{{0, 1, 10}, {0, 1, 3}}, 0, 1, 0, 3); }
+    @Test public void testExpensiveCycleCannotImprovePositiveCosts() { assertBoth(3, new int[][]{{0, 1, 2}, {1, 0, 2}, {1, 2, 8}}, 0, 2, 5, 10); }
+    @Test public void testLongerCheapPathBeatsDirectWhenAllowed() { assertBoth(5, new int[][]{{0, 4, 50}, {0, 1, 1}, {1, 2, 1}, {2, 3, 1}, {3, 4, 1}}, 0, 4, 3, 4); }
+    @Test public void testRepeatedInvocation() { assertBoth(2, new int[][]{{0, 1, 7}}, 0, 1, 0, 7); assertBoth(2, new int[][]{}, 0, 1, 0, -1); }
+    @Test public void testOneCitySourceDestination() { assertBoth(1, new int[][]{}, 0, 0, 0, 0); }
+
     private void assertBoth(int n, int[][] flight, int src, int dst, int k, int expected) {
         assertEquals(expected, test.findCheapestPrice(n, flight, src, dst, k));
         assertEquals(expected, test.findCheapestPriceDFS(n, flight, src, dst, k));

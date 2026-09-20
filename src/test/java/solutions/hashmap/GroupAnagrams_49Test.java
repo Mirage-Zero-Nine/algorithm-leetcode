@@ -227,4 +227,14 @@ class GroupAnagrams_49Test {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("No group contains: " + value));
     }
+    @Test void extra01() { assertEquals(1, solution.groupAnagrams(new String[]{"a"}).size()); }
+    @Test void extra02() { assertEquals(2, solution.groupAnagrams(new String[]{"a","b"}).size()); }
+    @Test void extra03() { assertEquals(1, solution.groupAnagrams(new String[]{"ab","ba"}).size()); }
+    @Test void extra04() { assertEquals(1, solution.groupAnagrams(new String[]{"eat","tea","ate"}).size()); }
+    @Test void extra05() { assertEquals(3, solution.groupAnagrams(new String[]{"abc","def","ghi"}).size()); }
+    @Test void extra06() { assertEquals(1, solution.groupAnagrams(new String[]{""}).size()); }
+    @Test void extra07() { assertEquals(2, solution.groupAnagrams(new String[]{"abc","cba","xyz"}).size()); }
+    @Test void extra08() { assertEquals(1, solution.groupAnagrams(new String[]{"a","a","a"}).size()); }
+    @Test void extra09() { assertEquals(2, solution.groupAnagrams(new String[]{"listen","silent","abc"}).size()); }
+    @Test void extra10() { assertEquals(1, solution.groupAnagrams(new String[]{"" , ""}).size()); }
 }

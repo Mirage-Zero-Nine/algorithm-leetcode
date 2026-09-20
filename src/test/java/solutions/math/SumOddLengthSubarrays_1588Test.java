@@ -66,4 +66,54 @@ public class SumOddLengthSubarrays_1588Test {
         }
         assertEquals((int) expected, test.sumOddLengthSubarrays(arr));
     }
+
+    @Test
+    public void testAdditional1() {
+        assertEquals(1, test.sumOddLengthSubarrays(new int[]{1}));
+    }
+
+    @Test
+    public void testAdditional2() {
+        assertEquals(2, test.sumOddLengthSubarrays(new int[]{2}));
+    }
+
+    @Test
+    public void testAdditional3() {
+        assertEquals(2, test.sumOddLengthSubarrays(new int[]{1,1}));
+    }
+
+    @Test
+    public void testAdditional4() {
+        assertEquals(12, test.sumOddLengthSubarrays(new int[]{1,2,3}));
+    }
+
+    @Test
+    public void testAdditional5() {
+        assertEquals(20, test.sumOddLengthSubarrays(new int[]{2,2,2,2}));
+    }
+
+    @Test
+    public void testAdditional6() {
+        assertEquals(0, test.sumOddLengthSubarrays(new int[]{0,0,0}));
+    }
+
+    @Test
+    public void testAdditional7() {
+        assertEquals(-2, test.sumOddLengthSubarrays(new int[]{-1,1,-1}));
+    }
+
+    @Test
+    public void testAdditional8() {
+        assertEquals(25, test.sumOddLengthSubarrays(new int[]{1,2,3,4}));
+    }
+
+    @Test
+    public void testAdditional9() {
+        assertEquals(55, test.sumOddLengthSubarrays(new int[]{5,0,5,0,5}));
+    }
+
+    @Test
+    public void testAdditional10() {
+        assertEquals(19, test.sumOddLengthSubarrays(new int[]{1,1,1,1,1}));
+    }
 }

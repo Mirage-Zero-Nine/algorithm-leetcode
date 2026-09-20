@@ -33,15 +33,14 @@ public class WordSubsets_916Test {
 
     @Test
     public void testLeetCodeExample2() {
-        // words1 = ["amazon","apple","facebook","google","leetcode"], words2 = ["l","e"]
-        // universal strings: "apple" (has 'l','e'), "leetcode" (has 'l','e')
+        // Official example 2: the combined requirements are l:1, c:1, e:1, o:1.
+        // Only "leetcode" contains all of them.
         List<String> result = solver.wordSubsets(
             new String[]{"amazon", "apple", "facebook", "google", "leetcode"},
-            new String[]{"l", "e"}
+            new String[]{"lc", "eo"}
         );
-        assertTrue(result.contains("apple"));
         assertTrue(result.contains("leetcode"));
-        assertEquals(3, result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
@@ -116,5 +115,107 @@ public class WordSubsets_916Test {
             new String[]{"aa", "a"}
         );
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testLeetCodeExample3() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"acaac", "cccbb", "aacbb", "caacc", "bcbbb"},
+            new String[]{"c", "cc", "b"}
+        );
+        assertEquals(List.of("cccbb"), result);
+    }
+
+    @Test
+    public void testRequirementsAreCombinedByMaximumFrequency() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"abca", "aabb", "abcc", "baaa"},
+            new String[]{"ab", "aa"}
+        );
+        assertEquals(List.of("abca", "aabb", "baaa"), result);
+    }
+
+    @Test
+    public void testOrderDoesNotMatter() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"zyxwv", "vwxyz", "xyzzv"},
+            new String[]{"xv", "z"}
+        );
+        assertEquals(List.of("zyxwv", "vwxyz", "xyzzv"), result);
+    }
+
+    @Test
+    public void testSingleCharacterRequirement() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"a", "b", "aa", "ba"},
+            new String[]{"a"}
+        );
+        assertEquals(List.of("a", "aa", "ba"), result);
+    }
+
+    @Test
+    public void testAllRequiredCharacters() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"abcdefghij", "abcdefghi", "jihgfedcba"},
+            new String[]{"abc", "defgh", "ij"}
+        );
+        assertEquals(List.of("abcdefghij", "jihgfedcba"), result);
+    }
+
+    @Test
+    public void testCandidateWithInsufficientMultiplicityIsRejected() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"aab", "ab", "baa", "abc"},
+            new String[]{"aa", "ab"}
+        );
+        assertEquals(List.of("aab", "baa"), result);
+    }
+
+    @Test
+    public void testCandidateMayContainExtraCharacters() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"zzabzz", "ab", "zazb", "ac"},
+            new String[]{"ab"}
+        );
+        assertEquals(List.of("zzabzz", "ab", "zazb"), result);
+    }
+
+    @Test
+    public void testNoCandidateCanSatisfyRepeatedRequirement() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"abc", "bc", "accc"},
+            new String[]{"aa", "bbb"}
+        );
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testDuplicateRequirementsDoNotOvercountAcrossWords() {
+        List<String> result = solver.wordSubsets(
+            new String[]{"abc", "aabc", "abbc", "ab"},
+            new String[]{"a", "b", "ab"}
+        );
+        assertEquals(List.of("abc", "aabc", "abbc", "ab"), result);
+    }
+
+    @Test
+    public void testContractScaleInput() {
+        String[] words1 = new String[10_000];
+        for (int i = 0; i < words1.length; i++) {
+            if (i == words1.length - 1) {
+                words1[i] = "abcdefghij";
+            } else {
+                // Encode each index with letters outside the required set so words1 remains unique.
+                int value = i;
+                char[] filler = new char[4];
+                for (int position = 0; position < filler.length; position++) {
+                    filler[position] = (char) ('k' + value % 16);
+                    value /= 16;
+                }
+                words1[i] = new String(filler);
+            }
+        }
+        List<String> result = solver.wordSubsets(words1, new String[]{"abc", "defgh", "ij"});
+        assertEquals(List.of("abcdefghij"), result);
     }
 }
