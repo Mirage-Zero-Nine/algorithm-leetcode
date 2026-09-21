@@ -105,6 +105,8 @@ public class LRUCache_146 {
             return;
         }
 
+        // Only unlink nodes already between both sentinels; a new node has no
+        // neighbors yet, and unlink requires both links to be non-null.
         if (current.previous != null && current.next != null) {
             unlink(current);
         }
