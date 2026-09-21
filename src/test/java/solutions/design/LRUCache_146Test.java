@@ -110,6 +110,54 @@ public class LRUCache_146Test {
     }
 
     @Test
+    public void testRepeatedGetOfCurrentMruPreservesEvictionOrder() {
+        test = new LRUCache_146(3);
+        test.put(1, 1);
+        test.put(2, 2);
+        test.put(3, 3);
+
+        assertEquals(3, test.get(3));
+        assertEquals(3, test.get(3));
+        test.put(4, 4);
+
+        assertEquals(-1, test.get(1));
+        assertEquals(2, test.get(2));
+        assertEquals(3, test.get(3));
+        assertEquals(4, test.get(4));
+    }
+
+    @Test
+    public void testRepeatedGetOfOnlyEntryWithCapacityOne() {
+        test = new LRUCache_146(1);
+        test.put(1, 10);
+
+        for (int i = 0; i < 10; i++) {
+            assertEquals(10, test.get(1));
+        }
+
+        test.put(2, 20);
+        assertEquals(-1, test.get(1));
+        assertEquals(20, test.get(2));
+    }
+
+    @Test
+    public void testPromotingTailThenEvictingRepairsTailOrder() {
+        test = new LRUCache_146(3);
+        test.put(1, 1);
+        test.put(2, 2);
+        test.put(3, 3);
+
+        assertEquals(1, test.get(1));
+        assertEquals(1, test.get(1));
+        test.put(4, 4);
+
+        assertEquals(-1, test.get(2));
+        assertEquals(1, test.get(1));
+        assertEquals(3, test.get(3));
+        assertEquals(4, test.get(4));
+    }
+
+    @Test
     public void testUpdateExistingKey() {
         test = new LRUCache_146(2);
         test.put(1, 10);
@@ -119,6 +167,19 @@ public class LRUCache_146Test {
         assertEquals(-1, test.get(2));
         assertEquals(100, test.get(1));
         assertEquals(30, test.get(3));
+    }
+
+    @Test
+    public void testUpdatingCurrentMruPreservesCapacityAndOrder() {
+        test = new LRUCache_146(2);
+        test.put(1, 1);
+        test.put(2, 2);
+        test.put(2, 200);
+        test.put(3, 3);
+
+        assertEquals(-1, test.get(1));
+        assertEquals(200, test.get(2));
+        assertEquals(3, test.get(3));
     }
 
     @Test
@@ -346,10 +407,11 @@ public class LRUCache_146Test {
     @Test
     public void testIndependentInstancesDoNotShareEntriesOrOrder() {
         LRUCache_146 first = new LRUCache_146(2);
-        LRUCache_146 second = new LRUCache_146(2);
         first.put(1, 10);
-        second.put(1, 20);
         first.put(2, 30);
+
+        LRUCache_146 second = new LRUCache_146(2);
+        second.put(1, 20);
         second.put(2, 40);
 
         assertEquals(10, first.get(1));

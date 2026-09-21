@@ -17,114 +17,141 @@ import java.util.Map;
 
 public class LRUCache_146 {
     private final int capacity;
-    private final Map<Integer, Node> map = new HashMap<>(); // key - value pair
-    private final Node first = new Node();
-    private final Node last = new Node();
+    private final Node START = new Node(-1, -1);
+    private final Node END = new Node(-1, -1);
+    private final Map<Integer, Node> map = new HashMap<>();
 
     /**
-     * To achieve O(1) for get / put operation, a hash map with key - value pair is required.
-     * To achieve O(1) for LRU remove operation, a customized double linked node is required.
-     * The node needs to be put in map as well to achieve O(1) when retrieving / updating / removing the node.
+     * Creates an empty cache with the supplied maximum number of entries.
+     * A zero capacity cache accepts writes but immediately evicts them.
      *
-     * @param capacity given capacity of cache
+     * <p>The implementation combines a hash map with a doubly linked list.
+     * The map stores each key and its corresponding node, allowing a key to be
+     * found in expected constant time. The linked list stores nodes in recency
+     * order: the node immediately after {@code START} is the most recently
+     * used, and the node immediately before {@code END} is the least recently
+     * used. The sentinel nodes represent the two boundaries and remove special
+     * cases when nodes are inserted or removed.
+     *
+     * <p>{@code get} looks up a node in the map and moves it to the front of
+     * the list. {@code put} updates and moves an existing node, or inserts a
+     * new node at the front. If insertion exceeds the capacity, the node
+     * before {@code END} is removed from both the list and the map. Each
+     * operation takes expected {@code O(1)} time, and the cache uses
+     * {@code O(capacity)} auxiliary space.
+     *
+     * @param capacity maximum number of entries retained by the cache
      */
     public LRUCache_146(int capacity) {
         this.capacity = capacity;
-        first.next = last;
-        last.previous = first;
+        START.next = END;
+        END.previous = START;
     }
 
     /**
-     * Retrieving value from cache. This would also move the cache entry to the most recently used entry.
+     * Returns a value and marks its key as most recently used.
      *
-     * @param key identifier for getting value
-     * @return value of the key in cache, or return -1 if key does not present in cache
+     * <p>A successful lookup moves the node to the front of the recency list;
+     * a miss leaves the list unchanged.</p>
+     *
+     * @param key key to look up
+     * @return the stored value, or {@code -1} when the key is absent
+     * @implNote The map finds the node and the doubly linked list promotes it
+     * without traversing other entries, giving expected {@code O(1)} time.
      */
     public int get(int key) {
         if (!map.containsKey(key)) {
             return -1;
         }
-        Node node = map.get(key);
-        removeNode(node);
-        addToFirst(node);
-        return map.get(key).value;
+        Node n = map.get(key);
+        moveToTop(n);
+        return n.val;
     }
 
     /**
-     * Put new key - value pair to cache, or update existing value in cache.
+     * Inserts or updates a key and marks it as most recently used.
+     * Updating an existing key changes its value without increasing the cache
+     * size. Inserting beyond capacity evicts the least recently used key.
      *
-     * @param key   given key
-     * @param value given value
+     * @param key   key to insert or update
+     * @param value value associated with {@code key}
+     * @implNote Map insertion or lookup, list promotion, and optional tail
+     * eviction each take expected {@code O(1)} time.
      */
     public void put(int key, int value) {
-        if (capacity == 0) {
-            return;
-        }
-
-        // if a duplicated key is added, update the value and move the node to the top
+        Node n;
         if (map.containsKey(key)) {
-            Node node = map.get(key);
-            node.value = value;
-            removeNode(node);
-            addToFirst(node);
-            return;
+            n = map.get(key);
+            n.val = value;
+        } else {
+            n = new Node(key, value);
+            map.put(key, n);
         }
-
-        Node node = new Node();
-        node.key = key;
-        node.value = value;
-
-        // evict cache if reaches the capacity
-        if (map.size() == capacity) {
+        moveToTop(n);
+        if (map.size() > capacity) {
             removeLast();
         }
-
-        addToFirst(node);
-        map.put(key, node);
     }
 
     /**
-     * Unlink node from linked list.
+     * Removes {@code current} from its current list position and inserts it at
+     * the front. A newly created node has no neighbors, so it is only inserted.
+     * The most-recently-used node is already at the front and needs no work.
      *
-     * @param node given node
+     * @param current node to promote
      */
-    private void removeNode(Node node) {
-        Node previousNode = node.previous;
-        Node nextNode = node.next;
-        previousNode.next = nextNode;
-        nextNode.previous = previousNode;
+    private void moveToTop(Node current) {
+        if (current == START.next) {
+            return;
+        }
+
+        if (current.previous != null && current.next != null) {
+            unlink(current);
+        }
+
+        Node first = START.next;
+        first.previous = current;
+        START.next = current;
+
+        current.previous = START;
+        current.next = first;
     }
 
     /**
-     * Add node to the top of the list.
-     *
-     * @param node given node
-     */
-    private void addToFirst(Node node) {
-        node.next = first.next;
-        node.previous = first;
-        first.next.previous = node;
-        first.next = node;
-    }
-
-    /**
-     * Unlink last node in linked list. Also remove the key entry in hash map.
+     * Removes the least recently used node, which is immediately before the
+     * tail sentinel, from both the list and the map.
      */
     private void removeLast() {
-        Node lastNode = last.previous;
-        removeNode(lastNode);
-        map.remove(lastNode.key);
+        Node remove = END.previous;
+        unlink(remove);
+        map.remove(remove.key);
     }
 
     /**
-     * Customized double linked list node.
-     * Double link is required to achieve O(1) get for the node instead of traversing the list.
+     * Removes a linked node while preserving the links between its neighbors.
+     * The node is detached completely so it can be safely reinserted elsewhere.
+     *
+     * @param current linked node to detach
      */
-    static class Node {
-        Node next;
-        Node previous;
+    private void unlink(Node current) {
+        current.previous.next = current.next;
+        current.next.previous = current.previous;
+        current.previous = null;
+        current.next = null;
+    }
+
+    /**
+     * A map entry plus its links in the recency-order list.
+     */
+    private static class Node {
         int key;
-        int value;
+        int val;
+        Node previous;
+        Node next;
+
+        Node(int key, int val) {
+            this.key = key;
+            this.val = val;
+        }
     }
 }
-
