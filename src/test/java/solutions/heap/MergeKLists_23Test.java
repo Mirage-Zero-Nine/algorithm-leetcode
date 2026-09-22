@@ -1,122 +1,211 @@
 package solutions.heap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import library.listnode.ListNode;
 import org.junit.jupiter.api.Test;
 
-public class MergeKLists_23Test {
+import java.time.Duration;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
-    private final MergeKLists_23 test = new MergeKLists_23();
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
-    private ListNode build(int... vals) {
-        ListNode dummy = new ListNode(0), cur = dummy;
-        for (int v : vals) { cur.next = new ListNode(v); cur = cur.next; }
-        return dummy.next;
+class MergeKLists_23Test {
+
+    private final MergeKLists_23 solution = new MergeKLists_23();
+
+    @Test
+    void emptyArrayReturnsNullFromBothApproaches() {
+        assertBoth(new int[]{}, new int[][]{});
     }
 
     @Test
-    public void testHappyCases() {
-        ListNode result = test.mergeKLists(new ListNode[]{build(1, 4, 5), build(1, 3, 4), build(2, 6)});
-        assertEquals(1, result.val);
-        assertEquals(5, result.next.next.next.next.next.next.val);
+    void nullArrayReturnsNullFromBothApproaches() {
+        assertNull(solution.mergeKListsHeap(null));
+        assertNull(solution.mergeKLists(null));
     }
 
     @Test
-    public void testNegativeAndEdgeCases() {
-        assertNull(test.mergeKLists(new ListNode[]{}));
-        assertNull(test.mergeKLists(new ListNode[]{null}));
-        assertEquals(1, test.mergeKLists(new ListNode[]{build(1)}).val);
+    void allNullEntriesReturnNullFromBothApproaches() {
+        assertBoth(new int[]{}, new int[][]{null, null, null});
     }
 
     @Test
-    public void testLargeCase() {
-        ListNode result = test.mergeKLists(new ListNode[]{build(1, 5, 9), build(2, 6, 10), build(3, 7, 11), build(4, 8, 12)});
-        assertEquals(1, result.val);
-        assertEquals(12, result.next.next.next.next.next.next.next.next.next.next.next.val);
+    void sampleListsAreMergedInAscendingOrder() {
+        assertBoth(new int[]{1, 1, 2, 3, 4, 4, 5, 6},
+                new int[][]{{1, 4, 5}, {1, 3, 4}, {2, 6}});
     }
 
     @Test
-    public void testTwoLists() {
-        ListNode result = test.mergeKLists(new ListNode[]{build(1, 3, 5), build(2, 4, 6)});
-        assertEquals(1, result.val);
-        assertEquals(2, result.next.val);
-        assertEquals(3, result.next.next.val);
+    void twoInterleavedListsAreMerged() {
+        assertBoth(new int[]{1, 2, 3, 4, 5, 6},
+                new int[][]{{1, 3, 5}, {2, 4, 6}});
     }
 
     @Test
-    public void testSingleElementLists() {
-        ListNode result = test.mergeKLists(new ListNode[]{build(3), build(1), build(2)});
-        assertEquals(1, result.val);
-        assertEquals(2, result.next.val);
-        assertEquals(3, result.next.next.val);
+    void oneListIsReturnedWithAllOfItsNodes() {
+        assertBoth(new int[]{-2, 0, 3}, new int[][]{{-2, 0, 3}});
     }
 
     @Test
-    public void testWithNullsInArray() {
-        ListNode result = test.mergeKLists(new ListNode[]{null, build(1, 3), null, build(2, 4)});
-        assertEquals(1, result.val);
-        assertEquals(2, result.next.val);
+    void emptyListsCanBeMixedWithNonEmptyLists() {
+        assertBoth(new int[]{1, 2, 3, 4},
+                new int[][]{new int[]{}, {1, 3}, null, {2, 4}});
     }
 
     @Test
-    public void testAllNulls() {
-        assertNull(test.mergeKLists(new ListNode[]{null, null, null}));
+    void negativeZeroAndPositiveValuesAreOrdered() {
+        assertBoth(new int[]{-5, -4, -3, -1, 0, 2, 3, 4},
+                new int[][]{{-5, -1, 4}, {-4, 0, 3}, {-3, 2}});
     }
 
     @Test
-    public void testNegativeValues() {
-        ListNode result = test.mergeKLists(new ListNode[]{build(-5, -1, 3), build(-3, 0, 2)});
-        assertEquals(-5, result.val);
-        assertEquals(-3, result.next.val);
-        assertEquals(-1, result.next.next.val);
+    void duplicateValuesKeepEveryNode() {
+        assertBoth(new int[]{1, 1, 1, 1, 1, 1},
+                new int[][]{{1, 1, 1}, {1, 1, 1}});
     }
 
     @Test
-    public void testDuplicateValues() {
-        ListNode result = test.mergeKLists(new ListNode[]{build(1, 1, 1), build(1, 1, 1)});
-        assertEquals(1, result.val);
-        assertEquals(1, result.next.val);
-        // all 6 nodes should be 1
-        ListNode cur = result;
-        int count = 0;
-        while (cur != null) { assertEquals(1, cur.val); cur = cur.next; count++; }
-        assertEquals(6, count);
+    void oddNumberOfListsCarriesTheUnpairedListToTheNextRound() {
+        assertBoth(new int[]{0, 1, 2, 3, 4, 5, 6},
+                new int[][]{{0, 6}, {1, 4}, {2, 5}, {3}});
     }
 
     @Test
-    public void testHeapVersion() {
-        ListNode result = test.mergeKListsHeap(new ListNode[]{build(1, 4, 5), build(1, 3, 4), build(2, 6)});
-        assertEquals(1, result.val);
-        assertEquals(1, result.next.val);
-        assertEquals(2, result.next.next.val);
+    void veryDifferentListLengthsAreHandled() {
+        assertBoth(new int[]{1, 2, 3, 4, 5, 6},
+                new int[][]{{1}, {2, 3, 4, 5, 6}});
     }
 
     @Test
-    public void testGiantCase() {
-        int k = 50;
-        ListNode[] lists = new ListNode[k];
-        for (int i = 0; i < k; i++) {
-            int[] vals = new int[20];
-            for (int j = 0; j < 20; j++) vals[j] = i * 20 + j;
-            lists[i] = build(vals);
+    void integerBoundariesAreComparedWithoutArithmeticOverflow() {
+        assertBoth(new int[]{Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE},
+                new int[][]{{Integer.MIN_VALUE, 0, Integer.MAX_VALUE}, {-1, 1}});
+    }
+
+    @Test
+    void regressionRepeatedNegativeValuesFollowedByNullList() {
+        assertBoth(new int[]{-2, -1, -1, -1},
+                new int[][]{{-2, -1, -1, -1}, null});
+    }
+
+    @Test
+    void divideAndConquerUsesIterativeMergeForLongLists() {
+        int length = 8_192;
+        int[][] values = {new int[length], new int[length]};
+        for (int i = 0; i < length; i++) {
+            values[0][i] = i * 2;
+            values[1][i] = i * 2 + 1;
         }
-        ListNode result = test.mergeKLists(lists);
-        assertEquals(0, result.val);
-        // traverse to end
-        ListNode cur = result;
-        while (cur.next != null) cur = cur.next;
-        assertEquals(999, cur.val);
+
+        ListNode[] lists = buildLists(values);
+        assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
+            ListNode result = solution.mergeKLists(lists);
+            assertSequence(result, length * 2);
+        });
     }
 
-    @Test public void testHeapEmpty() { assertNull(test.mergeKListsHeap(new ListNode[]{})); }
-    @Test public void testHeapNullEntries() { ListNode r = test.mergeKListsHeap(new ListNode[]{null, build(2, 4), null}); assertEquals(2, r.val); assertEquals(4, r.next.val); }
-    @Test public void testSingleListHeap() { ListNode r = test.mergeKListsHeap(new ListNode[]{build(-2, 0, 3)}); assertEquals(-2, r.val); assertEquals(3, r.next.next.val); }
-    @Test public void testSingleListDivide() { ListNode r = test.mergeKLists(new ListNode[]{build(-2, 0, 3)}); assertEquals(0, r.next.val); }
-    @Test public void testAllEqualHeap() { ListNode r = test.mergeKListsHeap(new ListNode[]{build(1, 1), build(1, 1)}); int c = 0; while (r != null) { assertEquals(1, r.val); c++; r = r.next; } assertEquals(4, c); }
-    @Test public void testInterleavedNegatives() { ListNode r = test.mergeKLists(new ListNode[]{build(-5, -1, 4), build(-4, 0, 3), build(-3, 2)}); int[] e = {-5, -4, -3, -1, 0, 2, 3, 4}; for (int v : e) { assertEquals(v, r.val); r = r.next; } }
-    @Test public void testTwoEmptyLists() { assertNull(test.mergeKLists(new ListNode[]{null, null})); }
-    @Test public void testDifferentLengthLists() { ListNode r = test.mergeKListsHeap(new ListNode[]{build(1), build(2, 3, 4, 5)}); int[] e = {1, 2, 3, 4, 5}; for (int v : e) { assertEquals(v, r.val); r = r.next; } }
-    @Test public void testRepeatedInvocation() { test.mergeKLists(new ListNode[]{build(1)}); assertEquals(8, test.mergeKListsHeap(new ListNode[]{build(8)}).val); }
+    @Test
+    void bothApproachesHandleAMeaningfulStressInputWithinTheContract() {
+        int listCount = 64;
+        int listLength = 256;
+        int[][] values = new int[listCount][listLength];
+        for (int list = 0; list < listCount; list++) {
+            for (int position = 0; position < listLength; position++) {
+                values[list][position] = list + position * listCount;
+            }
+        }
+
+        assertTimeoutPreemptively(Duration.ofSeconds(5),
+                () -> assertBothValuesOnly(new int[listCount * listLength], values));
+    }
+
+    @Test
+    void repeatedCallsDoNotShareStateBetweenInvocations() {
+        assertBoth(new int[]{1, 4}, new int[][]{{1}, {4}});
+        assertBoth(new int[]{-3, 2, 8}, new int[][]{{-3, 2}, {8}});
+    }
+
+    private void assertBoth(int[] expected, int[][] values) {
+        ListNode[] heapLists = buildLists(values);
+        ListNode[] divideLists = buildLists(values);
+        Map<ListNode, Boolean> heapNodes = nodesByIdentity(heapLists);
+        Map<ListNode, Boolean> divideNodes = nodesByIdentity(divideLists);
+
+        ListNode heapResult = solution.mergeKListsHeap(heapLists);
+        ListNode divideResult = solution.mergeKLists(divideLists);
+
+        assertListEquals(expected, heapResult);
+        assertListEquals(expected, divideResult);
+        assertReusesExactly(heapNodes, heapResult);
+        assertReusesExactly(divideNodes, divideResult);
+    }
+
+    private void assertBothValuesOnly(int[] expected, int[][] values) {
+        for (int i = 0; i < expected.length; i++) {
+            expected[i] = i;
+        }
+        assertListEquals(expected, solution.mergeKListsHeap(buildLists(values)));
+        assertListEquals(expected, solution.mergeKLists(buildLists(values)));
+    }
+
+    private ListNode[] buildLists(int[][] values) {
+        ListNode[] lists = new ListNode[values.length];
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] == null || values[i].length == 0) {
+                continue;
+            }
+            ListNode dummy = new ListNode(0);
+            ListNode tail = dummy;
+            for (int value : values[i]) {
+                tail.next = new ListNode(value);
+                tail = tail.next;
+            }
+            lists[i] = dummy.next;
+        }
+        return lists;
+    }
+
+    private Map<ListNode, Boolean> nodesByIdentity(ListNode[] lists) {
+        Map<ListNode, Boolean> nodes = new IdentityHashMap<>();
+        for (ListNode head : lists) {
+            for (ListNode current = head; current != null; current = current.next) {
+                nodes.put(current, Boolean.TRUE);
+            }
+        }
+        return nodes;
+    }
+
+    private void assertReusesExactly(Map<ListNode, Boolean> expectedNodes, ListNode result) {
+        Map<ListNode, Boolean> remaining = new IdentityHashMap<>(expectedNodes);
+        int nodeCount = expectedNodes.size();
+        for (int i = 0; i < nodeCount; i++) {
+            assertNotNull(result, "The result ended before all input nodes were reused");
+            assertNotNull(remaining.remove(result), "The result contains a node that was not in the input");
+            result = result.next;
+        }
+        assertNull(result, "The result contains a cycle or an extra node");
+        assertTrue(remaining.isEmpty(), "The result dropped one or more input nodes");
+    }
+
+    private void assertListEquals(int[] expected, ListNode actual) {
+        for (int value : expected) {
+            assertNotNull(actual, "The result ended before all expected values were found");
+            assertEquals(value, actual.val);
+            actual = actual.next;
+        }
+        assertNull(actual, "The result contains extra nodes");
+    }
+
+    private void assertSequence(ListNode result, int length) {
+        for (int value = 0; value < length; value++) {
+            assertNotNull(result);
+            assertEquals(value, result.val);
+            result = result.next;
+        }
+        assertNull(result);
+    }
 }
