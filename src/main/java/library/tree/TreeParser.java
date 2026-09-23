@@ -2,10 +2,11 @@ package library.tree;
 
 import com.google.common.collect.Lists;
 import library.tree.binarytree.TreeNode;
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
@@ -60,7 +61,7 @@ public class TreeParser {
         }
 
         TreeNode root = new TreeNode(Integer.parseInt(array[0]));
-        Queue<TreeNode> queue = new LinkedList<>();
+        Queue<TreeNode> queue = new ArrayDeque<>();
         queue.offer(root);
         int i = 1;
         while (i < array.length) {
@@ -110,8 +111,8 @@ public class TreeParser {
      * @return deque contains all nodes in in-order
      */
     private static Deque<Integer> generateInorder(TreeNode root) {
-        Deque<Integer> inorderDeque = new LinkedList<>();
-        Deque<TreeNode> deque = new LinkedList<>();
+        Deque<Integer> inorderDeque = new ArrayDeque<>();
+        Deque<TreeNode> deque = new ArrayDeque<>();
         deque.offer(root);
 
         while (!deque.isEmpty()) {
