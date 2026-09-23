@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Random;
 import java.util.Set;
 
 /** Contract and regression tests for both LCA implementations. */
+@Timeout(15)
 public class LowestCommonAncestor_236Test {
 
     private final LowestCommonAncestor_236 test = new LowestCommonAncestor_236();
@@ -185,6 +187,7 @@ public class LowestCommonAncestor_236Test {
 
     @Test
     public void sameNodeImplementationEdgeCase() {
+        // LeetCode supplies distinct p and q; this verifies the intentionally supported same-node extension.
         TreeNode root = new TreeNode(4);
         TreeNode target = new TreeNode(2);
         root.left = target;
@@ -204,7 +207,7 @@ public class LowestCommonAncestor_236Test {
         assertSame(parent, test.lowestCommonAncestor(root, p, q));
         IdentityHashMap<TreeNode, TreeNode> copies = new IdentityHashMap<>();
         TreeNode copiedRoot = copy(root, copies);
-        assertSame(copies.get(parent), test.bfsWithSet(copiedRoot, copies.get(p), copies.get(q)));
+        assertSame(copies.get(parent), test.lowestCommonAncestorBfsWithSet(copiedRoot, copies.get(p), copies.get(q)));
     }
 
     @Test
@@ -265,6 +268,16 @@ public class LowestCommonAncestor_236Test {
     }
 
     @Test
+    public void exhaustiveOrderedPairsOnSmallCompleteTreeMatchIndependentOracle() {
+        TreeNode[] nodes = completeNodes(31);
+        for (TreeNode p : nodes) {
+            for (TreeNode q : nodes) {
+                assertBoth(nodes[0], p, q);
+            }
+        }
+    }
+
+    @Test
     public void seededSparseTreesMatchIndependentParentChainOracle() {
         Random random = new Random(236_2026L);
         for (int treeNumber = 0; treeNumber < 40; treeNumber++) {
@@ -306,8 +319,8 @@ public class LowestCommonAncestor_236Test {
         TreeNode copyP = copies.get(p);
         TreeNode copyQ = copies.get(q);
         TreeNode copyExpected = copies.get(expected);
-        assertSame(copyExpected, test.bfsWithSet(copyRoot, copyP, copyQ));
-        assertSame(copyExpected, test.bfsWithSet(copyRoot, copyQ, copyP));
+        assertSame(copyExpected, test.lowestCommonAncestorBfsWithSet(copyRoot, copyP, copyQ));
+        assertSame(copyExpected, test.lowestCommonAncestorBfsWithSet(copyRoot, copyQ, copyP));
     }
 
     @Test
@@ -335,7 +348,7 @@ public class LowestCommonAncestor_236Test {
         IdentityHashMap<TreeNode, TreeNode> copies = new IdentityHashMap<>();
         TreeNode copiedRoot = copy(root, copies);
         TreeNode copiedExpected = copies.get(expected);
-        assertSame(copiedExpected, test.bfsWithSet(copiedRoot, copies.get(p), copies.get(q)));
+        assertSame(copiedExpected, test.lowestCommonAncestorBfsWithSet(copiedRoot, copies.get(p), copies.get(q)));
     }
 
     private static TreeNode officialTree() {
