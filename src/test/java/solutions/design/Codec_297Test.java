@@ -2,12 +2,16 @@ package solutions.design;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
+import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /** Tests for the preorder, null-marker representation used by {@link Codec_297}. */
 public class Codec_297Test {
@@ -242,6 +246,22 @@ public class Codec_297Test {
     }
 
     @Test
+    public void exhaustivelyRoundTripsEveryShapeThroughFiveNodes() {
+        // There are 65 ordered binary-tree shapes with 0 through 5 nodes.
+        // This finite check exercises every placement of missing children;
+        // values deliberately repeat so topology cannot be inferred from data.
+        assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
+            for (int nodeCount = 0; nodeCount <= 5; nodeCount++) {
+                for (TreeNode shape : allShapes(nodeCount)) {
+                    assignRepeatingValues(shape, new int[]{-1, 0, 1}, new int[]{0});
+                    assertRoundTrip(shape);
+                }
+            }
+        });
+    }
+
+    @Test
+    @Timeout(5)
     public void largeBalancedTreeAtTheTenThousandNodeConstraintRoundTrips() {
         TreeNode root = completeTree(10_000);
 
@@ -351,5 +371,33 @@ public class Codec_297Test {
             cursor = child;
         }
         return root;
+    }
+
+    private List<TreeNode> allShapes(int nodeCount) {
+        if (nodeCount == 0) {
+            return java.util.Collections.singletonList(null);
+        }
+        java.util.ArrayList<TreeNode> result = new java.util.ArrayList<>();
+        for (int leftCount = 0; leftCount < nodeCount; leftCount++) {
+            int rightCount = nodeCount - 1 - leftCount;
+            for (TreeNode left : allShapes(leftCount)) {
+                for (TreeNode right : allShapes(rightCount)) {
+                    TreeNode root = new TreeNode(0);
+                    root.left = left;
+                    root.right = right;
+                    result.add(root);
+                }
+            }
+        }
+        return result;
+    }
+
+    private void assignRepeatingValues(TreeNode root, int[] values, int[] nextIndex) {
+        if (root == null) {
+            return;
+        }
+        root.val = values[nextIndex[0]++ % values.length];
+        assignRepeatingValues(root.left, values, nextIndex);
+        assignRepeatingValues(root.right, values, nextIndex);
     }
 }
