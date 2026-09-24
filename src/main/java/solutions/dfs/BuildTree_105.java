@@ -2,7 +2,9 @@ package solutions.dfs;
 
 import library.tree.binarytree.TreeNode;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Given preorder and inorder traversal of a tree, construct the binary tree.
@@ -12,65 +14,110 @@ import java.util.HashMap;
  * Created with IntelliJ IDEA
  */
 public class BuildTree_105 {
+
     /**
-     * preorder[0] is the root node.
-     * Since array does not contain duplicated value, root node can be found in inorder[].
-     * The left part of array in inorder[] is the left child of root, right part is right child.
-     * Then preorder[1] is the left child's root, preorder[2] is the right child's root.
-     * Repeat this process and finally this tree can be rebuilt.
+     * Rebuilds a binary tree from its preorder and inorder traversals.
      *
-     * @param preorder pre order traversal array
-     * @param inorder  in order traversal array
-     * @return constructed tree
+     * <p>Preorder visits a subtree root before its children, so the first value
+     * in each preorder range is that range's root. Inorder visits the left
+     * subtree, root, and right subtree in that order. A value-to-index map lets
+     * us split the inorder range immediately: values before the root belong to
+     * the left subtree, and values after it belong to the right subtree. The
+     * number of values in the left range then identifies the next preorder
+     * range for the right subtree.</p>
+     *
+     * <p>The traversal contract requires distinct values and matching arrays.
+     * This method returns {@code null} for either {@code null} input or unequal
+     * lengths, and it does not modify either input array. Building the map takes
+     * O(n) time and space; each value is used once by the recursion, so total
+     * time is O(n) and recursion uses O(n) auxiliary space in the worst case
+     * (or O(log n) for a balanced tree).</p>
+     *
+     * @param preorder preorder traversal of the tree
+     * @param inorder inorder traversal of the same tree
+     * @return the reconstructed root, or {@code null} for a null or mismatched input
      */
     public TreeNode buildTree(int[] preorder, int[] inorder) {
-
-        /* Corner case */
-        if (preorder == null || inorder == null || inorder.length == 0 || inorder.length != preorder.length) {
+        // corner cases
+        if (preorder == null || inorder == null || preorder.length != inorder.length) {
             return null;
         }
         if (preorder.length == 1) {
             return new TreeNode(preorder[0]);
         }
 
-        HashMap<Integer, Integer> m = new HashMap<>();      // pair: node and its index in inorder array
-        for (int i = 0; i < inorder.length; i++) {
-            m.put(inorder[i], i);
-        }
+        // Store each value's inorder index so that index immediately identifies
+        // the left/right subtree split; constant-time lookups avoid rescanning
+        // inorder for every subtree, which could make the recursion quadratic.
+        Map<Integer, Integer> map = IntStream
+                .range(0, inorder.length).boxed()
+                .collect(Collectors.toMap(n -> inorder[n], i -> i));
 
-        return buildTree(preorder, 0, preorder.length - 1, 0, inorder.length - 1, m);
+        return buildTree(
+                map,
+                preorder,
+                0,
+                preorder.length - 1,
+                0,
+                inorder.length - 1);
     }
 
     /**
-     * Find root of children in inorder array and in this way to find their left and right children.
-     * The start position of preorder array is the root of current tree.
-     * Find the position of current root in inorder array.
-     * Then the size of left subtree can be found, which is the left part of inorder array.
-     * And the root of left subtree is the next value in preorder array.
-     * The size of right subtree can be found as well, which is the right part of inorder array.
-     * Based on size of left subtree, the root of right subtree can be found.
-     * Pass the parameter into the recursion, until start position is larger than end position.
+     * Builds one subtree from inclusive ranges in both traversals.
      *
-     * @param preorder preorder traversal array
-     * @param preStart root in preorder traverse array
-     * @param preEnd   end of tree in preorder array
-     * @param inStart  start of left children
-     * @param inEnd    end of right children
-     * @param m        hash map for quickly find root index in inorder array
-     * @return root node of current tree
+     * <p>The ranges describe the same set of nodes. Once the root's inorder
+     * position is known, the left subtree contains exactly the values before
+     * it. Its size determines where the right subtree begins in preorder, which
+     * keeps every recursive call aligned with the same nodes.</p>
+     *
+     * @param map maps each node value to its inorder position
+     * @param preorder preorder traversal
+     * @param preorderStart first index of this subtree in preorder
+     * @param preorderEnd last index of this subtree in preorder
+     * @param inorderStart first index of this subtree in inorder
+     * @param inorderEnd last index of this subtree in inorder
+     * @return the root of the requested subtree, or {@code null} for an empty range
      */
-    private TreeNode buildTree(int[] preorder, int preStart, int preEnd, int inStart, int inEnd, HashMap<Integer, Integer> m) {
-
-        if (preStart > preEnd || inStart > inEnd) {
-            return null;        // end point
+    private TreeNode buildTree(Map<Integer, Integer> map,
+                               int[] preorder,
+                               int preorderStart,
+                               int preorderEnd,
+                               int inorderStart,
+                               int inorderEnd) {
+        if (preorderStart > preorderEnd || inorderStart > inorderEnd) {
+            return null;
         }
 
-        TreeNode root = new TreeNode(preorder[preStart]);       // first element in preorder is the root of current tree
-        int inRoot = m.get(preorder[preStart]);                 // find index of root in inorder array
-        int leftChild = inRoot - inStart;       // left part of root in inorder array is left child of current root node
+        TreeNode root = new TreeNode(preorder[preorderStart]);
+        // preorderStart holds this subtree's root; its inorder position gives
+        // the split, and subtracting inorderStart counts left-subtree nodes.
+        int inRoot = map.get(preorder[preorderStart]);
+        int leftChildren = inRoot - inorderStart;
+        // All ranges are inclusive. The left subtree has leftChildren nodes,
+        // so after the root at preorderStart, its preorder range is the next
+        // leftChildren entries. The same nodes appear before the root in
+        // inorder, from inorderStart through inRoot - 1. If that range is
+        // empty, the recursive method returns null for a missing left child.
+        root.left = buildTree(
+                map,
+                preorder,
+                preorderStart + 1,
+                preorderStart + leftChildren,
+                inorderStart,
+                inRoot - 1);
 
-        root.left = buildTree(preorder, preStart + 1, preStart + leftChild, inStart, inRoot - 1, m);
-        root.right = buildTree(preorder, preStart + leftChild + 1, preEnd, inRoot + 1, inEnd, m);
+        // The root and all left-subtree nodes have now been accounted for in
+        // preorder. Therefore the right subtree starts one position after
+        // the left range: preorderStart + leftChildren + 1. Its inorder
+        // values are the ones after the root, from inRoot + 1 through
+        // inorderEnd. An empty range produces a null right child.
+        root.right = buildTree(
+                map,
+                preorder,
+                preorderStart + leftChildren + 1,
+                preorderEnd,
+                inRoot + 1,
+                inorderEnd);
         return root;
     }
 }

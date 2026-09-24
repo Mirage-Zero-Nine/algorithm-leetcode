@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import library.tree.binarytree.TreeNode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -15,8 +16,10 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /** Tests reconstruction from preorder and inorder traversals. */
+@Timeout(value = 10, unit = TimeUnit.SECONDS)
 public class BuildTree_105Test {
 
     private final BuildTree_105 test = new BuildTree_105();
@@ -170,6 +173,21 @@ public class BuildTree_105Test {
         expected.right.left.right = new TreeNode(40);
         expected.right.right = new TreeNode(50);
         assertSameTraversals(expected);
+    }
+
+    @Test
+    public void reconstructsValuesWithoutBinarySearchOrdering() {
+        // The traversals identify the shape even when values do not form a BST.
+        assertTree(
+                new int[]{0, 10, -5, 20, -10, 5, 15},
+                new int[]{-5, 10, 20, 0, -10, 5, 15});
+    }
+
+    @Test
+    public void reconstructsRootWithUnevenSubtreesAndDeepRightBranch() {
+        assertTree(
+                new int[]{42, 7, 3, 9, 100, 60, 55, 70, 120},
+                new int[]{3, 7, 9, 42, 55, 60, 70, 100, 120});
     }
 
     @Test
