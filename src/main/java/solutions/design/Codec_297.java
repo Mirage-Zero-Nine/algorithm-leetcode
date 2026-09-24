@@ -2,8 +2,8 @@ package solutions.design;
 
 import library.tree.binarytree.TreeNode;
 
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -19,68 +19,75 @@ import java.util.Queue;
 
 public class Codec_297 {
     /**
-     * Encodes a tree to a single string by DFS.
+     * Encodes a binary tree in preorder.  Each node contributes its integer
+     * value, and each missing child contributes {@code #}; commas separate
+     * tokens.  Recording both missing children preserves the shape, so trees
+     * with the same values in different positions remain distinguishable.
      *
-     * @param root root node
-     * @return serialized tree
+     * <p>The traversal visits every real node and every null child once, so
+     * the time and output space are {@code O(n)} for a tree with {@code n}
+     * nodes.  The recursive call stack uses {@code O(h)} auxiliary space,
+     * where {@code h} is the tree height, in addition to the output.  The
+     * input tree is read only and is not changed.</p>
+     *
+     * @param root root of the tree to encode, or {@code null}
+     * @return the preorder representation
      */
     public String serialize(TreeNode root) {
         StringBuilder sb = new StringBuilder();
-        serialize(root, sb);
+        dfs(sb, root);
         return sb.toString();
     }
 
-    /**
-     * DFS to encode tree to string. Use "#" to mark null nodes.
-     *
-     * @param root root node
-     * @param sb   string builder to save tree value.
-     */
-    private void serialize(TreeNode root, StringBuilder sb) {
+    private void dfs(StringBuilder sb, TreeNode root) {
         if (root == null) {
-            sb.append('#').append(',');
+            // A marker is required for each absent child to retain structure.
+            sb.append("#").append(",");
             return;
         }
-
-        sb.append(root.val).append(','); // avoid using '+', only append to StringBuilder to reduce time
-        serialize(root.left, sb);
-        serialize(root.right, sb);
+        sb.append(root.val).append(",");
+        dfs(sb, root.left);
+        dfs(sb, root.right);
     }
 
-
     /**
-     * Decodes your encoded data to tree.
-     * Split the data by ",", then build a queue based on split array.
-     * Build the tree based on same pre-order traverse.
+     * Rebuilds the tree from the preorder representation produced by
+     * {@link #serialize(TreeNode)}.  The queue exposes tokens in traversal
+     * order; consuming one token for a node and then recursively consuming
+     * its left and right subtrees mirrors the encoding exactly.
      *
-     * @param data encoded string
-     * @return deserialized root of tree
+     * <p>Each token is consumed once, giving {@code O(n)} time.  The token
+     * queue uses {@code O(n)} auxiliary space, and recursive calls use another
+     * {@code O(h)} stack frames for a tree of height {@code h}; the returned
+     * tree itself is excluded from auxiliary-space accounting.  The method
+     * expects a valid serialized representation containing integer values and
+     * {@code #} null markers.</p>
+     *
+     * @param data serialized tree
+     * @return the reconstructed root, or {@code null} for a null tree
      */
     public TreeNode deserialize(String data) {
-        return deserialize(new LinkedList<>(Arrays.asList(data.split(","))));
+        return deserialize(new ArrayDeque<>(List.of(data.split(","))));
     }
 
     /**
-     * Build tree by queue. Right node and left node is recursively completed.
-     * If current head of queue is "#", add null to current node.
+     * Consumes the next preorder token and recursively constructs its two
+     * children.  Returning immediately for a null marker is what makes the
+     * following token belong to the parent’s next child.
      *
-     * @param q queue stores serialized node value
-     * @return deserialized root of tree
+     * @param q remaining preorder tokens
+     * @return the subtree represented by the next token
      */
     private TreeNode deserialize(Queue<String> q) {
-        if (q.isEmpty()) {
+        String val = q.poll();
+        if (val == null || val.equals("#")) {
             return null;
         }
 
-        String data = q.poll();
-        if (data.equals("#")) {
-            return null;
-        }
+        TreeNode root = new TreeNode(Integer.parseInt(val));
+        root.left = deserialize(q);
+        root.right = deserialize(q);
 
-        TreeNode r = new TreeNode(Integer.parseInt(data));
-
-        r.left = deserialize(q);
-        r.right = deserialize(q);
-        return r;
+        return root;
     }
 }
