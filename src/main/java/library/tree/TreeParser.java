@@ -6,7 +6,6 @@ import library.tree.binarytree.TreeNode;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.List;
 import java.util.Queue;
 
@@ -33,9 +32,9 @@ public class TreeParser {
             return "null";
         }
 
-        Deque<Integer> inorderDeque = generateInorder(root);
+        List<Integer> inorder = generateInorder(root);
         StringBuilder sb = new StringBuilder();
-        inorderDeque.forEach(node -> sb.append(node).append(","));
+        inorder.forEach(node -> sb.append(node).append(","));
 
         return sb.substring(0, sb.length() - 1);
     }
@@ -98,39 +97,41 @@ public class TreeParser {
             return Lists.newArrayList((Integer) null);
         }
 
-        Deque<Integer> inorderDeque = generateInorder(root);
+        List<Integer> inorder = generateInorder(root);
 
-        return new ArrayList<>(inorderDeque);
+        return inorder;
     }
 
     /**
-     * Generate a deque contains all nodes in in-order.
-     * Filter all null nodes append to the last of the deque.
+     * Generate a list containing all nodes in level-order.
+     * Retain internal null children and remove null entries from the end.
      *
      * @param root root of the tree
-     * @return deque contains all nodes in in-order
+     * @return list containing all nodes in level-order
      */
-    private static Deque<Integer> generateInorder(TreeNode root) {
-        Deque<Integer> inorderDeque = new ArrayDeque<>();
-        Deque<TreeNode> deque = new ArrayDeque<>();
-        deque.offer(root);
+    private static List<Integer> generateInorder(TreeNode root) {
+        List<Integer> values = new ArrayList<>();
+        List<TreeNode> nodes = new ArrayList<>();
+        nodes.add(root);
 
-        while (!deque.isEmpty()) {
-            TreeNode current = deque.poll();
+        // Keep null children in the list so later nodes retain their level-order
+        // positions. An index avoids repeatedly removing the front element.
+        for (int index = 0; index < nodes.size(); index++) {
+            TreeNode current = nodes.get(index);
 
             if (current == null) {
-                inorderDeque.addLast(null);
+                values.add(null);
             } else {
-                inorderDeque.addLast(current.val);
-                deque.addLast(current.left);
-                deque.addLast(current.right);
+                values.add(current.val);
+                nodes.add(current.left);
+                nodes.add(current.right);
             }
         }
 
-        while (inorderDeque.peekLast() == null) {
-            inorderDeque.pollLast();
+        while (values.getLast() == null) {
+            values.removeLast();
         }
 
-        return inorderDeque;
+        return values;
     }
 }
