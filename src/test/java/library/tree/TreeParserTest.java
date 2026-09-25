@@ -46,4 +46,13 @@ public class TreeParserTest {
         assertIterableEquals(expected, convertToList(deserialize("1")));
         assertEquals("1", serialize(deserialize("1")));
     }
+
+    @Test
+    public void testHashNullMarkersAndNegativeValues() {
+        String data = "-1,#,2,#,-3";
+        List<Integer> expected = Lists.newArrayList(-1, null, 2, null, -3);
+
+        assertIterableEquals(expected, convertToList(deserialize(data)));
+        assertEquals("-1,null,2,null,-3", serialize(deserialize(data)));
+    }
 }
