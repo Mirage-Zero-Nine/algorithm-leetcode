@@ -2,9 +2,11 @@ package solutions.dfs;
 
 import library.graph.Node;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph.
@@ -21,74 +23,101 @@ import java.util.Map;
  */
 
 public class CloneGraph_133 {
+
     /**
-     * DFS to access all nodes in graph.
+     * Clones the reachable graph with recursive depth-first search.
      *
-     * @param node start node of original graph
-     * @return start node of cloned graph
+     * <p>The map stores the clone as soon as a source node is first seen.  That ordering is
+     * essential: an undirected edge points back to an already visited node, and a cycle can point
+     * back to a node whose recursive call is still in progress.  Returning the stored clone in
+     * both cases preserves the original graph's sharing and cycles without recursing forever.</p>
+     *
+     * <p>Every reachable node and edge is processed once, so the time complexity is {@code O(V + E)}
+     * and the auxiliary space is {@code O(V)} for the map and recursion stack.  The input graph is
+     * never modified.  The problem's node values are unique, so values can identify source nodes
+     * in the map.</p>
+     *
+     * @param node a node in the connected graph to copy, or {@code null}
+     * @return the cloned node corresponding to {@code node}, or {@code null}
      */
     public Node cloneGraph(Node node) {
-
-        Map<Integer, Node> map = new HashMap<>();
-        return dfs(node, map);
+        return dfs(node, new HashMap<>());
     }
 
     /**
-     * DFS to traverse every node in graph and create a new node to save neighbors.
+     * Creates a node before visiting its neighbors, then recursively fills its neighbor list.
+     * Creating and recording the node first makes a back edge resolve to the same clone.
      *
-     * @param node start node of original graph
-     * @param map  map to store previous visited nodes
-     * @return start node of original graph
+     * @param node the source node currently being copied
+     * @param map  source node values to the clones already created for them
+     * @return the clone for {@code node}, or {@code null} when {@code node} is {@code null}
      */
     private Node dfs(Node node, Map<Integer, Node> map) {
-
-        /* Corner case */
         if (node == null) {
             return null;
         }
 
         if (map.containsKey(node.val)) {
             return map.get(node.val);
-        } else {
-
-            Node newNode = new Node(node.val, new ArrayList<>());
-            map.put(node.val, newNode);
-
-            for (Node n : node.neighbors) {      // iter all elements in array
-                newNode.neighbors.add(dfs(n, map));     // DFS
-            }
-
-            return newNode;
-        }
-    }
-
-    private final Map<Node, Node> oldNewMap = new HashMap<>();        // hash map for BFS
-
-    /**
-     * BFS searching with hash map.
-     *
-     * @param node root node of original graph
-     * @return root node of cloned graph
-     */
-    public Node cloneGraphBFS(Node node) {
-
-        /* Corner case and end point */
-        if (node == null) {
-            return null;
-        }
-
-        if (oldNewMap.containsKey(node)) {
-            return oldNewMap.get(node);
         }
 
         Node cloned = new Node(node.val, new ArrayList<>());
-
-        oldNewMap.put(node, cloned);
-
-        for (Node n : node.neighbors) {
-            cloned.neighbors.add(cloneGraphBFS(n));        // add all connected nodes into neighbor
+        // Record the clone before descending so cycles can point back to this same object.
+        map.put(cloned.val, cloned);
+        for (Node neighbor : node.neighbors) {
+            cloned.neighbors.add(dfs(neighbor, map));
         }
-
         return cloned;
+    }
+
+    /**
+     * Clones the reachable graph with iterative breadth-first search.
+     *
+     * <p>The map is both the visited set and the source-to-clone lookup.  The root clone is created
+     * and the original root is queued first; each newly discovered neighbor is cloned and queued
+     * once, while every occurrence is appended to the current clone's neighbor list.  This keeps
+     * repeated references, cycles, and neighbor order identical to the input graph.</p>
+     *
+     * <p>The traversal processes each reachable node and edge once, giving {@code O(V + E)} time and
+     * {@code O(V)} auxiliary space.  Unlike the recursive method, its traversal uses an explicit
+     * queue, so it does not consume the call stack.  The input graph is never modified.</p>
+     *
+     * @param node a node in the connected graph to copy, or {@code null}
+     * @return the cloned node corresponding to {@code node}, or {@code null}
+     */
+    public Node cloneGraphBFS(Node node) {
+        return bfs(node, new HashMap<>());
+    }
+
+    /**
+     * Performs the queue-based portion of {@link #cloneGraphBFS(Node)}.
+     *
+     * @param node the source node at which traversal starts
+     * @param map  source node values to the clones already created for them
+     * @return the clone for {@code node}
+     */
+    private Node bfs(Node node, Map<Integer, Node> map) {
+        if (node == null) {
+            return null;
+        }
+        Node clonedRoot = new Node(node.val, new ArrayList<>());
+        map.put(clonedRoot.val, clonedRoot);
+
+        Queue<Node> q = new ArrayDeque<>();
+        // The root must be queued so its neighbors are copied and connected to the root clone.
+        q.add(node);
+        while (!q.isEmpty()) {
+            Node current = q.poll();
+            Node currentClone = map.get(current.val);
+            for (Node neighbor : current.neighbors) {
+                Node cloneNeighbor = map.computeIfAbsent(neighbor.val, val -> {
+                    // Queue a source node only when its clone is first created.
+                    q.add(neighbor);
+                    return new Node(val, new ArrayList<>());
+                });
+                currentClone.neighbors.add(cloneNeighbor);
+            }
+        }
+        return clonedRoot;
     }
 }
