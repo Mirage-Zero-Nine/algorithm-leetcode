@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import library.graph.Node;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
@@ -87,6 +89,70 @@ class CloneGraph_133Test {
     @Test
     void clonesCompleteGraphOfFiveNodes() {
         assertBoth(() -> complete(5));
+    }
+
+    /**
+     * Exhausts all connected simple graphs on four labeled nodes (38 topologies). Larger graphs,
+     * self-loops, and repeated edges are covered by the separate focused tests in this class.
+     */
+    @Test
+    void exhaustivelyClonesEveryConnectedSimpleGraphOfFourNodes() {
+        ProcessBuilder command = new ProcessBuilder(
+                javaCommand(),
+                "-cp",
+                System.getProperty("java.class.path"),
+                ExhaustiveGraphProbe.class.getName());
+        command.redirectErrorStream(true);
+        Process process = null;
+        try {
+            process = command.start();
+            if (!process.waitFor(10, TimeUnit.SECONDS)) {
+                process.destroyForcibly();
+                if (!process.waitFor(5, TimeUnit.SECONDS)) {
+                    fail("Exhaustive graph probe remained alive after forced termination");
+                }
+                String output = new String(process.getInputStream().readAllBytes());
+                fail("Exhaustive graph probe exceeded ten seconds and was terminated. "
+                        + "Last reported edge mask: " + output);
+            }
+            String output = new String(process.getInputStream().readAllBytes());
+            assertEquals(0, process.exitValue(), () -> "Exhaustive graph probe failed: " + output);
+        } catch (InterruptedException interrupted) {
+            if (process != null && process.isAlive()) {
+                process.destroyForcibly();
+            }
+            Thread.currentThread().interrupt();
+            fail("Interrupted while waiting for exhaustive graph probe", interrupted);
+        } catch (java.io.IOException exception) {
+            fail("Could not start exhaustive graph probe", exception);
+        }
+    }
+
+    private static String javaCommand() {
+        String executable = System.getProperty("os.name").startsWith("Windows") ? "java.exe" : "java";
+        return System.getProperty("java.home") + java.io.File.separator + "bin" + java.io.File.separator + executable;
+    }
+
+    private void runExhaustiveGraphProbe() {
+        int connectedGraphs = 0;
+        for (int edgeMask = 0; edgeMask < (1 << 6); edgeMask++) {
+            if (!isConnectedFourNodeGraph(edgeMask)) {
+                continue;
+            }
+            System.out.println("edgeMask=" + edgeMask);
+            System.out.flush();
+            int scenario = edgeMask;
+            assertBoth(() -> graphFromFourNodeEdgeMask(scenario));
+            connectedGraphs++;
+        }
+        assertEquals(38, connectedGraphs);
+    }
+
+    /** Entry point for the isolated process used by the exhaustive timeout test. */
+    public static class ExhaustiveGraphProbe {
+        public static void main(String[] args) {
+            new CloneGraph_133Test().runExhaustiveGraphProbe();
+        }
     }
 
     @Test
@@ -352,6 +418,60 @@ class CloneGraph_133Test {
             }
         }
         return nodes[0];
+    }
+
+    /**
+     * Builds one of the six possible undirected edges for each bit in a deterministic mask.
+     * Keeping the edge order fixed makes the topology oracle verify neighbor order as well as
+     * reachability and aliasing.
+     */
+    private static Node graphFromFourNodeEdgeMask(int edgeMask) {
+        int[][] possibleEdges = {
+                {1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4}
+        };
+        List<int[]> edges = new ArrayList<>();
+        for (int bit = 0; bit < possibleEdges.length; bit++) {
+            if ((edgeMask & (1 << bit)) != 0) {
+                edges.add(possibleEdges[bit]);
+            }
+        }
+        return graph(4, edges.toArray(int[][]::new));
+    }
+
+    private static boolean isConnectedFourNodeGraph(int edgeMask) {
+        boolean[] visited = new boolean[4];
+        Deque<Integer> queue = new ArrayDeque<>();
+        queue.add(0);
+        visited[0] = true;
+        while (!queue.isEmpty()) {
+            int current = queue.remove();
+            for (int bit = 0; bit < 6; bit++) {
+                if ((edgeMask & (1 << bit)) == 0) {
+                    continue;
+                }
+                int[] edge = switch (bit) {
+                    case 0 -> new int[]{0, 1};
+                    case 1 -> new int[]{0, 2};
+                    case 2 -> new int[]{0, 3};
+                    case 3 -> new int[]{1, 2};
+                    case 4 -> new int[]{1, 3};
+                    default -> new int[]{2, 3};
+                };
+                if (edge[0] == current && !visited[edge[1]]) {
+                    visited[edge[1]] = true;
+                    queue.add(edge[1]);
+                } else if (edge[1] == current && !visited[edge[0]]) {
+                    visited[edge[0]] = true;
+                    queue.add(edge[0]);
+                }
+            }
+        }
+        for (boolean nodeVisited : visited) {
+            if (!nodeVisited) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static Node selfLoop() {
