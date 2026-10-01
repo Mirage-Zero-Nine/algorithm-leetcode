@@ -7,13 +7,32 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
+import java.util.concurrent.Executors;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Timeout.ThreadMode;
 
-/** Contract and regression tests for {@link OrangesRotting_994}. */
+/**
+ * Contract and regression tests for {@link OrangesRotting_994}.
+ */
+@Timeout(value = 5, unit = TimeUnit.SECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
 public class OrangesRotting_994Test {
 
-    private final OrangesRotting_994 test = new OrangesRotting_994();
+    private final IsolatedSolution test = new IsolatedSolution();
+
+    @AfterEach
+    public void stopWorker() throws Exception {
+        test.close();
+    }
 
     @Test
     public void testOfficialExamples() {
@@ -228,6 +247,161 @@ public class OrangesRotting_994Test {
             }
         }
         assertEquals(independentOracle(grid), test.orangesRotting(copy(grid)));
+    }
+
+    @Test
+    public void testExhaustiveTwoByTwoTernaryGridsAgainstIndependentOracle() {
+        // There are only 3^4 = 81 two-by-two grids. Exhausting this small
+        // domain exercises every placement of empty, fresh, and rotten cells,
+        // including all source-free and disconnected combinations.
+        for (int encoded = 0; encoded < 81; encoded++) {
+            int value = encoded;
+            int[][] grid = new int[2][2];
+            for (int row = 0; row < 2; row++) {
+                for (int column = 0; column < 2; column++) {
+                    grid[row][column] = value % 3;
+                    value /= 3;
+                }
+            }
+            int expected = independentOracle(grid);
+            assertEquals(expected, test.orangesRotting(copy(grid)),
+                    "encoded two-by-two grid=" + encoded);
+        }
+    }
+
+    /**
+     * Delegates every solver call to a killable persistent child process.
+     */
+    private static final class IsolatedSolution extends OrangesRotting_994 {
+        private Process process;
+        private BufferedWriter input;
+        private BufferedReader output;
+
+        @Override
+        public synchronized int orangesRotting(int[][] grid) {
+            try {
+                ensureWorker();
+                input.write(encode(grid));
+                input.newLine();
+                input.flush();
+                var executor = Executors.newSingleThreadExecutor();
+                Future<String> response = executor.submit(output::readLine);
+                String line;
+                try {
+                    line = response.get(2, TimeUnit.SECONDS);
+                } finally {
+                    response.cancel(true);
+                    executor.shutdownNow();
+                }
+                if (line == null) {
+                    throw new IllegalStateException("isolated worker exited");
+                }
+                return applyResponse(grid, line);
+            } catch (Exception exception) {
+                killWorker();
+                throw new AssertionError("isolated solver invocation failed", exception);
+            }
+        }
+
+        private void ensureWorker() throws IOException {
+            if (process != null && process.isAlive()) {
+                return;
+            }
+            process = new ProcessBuilder(javaExecutable(), "-cp", System.getProperty("java.class.path"),
+                    Worker.class.getName(), "persistent").redirectErrorStream(true).start();
+            input = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+            output = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        }
+
+        private static String javaExecutable() {
+            return System.getProperty("java.home") + java.io.File.separator + "bin"
+                    + java.io.File.separator + "java";
+        }
+
+        private void killWorker() {
+            if (process != null) {
+                process.destroyForcibly();
+                try {
+                    process.waitFor(2, TimeUnit.SECONDS);
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            process = null;
+        }
+
+        void close() {
+            killWorker();
+        }
+    }
+
+    private static String encode(int[][] grid) {
+        if (grid == null) return "N";
+        StringBuilder result = new StringBuilder().append(grid.length).append(':');
+        for (int row = 0; row < grid.length; row++) {
+            if (row > 0) result.append(';');
+            for (int column = 0; column < grid[row].length; column++) {
+                if (column > 0) result.append(',');
+                result.append(grid[row][column]);
+            }
+        }
+        return result.toString();
+    }
+
+    private static int applyResponse(int[][] grid, String response) {
+        int separator = response.indexOf('|');
+        int result = Integer.parseInt(response.substring(0, separator));
+        int[][] mutated = Worker.decode(response.substring(separator + 1));
+        if (grid != null && mutated != null) {
+            for (int row = 0; row < grid.length; row++) {
+                for (int column = 0; column < grid[row].length; column++) {
+                    grid[row][column] = mutated[row][column];
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Child-process entry point; each line is one independent solver request.
+     */
+    public static final class Worker {
+        public static void main(String[] args) throws Exception {
+            if (args.length == 0 || !"persistent".equals(args[0])) return;
+            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+            BufferedWriter output = new BufferedWriter(new OutputStreamWriter(System.out));
+            OrangesRotting_994 solver = new OrangesRotting_994();
+            String request;
+            while ((request = input.readLine()) != null) {
+                int[][] grid = decode(request);
+                int result = solver.orangesRotting(grid);
+                output.write(result + "|" + encode(grid));
+                output.newLine();
+                output.flush();
+            }
+        }
+
+        private static int[][] decode(String encoded) {
+            if ("N".equals(encoded)) return null;
+            int separator = encoded.indexOf(':');
+            int rows = Integer.parseInt(encoded.substring(0, separator));
+            String body = encoded.substring(separator + 1);
+            if (rows == 0) return new int[0][];
+            String[] encodedRows = body.split(";", -1);
+            int[][] grid = new int[rows][];
+            for (int row = 0; row < rows; row++) {
+                if (encodedRows[row].isEmpty()) {
+                    grid[row] = new int[0];
+                } else {
+                    String[] cells = encodedRows[row].split(",");
+                    grid[row] = new int[cells.length];
+                    for (int column = 0; column < cells.length; column++) {
+                        grid[row][column] = Integer.parseInt(cells[column]);
+                    }
+                }
+            }
+            return grid;
+        }
     }
 
     private static int independentOracle(int[][] grid) {
