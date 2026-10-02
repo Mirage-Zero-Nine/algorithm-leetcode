@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Given a list accounts, each element accounts[i] is a list of strings.
@@ -29,130 +29,121 @@ import java.util.stream.IntStream;
  */
 
 public class AccountsMerge_721 {
+
     /**
-     * Merges accounts with common email addresses into a single account. Accounts are represented
-     * as lists of strings, where the first element is the user's name and the rest are email addresses.
-     * If two accounts share at least one email, they are considered to belong to the same person and are merged.
-     * The method uses a Union-Find data structure to efficiently group accounts with common emails.
-     * After processing all accounts, it collects the merged emails under each root account and returns a list of
-     * lists where each list represents a distinct account with the person's name and all associated emails.
-     * The Union-Find structure is used to track which accounts are connected by shared email addresses.
-     * After performing union operations to group accounts, emails are collected and sorted for each root account.
-     * Time Complexity:
-     * - Union-Find operations (union/find) are amortized to O(α(n)), where α(n) is the inverse Ackermann function.
-     * - Iterating over the accounts and emails has a time complexity of O(e log e), where e is the total number of emails.
-     * - Therefore, the overall time complexity is O(e log e), where e is the total number of emails.
-     * Space Complexity:
-     * - The space complexity is O(e + n), where e is the total number of emails and n is the number of accounts.
-     * - Space is used by the Union-Find data structure, email mapping, and result list.
-     * @param accounts A list of accounts, where each account is a list where the first element is the account holder's name
-     *                 and the rest are email addresses associated with that account.
-     * @return A list of lists where each list represents a merged account, starting with the account holder's name followed
-     *         by all associated email addresses. The emails are unique and sorted in lexicographical order.
+     * Groups accounts that share an email address and returns one sorted account per person.
+     *
+     * <p>The first value in each input account is its name; all remaining values are email
+     * addresses.  Two rows belong to the same person when their email-address sets are connected
+     * through one or more shared addresses.  A name by itself never creates a connection, so two
+     * people with the same name remain separate.  Every output row contains the name from its
+     * representative account followed by each distinct email in lexicographic order.  The output
+     * row order is unspecified, and this method does not mutate the supplied account lists.</p>
+     *
+     * <p>The algorithm first uses a disjoint-set structure to connect account indexes while
+     * scanning emails, then collects the emails belonging to each final root in {@link TreeSet}s.
+     * If {@code n} is the number of accounts and {@code e} is the total number of email entries,
+     * auxiliary space is {@code O(n + e)};
+     * Path compression makes repeated lookups fast in practice, but this implementation does not
+     * use union by rank, so the safe worst-case bound for the union-find work is
+     * {@code O(n(n + e))}; this also accounts for resolving every account when there are no
+     * email entries.
+     * a find can follow a chain of up to {@code n} account indexes.  The recursive find also uses
+     * {@code O(n)} temporary stack space in that worst case.  Sorting the collected emails adds
+     * {@code O(e log(e + 1))}, so the safe overall running time is
+     * {@code O(n(n + e) + e log(e + 1))}.  The
+     * documented input limits are {@code 1 <= n <= 1000}, {@code 2 <= account.size() <= 10}, and
+     * name/email lengths from 1 through 30 characters.  This implementation also returns an empty
+     * list for null or empty input and preserves name-only rows, both intentional extensions covered
+     * by the local tests.</p>
+     *
+     * @param accounts accounts whose first element is a name and remaining elements are emails
+     * @return merged accounts with unique, sorted emails; output account order is unspecified
      */
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
 
-        // corner case
+        // The problem normally supplies at least one account, but returning an empty result keeps
+        // the method total for callers that pass null or an empty collection.
         if (accounts == null || accounts.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // create a new union find set with size of accounts (max number of possible names)
-        int n = accounts.size();
-        UnionFind uf = new UnionFind(n);
+        UnionFind uf = new UnionFind(accounts.size());
         Map<String, Integer> map = new HashMap<>();
 
-        // iter the list, if there are email addresses that're shared among different person, union them (their index)
-        for (int i = 0; i < n; i++) {
-            for (int j = 1; j < accounts.get(i).size(); j++) {
-                String address = accounts.get(i).get(j);
+        // The outer stream visits each account index.  skip(1) deliberately ignores the name,
+        // because equal names do not prove that two rows belong to the same person.  For each
+        // email, putIfAbsent records its first owner and returns an earlier owner when the email
+        // was already seen.  That returned index is unioned with the current index, which also
+        // handles transitive bridges: A shares one email with B and B shares another with C.
+        IntStream.range(0, accounts.size()).forEach(i ->
+                accounts.get(i).stream()
+                        .skip(1)
+                        .forEach(s -> {
+                            var existingAccount = map.putIfAbsent(s, i);
+                            if (existingAccount != null) {
+                                uf.union(existingAccount, i);
+                            }
+                        }));
 
-                // email addresses are unique, so if the email address has been seen before, they belong to same person
-                if (map.containsKey(address)) {
-                    // union the index of the email lists, i stands for the ith person in the list
-                    uf.union(map.get(address), i);
-                } else {
-                    map.put(address, i);
-                }
-            }
-        }
+        Map<Integer, TreeSet<String>> merged = new HashMap<>();
 
-        Map<Integer, TreeSet<String>> merge = new HashMap<>();
+        // A second index stream resolves every account to its compressed root.  Each stream
+        // element is only an account index; computeIfAbsent turns that index into one sorted set
+        // per connected component, and addAll contributes the account's email sublist.  TreeSet
+        // both removes duplicate email entries and keeps the output order required by the problem.
+        IntStream.range(0, accounts.size()).forEach(i ->
+                merged.computeIfAbsent(
+                                uf.find(i),
+                                _ -> new TreeSet<>())
+                        .addAll(accounts.get(i).subList(1, accounts.get(i).size()))
+        );
 
-        // iter all n people, if any of those are merged in the union-find operation, merge email to the final output
-        for (int i = 0; i < n; i++) {
-
-            // union-find find if it can be merged with another
-            int root = uf.find(i);
-
-            merge.putIfAbsent(root, new TreeSet<>());
-            TreeSet<String> set = merge.get(root);
-            set.addAll(accounts.get(i).subList(1, accounts.get(i).size()));
-            merge.put(root, set);
-        }
-
-        // after previous iteration, the merge map stores all the indexes that are unique
-        // add their name and email address to the output
-        return merge.keySet().stream()
-                .map(index -> {
-                    List<String> emails = new ArrayList<>();
-                    emails.add(accounts.get(index).getFirst());
-                    emails.addAll(merge.get(index));
-                    return emails;
-                }).collect(Collectors.toList());
+        // The final pipeline consumes Map.Entry<Integer, TreeSet<String>> elements.  map creates
+        // one row per component: Stream.of supplies its representative name, concat appends the
+        // already sorted email stream, and the inner toList materializes that row.  The outer
+        // toList materializes all rows.  HashMap iteration order is unspecified, so only email
+        // order within a row is part of the contract.
+        return merged.entrySet().stream()
+                .map(entry -> Stream.concat(
+                                Stream.of(accounts.get(entry.getKey()).getFirst()),
+                                entry.getValue().stream())
+                        .toList())
+                .toList();
     }
 
-    /**
-     * Union-Find class maintains a collection of disjoint sets and supports efficient union and find operations to group accounts with shared email addresses.
-     * The Union-Find structure uses path compression to optimize the find operation and union by rank (or size) to keep the tree flat and improve the performance of union operations.
-     * The `find` method returns the root of the set to which a particular element belongs.
-     * The `union` method merges two sets into one by linking the root of one set to the root of another.
-     * Time Complexity:
-     * - The `find` and `union` operations are nearly constant time, specifically O(α(n)), where α(n) is the inverse Ackermann function.
-     * - In practice, these operations are extremely efficient, with amortized time complexity close to O(1).
-     * Space Complexity:
-     * - The space complexity is O(n), where n is the number of elements (accounts) being tracked in the Union-Find structure.
-     */
-    static class UnionFind {
-        int[] parent;
+    private static class UnionFind {
+        int[] parents;
 
         /**
-         * Initializes a Union-Find data structure with the specified size.
-         * Each element initially points to itself, representing a disjoint set.
+         * Starts with one singleton component per account index.
          *
-         * @param size The number of elements in the union-find structure. Each element is initially its own parent.
+         * @param size number of account indexes to track
          */
         UnionFind(int size) {
-            this.parent = IntStream.range(0, size).toArray();
+            this.parents = IntStream.range(0, size).toArray();
         }
 
         /**
-         * Finds the root of the set containing the specified element.
-         * Implements path compression to flatten the structure, improving the efficiency of future operations.
+         * Returns the component root and compresses the traversed path so later lookups are faster.
          *
-         * @param value The element whose root is to be found.
-         * @return The root of the set containing the specified element.
+         * @param a account index to resolve
+         * @return the representative index of {@code a}'s component
          */
-        int find(int value) {
-
-            // if value is not its own parent, recursively find the root
-            if (value != parent[value]) {
-                // path compression: point the current value directly to the root
-                parent[value] = find(parent[value]);
+        int find(int a) {
+            if (parents[a] != a) {
+                parents[a] = find(parents[a]);
             }
-
-            return parent[value];
+            return parents[a];
         }
 
         /**
-         * Unites the sets containing the two specified elements by linking one set's root to the other.
-         * This operation merges two disjoint sets into one set.
-         *
-         * @param a The first element whose set is to be merged.
-         * @param b The second element whose set is to be merged.
+         * Connects the two components by linking the first root to the second root. Path
+         * compression in {@link #find(int)} shortens paths when they are subsequently visited;
+         * repeated connections are harmless because both indexes are resolved first.
          */
         void union(int a, int b) {
-            parent[find(a)] = parent[find(b)];
+            parents[find(a)] = parents[find(b)];
         }
     }
 }
