@@ -1,7 +1,10 @@
 package solutions.dynamicprogramming;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -99,8 +102,9 @@ public class CoinChange_322Test {
 
     @Test
     public void testLargeAmountSmallDenominations() {
-        // 10000 with coins [1,5,10] - should not TLE
-        assertEquals(1000, test.coinChange(new int[]{1, 5, 10}, 10000));
+        // 10000 is the maximum amount in the problem contract.
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () ->
+                assertEquals(1000, test.coinChange(new int[]{1, 5, 10}, 10000)));
     }
 
     @Test
@@ -126,17 +130,42 @@ public class CoinChange_322Test {
     public void testExhaustiveSmallValidInputs() {
         int[] denominations = {1, 2, 3, 4, 5, 6};
 
-        // Every nonempty subset is a valid distinct positive coin set.
-        for (int mask = 1; mask < (1 << denominations.length); mask++) {
-            int[] coins = coinsForMask(denominations, mask);
-            for (int amount = 0; amount <= 20; amount++) {
-                int[] memo = new int[amount + 1];
-                Arrays.fill(memo, Integer.MIN_VALUE);
-                int expected = minimumCoins(amount, coins, memo);
-                assertEquals(expected, test.coinChange(coins, amount),
-                        "coins=" + Arrays.toString(coins) + ", amount=" + amount);
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            // Every nonempty subset is a valid distinct positive coin set. Enumerating amounts
+            // through 20 catches unreachable gaps and combinations requiring several coins.
+            for (int mask = 1; mask < (1 << denominations.length); mask++) {
+                int[] coins = coinsForMask(denominations, mask);
+                for (int amount = 0; amount <= 20; amount++) {
+                    int[] memo = new int[amount + 1];
+                    Arrays.fill(memo, Integer.MIN_VALUE);
+                    int expected = minimumCoins(amount, coins, memo);
+                    assertEquals(expected, test.coinChange(coins, amount),
+                            "coins=" + Arrays.toString(coins) + ", amount=" + amount);
+                }
             }
-        }
+        });
+    }
+
+    @Test
+    public void testDuplicateDenominationsAndInputRemainUnchanged() {
+        int[] coins = {9, 1, 3, 3, 9};
+        int[] original = coins.clone();
+
+        assertEquals(2, test.coinChange(coins, 10));
+        assertArrayEquals(original, coins);
+    }
+
+    @Test
+    public void testRepeatedCallsUseFreshDynamicProgrammingState() {
+        assertEquals(2, test.coinChange(new int[]{2, 5}, 10));
+        assertEquals(-1, test.coinChange(new int[]{4, 6}, 7));
+        assertEquals(2, test.coinChange(new int[]{1, 3, 4}, 6));
+    }
+
+    @Test
+    public void testNullCoinsUsesSupportedEmptyInputBehavior() {
+        assertEquals(-1, test.coinChange(null, 0));
+        assertEquals(-1, test.coinChange(null, 17));
     }
 
     private int[] coinsForMask(int[] denominations, int mask) {
