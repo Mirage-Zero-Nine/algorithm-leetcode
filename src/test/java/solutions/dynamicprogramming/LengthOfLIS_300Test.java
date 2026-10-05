@@ -1,6 +1,7 @@
 package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
@@ -68,8 +69,64 @@ public class LengthOfLIS_300Test {
     }
 
     @Test
-    public void testEmptyArray() {
-        assertEquals(0, test.lengthOfLIS(new int[]{}));
+    public void testMaximumContractLength() {
+        int[] arr = new int[2500];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = -10000 + i;
+        }
+
+        assertEquals(2500, test.lengthOfLIS(arr));
+    }
+
+    @Test
+    public void testTailReplacementAndDuplicateBoundaries() {
+        assertEquals(4, test.lengthOfLIS(new int[]{10, 20, 5, 15, 25, 6, 7, 30}));
+        assertEquals(3, test.lengthOfLIS(new int[]{4, 10, 4, 3, 8, 9}));
+        assertEquals(2, test.lengthOfLIS(new int[]{-10000, -10000, 10000, 10000}));
+    }
+
+    @Test
+    public void testDoesNotMutateInput() {
+        int[] input = {3, 4, -1, 0, 6, 2, 3};
+        int[] original = input.clone();
+
+        assertEquals(4, test.lengthOfLIS(input));
+        assertArrayEquals(original, input);
+    }
+
+    @Test
+    public void testExhaustiveSmallArraysAgainstDynamicProgrammingReference() {
+        for (int length = 1; length <= 6; length++) {
+            int[] input = new int[length];
+            assertAllArraysWithValues(input, 0, 0);
+        }
+    }
+
+    private void assertAllArraysWithValues(int[] input, int index, int minimumValue) {
+        if (index == input.length) {
+            assertEquals(referenceLis(input), test.lengthOfLIS(input.clone()));
+            return;
+        }
+
+        for (int value = minimumValue; value <= 3; value++) {
+            input[index] = value;
+            assertAllArraysWithValues(input, index + 1, minimumValue);
+        }
+    }
+
+    private int referenceLis(int[] nums) {
+        int[] lengths = new int[nums.length];
+        int best = 0;
+        for (int i = 0; i < nums.length; i++) {
+            lengths[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    lengths[i] = Math.max(lengths[i], lengths[j] + 1);
+                }
+            }
+            best = Math.max(best, lengths[i]);
+        }
+        return best;
     }
 
     @Test
