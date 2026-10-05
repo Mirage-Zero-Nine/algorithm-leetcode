@@ -1,7 +1,6 @@
 package solutions.dynamicprogramming;
 
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Given a non-empty array containing only positive integers.
@@ -13,25 +12,18 @@ import java.util.Map;
  */
 
 public class CanPartition_416 {
+
     /**
-     * First, check if the sum of the array is odd. Odd sum can not be divided.
-     * Then it's 0/1 Knapsack problem: select items from array to have it sum equals to the target sum (total / 2).
-     * Build a 1D boolean array for DP with size (total / 2) + 1.
-     * dp[i] is true if it's possible to achieve a sum of i using a subset of the numbers from nums.
-     * Then, loop the elements in array. From the range [target - num, target], filling the dp[i] with:
-     * 1. It's already true (which means current element does not need to be selected).
-     * 2. It can be obtained by adding current element to a previous subset (dp[i - num]).
-     * State transition:
-     * dp[i][j] = dp[i - 1][j - nums[i - 1]] || dp[i - 1][j]
-     * dp[i - 1][j - nums[i - 1]]: choose nums[i], and if j - nums[i] can make up sum, dp[i][j] can.
-     * dp[i - 1][j]: leave nums[i] and if from nums[0] to nums[i-1] can make up, then dp[i][j] can.
+     * Uses a one-dimensional 0/1-knapsack table to find a subset summing to
+     * half the total. For each value {@code n}, the state transition is
+     * {@code dp[s] = dp[s] || dp[s - n]}, with {@code dp[0]} initially true.
      *
-     * @param nums given array
-     * @return if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal
+     * @param nums positive input values; the array is not mutated
+     * @return whether the values can be split into two equal-sum subsets
+     * <p>Complexity: O(n * totalSum) time and O(totalSum) auxiliary space.
      */
     public boolean canPartition(int[] nums) {
-
-        // corner case
+        // corner cases
         if (nums == null || nums.length < 2) {
             return false;
         }
@@ -45,11 +37,14 @@ public class CanPartition_416 {
         boolean[] dp = new boolean[target + 1];
         dp[0] = true;
 
-        // considering each element
         for (int n : nums) {
+            // Before this iteration, dp[s] describes sums reachable from the
+            // prefix before n. The update either skips n (dp[i]) or takes it
+            // from a previously reachable sum (dp[i - n]).
             for (int i = target; i >= n; i--) {
-                // either current subset sum is already reaching the current target sum
-                // or by adding the current element to a previous set
+                // Descending ensures dp[i - n] still belongs to the previous
+                // prefix, so this 0/1 transition cannot reuse n. The bounds
+                // avoid negative indexes and ignore sums above the target.
                 dp[i] = dp[i] || dp[i - n];
             }
         }
@@ -58,15 +53,18 @@ public class CanPartition_416 {
     }
 
     /**
-     * DFS with pruning, idea is same as the DP solution, select or not select.
-     * Keep a boolean array or a hash map to prune.
+     * Explores the include/exclude decision tree with memoization. The state
+     * transition is {@code F(i, r) = F(i + 1, r - nums[i]) || F(i + 1, r)}.
      *
-     * @param nums given array
-     * @return if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal
+     * @param nums positive input values; the array is not mutated
+     * @return whether a subset reaches half of the total sum
+     * <p>Complexity: O(n * totalSum) worst-case time plus O(n log n) sorting,
+     * with O(n * totalSum) auxiliary memo space and O(n) recursion depth.
      */
     public boolean canPartitionDFS(int[] nums) {
 
-        // corner case
+        // The implementation defines null and shorter inputs as having no
+        // valid partition.
         if (nums == null || nums.length < 2) {
             return false;
         }
@@ -74,68 +72,46 @@ public class CanPartition_416 {
         int sum = Arrays.stream(nums).sum();
 
         if (sum % 2 == 1) {
-            return false;       // odd number can not be spilt to equal parts
+            return false;       // odd number cannot be split into equal parts
         }
-        Arrays.sort(nums);
-        Boolean[] visited = new Boolean[sum / 2 + 1];       // input only contains positive numbers, + 1 can be removed
-
-        return dfs(nums, 0, sum / 2, visited);
+        // Sorting enables the recursive remaining-sum prune without mutating
+        // the caller's array: every later value is at least sorted[index].
+        int[] sorted = Arrays.copyOf(nums, nums.length);
+        Arrays.sort(sorted);
+        // The index is part of the key: the same remaining sum can have a
+        // different answer when different suffixes remain available.
+        Boolean[][] memo = new Boolean[sorted.length][sum / 2 + 1];
+        return dfs(sorted, 0, sum / 2, memo);
     }
 
     /**
-     * DFS to check if array can be divided into 2 subsets.
-     * Idea is same to dynamic programming solution, select current element or not select.
-     * Keep a hash map as pruning.
+     * Evaluates one memoized DFS state. A state succeeds when its remaining sum
+     * is zero and fails when no sorted value remains small enough to use.
      *
      * @param nums  given array
      * @param index current index
      * @param sum   current remaining sum
-     * @param m     hash map
-     * @return if the array can be divided into two parts
+     * @param memo  memoization table indexed by index and remaining sum
+     * @return whether the suffix can form the remaining sum
      */
-    private boolean dfs(int[] nums, int index, int sum, Map<Integer, Boolean> m) {
-
-        if (m.containsKey(sum)) {
-            return m.get(sum);
-        }
-
-        if (index == nums.length || sum < nums[index]) {
-            return false;
-        }
-        if (sum == nums[index]) {
+    private boolean dfs(int[] nums, int index, int sum, Boolean[][] memo) {
+        if (sum == 0) {
             return true;
         }
-
-        m.put(sum, dfs(nums, index + 1, sum - nums[index], m) || dfs(nums, index + 1, sum, m));
-
-        return m.get(sum);
-    }
-
-    /**
-     * DFS to check if array can be divided into 2 subsets.
-     * Idea is same to dynamic programming solution, select current element or not select.
-     * Keep a Boolean array as pruning.
-     *
-     * @param nums    given array
-     * @param index   current index
-     * @param sum     current remaining sum
-     * @param visited pruning
-     * @return if the array can be divided into two parts
-     */
-    private boolean dfs(int[] nums, int index, int sum, Boolean[] visited) {
-
-        if (visited[sum] != null) {
-            return visited[sum];
-        }
-
         if (index == nums.length || sum < nums[index]) {
+            // With positive sorted values, neither taking a later value nor
+            // skipping the current one can make a too-large remaining sum.
             return false;
         }
-
-        if (sum == nums[index]) {
-            return true;
+        if (memo[index][sum] != null) {
+            return memo[index][sum];
         }
 
-        return dfs(nums, index + 1, sum - nums[index], visited) || dfs(nums, index + 1, sum, visited);
+        // Try taking the current value, then skipping it. Short-circuiting
+        // avoids exploring the second branch after a complete subset is found.
+        boolean found = dfs(nums, index + 1, sum - nums[index], memo)
+                || dfs(nums, index + 1, sum, memo);
+        memo[index][sum] = found;
+        return found;
     }
 }
