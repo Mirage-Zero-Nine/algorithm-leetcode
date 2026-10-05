@@ -1,16 +1,17 @@
 package solutions.dynamicprogramming;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
 /**
- * @author BorisMirage
- * Time: 2025/05/20 23:52
- * Created with IntelliJ IDEA
+ * Contract and edge-case tests for both the dynamic-programming and DFS
+ * implementations. Each shared case supplies a fresh array to each approach.
+ * Null, short, and zero-valued inputs cover the implementation-defined
+ * extensions documented by {@link CanPartition_416}; positive cases follow
+ * the original problem contract.
  */
 
 public class CanPartition_416Test {
@@ -75,7 +76,7 @@ public class CanPartition_416Test {
     public void testGiantCase() {
         int[] nums = new int[200];
         for (int i = 0; i < 200; i++) nums[i] = 1;
-        assertTrue(test.canPartition(nums));
+        assertBoth(nums, true);
     }
 
     @Test
@@ -106,25 +107,12 @@ public class CanPartition_416Test {
     }
 
     @Test
-    public void testLargeArraySeed42() {
-        Random rand = new Random(42L);
+    public void testMaximumSizeConstructedPartition() {
         int[] nums = new int[200];
-        int sum = 0;
-        for (int i = 0; i < 199; i++) {
-            nums[i] = rand.nextInt(10) + 1; // 1-10
-            sum += nums[i];
-        }
-        // make sum even by choosing last element
-        if (sum % 2 == 0) {
-            nums[199] = 2;
-        } else {
-            nums[199] = 1;
-        }
-        sum += nums[199];
-        // sum is now even; verify partitionable via DP
-        assertTrue(sum % 2 == 0);
-        // with 200 elements of values 1-10 and even sum, partition is almost certainly possible
-        assertTrue(test.canPartition(nums));
+        // The first 100 ones plus 25 of the 100 twos make one half (150).
+        java.util.Arrays.fill(nums, 0, 100, 1);
+        java.util.Arrays.fill(nums, 100, 200, 2);
+        assertBoth(nums, true);
     }
 
     @Test
@@ -140,7 +128,7 @@ public class CanPartition_416Test {
     public void testPropertyPairKKAlwaysTrue() {
         // [k, k] is always partitionable for any positive k
         for (int k = 1; k <= 50; k++) {
-            assertTrue(test.canPartition(new int[]{k, k}), "Failed for k=" + k);
+            assertBoth(new int[]{k, k}, true);
         }
     }
 
@@ -168,5 +156,70 @@ public class CanPartition_416Test {
         assertTrue(test.canPartitionDFS(values));
         assertFalse(test.canPartition(new int[]{2, 2, 2, 2, 2}));
         assertFalse(test.canPartitionDFS(new int[]{2, 2, 2, 2, 2}));
+    }
+
+    @Test
+    public void testLargestAllowedValues() {
+        assertBoth(new int[]{100, 100}, true);
+        assertBoth(new int[]{100, 100, 100, 100, 1, 1}, true);
+    }
+
+    @Test
+    public void testSingleLargeValueDominates() {
+        assertBoth(new int[]{1, 1, 1, 1, 100}, false);
+    }
+
+    @Test
+    public void testDifferentWaysToReachTarget() {
+        assertBoth(new int[]{1, 2, 2, 3, 4, 4}, true);
+        assertBoth(new int[]{2, 3, 5, 7, 11, 12}, true);
+    }
+
+    @Test
+    public void testDfsMemoMustIncludeIndex() {
+        // Total is 62; {1, 5, 5, 6, 14} reaches the independent target 31.
+        assertBoth(new int[]{1, 4, 5, 5, 5, 6, 8, 14, 14}, true);
+    }
+
+    @Test
+    public void testZeroAndPositiveValues() {
+        assertBoth(new int[]{0, 0, 2, 2}, true);
+        assertBoth(new int[]{0, 1, 2, 4, 5}, true);
+    }
+
+    @Test
+    public void testDfsDoesNotSortCallerInput() {
+        int[] nums = {11, 5, 1, 5};
+        int[] before = nums.clone();
+        assertTrue(test.canPartitionDFS(nums));
+        assertArrayEquals(before, nums);
+    }
+
+    @Test
+    public void testRepeatedCallsOnSameInstance() {
+        assertBoth(new int[]{1, 5, 11, 5}, true);
+        assertBoth(new int[]{1, 2, 3, 5}, false);
+        assertBoth(new int[]{3, 3, 4, 4}, true);
+    }
+
+    @Test
+    public void testSelectedSmallPositiveCases() {
+        int[][] cases = {
+                {1, 1}, {1, 2}, {1, 3}, {1, 2, 3}, {1, 2, 4},
+                {1, 2, 3, 4}, {1, 1, 2, 2}, {2, 2, 2}, {2, 3, 3},
+                {1, 3, 5, 7}, {2, 4, 6, 8}, {1, 1, 1, 1, 1, 1}
+        };
+        boolean[] expected = {true, false, false, true, false, true, true, false,
+                false, true, true, true};
+        for (int i = 0; i < cases.length; i++) {
+            assertBoth(cases[i], expected[i]);
+        }
+    }
+
+    private void assertBoth(int[] nums, boolean expected) {
+        assertTrue(test.canPartition(nums.clone()) == expected,
+                "DP result for " + java.util.Arrays.toString(nums));
+        assertTrue(test.canPartitionDFS(nums.clone()) == expected,
+                "DFS result for " + java.util.Arrays.toString(nums));
     }
 }
