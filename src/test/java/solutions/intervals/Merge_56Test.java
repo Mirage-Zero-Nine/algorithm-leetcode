@@ -10,118 +10,152 @@ import java.util.Random;
 public class Merge_56Test {
     private final Merge_56 solver = new Merge_56();
 
-    @Test public void testBasic() {
+    @Test
+    public void testBasic() {
         int[][] intervals = {{1, 3}, {2, 6}, {8, 10}, {15, 18}};
         int[][] expected = {{1, 6}, {8, 10}, {15, 18}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testMergeAll() {
+    @Test
+    public void testMergeAll() {
         int[][] intervals = {{1, 4}, {4, 5}};
         int[][] expected = {{1, 5}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testSingle() {
+    @Test
+    public void testSingle() {
         int[][] intervals = {{1, 2}};
         int[][] expected = {{1, 2}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testUnsorted() {
+    @Test
+    public void testUnsorted() {
         int[][] intervals = {{15, 18}, {2, 6}, {1, 3}, {8, 10}};
         int[][] expected = {{1, 6}, {8, 10}, {15, 18}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testNested() {
+    @Test
+    public void testNested() {
         int[][] intervals = {{1, 10}, {2, 4}, {6, 9}};
         int[][] expected = {{1, 10}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testNoOverlap() {
+    @Test
+    public void testNoOverlap() {
         int[][] intervals = {{1, 2}, {4, 5}, {7, 8}};
         int[][] expected = {{1, 2}, {4, 5}, {7, 8}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testAllMergeIntoOne() {
+    @Test
+    public void testAllMergeIntoOne() {
         int[][] intervals = {{1, 5}, {2, 7}, {3, 10}, {4, 12}};
         int[][] expected = {{1, 12}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testAdjacentTouching() {
+    @Test
+    public void testAdjacentTouching() {
         int[][] intervals = {{1, 2}, {2, 3}, {3, 4}};
         int[][] expected = {{1, 4}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testSameIntervals() {
+    @Test
+    public void testSameIntervals() {
         int[][] intervals = {{1, 5}, {1, 5}, {1, 5}};
         int[][] expected = {{1, 5}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testSinglePointIntervals() {
+    @Test
+    public void testSinglePointIntervals() {
         int[][] intervals = {{1, 1}, {2, 2}, {3, 3}};
         int[][] expected = {{1, 1}, {2, 2}, {3, 3}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testGiantCase() {
+    @Test
+    public void testGiantCase() {
         int size = 10000;
         int[][] intervals = new int[size][2];
         for (int i = 0; i < size; i++) {
-            intervals[i] = new int[]{i, i + 2}; // all overlap
+            intervals[i] = new int[]{i, i + 1}; // all overlap or touch
         }
         int[][] result = solver.merge(intervals);
-        assertArrayEquals(new int[][]{{0, size + 1}}, result);
+        assertArrayEquals(new int[][]{{0, size}}, result);
     }
 
-    @Test public void testEmptyInput() {
+    @Test
+    public void testEmptyInput() {
         assertArrayEquals(new int[][]{}, solver.merge(new int[][]{}));
     }
 
-    @Test public void testReverseSorted() {
+    @Test
+    public void testNullInput() {
+        assertArrayEquals(new int[][]{}, solver.merge(null));
+    }
+
+    @Test
+    public void testEmptyFirstRowUsesDocumentedFallback() {
+        assertArrayEquals(new int[][]{}, solver.merge(new int[][]{{}}));
+    }
+
+    @Test
+    public void testNullFirstRowUsesDocumentedFallback() {
+        assertArrayEquals(new int[][]{}, solver.merge(new int[][]{null, {1, 2}}));
+    }
+
+    @Test
+    public void testReverseSorted() {
         int[][] intervals = {{10, 15}, {5, 8}, {1, 3}};
         int[][] expected = {{1, 3}, {5, 8}, {10, 15}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testContainedInterval() {
+    @Test
+    public void testContainedInterval() {
         int[][] intervals = {{1, 10}, {2, 5}};
         int[][] expected = {{1, 10}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testNegativeCoordinates() {
+    @Test
+    public void testNegativeCoordinates() {
         int[][] intervals = {{-10, -3}, {-5, 0}, {1, 5}};
         int[][] expected = {{-10, 0}, {1, 5}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testLargeCoordinates() {
+    @Test
+    public void testLargeCoordinates() {
         int[][] intervals = {{Integer.MAX_VALUE - 10, Integer.MAX_VALUE}, {0, 1}, {Integer.MAX_VALUE - 5, Integer.MAX_VALUE}};
         int[][] expected = {{0, 1}, {Integer.MAX_VALUE - 10, Integer.MAX_VALUE}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testAllIdenticalIntervals() {
+    @Test
+    public void testAllIdenticalIntervals() {
         int[][] intervals = {{3, 7}, {3, 7}, {3, 7}, {3, 7}, {3, 7}};
         int[][] expected = {{3, 7}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testTouchingIntervalsAreMerged() {
+    @Test
+    public void testTouchingIntervalsAreMerged() {
         // impl merges when end == next start (i[0] > end is false)
         int[][] intervals = {{1, 3}, {3, 5}, {5, 7}};
         int[][] expected = {{1, 7}};
         assertArrayEquals(expected, solver.merge(intervals));
     }
 
-    @Test public void testRandomLargeListProperties() {
+    @Test
+    public void testRandomLargeListProperties() {
         Random rng = new Random(42L);
         int n = 1000;
         int[][] intervals = new int[n][2];
@@ -133,7 +167,8 @@ public class Merge_56Test {
 
         int[][] merged = solver.merge(intervals);
 
-        // merged length <= input length
+        // Every emitted interval is a valid component, and components are
+        // strictly separated because touching intervals are merged.
         assertTrue(merged.length <= n);
         assertTrue(merged.length >= 1);
 
@@ -156,13 +191,15 @@ public class Merge_56Test {
         }
     }
 
-    @Test public void testIdempotency() {
+    @Test
+    public void testIdempotency() {
         int[][] intervals = {{5, 10}, {1, 3}, {2, 6}, {8, 12}, {15, 20}};
         int[][] once = solver.merge(intervals);
         int[][] twice = solver.merge(once.clone());
         assertArrayEquals(once, twice);
     }
-@Test
+
+    @Test
     public void testSmallIntervalsAgainstOccupiedHalfStepOracle() {
         Random random = new Random(562026L);
         for (int trial = 0; trial < 100; trial++) {
@@ -191,12 +228,39 @@ public class Merge_56Test {
     }
 
     @Test
-    public void testGiantReverseDisjointIntervalsPreserveEveryInterval() {
-        int[][] input = new int[10000][2], expected = new int[10000][2];
-        for (int i = 0; i < input.length; i++) {
-            expected[i] = new int[]{3 * i, 3 * i + 1};
+    public void testGiantReverseInputWithDuplicateIntervals() {
+        int distinct = 5000;
+        int[][] input = new int[10000][2], expected = new int[distinct][2];
+        for (int i = 0; i < distinct; i++) {
+            expected[i] = new int[]{2 * i, 2 * i + 1};
             input[input.length - 1 - i] = expected[i].clone();
+            input[i] = expected[i].clone();
         }
         assertArrayEquals(expected, solver.merge(input));
+    }
+
+    @Test
+    public void testExtremeIntegerCoordinates() {
+        int[][] intervals = {
+                {Integer.MAX_VALUE - 1, Integer.MAX_VALUE},
+                {Integer.MIN_VALUE, Integer.MIN_VALUE + 1},
+                {0, 0}
+        };
+        assertArrayEquals(new int[][]{
+                {Integer.MIN_VALUE, Integer.MIN_VALUE + 1},
+                {0, 0},
+                {Integer.MAX_VALUE - 1, Integer.MAX_VALUE}
+        }, solver.merge(intervals));
+    }
+
+    @Test
+    public void testOuterInputOrderMayBeSortedButRowsRemainUnchanged() {
+        int[] first = {8, 10};
+        int[] second = {1, 3};
+        int[][] intervals = {first, second};
+
+        assertArrayEquals(new int[][]{{1, 3}, {8, 10}}, solver.merge(intervals));
+        assertArrayEquals(new int[]{8, 10}, first);
+        assertArrayEquals(new int[]{1, 3}, second);
     }
 }
