@@ -15,41 +15,56 @@ import java.util.List;
 
 public class Insert_57 {
     /**
-     * The input interval is sorted. Therefore, starts at the first element in intervals.
-     * There are three conditions:
-     * 1. new interval is later than current interval: directly add current interval to output
-     * 2. new interval is at front of interval: directly add current interval to output and set interval to current one
-     * 3. overlap: merge two intervals and wait for later interval to check if there is more overlap
-     * Finally, after the iteration, add final temp value into list.
+     * Initializes a pending interval from {@code newInterval}, then scans the
+     * already sorted rows once: emit rows before it, merge overlaps or
+     * touching rows, and finalize it when a later row starts after its end.
+     * The inputs stay unchanged, the result shares unchanged prefix rows,
+     * {@code null} intervals return empty by extension, and no state is kept.
      *
-     * @param intervals   interval list
-     * @param newInterval new interval to be inserted
-     * @return new array with input interval inserted
+     * <p>Time complexity: O(n), where n is the number of existing intervals.
+     * The scan examines each existing row once.</p>
+     *
+     * <p>Auxiliary space complexity: O(n), for the temporary output-reference
+     * list; this excludes the O(n) array returned to the caller. Existing rows
+     * are reused only for the emitted prefix; merged and tail rows are new
+     * two-element arrays.</p>
+     *
+     * @param intervals   sorted, non-overlapping existing intervals
+     * @param newInterval interval to insert
+     * @return the intervals after insertion and merging
      */
     public int[][] insert(int[][] intervals, int[] newInterval) {
-
-        /* Corner case */
-        if (intervals == null || newInterval == null || newInterval.length == 0) {
-            return intervals;
+        // corner case
+        if (intervals == null) {
+            return new int[0][0];
         }
 
-        List<int[]> out = new ArrayList<>();
-        int[] temp = newInterval;
-        for (int[] i : intervals) {
+        List<int[]> output = new ArrayList<>();
+        int start = newInterval[0], end = newInterval[1];
 
-            if (temp[0] > i[1]) { // case 1: not reached yet (start > end)
-                out.add(i);
-            } else if (temp[1] < i[0]) { // case 2: new interval is added
-                out.add(temp);
-                temp = i; // replaced with new sorted non-overlapped interval, since all intervals need to be added
-            } else { // there is overlap, merge two intervals by finding minimum start and maximum end
-                temp = new int[]{Math.min(temp[0], i[0]), Math.max(temp[1], i[1])};
+        for (int[] interval : intervals) {
+            if (interval[1] < start) {
+                // This row is completely before the pending interval. Because
+                // the input rows are sorted and pairwise disjoint, it and all
+                // earlier rows are permanently finalized.
+                output.add(interval);
+            } else if (interval[0] > end) {
+                // The current interval is complete. Strict comparisons make
+                // endpoint-touching rows merge as required for closed ranges.
+                output.add(new int[]{start, end});
+                start = interval[0];
+                end = interval[1];
+            } else {
+                // The ranges overlap or touch, so expand the pending bounds.
+                // Math.min is needed because newInterval may begin inside an
+                // existing row; Merge_56 can initialize from the first row.
+                start = Math.min(interval[0], start);
+                end = Math.max(interval[1], end);
             }
         }
 
-        out.add(temp);
-
-        return out.toArray(new int[out.size()][]);
+        // The last pending interval has no later row to finalize it.
+        output.add(new int[]{start, end});
+        return output.toArray(new int[output.size()][]);
     }
-
 }

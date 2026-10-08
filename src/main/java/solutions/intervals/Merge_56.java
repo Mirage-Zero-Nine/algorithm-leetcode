@@ -37,7 +37,7 @@ public class Merge_56 {
      * the documented empty-input cases
      */
     public int[][] merge(int[][] intervals) {
-        // The documented fallback for an empty or unusable first row is an empty matrix.
+        // corner cases
         if (intervals == null || intervals.length == 0 || intervals[0] == null || intervals[0].length == 0) {
             return new int[0][0];
         }
