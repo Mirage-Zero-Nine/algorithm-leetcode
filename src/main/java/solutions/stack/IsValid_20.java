@@ -16,34 +16,45 @@ import java.util.Stack;
 
 public class IsValid_20 {
     /**
-     * Use stack to solve this problem. While char is left part of parentheses, push its right part to stack.
-     * When char is right part, pop the top of stack and compare.
+     * Checks whether every opening bracket in {@code s} is closed by the same bracket type
+     * and whether brackets close in last-opened, first-closed order. The empty string is valid.
      *
-     * @param s input parentheses
-     * @return boolean value that whether this input string is valid
+     * <p>The stack stores the closing bracket expected for each opening bracket. When a closing
+     * bracket arrives, it must equal the stack's top expectation; an empty stack or a different
+     * bracket proves that the prefix cannot be completed into a valid sequence. After the scan,
+     * an empty stack means every opening bracket was matched. For a string of length {@code n},
+     * this takes O(n) time and O(n) auxiliary space in the worst case. The input string is not
+     * modified.</p>
+     *
+     * @param s a string containing only parentheses, square brackets, and curly braces
+     * @return {@code true} when the brackets are correctly matched and nested; otherwise
+     * {@code false}
      */
     public boolean isValid(String s) {
+        // corner cases
+        if (s == null || s.isEmpty()) {
+            return true;
+        }
+
         Stack<Character> stack = new Stack<>();
 
         for (char c : s.toCharArray()) {
-            switch (c) {
-                case '(':
-                    stack.push(')');
-                    break;
-                case '{':
-                    stack.push('}');
-                    break;
-                case '[':
-                    stack.push(']');
-                    break;
-                default:
-                    if (stack.isEmpty() || stack.pop() != c) {      // open brackets must be closed by same type of it
-                        return false;
-                    }
-                    break;
+            // Record the only closing character that can correctly match this opening one.
+            if (c == '{') {
+                stack.push('}');
+            } else if (c == '(') {
+                stack.push(')');
+            } else if (c == '[') {
+                stack.push(']');
+            } else {
+                // A closer must match the most recent unmatched opener, preserving nesting order.
+                if (stack.isEmpty() || stack.pop() != c) {
+                    return false;
+                }
             }
         }
-        return stack.isEmpty();     // including corner case
-    }
 
+        // Any remaining expectation belongs to an opener that never received its closer.
+        return stack.isEmpty();
+    }
 }
