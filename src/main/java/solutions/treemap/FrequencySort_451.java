@@ -1,11 +1,10 @@
 package solutions.treemap;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 /**
  * Given a string s, sort it in decreasing order based on the frequency of the characters.
@@ -19,81 +18,49 @@ import java.util.Queue;
 
 public class FrequencySort_451 {
     /**
-     * Keep a hash map to store the frequency of each character.
-     * Then use a heap to sort the frequency of character.
-     * Finally, poll each element out, append with frequency to a string builder.
+     * Counts each Java {@code char} in a hash map, orders the distinct
+     * characters by decreasing count in a max heap, and appends each polled
+     * character as one complete run. Because the heap always yields a
+     * greatest remaining frequency, every run is placed after only runs with
+     * at least as high a frequency; equal-frequency ties may be ordered
+     * arbitrarily. The input string is immutable, and each call creates fresh
+     * map, heap, and output state. This method is applicable to Java UTF-16
+     * code units: supplementary code points are counted as their two surrogate
+     * {@code char} values. For the intentionally supported null and empty
+     * extension, it returns the same reference unchanged.
      *
-     * @param s given string
-     * @return string sorted in decreasing order based on the frequency of the characters
+     * <p>For n input code units and d distinct code units, counting takes O(n)
+     * time and heap construction/polling takes O(d log d) time. The map and
+     * heap require O(d) storage; the temporary {@code char[]} from
+     * {@link String#toCharArray()}, the {@link StringBuilder}, and the returned
+     * text together require O(n) text storage, so total extra storage is
+     * O(n + d) including the result-building storage.</p>
+     *
+     * @param s input string whose characters should be grouped by frequency
+     * @return a permutation of {@code s} with character frequencies in
+     *         non-increasing order, or the same value/reference for null or
+     *         empty input
      */
     public String frequencySort(String s) {
-
-        /* Corner case */
-        if (s == null || s.length() == 0) {
+        // corner cases
+        if (s == null || s.isEmpty()) {
             return s;
         }
-
         Map<Character, Integer> map = new HashMap<>();
-        for (int i = 0; i < s.length(); i++) {
-            char current = s.charAt(i);
-            map.put(current, map.getOrDefault(current, 0) + 1);
+        for (char c : s.toCharArray()) {
+            map.put(c, map.getOrDefault(c, 0) + 1);
         }
-
-        Queue<Map.Entry<Character, Integer>> pq = new PriorityQueue<>(
-                (a, b) -> b.getValue() - a.getValue()
-        );
-        pq.addAll(map.entrySet());
+        Queue<Map.Entry<Character, Integer>> pq = map.entrySet().stream()
+                .collect(Collectors.toCollection(
+                        () -> new PriorityQueue<>((e1, e2) -> e2.getValue() - e1.getValue())
+                ));
 
         StringBuilder sb = new StringBuilder();
-
         while (!pq.isEmpty()) {
-            Map.Entry<Character, Integer> e = pq.poll();
-            for (int i = 0; i < e.getValue(); i++) {
-                sb.append(e.getKey());
-            }
-        }
-
-        return sb.toString();
-    }
-
-    /**
-     * Same idea, but use an array to sort (the largest frequency is the string length, which is fixed).
-     *
-     * @param s given string
-     * @return string sorted in decreasing order based on the frequency of the characters
-     */
-    public String frequencySortBucketSort(String s) {
-
-        /* Corner case */
-        if (s == null || s.length() == 0) {
-            return s;
-        }
-
-        Map<Character, Integer> map = new HashMap<>();
-        for (int i = 0; i < s.length(); i++) {
-            int frequency = map.getOrDefault(s.charAt(i), -1) + 1;  // frequency started at 0 to align with bucket index
-            map.put(s.charAt(i), frequency);
-        }
-
-        List<List<Character>> bucket = new ArrayList<>(s.length());
-        for (int i = 0; i < s.length(); i++) {
-            bucket.add(new ArrayList<>());
-        }
-
-        for (Character c : map.keySet()) {
-            int frequency = map.get(c);
-            bucket.get(frequency).add(c);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = bucket.size() - 1; i >= 0; i--) {
-            if (bucket.get(i).size() > 0) {
-                for (Character c : bucket.get(i)) {
-                    for (int j = 0; j <= i; j++) {
-                        sb.append(c);
-                    }
-                }
-            }
+            var entry = pq.poll();
+            // Polling removes the largest remaining frequency, so appending its
+            // complete run preserves the heap's non-increasing order invariant.
+            sb.repeat(entry.getKey(), entry.getValue());
         }
 
         return sb.toString();
