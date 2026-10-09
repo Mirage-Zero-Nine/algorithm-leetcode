@@ -1,20 +1,9 @@
 package solutions.binarysearch;
 
 /**
- * Searches for a target in an ascending array of distinct integers.
- *
- * <p>The method uses binary search over an inclusive candidate range. At each iteration it
- * checks the midpoint and discards the half that cannot contain the target. The problem contract
- * supplies a sorted array, while this implementation also returns {@code -1} for {@code null}
- * input as a defensive behavior.
- *
- * <p>Under the problem constraints, {@code 1 <= nums.length <= 10^4}, the values are distinct,
- * and each array value and target is between {@code -10^4} and {@code 10^4}, inclusive.
- * The comparison-based implementation also works for any sorted array of Java {@code int}
- * values, including values outside those problem bounds.
- *
- * <p>For an array of length {@code n}, the algorithm runs in {@code O(log n)} time and uses
- * {@code O(1)} auxiliary space. The input array is not modified.
+ * Given an array of integers nums which is sorted in ascending order, write a function to search target in nums.
+ * If target exists, then return its index. Otherwise, return -1.
+ * You must write an algorithm with O(log n) runtime complexity.
  *
  * @author BorisMirage
  * Time: 2019/06/02 23:37
@@ -40,7 +29,7 @@ public class Search_704 {
      * @return the index of {@code target}, or {@code -1} if it is absent
      */
     public int search(int[] nums, int target) {
-        // A null or empty array has no candidate index.
+        // corner cases
         if (nums == null || nums.length == 0) {
             return -1;
         }
