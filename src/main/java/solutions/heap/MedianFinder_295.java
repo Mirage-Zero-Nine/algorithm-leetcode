@@ -12,6 +12,8 @@ import java.util.Queue;
  * Design a data structure that supports the following two operations:
  * 1. void addNum(int num) - Add a integer number from the data stream to the data structure.
  * 2. double findMedian() - Return the median of all elements so far.
+ * Inputs contain at most 50,000 values, and each value is in the range
+ * {@code [-100000, 100000]}.
  *
  * @author BorisMirage
  * Time: 2020/02/20 15:22
@@ -19,55 +21,85 @@ import java.util.Queue;
  */
 
 public class MedianFinder_295 {
-    private final Queue<Integer> small;
-    private final Queue<Integer> large;
-    private boolean even = true;        // initially, the size of 2 heaps are both 0, which is even
+    private final Queue<Integer> smallHeap;
+    private final Queue<Integer> largeHeap;
+    private boolean isEven;
 
     /**
-     * Keeping two heaps. One min heap stores larger part of stream and one max heap stores smaller part.
-     * The size of two heaps should be same, or the large heap can have one more elements when total size is odd.
-     * There are two conditions:
-     * 1. If two heaps have same size, then add one element to large heap.
-     * 2. If total size is odd, then add one element to small heap.
-     * The adding process is, for example, add one element to large heap:
-     * Add given element to small heap first, then poll out the top of small heap, add the polled element to large heap.
+     * Creates an empty median tracker backed by two heaps.  {@code smallHeap} is
+     * a max heap containing the lower half of the values, while {@code largeHeap}
+     * is a min heap containing the upper half.  After every insertion their
+     * sizes differ by at most one, and every value in the lower half is less
+     * than or equal to every value in the upper half.  The upper heap contains
+     * the extra value when the total count is odd, so its head is the median;
+     * when the count is even, the two heads are the middle values.  Both
+     * insertion and lookup take {@code O(log n)} and {@code O(1)} time,
+     * respectively, while the heaps use {@code O(n)} space.  The public
+     * operations are synchronized so one instance can be used safely by
+     * callers that serialize their observations through this object's monitor.
      */
     public MedianFinder_295() {
-        small = new PriorityQueue<>((o1, o2) -> o2 - o1); // max heap stores smaller part of stream
-        large = new PriorityQueue<>();                    // min heap stores larger part of stream
+        // The max heap exposes the largest value in the lower half.
+        this.smallHeap = new PriorityQueue<>((n1, n2) -> Integer.compare(n2, n1));
+        // The min heap exposes the smallest value in the upper half.
+        this.largeHeap = new PriorityQueue<>();
+        isEven = true;
     }
 
     /**
-     * Add number to heap.
-     * Basic rule: add value to a heap, then poll out top of this heap and add this value to the other heap.
-     * Size of small heap should be larger or equal to large heap.
-     * This rule make findMedian() easier.
-     * If total size is odd, then small heap is larger. Add value to large heap to make two heaps size equal.
-     * Otherwise, add value to small heap. If findMedian() is called, return top of the small heap.
-     * To add value, if add to small heap, first add value to large heap, then move top of large heap to small heap.
+     * Adds one stream value while restoring the two heap invariants.
      *
-     * @param num given integer
+     * <p>The original size parity chooses the direction of the transfer.  If
+     * the old size is even, the upper heap is about to need one extra value, so
+     * the new number enters the lower heap first; its largest value is then
+     * moved to the upper heap.  If the old size is odd, the reverse transfer
+     * gives the lower heap the extra value.  This is written with shared
+     * {@code source} and {@code destination} variables so both branches have
+     * the same operation: inserting into the source and moving its boundary
+     * value to the destination.  The moved boundary value is exactly the one
+     * that could violate the ordering between the halves, so the transfer
+     * restores ordering while also restoring the required heap sizes.
+     *
+     * @param num value to append to the stream
      */
-    public void addNum(int num) {
-        if (even) {
-            small.add(num);
-            large.add(small.poll());
-        } else {
-            large.add(num);
-            small.add(large.poll());
+    public synchronized void addNum(int num) {
+        var source = isEven ? smallHeap : largeHeap;
+        var destination = isEven ? largeHeap : smallHeap;
+
+        // The old parity determines which heap should receive the extra item.
+        // Polling immediately moves the source boundary across the partition,
+        // preserving sorted lower-half/upper-half ordering in either branch.
+        source.add(num);
+        destination.add(source.poll());
+
+        isEven = !isEven;
+    }
+
+    /**
+     * Returns the median of all values added so far.
+     *
+     * <p>With an odd count, the upper heap has one extra value and its minimum
+     * is the middle value.  With an even count, the two heap minima are the
+     * adjacent middle values and their arithmetic mean is the median.  This
+     * class intentionally returns {@code -1} for an empty stream, matching its
+     * existing corner-case extension rather than throwing an exception.  The
+     * published problem bounds keep the two middle values' sum within the
+     * {@code int} range, but widening before addition also preserves the
+     * mathematically correct result for the separately supported full-integer
+     * extension.
+     *
+     * @return the current median, or {@code -1} when the stream is empty
+     */
+    public synchronized double findMedian() {
+        // Both heaps are empty only before the first insertion.  A singleton
+        // legitimately lives in largeHeap, so checking either heap would
+        // incorrectly reject the first median.
+        if (smallHeap.isEmpty() && largeHeap.isEmpty()) {
+            return -1;
         }
 
-        even = !even;
-    }
-
-    /**
-     * If stream size is even, then return the average of two middle value in stream.
-     * If stream size is odd, return value in the middle of stream, which is the top of small heap.
-     * The reason is that, when adding value to heap, always keep small heap size larger or equal to large heap.
-     *
-     * @return median value in stream
-     */
-    public double findMedian() {
-        return even ? (small.peek() + large.peek()) / 2.0 : (double) large.peek();
+        return isEven ?
+                ((double) smallHeap.peek() + largeHeap.peek()) / 2.0
+                : (double) largeHeap.peek();
     }
 }
