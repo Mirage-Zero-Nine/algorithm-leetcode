@@ -4,12 +4,17 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CombinationSum_39Test {
@@ -55,6 +60,11 @@ class CombinationSum_39Test {
     void testEmptyCandidates() {
         List<List<Integer>> result = solution.combinationSum(new int[]{}, 7);
         assertEquals(0, result.size());
+    }
+
+    @Test
+    void testNullCandidatesTakeTheDocumentedEmptyInputExtension() {
+        assertEquals(Set.of(), toSetOfSortedLists(solution.combinationSum(null, 7)));
     }
 
     @Test
@@ -161,6 +171,13 @@ class CombinationSum_39Test {
     }
 
     @Test
+    void testSortsTheCallerArrayInPlaceAsDocumented() {
+        int[] candidates = {7, 2, 6, 3};
+        solution.combinationSum(candidates, 7);
+        assertTrue(Arrays.equals(new int[]{2, 3, 6, 7}, candidates));
+    }
+
+    @Test
     void testNoSolutionWhenTargetIsNotRepresentableByCandidateGcd() {
         List<List<Integer>> result = solution.combinationSum(new int[]{6, 10, 14}, 9);
         assertEquals(Set.of(), toSetOfSortedLists(result));
@@ -259,38 +276,17 @@ class CombinationSum_39Test {
 
     @Test
     void testExhaustiveSmallCandidateSubsetsAndTargetsAgainstIndependentOracle() {
-        int[] universe = {2, 3, 4, 5};
-        for (int mask = 1; mask < (1 << universe.length); mask++) {
-            int[] candidates = new int[Integer.bitCount(mask)];
-            int next = 0;
-            for (int i = 0; i < universe.length; i++) {
-                if ((mask & (1 << i)) != 0) {
-                    candidates[next++] = universe[i];
-                }
-            }
-            for (int target = 1; target <= 12; target++) {
-                Set<List<Integer>> expected = enumerateByMultiplicity(candidates, target);
-                assertEquals(expected, toSetOfSortedLists(solution.combinationSum(candidates.clone(), target)),
-                        "candidates=" + Arrays.toString(candidates) + ", target=" + target);
-            }
-        }
+        assertEquals("CASES=1260", runWorker("exhaustive"));
     }
 
     @Test
     void testOfficialMaximumCandidateCountWithMaximumCandidateValue() {
-        int[] candidates = new int[30];
-        for (int i = 0; i < candidates.length; i++) {
-            candidates[i] = i + 11;
-        }
-        List<List<Integer>> result = solution.combinationSum(candidates, 40);
-        Set<List<Integer>> expected = enumerateByMultiplicity(candidates, 40);
-        assertEquals(Set.of(List.of(11, 11, 18), List.of(11, 12, 17), List.of(11, 13, 16),
-                        List.of(11, 14, 15), List.of(12, 12, 16), List.of(12, 13, 15),
-                        List.of(12, 14, 14), List.of(13, 13, 14), List.of(11, 29),
-                        List.of(12, 28), List.of(13, 27), List.of(14, 26), List.of(15, 25),
-                        List.of(16, 24), List.of(17, 23), List.of(18, 22), List.of(19, 21),
-                        List.of(20, 20), List.of(40)), expected);
-        assertEquals(expected, toSetOfSortedLists(result));
+        assertEquals("CASES=1", runWorker("maximumCandidates"));
+    }
+
+    @Test
+    void testMaximumCandidateCountWithDeepestPracticalSearch() {
+        assertEquals("CASES=1", runWorker("deepestSearch"));
     }
 
     @Test
@@ -327,6 +323,113 @@ class CombinationSum_39Test {
                 toSetOfSortedLists(solution.combinationSum(new int[]{2, 3}, 0)));
         assertEquals(Set.of(List.of(2, 2, 2), List.of(3, 3)),
                 toSetOfSortedLists(solution.combinationSum(new int[]{2, 3}, 6)));
+    }
+
+    private String runWorker(String mode) {
+        Path outputFile = null;
+        Process process = null;
+        boolean interrupted = false;
+        try {
+            outputFile = Files.createTempFile("combination-sum-worker-", ".log");
+            String javaCommand = Path.of(System.getProperty("java.home"), "bin", "java").toString();
+            process = new ProcessBuilder(javaCommand, "-cp", System.getProperty("java.class.path"),
+                    Worker.class.getName(), mode)
+                    .redirectErrorStream(true)
+                    .redirectOutput(outputFile.toFile())
+                    .start();
+            boolean finished = process.waitFor(10, java.util.concurrent.TimeUnit.SECONDS);
+            if (!finished) {
+                process.destroyForcibly();
+                assertTrue(process.waitFor(2, java.util.concurrent.TimeUnit.SECONDS),
+                        "timed-out worker did not terminate after forced cleanup");
+                fail("worker timed out: " + mode + "\n" + Files.readString(outputFile));
+            }
+            assertEquals(0, process.exitValue(),
+                    "worker failed: " + Files.readString(outputFile));
+            return Files.readString(outputFile, StandardCharsets.UTF_8).trim();
+        } catch (InterruptedException exception) {
+            interrupted = true;
+            if (process != null) {
+                process.destroyForcibly();
+                try {
+                    assertTrue(process.waitFor(2, java.util.concurrent.TimeUnit.SECONDS),
+                            "interrupted worker did not terminate after forced cleanup");
+                } catch (InterruptedException cleanupException) {
+                    process.destroyForcibly();
+                    throw new AssertionError("worker cleanup was interrupted", cleanupException);
+                }
+            }
+            throw new AssertionError("worker wait was interrupted", exception);
+        } catch (IOException exception) {
+            throw new AssertionError("could not run worker " + mode, exception);
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+            if (outputFile != null) {
+                try {
+                    Files.deleteIfExists(outputFile);
+                } catch (IOException exception) {
+                    throw new AssertionError("could not remove worker output", exception);
+                }
+            }
+        }
+    }
+
+    private static final class Worker {
+        private static final CombinationSum_39Test TEST = new CombinationSum_39Test();
+
+        public static void main(String[] args) {
+            int cases;
+            switch (args[0]) {
+                case "exhaustive" -> cases = exhaustive();
+                case "maximumCandidates" -> cases = boundary(false);
+                case "deepestSearch" -> cases = boundary(true);
+                default -> throw new IllegalArgumentException("unknown worker mode: " + args[0]);
+            }
+            System.out.println("CASES=" + cases);
+        }
+
+        private static int exhaustive() {
+            int[] universe = {2, 3, 4, 5, 6, 7};
+            int cases = 0;
+            for (int mask = 1; mask < (1 << universe.length); mask++) {
+                int[] candidates = new int[Integer.bitCount(mask)];
+                int next = 0;
+                for (int i = 0; i < universe.length; i++) {
+                    if ((mask & (1 << i)) != 0) {
+                        candidates[next++] = universe[i];
+                    }
+                }
+                for (int target = 1; target <= 20; target++) {
+                    Set<List<Integer>> expected = TEST.enumerateByMultiplicity(candidates, target);
+                    assertEquals(expected,
+                            TEST.toSetOfSortedLists(TEST.solution.combinationSum(candidates.clone(), target)),
+                            "candidates=" + Arrays.toString(candidates) + ", target=" + target);
+                    cases++;
+                }
+            }
+            assertEquals(1260, cases);
+            return cases;
+        }
+
+        private static int boundary(boolean deepest) {
+            int[] candidates = new int[30];
+            if (deepest) {
+                candidates[0] = 2;
+                for (int i = 1; i < candidates.length; i++) {
+                    candidates[i] = i + 11;
+                }
+            } else {
+                for (int i = 0; i < candidates.length; i++) {
+                    candidates[i] = i + 11;
+                }
+            }
+            Set<List<Integer>> expected = TEST.enumerateByMultiplicity(candidates, 40);
+            assertTrue(expected.size() < 150);
+            assertEquals(expected, TEST.toSetOfSortedLists(TEST.solution.combinationSum(candidates, 40)));
+            return 1;
+        }
     }
 
     private Set<List<Integer>> enumerateByMultiplicity(int[] candidates, int target) {
