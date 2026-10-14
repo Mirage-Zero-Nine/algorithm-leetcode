@@ -1,5 +1,8 @@
 package solutions.design;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Implement a trie with insert, search, and startsWith methods.
  *
@@ -11,98 +14,127 @@ public class Trie_208 {
     private final TrieNode root;
 
     /**
-     * Initialize of Trie.
+     * Creates a trie whose character maps share prefix paths. Each node's end flag
+     * marks an inserted word independently of its children. Maps store only used
+     * edges, trading fixed child-array slots for hashing and map-entry overhead.
+     *
+     * <p>LeetCode inputs contain only lowercase English letters, have lengths from
+     * 1 to 2,000, and make at most 30,000 calls across the three operations.</p>
+     *
+     * <p>Operations take expected O(L) time for input length L. Retained storage is
+     * O(S + 1) for S inserted characters; shared prefixes reduce the node count.</p>
+     *
+     * <p>Time complexity: O(1), creating only the root and its empty child map.</p>
+     * <p>Auxiliary space complexity: O(1); the empty trie also retains O(1) storage.</p>
      */
     public Trie_208() {
-        // create root trie node
-        root = new TrieNode('-');
+        root = new TrieNode();
     }
 
     /**
-     * Inserts a word into the trie.
-     * Iterate each char in word, if current char does not exist in children, create a new node.
-     * Finally, mark this word as the end of the string for searching.
+     * Reuses the word's existing prefix and creates only missing nodes. Marking the
+     * final node records the word without marking its proper prefixes. Duplicate
+     * insertions have no effect; null and empty words are ignored.
      *
-     * @param word word to be inserted to trie
+     * <p>Time complexity: O(L) expected amortized, where L is the word length;
+     * one map operation per character, including map growth.</p>
+     * <p>Auxiliary space complexity: O(1) for iterative traversal, excluding up to
+     * O(L) newly retained nodes and edges. The input is unchanged.</p>
+     *
+     * @param word word to insert
      */
     public void insert(String word) {
-        TrieNode current = root;  // current trie node
-
-        for (int i = 0; i < word.length(); i++) {
-
-            int index = word.charAt(i) - 'a';
-            if (current.child[index] == null) {
-                current.child[index] = new TrieNode(word.charAt(i));
-            }
-            current = current.child[index];
+        // Empty input must not mark the root as a stored word.
+        if (word == null || word.isEmpty()) {
+            return;
         }
-
-        current.isLastChar = true;
+        TrieNode current = root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            // Reusing an existing edge preserves every word sharing this prefix.
+            current = current.children.computeIfAbsent(c, _ -> new TrieNode());
+        }
+        // A prefix becomes a word only when an insertion ends at this node.
+        current.isEnd = true;
     }
 
     /**
-     * Returns true if the word is in the trie.
+     * Follows the word's path and checks its end flag: an existing prefix alone is
+     * not a stored word. Null and empty words return false. The trie is unchanged.
      *
-     * @param word given word
-     * @return if word is in trie
+     * <p>Time complexity: O(L) expected for word length L, with one map lookup per
+     * character until the path ends.</p>
+     * <p>Auxiliary space complexity: O(1), using iterative lookup.</p>
+     *
+     * @param word complete word to look up
+     * @return true only if this nonempty word was previously inserted
      */
     public boolean search(String word) {
-        TrieNode lastNode = findLastTrieNode(word);
-        return lastNode != null && lastNode.isLastChar;
+        TrieNode n = find(word);
+        return n != null && n.isEnd;
     }
 
     /**
-     * Returns true if there exist a word in the trie that starts with the given prefix.
+     * Checks whether the prefix's path exists. Every path comes from an insertion,
+     * so no end flag is needed. Null and empty prefixes return false; the trie is
+     * unchanged.
      *
-     * @param prefix given prefix
-     * @return if prefix is in trie
+     * <p>Time complexity: O(L) expected for prefix length L, with one map lookup per
+     * character until the path ends.</p>
+     * <p>Auxiliary space complexity: O(1), using iterative lookup.</p>
+     *
+     * @param prefix nonempty prefix to look up
+     * @return true if at least one inserted word begins with the prefix
      */
     public boolean startsWith(String prefix) {
-        return findLastTrieNode(prefix) != null;
+        return find(prefix) != null;
     }
 
     /**
-     * Find longest reachable TrieNode in trie.
+     * Follows one edge per character, stopping when an edge is missing. Ignores end
+     * flags so word and prefix queries can share traversal without changing the trie.
      *
-     * @param w given string
-     * @return longest reachable TrieNode, or null if given string contains char that is not exist in trie.
+     * <p>Time complexity: O(L) expected for string length L, with one map lookup per
+     * character; null or empty input takes O(1).</p>
+     * <p>Auxiliary space complexity: O(1), using a node reference and index.
+     * The returned node already belongs to the trie.</p>
+     *
+     * @param word string whose complete path is needed
+     * @return final existing node, or null for a missing path, null, or empty input
      */
-    private TrieNode findLastTrieNode(String w) {
-        TrieNode current = root;
-
-        for (int i = 0; i < w.length(); i++) {
-            int index = w.charAt(i) - 'a';
-            if (current.child[index] == null) {
-                return null;
-            }
-            current = current.child[index];
+    private TrieNode find(String word) {
+        // The root is a structural starting point, not a match for an empty query.
+        if (word == null || word.isEmpty()) {
+            return null;
         }
 
+        TrieNode current = root;
+        for (int i = 0; i < word.length(); i++) {
+            current = current.children.get(word.charAt(i));
+            if (current == null) {
+                // A missing edge rules out this prefix; later characters cannot repair it.
+                return null;
+            }
+        }
         return current;
     }
 
-//    /**
-//     * Nodes in trie.
-//     * Hash map can be a more generic choice, but consuming more memory.
-//     */
-//    static class TrieNodeWithMap {
-//        public HashMap<Character, TrieNode> child = new HashMap<>();
-//        boolean isLastChar = false;
-//
-//        TrieNodeWithMap() {
-//        }
-//    }
-
     /**
-     * TrieNode with array to replace hash map. Less generic but consuming less memory.
+     * Stores whether its root-to-node path is a word and the existing next-character
+     * edges. A word ending can still have children for longer inserted words.
      */
-    static class TrieNode {
-        TrieNode[] child = new TrieNode[26];
-        boolean isLastChar = false;
-        char character;
+    private static class TrieNode {
+        boolean isEnd;
+        Map<Character, TrieNode> children;
 
-        TrieNode(char c) {
-            character = c;
+        /**
+         * Creates a node with no children or word ending.
+         *
+         * <p>Time complexity: O(1), initializing an empty child map.</p>
+         * <p>Auxiliary space complexity: O(1); the node and map retain O(1) storage.</p>
+         */
+        TrieNode() {
+            children = new HashMap<>();
         }
     }
 }
