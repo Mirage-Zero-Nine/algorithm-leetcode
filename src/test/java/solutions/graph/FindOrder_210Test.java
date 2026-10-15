@@ -2,150 +2,212 @@ package solutions.graph;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 
 public class FindOrder_210Test {
+    private final FindOrder_210 solution = new FindOrder_210();
 
     @Test
-    public void testAllFourCourseGraphsProduceValidPermutationsOrDetectCycles() {
-        for (int mask = 0; mask < 4096; mask++) {
-            java.util.List<int[]> edges = new java.util.ArrayList<>();
-            boolean[][] reachable = new boolean[4][4];
-            int bit = 0;
-            for (int from = 0; from < 4; from++) {
-                for (int to = 0; to < 4; to++) {
-                    if (from != to && (mask & (1 << bit++)) != 0) {
-                        edges.add(new int[]{to, from});
-                        reachable[from][to] = true;
+    public void returnsTheRequiredOrderForOfficialShapes() {
+        assertArrayEquals(new int[]{0, 1}, solution.findOrder(2, new int[][]{{1, 0}}));
+        assertValid(solution.findOrder(4, new int[][]{{1, 0}, {2, 0}, {3, 1}, {3, 2}}),
+                4, new int[][]{{1, 0}, {2, 0}, {3, 1}, {3, 2}});
+        assertValid(solution.findOrder(5, new int[][]{{2, 0}, {2, 1}, {3, 2}, {4, 2}}),
+                5, new int[][]{{2, 0}, {2, 1}, {3, 2}, {4, 2}});
+    }
+
+    @Test
+    public void handlesNoPrerequisitesAndSingletons() {
+        assertValid(solution.findOrder(1, new int[][]{}), 1, new int[][]{});
+        assertValid(solution.findOrder(5, new int[][]{}), 5, new int[][]{});
+        assertArrayEquals(new int[0], solution.findOrder(0, new int[][]{}));
+        assertArrayEquals(new int[0], solution.findOrder(3, null));
+    }
+
+    @Test
+    public void handlesIndependentChainsAndDisconnectedCourses() {
+        int[][] prerequisites = {{1, 0}, {3, 2}};
+        assertValid(solution.findOrder(4, prerequisites), 4, prerequisites);
+        prerequisites = new int[][]{{1, 0}, {2, 1}, {3, 2}};
+        assertArrayEquals(new int[]{0, 1, 2, 3}, solution.findOrder(4, prerequisites));
+    }
+
+    @Test
+    public void handlesManyPrerequisitesAndMerges() {
+        int[][] prerequisites = {{3, 0}, {3, 1}, {3, 2}};
+        assertValid(solution.findOrder(4, prerequisites), 4, prerequisites);
+        prerequisites = new int[][]{{1, 0}, {2, 0}, {3, 1}, {4, 2}, {5, 3}, {5, 4}};
+        assertValid(solution.findOrder(6, prerequisites), 6, prerequisites);
+    }
+
+    @Test
+    public void detectsTwoCourseAndLongerCycles() {
+        assertArrayEquals(new int[0], solution.findOrder(2, new int[][]{{1, 0}, {0, 1}}));
+        assertArrayEquals(new int[0], solution.findOrder(3, new int[][]{{0, 1}, {1, 2}, {2, 0}}));
+        assertArrayEquals(new int[0], solution.findOrder(4, new int[][]{{0, 1}, {1, 2}, {2, 3}, {3, 0}}));
+    }
+
+    @Test
+    public void detectsSelfCycleAndCycleWithAcyclicTail() {
+        assertArrayEquals(new int[0], solution.findOrder(2, new int[][]{{0, 0}}));
+        assertArrayEquals(new int[0], solution.findOrder(4,
+                new int[][]{{1, 0}, {2, 1}, {0, 2}, {3, 2}}));
+    }
+
+    @Test
+    public void preservesPrerequisiteInputAndSupportsRepeatedCalls() {
+        int[][] prerequisites = {{1, 0}, {2, 1}, {2, 0}};
+        int[][] before = copy(prerequisites);
+        assertValid(solution.findOrder(3, prerequisites), 3, prerequisites);
+        assertTrue(Arrays.deepEquals(before, prerequisites));
+        assertValid(solution.findOrder(2, new int[][]{{1, 0}}), 2, new int[][]{{1, 0}});
+        assertArrayEquals(new int[0], solution.findOrder(2, new int[][]{{0, 1}, {1, 0}}));
+        assertValid(solution.findOrder(1, new int[][]{}), 1, new int[][]{});
+    }
+
+    @Test
+    public void exhaustiveFourCourseGraphsAgreeWithIndependentCycleOracle() throws Exception {
+        runWorker("exhaustive");
+    }
+
+    @Test
+    public void handlesMaximumSizedDagAndCycleWithinBoundedChildProcess() throws Exception {
+        runWorker("stress");
+    }
+
+    private void assertValid(int[] order, int numCourses, int[][] prerequisites) {
+        assertEquals(numCourses, order.length);
+        boolean[] seen = new boolean[numCourses];
+        int[] position = new int[numCourses];
+        for (int i = 0; i < order.length; i++) {
+            assertTrue(order[i] >= 0 && order[i] < numCourses);
+            assertFalse(seen[order[i]], "duplicate course " + order[i]);
+            seen[order[i]] = true;
+            position[order[i]] = i;
+        }
+        for (int[] prerequisite : prerequisites) {
+            assertTrue(position[prerequisite[1]] < position[prerequisite[0]],
+                    "invalid prerequisite " + Arrays.toString(prerequisite));
+        }
+    }
+
+    private void runWorker(String mode) throws Exception {
+        String java = System.getProperty("java.home") + "/bin/java";
+        String classPath = System.getProperty("surefire.test.class.path", System.getProperty("java.class.path"));
+        Process process = new ProcessBuilder(java, "-cp", classPath, FindOrder_210Worker.class.getName(), mode)
+                .redirectErrorStream(true).start();
+        if (!process.waitFor(10, TimeUnit.SECONDS)) {
+            process.destroyForcibly();
+            if (!process.waitFor(2, TimeUnit.SECONDS)) {
+                fail("worker could not be terminated after timeout: " + mode);
+            }
+            fail("worker timed out: " + mode);
+        }
+        String output;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            output = reader.lines().reduce("", (a, b) -> a + b);
+        }
+        assertEquals(0, process.exitValue(), mode + ": " + output);
+        assertTrue(output.contains("OK"), mode + ": " + output);
+    }
+
+    private static int[][] copy(int[][] input) {
+        int[][] copy = new int[input.length][];
+        for (int i = 0; i < input.length; i++) copy[i] = input[i].clone();
+        return copy;
+    }
+
+    public static final class FindOrder_210Worker {
+        public static void main(String[] args) {
+            if ("exhaustive".equals(args[0])) exhaustive();
+            else stress();
+            System.out.println("OK");
+        }
+
+        private static void exhaustive() {
+            int n = 4;
+            for (int mask = 0; mask < (1 << (n * n)); mask++) {
+                List<int[]> edges = new ArrayList<>();
+                int bit = 0;
+                for (int prerequisite = 0; prerequisite < n; prerequisite++) {
+                    for (int course = 0; course < n; course++) {
+                        if ((mask & (1 << bit++)) != 0) edges.add(new int[]{course, prerequisite});
                     }
                 }
-            }
-            for (int via = 0; via < 4; via++)
-                for (int from = 0; from < 4; from++)
-                    for (int to = 0; to < 4; to++)
-                        reachable[from][to] |= reachable[from][via] && reachable[via][to];
-            boolean cyclic = false;
-            for (int i = 0; i < 4; i++) cyclic |= reachable[i][i];
-            int[] actual = test.findOrder(4, edges.toArray(new int[0][]));
-            assertEquals(cyclic ? 0 : 4, actual.length, "graph " + mask);
-            if (!cyclic) {
-                boolean[] seen = new boolean[4];
-                int[] positions = new int[4];
-                for (int i = 0; i < actual.length; i++) {
-                    assertTrue(actual[i] >= 0 && actual[i] < 4);
-                    assertTrue(!seen[actual[i]], "duplicate course");
-                    seen[actual[i]] = true;
-                    positions[actual[i]] = i;
+                int[][] graph = edges.toArray(new int[0][]);
+                int[] actual = new FindOrder_210().findOrder(n, graph);
+                if (hasCycle(n, graph)) {
+                    if (actual.length != 0) throw new AssertionError("cycle mask " + mask);
+                } else {
+                    validate(actual, n, graph, mask);
                 }
-                for (int[] edge : edges) assertTrue(positions[edge[1]] < positions[edge[0]]);
             }
         }
-    }
 
-
-    private final FindOrder_210 test = new FindOrder_210();
-
-    @Test
-    public void testHappyCases() {
-        assertArrayEquals(new int[]{0, 1}, test.findOrder(2, new int[][]{{1, 0}}));
-        int[] result = test.findOrder(4, new int[][]{{1, 0}, {2, 0}, {3, 1}, {3, 2}});
-        assertEquals(4, result.length);
-    }
-
-    @Test
-    public void testNegativeAndEdgeCases() {
-        assertArrayEquals(new int[]{}, test.findOrder(2, new int[][]{{1, 0}, {0, 1}}));
-        assertArrayEquals(new int[]{0}, test.findOrder(1, new int[][]{}));
-    }
-
-    @Test
-    public void testLargeCase() {
-        int[] result = test.findOrder(5, new int[][]{{1, 0}, {2, 1}, {3, 2}, {4, 3}});
-        assertEquals(5, result.length);
-        assertEquals(0, result[0]);
-        assertEquals(4, result[4]);
-    }
-
-    @Test
-    public void testNoPrerequisites() {
-        int[] result = test.findOrder(3, new int[][]{});
-        assertEquals(3, result.length);
-    }
-
-    @Test
-    public void testCycleDetection() {
-        // 3-node cycle
-        assertArrayEquals(new int[]{}, test.findOrder(3, new int[][]{{0, 1}, {1, 2}, {2, 0}}));
-    }
-
-    @Test
-    public void testLinearChain() {
-        int[] result = test.findOrder(4, new int[][]{{1, 0}, {2, 1}, {3, 2}});
-        assertArrayEquals(new int[]{0, 1, 2, 3}, result);
-    }
-
-    @Test
-    public void testTwoIndependentChains() {
-        int[] result = test.findOrder(4, new int[][]{{1, 0}, {3, 2}});
-        assertEquals(4, result.length);
-        // 0 before 1, 2 before 3
-        assertTrue(indexOf(result, 0) < indexOf(result, 1));
-        assertTrue(indexOf(result, 2) < indexOf(result, 3));
-    }
-
-    @Test
-    public void testDiamondDependency() {
-        // 0 -> 1, 0 -> 2, 1 -> 3, 2 -> 3
-        int[] result = test.findOrder(4, new int[][]{{1, 0}, {2, 0}, {3, 1}, {3, 2}});
-        assertEquals(4, result.length);
-        assertTrue(indexOf(result, 0) < indexOf(result, 1));
-        assertTrue(indexOf(result, 0) < indexOf(result, 2));
-        assertTrue(indexOf(result, 1) < indexOf(result, 3));
-        assertTrue(indexOf(result, 2) < indexOf(result, 3));
-    }
-
-    @Test
-    public void testSelfCycle() {
-        // Self-loop
-        assertArrayEquals(new int[]{}, test.findOrder(2, new int[][]{{0, 0}}));
-    }
-
-    @Test
-    public void testZeroCourses() {
-        assertArrayEquals(new int[]{}, test.findOrder(0, new int[][]{}));
-    }
-
-    @Test
-    public void testGiantLinearChain() {
-        int n = 500;
-        int[][] prereqs = new int[n - 1][2];
-        for (int i = 0; i < n - 1; i++) {
-            prereqs[i] = new int[]{i + 1, i};
+        private static void stress() {
+            int n = 2000;
+            int[][] dag = new int[5000][2];
+            int edge = 0;
+            for (int prerequisite = 0; prerequisite < n && edge < dag.length; prerequisite++) {
+                for (int course = prerequisite + 1; course < n && edge < dag.length; course++) {
+                    dag[edge++] = new int[]{course, prerequisite};
+                }
+            }
+            validate(new FindOrder_210().findOrder(n, dag), n, dag, 0);
+            int[][] cycle = new int[n][2];
+            for (int i = 0; i < n - 1; i++) cycle[i] = new int[]{i + 1, i};
+            cycle[n - 1] = new int[]{0, n - 1};
+            if (new FindOrder_210().findOrder(n, cycle).length != 0)
+                throw new AssertionError("large cycle was not rejected");
         }
-        int[] result = test.findOrder(n, prereqs);
-        assertEquals(n, result.length);
-        for (int i = 0; i < n; i++) {
-            assertEquals(i, result[i]);
+
+        private static void validate(int[] order, int n, int[][] edges, int caseId) {
+            if (order.length != n) throw new AssertionError("case " + caseId + " length");
+            int[] positions = new int[n];
+            boolean[] seen = new boolean[n];
+            for (int i = 0; i < n; i++) {
+                if (order[i] < 0 || order[i] >= n || seen[order[i]])
+                    throw new AssertionError("case " + caseId + " permutation");
+                seen[order[i]] = true;
+                positions[order[i]] = i;
+            }
+            for (int[] edge : edges) {
+                if (positions[edge[1]] >= positions[edge[0]])
+                    throw new AssertionError("case " + caseId + " edge");
+            }
         }
-    }
 
-    @Test public void testSinglePrerequisiteReverseInput() { assertArrayEquals(new int[]{0,1}, test.findOrder(2, new int[][]{{1,0}})); }
-    @Test public void testMultipleIndependentCoursesAreAllIncluded() { assertEquals(5, test.findOrder(5, new int[][]{}).length); }
-    @Test public void testTwoBranchesMerge() { int[] r = test.findOrder(5, new int[][]{{2,0},{2,1},{3,2},{4,2}}); assertValid(r, new int[][]{{2,0},{2,1},{3,2},{4,2}}, 5); }
-    @Test public void testCycleWithTailReturnsEmpty() { assertArrayEquals(new int[]{}, test.findOrder(4, new int[][]{{1,0},{2,1},{0,2},{3,2}})); }
-    @Test public void testDuplicateEdgeImplementationBehavior() { int[] r = test.findOrder(2, new int[][]{{1,0},{1,0}}); assertValid(r, new int[][]{{1,0}}, 2); }
-    @Test public void testRepeatedInvocation() { assertEquals(2, test.findOrder(2, new int[][]{{1,0}}).length); assertArrayEquals(new int[]{}, test.findOrder(2, new int[][]{{0,1},{1,0}})); }
-    @Test public void testLongIndependentThenDependent() { int n=50; int[][] p=new int[n-1][2]; for(int i=1;i<n;i++) p[i-1]=new int[]{i,i-1}; assertValid(test.findOrder(n,p),p,n); }
-    @Test public void testPrerequisiteOrderProperty() { int[][] p={{1,0},{2,0},{3,1},{4,2},{5,3},{5,4}}; assertValid(test.findOrder(6,p),p,6); }
-
-    private void assertValid(int[] order, int[][] prerequisites, int n) { assertEquals(n, order.length); int[] pos=new int[n]; for(int i=0;i<n;i++) pos[order[i]]=i; for(int[] p:prerequisites) assertTrue(pos[p[1]]<pos[p[0]]); }
-
-    private int indexOf(int[] arr, int val) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == val) return i;
+        private static boolean hasCycle(int n, int[][] edges) {
+            List<List<Integer>> graph = new ArrayList<>();
+            for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
+            for (int[] edge : edges) graph.get(edge[1]).add(edge[0]);
+            int[] state = new int[n];
+            for (int course = 0; course < n; course++) {
+                if (state[course] == 0 && visit(course, graph, state)) return true;
+            }
+            return false;
         }
-        return -1;
+
+        private static boolean visit(int course, List<List<Integer>> graph, int[] state) {
+            state[course] = 1;
+            for (int next : graph.get(course)) {
+                if (state[next] == 1 || (state[next] == 0 && visit(next, graph, state))) return true;
+            }
+            state[course] = 2;
+            return false;
+        }
     }
 }
