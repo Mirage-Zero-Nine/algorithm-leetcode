@@ -1,8 +1,12 @@
 package solutions.bfs;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Given an m x n matrix of non-negative integers representing the height of each unit cell in a continent.
@@ -20,79 +24,85 @@ import java.util.Queue;
 
 public class PacificAtlantic_417 {
     /**
-     * Add all points next to edge and find all possible accessed point from edge using BFS.
-     * Use two boolean 2D array to record corresponding visit.
-     * The start point of each BFS is the edge point.
-     * Finally, compare both diagonal visited map, if a point can be accessed in both visit map, then add to result.
+     * Finds cells that can reach both oceans by running BFS backwards from each ocean's border. A separate boolean
+     * grid tracks each search, and cells marked in both grids form the result. The input is not mutated, and each
+     * call uses fresh state.
+     * <p>
+     * Time complexity: O(mn)
+     * Auxiliary space: O(mn)
      *
-     * @param matrix given grid
-     * @return all points that could move to diagonal edges
+     * @param heights rectangular matrix of cell heights
+     * @return coordinates of cells whose rainwater can reach both oceans, in unspecified order
      */
-    public List<int[]> pacificAtlantic(int[][] matrix) {
-        List<int[]> out = new LinkedList<>();
-
-        /* Corner case */
-        if (matrix.length == 0) {
-            return out;
+    public List<List<Integer>> pacificAtlantic(int[][] heights) {
+        if (heights == null || heights.length == 0 || heights[0].length == 0) {
+            return new ArrayList<>();
         }
 
-        int row = matrix.length;
-        int col = matrix[0].length;
+        // Reverse a legal downhill flow: from an ocean, a search may move to an adjacent cell whose height is
+        // equal or higher. Reversing any such path gives a valid route from that cell down to the ocean.
+        // Seed the Pacific search with its top and left borders; every other reachable cell is discovered from
+        // these starting points.
+        Queue<int[]> queue = Stream.concat(
+                IntStream.range(0, heights.length)
+                        .mapToObj(n -> new int[]{n, 0}),
+                IntStream.range(1, heights[0].length)
+                        .mapToObj(n -> new int[]{0, n})
+        ).collect(Collectors.toCollection(ArrayDeque::new));
+        boolean[][] visited1 = new boolean[heights.length][heights[0].length];
+        // Mark seeds before BFS so a border cell cannot be rediscovered through a neighboring cell.
+        queue.forEach(cell -> visited1[cell[0]][cell[1]] = true);
+        bfs(queue, visited1, heights);
 
-        boolean[][] visitedPacific = new boolean[row][col], visitedAtlantic = new boolean[row][col];
-        Queue<int[]> Pacific = new LinkedList<>(), Atlantic = new LinkedList<>();
+        // Seed the Atlantic search with its bottom and right borders. The bottom range stops before the last
+        // column because the bottom-right cell is already included in the right-border seed.
+        queue = Stream.concat(
+                IntStream.range(0, heights.length)
+                        .mapToObj(n -> new int[]{n, heights[0].length - 1}),
+                IntStream.range(0, heights[0].length - 1)
+                        .mapToObj(n -> new int[]{heights.length - 1, n})
+        ).collect(Collectors.toCollection(ArrayDeque::new));
+        boolean[][] visited2 = new boolean[heights.length][heights[0].length];
+        queue.forEach(cell -> visited2[cell[0]][cell[1]] = true);
+        bfs(queue, visited2, heights);
 
-        for (int i = 0; i < row; i++) {       // mark all edges to corresponding map as visited
-            Pacific.add(new int[]{i, 0});
-            Atlantic.add(new int[]{i, col - 1});
-            visitedPacific[i][0] = true;
-            visitedAtlantic[i][col - 1] = true;
-        }
-        for (int i = 0; i < col; i++) {        // mark all edges to corresponding map as visited
-            Pacific.add(new int[]{0, i});
-            Atlantic.add(new int[]{row - 1, i});
-            visitedPacific[0][i] = true;
-            visitedAtlantic[row - 1][i] = true;
-        }
-
-        bfs(visitedPacific, matrix, Pacific);       // find all points can be accessed from upper and left edge
-        bfs(visitedAtlantic, matrix, Atlantic);     // find all points can be accessed from right and bottom edge
-
-        for (int i = 0; i < row; i++) {       // find points that is both accessible
-            for (int j = 0; j < col; j++) {
-                if (visitedPacific[i][j] && visitedAtlantic[i][j]) {
-                    out.add(new int[]{i, j});
-                }
-            }
-        }
-
-        return out;
+        // A cell belongs in the answer only when both reverse searches reached it: each visited grid proves a
+        // route to its corresponding ocean, so their intersection proves reachability to both.
+        return IntStream.range(0, heights.length)
+                .boxed()
+                .flatMap(i -> IntStream.range(0, heights[0].length)
+                        .filter(j -> visited1[i][j] && visited2[i][j])
+                        .mapToObj(j -> List.of(i, j))).toList();
     }
 
     /**
-     * BFS to find all points that is accessible based on given point queue.
+     * Expands one ocean's reverse-reachability frontier. Each cell is enqueued at most once and the supplied queue
+     * and visited grid are used without retaining state.
+     * <p>
+     * Time complexity: O(mn)
+     * Auxiliary space: O(mn) for the supplied queue and visited grid
      *
-     * @param isVisited 2D array record which point has been visited
-     * @param matrix    given 2D array record value
-     * @param q         queue
+     * @param queue   initially seeded with one ocean's border cells
+     * @param visited reachability state for that ocean
+     * @param heights input height matrix
      */
-    private void bfs(boolean[][] isVisited, int[][] matrix, Queue<int[]> q) {
-        int[] xy = {1, -1, 0, 0, 0, 0, 1, -1};
-        int row = matrix.length;
-        int col = matrix[0].length;
-
-        while (!q.isEmpty()) {
-            int[] c = q.remove();
-            int x = c[0];
-            int y = c[1];
-            for (int i = 0; i < 4; i++) {
-                int xx = x + xy[i];
-                int yy = y + xy[i + 4];
-                if (xx > -1 && xx < row && yy > -1 && yy < col && !isVisited[xx][yy] && matrix[xx][yy] >= matrix[x][y]) {
-                    q.add(new int[]{xx, yy});
-                    isVisited[xx][yy] = true;
+    private void bfs(Queue<int[]> queue, boolean[][] visited, int[][] heights) {
+        int[] directions = new int[]{1, 0, -1, 0, 1};
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int x = current[0], y = current[1];
+            IntStream.range(0, 4).forEach(i -> {
+                int nextX = x + directions[i], nextY = y + directions[i + 1];
+                if (nextX >= 0 && nextX < visited.length
+                        && nextY >= 0 && nextY < visited[0].length
+                        && !visited[nextX][nextY]
+                        && heights[nextX][nextY] >= heights[x][y]) {
+                    // Mark on enqueue, rather than dequeue: equal-height cells can point back to one another,
+                    // and this prevents duplicate work and cycles while preserving the reverse-flow invariant.
+                    visited[nextX][nextY] = true;
+                    queue.add(new int[]{nextX, nextY});
                 }
-            }
+            });
         }
     }
 }

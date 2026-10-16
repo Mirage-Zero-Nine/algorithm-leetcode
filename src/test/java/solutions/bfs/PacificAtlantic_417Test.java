@@ -4,18 +4,30 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.InvocationInterceptor;
+import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 
-/** Tests four-directional flow independently of the reverse-edge BFS implementation. */
+@ExtendWith(PacificAtlantic_417Test.IsolatedTestExtension.class)
 public class PacificAtlantic_417Test {
 
     private final PacificAtlantic_417 test = new PacificAtlantic_417();
@@ -34,6 +46,10 @@ public class PacificAtlantic_417Test {
     @Test
     public void testNegativeAndEdgeCases() {
         assertEquals(Set.of(), asSet(test.pacificAtlantic(new int[][]{})));
+        assertEquals(Set.of(), asSet(test.pacificAtlantic(null)));
+        assertEquals(Set.of(), asSet(test.pacificAtlantic(new int[][]{{}, {}})));
+        assertExact(new int[][]{{0, 1}}, Set.of("0,0", "0,1"));
+        assertExact(new int[][]{{1, 1}, {0, 1}}, Set.of("0,0", "0,1", "1,0", "1,1"));
         assertExact(new int[][]{{0}}, Set.of("0,0"));
     }
 
@@ -160,13 +176,14 @@ public class PacificAtlantic_417Test {
     @Test
     public void testReturnedCoordinatesAreUniqueAndFresh() {
         int[][] grid = {{1, 2}, {3, 4}};
-        List<int[]> first = test.pacificAtlantic(grid);
+        List<List<Integer>> first = test.pacificAtlantic(grid);
         Set<String> expected = expectedByForwardFlow(grid);
         assertEquals(expected, asSet(first));
         assertEquals(first.size(), asSet(first).size());
         assertNotNull(first.get(0));
-        first.get(0)[0] = 99;
-        assertEquals(expected, asSet(test.pacificAtlantic(grid)));
+        List<List<Integer>> second = test.pacificAtlantic(grid);
+        assertNotSame(first, second);
+        assertEquals(expected, asSet(second));
     }
 
     @Test
@@ -204,10 +221,13 @@ public class PacificAtlantic_417Test {
                 grid[row][column] = 100000;
             }
         }
-        List<int[]> result = test.pacificAtlantic(grid);
-        assertEquals(40000, result.size());
-        assertEquals(40000, asSet(result).size());
-        assertTrue(asSet(result).contains("199,199"));
+        Set<String> expected = new HashSet<>();
+        for (int row = 0; row < 200; row++) {
+            for (int column = 0; column < 200; column++) {
+                expected.add(row + "," + column);
+            }
+        }
+        assertExact(grid, expected);
     }
 
     @Test
@@ -218,12 +238,33 @@ public class PacificAtlantic_417Test {
                 grid[row][column] = row + column;
             }
         }
-        List<int[]> result = test.pacificAtlantic(grid);
-        assertEquals(399, result.size());
-        assertEquals(399, asSet(result).size());
-        assertTrue(asSet(result).contains("0,199"));
-        assertTrue(asSet(result).contains("199,0"));
-        assertFalse(asSet(result).contains("100,100"));
+        Set<String> expected = new HashSet<>();
+        for (int row = 0; row < 200; row++) {
+            for (int column = 0; column < 200; column++) {
+                if (row == 199 || column == 199) {
+                    expected.add(row + "," + column);
+                }
+            }
+        }
+        assertExact(grid, expected);
+    }
+
+    @Test
+    public void testExhaustiveBinaryGridsUpToThreeByThree() {
+        // Exhausts all 2^(r*c) binary grids for every 1 <= r,c <= 3: 682 inputs.
+        // Larger dimensions and height alphabets are covered by the focused and seeded cases below.
+        for (int rows = 1; rows <= 3; rows++) {
+            for (int columns = 1; columns <= 3; columns++) {
+                int cells = rows * columns;
+                for (int mask = 0; mask < (1 << cells); mask++) {
+                    int[][] grid = new int[rows][columns];
+                    for (int cell = 0; cell < cells; cell++) {
+                        grid[cell / columns][cell % columns] = (mask >>> cell) & 1;
+                    }
+                    assertExact(grid);
+                }
+            }
+        }
     }
 
     private void assertExact(int[][] grid) {
@@ -232,14 +273,18 @@ public class PacificAtlantic_417Test {
 
     private void assertExact(int[][] grid, Set<String> expected) {
         int[][] input = copy(grid);
-        List<int[]> result = test.pacificAtlantic(input);
-        Set<String> actual = asSet(result);
-        assertEquals(expected, actual);
-        assertEquals(result.size(), actual.size(), "result must not contain duplicate coordinates");
-        assertMatrixEquals(grid, input);
+        List<List<Integer>> result = test.pacificAtlantic(input);
+        String description = "grid=" + Arrays.deepToString(grid);
+        Set<String> actual = asSet(result, description);
+        assertEquals(expected, actual, description);
+        assertEquals(result.size(), actual.size(), "result must not contain duplicate coordinates; " + description);
+        assertCoordinatesWithin(result, grid.length, grid.length == 0 ? 0 : grid[0].length, description);
+        assertMatrixEquals(grid, input, description);
     }
 
-    /** Directly simulates downhill flow from each cell; independent of reverse ocean BFS. */
+    /**
+     * Directly simulates downhill flow from each cell; independent of reverse ocean BFS.
+     */
     private Set<String> expectedByForwardFlow(int[][] heights) {
         Set<String> expected = new HashSet<>();
         if (heights.length == 0) {
@@ -281,16 +326,39 @@ public class PacificAtlantic_417Test {
         return expected;
     }
 
-    private Set<String> asSet(List<int[]> coordinates) {
+    /**
+     * Converts unordered coordinates into a canonical set while checking coordinate shape and bounds.
+     */
+    private Set<String> asSet(List<List<Integer>> coordinates) {
+        return asSet(coordinates, "coordinates");
+    }
+
+    /**
+     * Converts coordinates while attaching the input description to every structural assertion.
+     */
+    private Set<String> asSet(List<List<Integer>> coordinates, String description) {
+        assertNotNull(coordinates, description);
         Set<String> result = new HashSet<>();
-        for (int[] coordinate : coordinates) {
-            assertNotNull(coordinate);
-            assertEquals(2, coordinate.length);
-            assertTrue(coordinate[0] >= 0 && coordinate[0] < 200);
-            assertTrue(coordinate[1] >= 0 && coordinate[1] < 200);
-            result.add(coordinate[0] + "," + coordinate[1]);
+        for (List<Integer> coordinate : coordinates) {
+            assertNotNull(coordinate, description);
+            assertEquals(2, coordinate.size(), description);
+            assertNotNull(coordinate.get(0), description);
+            assertNotNull(coordinate.get(1), description);
+            assertTrue(coordinate.get(0) >= 0, description);
+            assertTrue(coordinate.get(1) >= 0, description);
+            result.add(coordinate.get(0) + "," + coordinate.get(1));
         }
         return result;
+    }
+
+    /**
+     * Verifies every returned coordinate belongs to the exact input dimensions for this scenario.
+     */
+    private void assertCoordinatesWithin(List<List<Integer>> coordinates, int rows, int columns, String description) {
+        for (List<Integer> coordinate : coordinates) {
+            assertTrue(coordinate.get(0) < rows, description);
+            assertTrue(coordinate.get(1) < columns, description);
+        }
     }
 
     private int[][] copy(int[][] matrix) {
@@ -302,9 +370,85 @@ public class PacificAtlantic_417Test {
     }
 
     private void assertMatrixEquals(int[][] expected, int[][] actual) {
-        assertEquals(expected.length, actual.length);
+        assertMatrixEquals(expected, actual, "matrix");
+    }
+
+    /**
+     * Verifies nonmutation while retaining the triggering input in failure output.
+     */
+    private void assertMatrixEquals(int[][] expected, int[][] actual, String description) {
+        assertEquals(expected.length, actual.length, description);
         for (int row = 0; row < expected.length; row++) {
-            assertArrayEquals(expected[row], actual[row]);
+            assertArrayEquals(expected[row], actual[row], description);
+        }
+    }
+
+    /**
+     * Runs each test method in a killable child JVM so a nonterminating solution cannot hang the suite.
+     */
+    public static final class IsolatedTestExtension implements InvocationInterceptor {
+        private static final Duration DEADLINE = Duration.ofSeconds(10);
+
+        @Override
+        public void interceptTestMethod(Invocation<Void> invocation,
+                                        ReflectiveInvocationContext<Method> context,
+                                        ExtensionContext extensionContext) throws Throwable {
+            Path output = Files.createTempFile("pacific-atlantic-test-", ".log");
+            Process process = null;
+            try {
+                process = new ProcessBuilder(javaCommand(), "-cp", testClasspath(),
+                        PacificAtlantic_417Test.class.getName() + "$Worker", context.getExecutable().getName())
+                        .redirectOutput(output.toFile()).redirectErrorStream(true).start();
+                if (!process.waitFor(DEADLINE.toMillis(), TimeUnit.MILLISECONDS)) {
+                    process.destroyForcibly();
+                    boolean dead = process.waitFor(2, TimeUnit.SECONDS);
+                    throw new AssertionError("Timed out: " + context.getExecutable().getName()
+                            + ", child terminated=" + dead + "\n" + Files.readString(output));
+                }
+                if (process.exitValue() != 0) {
+                    throw new AssertionError("Child test failed: " + context.getExecutable().getName()
+                            + "\n" + Files.readString(output));
+                }
+                invocation.skip();
+            } finally {
+                if (process != null && process.isAlive()) {
+                    process.destroyForcibly();
+                }
+                if (process != null && !process.waitFor(2, TimeUnit.SECONDS)) {
+                    throw new AssertionError("Child process did not terminate: " + context.getExecutable().getName());
+                }
+                Files.deleteIfExists(output);
+            }
+        }
+
+        private static String javaCommand() {
+            return Path.of(System.getProperty("java.home"), "bin", "java").toString();
+        }
+
+        private static String testClasspath() {
+            String surefireClasspath = System.getProperty("surefire.test.class.path");
+            return surefireClasspath == null ? System.getProperty("java.class.path") : surefireClasspath;
+        }
+    }
+
+    /**
+     * Child entry point that invokes only the selected test method, avoiding extension recursion.
+     */
+    public static final class Worker {
+        public static void main(String[] args) throws Exception {
+            if (args.length != 1) {
+                throw new IllegalArgumentException("Expected one test method name");
+            }
+            PacificAtlantic_417Test test = new PacificAtlantic_417Test();
+            Method method = PacificAtlantic_417Test.class.getDeclaredMethod(args[0]);
+            try {
+                method.invoke(test);
+            } catch (InvocationTargetException exception) {
+                Throwable cause = exception.getCause();
+                if (cause instanceof Exception checked) throw checked;
+                if (cause instanceof Error error) throw error;
+                throw exception;
+            }
         }
     }
 }
