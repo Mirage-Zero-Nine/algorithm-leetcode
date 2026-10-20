@@ -1,5 +1,8 @@
 package solutions.unionfind;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 /**
  * In this problem, a tree is an undirected graph that is connected and has no cycles.
  * You are given a graph that started as a tree with n nodes labeled from 1 to n, with one additional edge added.
@@ -15,66 +18,95 @@ package solutions.unionfind;
 
 public class FindRedundantConnection_684 {
     /**
-     * Union find.
-     * Union each vertex of every edge when traversing the edges.
-     * If two vertices are having same root, then the cycle found. Return this edge.
+     * Uses union-find with union by size and path compression to add edges in input order. The roots identify the
+     * connected components; an edge whose endpoints already share a root closes the unique cycle. The ordered stream
+     * stops at that edge and returns its original row.
+     * <p>
+     * Time complexity: O(n alpha(n)) amortized over n edges, where alpha is the inverse Ackermann function.
+     * Auxiliary space: O(n) for the parent and component-size arrays.
      *
-     * @param edges array of edges in the graph
-     * @return the edge that can be removed so that the resulting graph is a tree of n nodes
+     * @param edges the graph's n edges, with vertices labeled from 1 to n
+     * @return the last input edge on the graph's unique cycle
      */
     public int[] findRedundantConnection(int[][] edges) {
         UnionFind uf = new UnionFind(edges.length);
 
-        for (int[] e : edges) {
-            int r1 = uf.find(e[0]);
-            int r2 = uf.find(e[1]);
-            if (r1 != r2) {
-                uf.union(r1, r2);
-            } else {
-                return e;
+        // The graph has exactly one cycle, so its earlier edges join separate components and the last cycle edge in
+        // input order is the first failed union.
+        // findFirst short-circuits at that edge, which is also the required last removable edge in the input.
+        return Arrays.stream(edges).filter(edge -> {
+            int root1 = uf.find(edge[0]), root2 = uf.find(edge[1]);
+            if (root1 == root2) {
+                return true;
             }
-        }
-
-        return new int[0];
+            // Merge only distinct components so every processed tree edge keeps the forest acyclic.
+            uf.union(root1, root2);
+            return false;
+        }).findFirst().orElse(new int[0]);
     }
 
     /**
-     * Union find class.
+     * Tracks disjoint components with a parent array and their sizes. Union by size keeps trees shallow, and
+     * path compression makes later finds faster. Component sizes are authoritative only at roots; each instance
+     * holds independent state for one graph traversal.
+     * <p>
+     * Space: O(n).
      */
     private static class UnionFind {
         private final int[] root;
+        private final int[] componentSize;
 
         /**
-         * Initialize union find class.
+         * Starts each label, including the unused zero label, in its own size-one component.
+         * <p>
+         * Time complexity: O(n).
+         * Auxiliary space: O(n).
          *
-         * @param n number of vertices in graph
+         * @param size largest supported label
          */
-        UnionFind(int n) {
-            root = new int[n + 1];
-            for (int i = 0; i < root.length; i++) {
-                root[i] = i;
+        UnionFind(int size) {
+            root = IntStream.rangeClosed(0, size).toArray();
+            componentSize = IntStream.range(0, size + 1).map(_ -> 1).toArray();
+        }
+
+        /**
+         * Merges the components containing {@code a} and {@code b}, attaching the smaller tree under the larger one.
+         * If their sizes tie, the first root remains the root. Does nothing when both labels are already connected.
+         * <p>
+         * Time complexity: O(alpha(n)) amortized.
+         *
+         * @param a a label in the first component
+         * @param b a label in the second component
+         */
+        void union(int a, int b) {
+            int root1 = find(a), root2 = find(b);
+            if (root1 != root2) {
+                // Keep the larger tree as the root; equal sizes deterministically keep root1.
+                if (componentSize[root1] < componentSize[root2]) {
+                    int swap = root1;
+                    root1 = root2;
+                    root2 = swap;
+                }
+                root[root2] = root1;
+                // Only root entries are authoritative; sizes stored at non-roots are never consulted.
+                componentSize[root1] += componentSize[root2];
             }
         }
 
         /**
-         * Union two vertices.
+         * Returns the component root and compresses the traversed parent path so future lookups take fewer steps.
+         * <p>
+         * Time complexity: O(alpha(n)) amortized.
          *
-         * @param n1 first node
-         * @param n2 second node
+         * @param a label whose component is queried
+         * @return the root representing {@code a}'s component
          */
-        void union(int n1, int n2) {
-            int r1 = find(n1);
-            root[n2] = r1;
-        }
-
-        /**
-         * Find root of current vertex.
-         *
-         * @param n current vertex
-         * @return root of current vertex
-         */
-        int find(int n) {
-            return root[n] == n ? root[n] : find(root[n]);
+        int find(int a) {
+            if (root[a] != a) {
+                // Point this vertex at the root so later lookups skip the path traversed here.
+                root[a] = find(root[a]);
+            }
+            return root[a];
         }
     }
 }
