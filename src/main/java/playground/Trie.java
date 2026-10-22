@@ -42,8 +42,13 @@ public class Trie {
      * @param val children value
      */
     void addChild(char val) {
-        this.m.put(val, new Trie());
-        this.m.get(val).setVal(val);
+        // Keep an existing branch so adding another word with the same prefix
+        // does not erase the words already stored below that prefix.
+        this.m.computeIfAbsent(val, ignored -> {
+            Trie child = new Trie();
+            child.setVal(val);
+            return child;
+        });
     }
 
     /**

@@ -12,8 +12,8 @@ import java.util.PriorityQueue;
 
 public class ComparatorSample {
     public ComparatorSample() {
-        String[] words = new String[10];
-        int[][] intervals = new int[10][10];
+        String[] words = {"pear", "fig", "apple", "kiwi", "plum", "banana", "tea", "melon", "a", "grape"};
+        int[][] intervals = {{3, 4}, {1, 2}, {5, 6}, {0, 9}, {2, 8}, {7, 7}, {4, 5}, {6, 10}, {8, 11}, {9, 12}};
 
         // sort list by length
         Arrays.sort(words, Comparator.comparingInt(String::length));

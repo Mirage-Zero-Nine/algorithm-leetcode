@@ -37,7 +37,7 @@ public class DistinctIds {
         Collections.sort(l);
         int count = m.size();
         for (Integer i : l) {
-            if (mi - i > 0) {
+            if (mi >= i) {
                 count--;
                 mi = mi - i;
             } else {

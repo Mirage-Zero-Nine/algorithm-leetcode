@@ -46,7 +46,9 @@ public class MinHeap {
      */
     private void heapify() {
         for (int i = (size - 2) / 2; i >= 0; i--) {
-            percolateUp(i);
+            // Every parent is corrected after its children have already been
+            // corrected, so moving it down builds a valid heap in linear time.
+            percolateDown(i);
         }
     }
 
@@ -98,9 +100,8 @@ public class MinHeap {
      */
     public void offer(int v) {
         if (array.length == size) {     // if reaches the size of array, initialize a new array
-            int[] newArray;
-            newArray = Arrays.copyOf(array, size);
-            array = newArray;
+            int newCapacity = Math.max(1, array.length * 2);
+            array = Arrays.copyOf(array, newCapacity);
         }
         array[size] = v;
         percolateUp(size);      // initially, the element is at the end of array (leaf node in tree)
@@ -119,8 +120,10 @@ public class MinHeap {
         }
         int smallest = array[0];
         array[0] = array[size - 1];
-        percolateDown(0);
         size--;
+        // Shrink the logical heap before restoring its order, so the removed
+        // slot is not treated as a child of the replacement root.
+        percolateDown(0);
         return smallest;
     }
 
@@ -132,7 +135,7 @@ public class MinHeap {
      * @param v     value to be updated
      */
     public void update(int index, int v) {
-        if (index < 0 || index > size) {
+        if (index < 0 || index >= size) {
             throw new IllegalArgumentException("Invalid index!");
         }
 

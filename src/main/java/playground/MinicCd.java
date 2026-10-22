@@ -31,9 +31,12 @@ public class MinicCd {
                 .forEach(stack::push);
 
         for (String s : commands) {
+            if (s.isEmpty() || s.equals(".")) {
+                continue;
+            }
             if (s.equals("..") && !stack.isEmpty()) {
                 stack.pop();
-            } else if (!s.equals(".")) {
+            } else if (!s.equals("..")) {
                 stack.push(s);
             }
         }

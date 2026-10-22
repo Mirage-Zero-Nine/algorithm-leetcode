@@ -1,6 +1,7 @@
 package solutions.dynamicprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -129,5 +130,24 @@ public class IsMatch_10Test {
         String s = "a".repeat(25);
         String p = "a*".repeat(25) + "b";
         assertFalse(test.isMatch(s, p));
+        assertFalse(test.dfsImplementation(s, p));
+    }
+
+    @Test
+    public void exercisesDfsOnDistinctContractInputs() {
+        String[][] cases = {
+            {"", "", "true"}, {"", "a", "false"}, {"a", "a", "true"},
+            {"a", ".", "true"}, {"a", "a*", "true"}, {"aa", "a", "false"},
+            {"aa", "a*", "true"}, {"ab", ".*", "true"}, {"ab", "a.", "true"},
+            {"ab", "b.", "false"}, {"abc", "ab", "false"}, {"aab", "c*a*b", "true"},
+            {"aab", "a*c", "false"}, {"mississippi", "mis*is*p*.", "false"},
+            {"mississippi", "mis*is*ip*.", "true"}, {"aaa", "ab*a*c*a", "true"},
+            {"aaa", "ab*a", "false"}, {"bbb", "a*b*", "true"},
+            {"abcd", "d*", "false"}, {"a", "ab*", "true"}
+        };
+        for (String[] c : cases) {
+            assertEquals(Boolean.parseBoolean(c[2]), test.dfsImplementation(c[0], c[1]),
+                    c[0] + "/" + c[1]);
+        }
     }
 }

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 
 public class ListParser {
-    private static final Pattern pattern = Pattern.compile("\\[[\\s*\\d+,]+[\\s*\\d+]+]");
+    private static final Pattern pattern = Pattern.compile("\\[\\s*-?\\d+(?:\\s*,\\s*-?\\d+)*\\s*\\]");
 
     /**
      * Parse 1d integer list string to list.
@@ -26,11 +26,13 @@ public class ListParser {
      * @return parsed list
      */
     public static List<Integer> parseList(String listString) {
-        if (listString == null || listString.length() < 3) {
+        if (listString == null || listString.length() < 3
+                || !listString.trim().startsWith("[") || !listString.trim().endsWith("]")) {
             throw new InvalidParameterException("Invalid list: " + listString);
         }
 
-        return Arrays.stream(listString.substring(1, listString.length() - 1).split(","))
+        String trimmed = listString.trim();
+        return Arrays.stream(trimmed.substring(1, trimmed.length() - 1).split(",", -1))
                 .map(value -> {
                     if (value == null || value.length() == 0) {
                         throw new InvalidParameterException("Invalid integer value: " + value);

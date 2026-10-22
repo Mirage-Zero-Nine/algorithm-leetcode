@@ -114,4 +114,15 @@ public class MinCameraCover_968Test {
     @Test public void testAdditionalSkewed() { TreeNode r=new TreeNode(0); r.right=new TreeNode(0); r.right.left=new TreeNode(0); r.right.left.right=new TreeNode(0); assertEquals(2,new MinCameraCover_968().minCameraCover(r)); }
     @Test public void testAdditionalReuse() { assertEquals(0,new MinCameraCover_968().minCameraCover(null)); }
     @Test public void testAdditionalRootChildren() { TreeNode r=new TreeNode(0); r.left=new TreeNode(0); r.right=new TreeNode(0); assertEquals(1,new MinCameraCover_968().minCameraCover(r)); }
+
+    @Test
+    public void testDfsStatesAreExposedCorrectly() {
+        MinCameraCover_968 solver = new MinCameraCover_968();
+        assertEquals(2, solver.dfs(null));
+        assertEquals(0, solver.dfs(new TreeNode(1)));
+
+        TreeNode parent = new TreeNode(2);
+        parent.left = new TreeNode(3);
+        assertEquals(1, solver.dfs(parent));
+    }
 }

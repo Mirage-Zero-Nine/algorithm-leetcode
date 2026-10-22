@@ -29,13 +29,16 @@ public class LongestSubArray {
 
     public int[] FindSubArray() {
 
+        if (randomArray.length == 0) return new int[0];
+        currentArrayLength = 1;
+
         /* A cache for temporary store the start and the end of the continuous array. */
         int subStart = 0;
-        int subEnd = 1;
+        int subEnd = 0;
 
         /* Store the real start and end of longest sub array after comparison. */
         int longestStart = 0;
-        int longestEnd = 1;
+        int longestEnd = 0;
 
         /* Counting. */
         int index;

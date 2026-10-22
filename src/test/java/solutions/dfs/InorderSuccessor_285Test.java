@@ -88,6 +88,21 @@ public class InorderSuccessor_285Test {
     }
 
     @Test
+    public void testRecursiveAlternativeMatchesSuccessorCases() {
+        TreeNode root = new TreeNode(5);
+        TreeNode left = new TreeNode(3);
+        TreeNode right = new TreeNode(7);
+        root.left = left;
+        root.right = right;
+        left.left = new TreeNode(2);
+        left.right = new TreeNode(4);
+
+        assertEquals(4, test.recursion(root, left).val);
+        assertEquals(5, test.recursion(root, left.right).val);
+        assertNull(test.recursion(root, right));
+    }
+
+    @Test
     public void testGiantBST() {
         // Build a larger BST: 20 at root
         TreeNode root = new TreeNode(20);

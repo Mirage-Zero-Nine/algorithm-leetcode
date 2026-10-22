@@ -112,4 +112,17 @@ public class DaysBetweenDates_1360Test {
     public void testAdditional10() {
         assertEquals(47481, test.daysBetweenDates("1971-01-01", "2100-12-31"));
     }
+
+    @Test
+    public void testJavaApiApproachMatchesManualCalculation() {
+        String[][] pairs = {
+                {"2019-06-29", "2019-06-30"},
+                {"2020-02-29", "2021-03-01"},
+                {"2100-12-31", "1971-01-01"}
+        };
+        for (String[] pair : pairs) {
+            assertEquals(test.daysBetweenDates(pair[0], pair[1]),
+                    test.daysBetweenDatesAPI(pair[0], pair[1]));
+        }
+    }
 }

@@ -68,6 +68,7 @@ public class IsScramble_87Test {
     @Test
     public void testGiantCase() {
         assertFalse(test.isScramble("abcdefghij", "efghijcadb"));
+        assertFalse(test.dp("abcdefghij", "efghijcadb"));
     }
 
     @Test
@@ -79,5 +80,21 @@ public class IsScramble_87Test {
     @CsvSource({"abc,bca,true","abc,cab,true","abcd,bdac,false","abcd,acbd,true","abcd,abdc,true","abcd,efgh,false","a,a,true","a,b,false","great,rgtae,true","abcde,ebcda,true"})
     public void testAdditionalScramblePartitions(String first, String second, boolean expected) {
         assertEquals(expected, test.isScramble(first, second));
+    }
+
+    @Test
+    public void exercisesDpOnDistinctContractInputs() {
+        String[][] cases = {
+                {"a", "a", "true"}, {"a", "b", "false"}, {"ab", "ab", "true"},
+                {"ab", "ba", "true"}, {"ab", "ac", "false"}, {"abc", "abc", "true"},
+                {"abc", "bca", "true"}, {"abc", "cab", "true"}, {"abc", "acb", "true"},
+                {"abc", "abd", "false"}, {"abcd", "bdac", "false"}, {"abcd", "acbd", "true"},
+                {"abcd", "abdc", "true"}, {"abcd", "dcba", "true"}, {"abcd", "efgh", "false"},
+                {"great", "rgeat", "true"}, {"great", "rgtae", "true"}, {"great", "taerg", "true"},
+                {"abcde", "caebd", "false"}, {"abcde", "ebcda", "true"}
+        };
+        for (String[] c : cases) {
+            assertEquals(Boolean.parseBoolean(c[2]), test.dp(c[0], c[1]), c[0] + "/" + c[1]);
+        }
     }
 }
