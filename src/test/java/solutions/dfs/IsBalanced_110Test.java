@@ -85,6 +85,19 @@ public class IsBalanced_110Test {
     }
 
     @Test
+    public void testBottomUpAlternativeHandlesBothShapes() {
+        TreeNode balanced = new TreeNode(1);
+        balanced.left = new TreeNode(2);
+        balanced.right = new TreeNode(3);
+        assertTrue(test.bottomUp(balanced));
+
+        TreeNode unbalanced = new TreeNode(1);
+        unbalanced.left = new TreeNode(2);
+        unbalanced.left.left = new TreeNode(3);
+        assertFalse(test.bottomUp(unbalanced));
+    }
+
+    @Test
     public void testGiantBalancedTree() {
         // 15-node perfect tree
         TreeNode root = new TreeNode(1);

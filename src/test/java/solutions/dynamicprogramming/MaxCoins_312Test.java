@@ -100,4 +100,18 @@ public class MaxCoins_312Test {
                 DynamicTest.dynamicTest("four twos", () -> assertEquals(22, test.maxCoins(new int[]{2, 2, 2, 2}))),
                 DynamicTest.dynamicTest("dp agrees", () -> assertEquals(test.maxCoins(new int[]{2, 5, 3}), test.dp(new int[]{2, 5, 3}))));
     }
+
+    @Test
+    public void exercisesDpOnDistinctInputsWithIndependentOracle() {
+        int[][] cases = {
+                {1}, {2}, {3}, {1, 1}, {1, 2}, {2, 1}, {2, 2}, {1, 2, 1},
+                {1, 1, 1}, {1, 2, 3}, {3, 2, 1}, {2, 3, 2}, {1, 3, 1},
+                {2, 4, 1}, {4, 1, 2}, {1, 4, 2, 3}, {2, 1, 3, 2},
+                {3, 1, 5, 8}, {1, 5, 3, 1}, {2, 2, 2, 2}
+        };
+        for (int[] values : cases) {
+            int expected = bruteForce(values);
+            assertEquals(expected, test.dp(values.clone()), java.util.Arrays.toString(values));
+        }
+    }
 }

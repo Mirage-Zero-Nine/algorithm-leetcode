@@ -61,6 +61,7 @@ public class MinDistance_72Test {
     @Test
     public void testGiantCase() {
         assertEquals(6, test.minDistance("dinitrophenylhydrazine", "acetylphenylhydrazine"));
+        assertEquals(6, test.dfsImpl("dinitrophenylhydrazine", "acetylphenylhydrazine"));
     }
 
     @Test
@@ -77,5 +78,22 @@ public class MinDistance_72Test {
     public void testAdditionalEditDistanceShapes(String first, String second, int expected) {
         assertEquals(expected, test.minDistance(first, second));
         assertEquals(expected, test.dfsImpl(first, second));
+    }
+
+    @Test
+    public void exercisesDfsOnDistinctContractInputs() {
+        String[][] cases = {
+                {"", "a", "1"}, {"a", "", "1"}, {"ab", "ac", "1"},
+                {"ab", "ba", "2"}, {"abc", "yabd", "2"}, {"cat", "cut", "1"},
+                {"saturday", "sunday", "3"}, {"flaw", "lawn", "2"},
+                {"gumbo", "gambol", "2"}, {"book", "back", "2"},
+                {"abc", "def", "3"}, {"abc", "abcd", "1"}, {"abcd", "abc", "1"},
+                {"kitten", "sitting", "3"}, {"intention", "execution", "5"},
+                {"algorithm", "altruistic", "6"}, {"distance", "instance", "2"},
+                {"a", "b", "1"}, {"abc", "abc", "0"}, {"aaaa", "bbbb", "4"}
+        };
+        for (String[] c : cases) {
+            assertEquals(Integer.parseInt(c[2]), test.dfsImpl(c[0], c[1]), c[0] + "/" + c[1]);
+        }
     }
 }

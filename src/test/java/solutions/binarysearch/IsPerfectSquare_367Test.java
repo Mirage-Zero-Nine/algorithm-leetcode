@@ -224,6 +224,12 @@ public class IsPerfectSquare_367Test {
         assertTrue(test.isPerfectSquare(10000));
     }
 
+    @Test
+    public void testZeroIsTheOnlyNonPositiveSquare() {
+        assertTrue(test.isPerfectSquare(0));
+        assertFalse(test.isPerfectSquare(-1));
+    }
+
     private static boolean exactSquareOracle(int number) {
         long root = (long) Math.sqrt(number);
         while ((root + 1) * (root + 1) <= number) {

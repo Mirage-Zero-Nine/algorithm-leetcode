@@ -86,6 +86,16 @@ public class IsValidBST_98Test {
         assertAllApproaches(buildBalancedBST(1, 1023), true);
     }
 
+    @Test
+    public void testRepeatedCallsDoNotCarryTraversalState() {
+        TreeNode first = deserialize("2,1,3");
+        TreeNode second = deserialize("5,1,4,null,null,3,6");
+
+        assertAllApproaches(first, true);
+        // Each approach must initialize its predecessor/bounds state per call.
+        assertAllApproaches(second, false);
+    }
+
     private void assertAllApproaches(TreeNode root, boolean expected) {
         assertAll(
                 () -> assertEquals(expected, test.isValidBST(root), "recursive bounds approach"),

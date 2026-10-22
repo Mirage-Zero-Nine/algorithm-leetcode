@@ -85,6 +85,20 @@ public class LongestConsecutive_549Test {
     }
 
     @Test
+    public void testDfsStateReportsBothDirections() {
+        TreeNode root = new TreeNode(2);
+        root.left = new TreeNode(1);
+        root.right = new TreeNode(3);
+        int[] maximum = {0};
+
+        int[] state = test.dfs(root, maximum);
+
+        assertEquals(2, state[0]);
+        assertEquals(2, state[1]);
+        assertEquals(3, maximum[0]);
+    }
+
+    @Test
     public void testDuplicateValues() {
         TreeNode root = new TreeNode(1);
         root.left = new TreeNode(1); root.right = new TreeNode(1);

@@ -35,5 +35,6 @@ public class Node {
         this.left = left;
         this.right = right;
         this.next = next;
+        this.parent = parent;
     }
 }

@@ -111,4 +111,13 @@ public class DayOfTheWeek_1185Test {
     public void testAdditional10() {
         assertEquals("Thursday", test.dayOfTheWeek(31, 12, 2099));
     }
+
+    @Test
+    public void testJavaApiApproachMatchesFormula() {
+        int[][] dates = {{1, 1, 1971}, {29, 2, 2000}, {28, 2, 2100}, {31, 12, 2099}};
+        for (int[] date : dates) {
+            assertEquals(test.dayOfTheWeek(date[0], date[1], date[2]),
+                    test.api(date[0], date[1], date[2]));
+        }
+    }
 }

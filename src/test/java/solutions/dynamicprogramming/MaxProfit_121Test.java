@@ -63,6 +63,7 @@ public class MaxProfit_121Test {
         int[] prices = new int[10000];
         for (int i = 0; i < 10000; i++) prices[i] = i;
         assertEquals(9999, test.maxProfit(prices));
+        assertEquals(9999, test.maxProfitStandardDP(prices));
     }
 
     @Test
@@ -148,5 +149,24 @@ public class MaxProfit_121Test {
         int[] prices = {5, 2, 2, 4, 2, 6};
         assertEquals(4, test.maxProfit(prices));
         assertEquals(4, test.maxProfitStandardDP(prices));
+    }
+
+    @Test
+    public void exercisesBothApproachesOnTwentyDistinctInputs() {
+        int[][] cases = {
+            {1,2}, {2,1}, {1,3,2}, {3,1,4}, {5,4,3}, {2,2,2}, {1,5,3,6,4},
+            {7,1,5,3,6,4}, {9,2,8,1,7}, {4,6,1,3,2,5}, {10,1,2,3},
+            {3,2,1,4}, {8,1,9}, {2,7,1,8}, {5,1,5,1,5}, {6,4,2,9,1},
+            {1,10,2,9,3,8}, {4,3,2,1,0}, {0,2,1,4}, {11,5,12,3,14}
+        };
+        for (int[] prices : cases) {
+            int expected = 0;
+            for (int buy = 0; buy < prices.length; buy++) {
+                for (int sell = buy + 1; sell < prices.length; sell++) {
+                    expected = Math.max(expected, prices[sell] - prices[buy]);
+                }
+            }
+            assertEquals(expected, test.maxProfitStandardDP(prices.clone()));
+        }
     }
 }

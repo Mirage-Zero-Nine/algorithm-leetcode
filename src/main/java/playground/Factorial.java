@@ -9,9 +9,11 @@ package playground;
 public class Factorial {
 
     public int factorial(int num) {
-
-        if (num == 2) {
-            return 2;
+        if (num < 0) {
+            throw new IllegalArgumentException("Factorial is undefined for negative numbers");
+        }
+        if (num <= 1) {
+            return 1;
         }
         return num * factorial(num - 1);
     }

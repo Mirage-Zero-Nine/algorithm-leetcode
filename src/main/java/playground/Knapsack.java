@@ -21,26 +21,19 @@ public class Knapsack {
      */
     public int knapsack(int[] weight, int[] value, int maxWeight) {
 
-        if (weight.length == 1) {
-            return value[0];
-        }
-        if (weight.length != value.length) {
+        if (weight == null || value == null || weight.length != value.length || maxWeight < 0) {
             throw new IllegalArgumentException("Weight array and value array should be same! ");
         }
-
-        int[][] dp = new int[weight.length][maxWeight];
-
-        for (int i = 0; i < maxWeight; i++) {
-            dp[weight.length - 1][i] = (weight[weight.length - 1] > i) ? 0 : value[value.length - 1];
-        }
-
-        for (int i = weight.length - 2; i > -1; i--) {
-            for (int j = 0; j < maxWeight; j++) {
-                dp[i][j] = (j >= weight[i]) ? Math.max(dp[i + 1][j - weight[i]] + value[i], dp[i + 1][j]) : dp[i + 1][j];
+        int[][] dp = new int[weight.length + 1][maxWeight + 1];
+        for (int i = weight.length - 1; i >= 0; i--) {
+            for (int capacity = 0; capacity <= maxWeight; capacity++) {
+                dp[i][capacity] = dp[i + 1][capacity];
+                if (weight[i] >= 0 && weight[i] <= capacity) {
+                    dp[i][capacity] = Math.max(dp[i][capacity], value[i] + dp[i + 1][capacity - weight[i]]);
+                }
             }
         }
-
-        return dp[0][maxWeight - 1];
+        return dp[0][maxWeight];
     }
 
     public static void main(String[] args) {

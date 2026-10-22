@@ -26,6 +26,6 @@ public class LengthOfLongestIncreasingSubarray {
             }
         }
 
-        return max;
+        return Math.max(max, tmp);
     }
 }

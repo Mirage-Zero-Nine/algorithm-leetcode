@@ -94,6 +94,28 @@ public class MinCostII_265Test {
         assertEquals(expected, test.minCostII(parse(encoded)));
     }
 
+    @Test
+    public void exercisesNaiveApproachOnDistinctInputs() {
+        for (int houses = 1; houses <= 20; houses++) {
+            int colors = 3;
+            int[][] costs = new int[houses][colors];
+            for (int house = 0; house < houses; house++) {
+                for (int color = 0; color < colors; color++) {
+                    costs[house][color] = 1 + ((house * 2 + color * 3) % 9);
+                }
+            }
+            int expected = reference(costs);
+            assertEquals(expected, test.naiveDP(copy(costs)), "naive houses=" + houses);
+            assertEquals(expected, test.minCostII(copy(costs)), "optimized houses=" + houses);
+        }
+    }
+
+    private static int[][] copy(int[][] costs) {
+        int[][] result = new int[costs.length][];
+        for (int i = 0; i < costs.length; i++) result[i] = costs[i].clone();
+        return result;
+    }
+
     private static int[][] parse(String encoded) {
         String[] rows = encoded.split("\\|"); int[][] result = new int[rows.length][];
         for (int i = 0; i < rows.length; i++) { String[] values = rows[i].split(";"); result[i] = new int[values.length]; for (int j = 0; j < values.length; j++) result[i][j] = Integer.parseInt(values[j]); }

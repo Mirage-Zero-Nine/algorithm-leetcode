@@ -23,7 +23,7 @@ public class BinarySearch {
      * @return position of target, or return -1 if not found
      */
     public int searchPosition(int[] array, int target) {
-        int start = 0, end = array.length;
+        int start = 0, end = array.length - 1;
 
         while (start <= end) {
             int mid = start + (end - start) / 2;

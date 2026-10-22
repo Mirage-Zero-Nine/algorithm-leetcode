@@ -67,6 +67,7 @@ public class MaxProfit_122Test {
         }
         // 5000 transactions of profit 99 each
         assertEquals(495000, test.maxProfit(prices));
+        assertEquals(495000, test.maxProfitGreedy(prices));
     }
 
     @Test
@@ -85,5 +86,20 @@ public class MaxProfit_122Test {
         for (int i = 0; i < values.length; i++) prices[i] = Integer.parseInt(values[i]);
         assertEquals(expected, test.maxProfit(prices));
         assertEquals(expected, test.maxProfitGreedy(prices));
+    }
+
+    @Test
+    public void exercisesGreedyOnTwentyDistinctInputs() {
+        int[][] cases = {
+            {1,2}, {2,1}, {1,3,2}, {3,1,4}, {5,4,3}, {2,2,2}, {1,5,3,6,4},
+            {7,1,5,3,6,4}, {9,2,8,1,7}, {4,6,1,3,2,5}, {10,1,2,3},
+            {3,2,1,4}, {8,1,9}, {2,7,1,8}, {5,1,5,1,5}, {6,4,2,9,1},
+            {1,10,2,9,3,8}, {4,3,2,1,0}, {0,2,1,4}, {11,5,12,3,14}
+        };
+        for (int[] prices : cases) {
+            int expected = 0;
+            for (int i = 1; i < prices.length; i++) expected += Math.max(0, prices[i] - prices[i - 1]);
+            assertEquals(expected, test.maxProfitGreedy(prices.clone()));
+        }
     }
 }

@@ -107,6 +107,19 @@ public class InsertIntoBST_701Test {
         assertEquals(6, result.left.right.left.val);
     }
 
+    @Test
+    public void testIterativeAlternativeInsertsAtBothLeaves() {
+        TreeNode root = new TreeNode(4);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(6);
+
+        TreeNode result = test.iterative(root, 1);
+        result = test.iterative(result, 7);
+
+        assertEquals(1, result.left.left.val);
+        assertEquals(7, result.right.right.val);
+    }
+
     private TreeNode buildBalancedBST(int lo, int hi) {
         if (lo > hi) return null;
         int mid = lo + (hi - lo) / 2;

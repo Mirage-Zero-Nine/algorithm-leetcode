@@ -143,6 +143,8 @@ public class IsMatch_44Test {
         String s = "a".repeat(1000);
         String p = "a*a*a*a*a*a*a*a*a*a*b";
         assertFalse(test.isMatch(s, p));
+        assertFalse(test.dfsImplementation(s, p));
+        assertFalse(test.isMatchGreedy(s, p));
     }
 
     @Test
@@ -157,6 +159,25 @@ public class IsMatch_44Test {
             boolean expected = Boolean.parseBoolean(c[2]);
             assertEquals(expected, test.dfsImplementation(c[0], c[1]));
             assertEquals(expected, test.isMatchGreedy(c[0], c[1]));
+        }
+    }
+
+    @Test
+    public void exercisesDfsAndGreedyOnDistinctContractInputs() {
+        String[][] cases = {
+                {"", "", "true"}, {"", "*", "true"}, {"", "?", "false"},
+                {"a", "?", "true"}, {"a", "a", "true"}, {"a", "b", "false"},
+                {"ab", "a?", "true"}, {"ab", "?b", "true"}, {"ab", "?a", "false"},
+                {"abc", "a*c", "true"}, {"abc", "a*d", "false"}, {"abc", "*b*", "true"},
+                {"abc", "***", "true"}, {"abc", "????", "false"}, {"abcd", "a*d", "true"},
+                {"abcd", "a?c?", "true"}, {"abcd", "a?d", "false"},
+                {"hello", "h*o", "true"}, {"hello", "h?llo", "true"},
+                {"hello", "h?ll", "false"}
+        };
+        for (String[] c : cases) {
+            boolean expected = Boolean.parseBoolean(c[2]);
+            assertEquals(expected, test.dfsImplementation(c[0], c[1]), c[0] + "/" + c[1]);
+            assertEquals(expected, test.isMatchGreedy(c[0], c[1]), c[0] + "/" + c[1]);
         }
     }
 }

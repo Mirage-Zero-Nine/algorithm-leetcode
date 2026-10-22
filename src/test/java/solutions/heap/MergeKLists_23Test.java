@@ -10,6 +10,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
@@ -127,6 +128,41 @@ class MergeKLists_23Test {
     void repeatedCallsDoNotShareStateBetweenInvocations() {
         assertBoth(new int[]{1, 4}, new int[][]{{1}, {4}});
         assertBoth(new int[]{-3, 2, 8}, new int[][]{{-3, 2}, {8}});
+    }
+
+    @Test
+    void handlesManyEmptyListsAroundOneNonEmptyList() {
+        assertBoth(new int[]{-1, 0, 4}, new int[][]{
+                {}, null, {-1, 0, 4}, {}, null, {}
+        });
+    }
+
+    @Test
+    void handlesUnevenOddNumberOfListsWithDuplicateBoundaries() {
+        assertBoth(new int[]{0, 0, 1, 1, 2, 2, 3, 3}, new int[][]{
+                {0, 1, 2, 3}, {0, 1, 2, 3}, {}, null, {}
+        });
+    }
+
+    @Test
+    void directPairMergeHandlesEitherEmptyInput() {
+        ListNode right = buildLists(new int[][]{{2, 5}})[0];
+        assertSame(right, solution.mergeTwoLists(null, right));
+        ListNode left = buildLists(new int[][]{{-3, 7}})[0];
+        assertSame(left, solution.mergeTwoLists(left, null));
+    }
+
+    @Test
+    void divideHandlesAValidSubrangeWithoutTouchingOutsideLists() {
+        ListNode before = buildLists(new int[][]{{-5}})[0];
+        ListNode first = buildLists(new int[][]{{1, 4}})[0];
+        ListNode second = buildLists(new int[][]{{2, 3}})[0];
+        ListNode after = buildLists(new int[][]{{9}})[0];
+        ListNode[] lists = {before, first, second, after};
+
+        assertListEquals(new int[]{1, 2, 3, 4}, solution.divide(lists, 1, 2));
+        assertSame(before, lists[0]);
+        assertSame(after, lists[3]);
     }
 
     private void assertBoth(int[] expected, int[][] values) {

@@ -112,4 +112,12 @@ public class DayOfYear_1154Test {
     public void testAdditional10() {
         assertEquals(365, test.dayOfYear("2100-12-31"));
     }
+
+    @Test
+    public void testJavaApiApproachMatchesManualCalculation() {
+        String[] dates = {"1971-01-01", "1900-03-01", "2000-02-29", "2024-12-31"};
+        for (String date : dates) {
+            assertEquals(test.dayOfYear(date), test.api(date));
+        }
+    }
 }

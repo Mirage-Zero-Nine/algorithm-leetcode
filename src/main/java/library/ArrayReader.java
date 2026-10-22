@@ -21,6 +21,7 @@ public class ArrayReader {
      * @param arr given array
      */
     void setArr(int[] arr) {
+        m.clear();
         for (int i = 0; i < arr.length; i++) {
             m.put(arr[i], i);
         }
