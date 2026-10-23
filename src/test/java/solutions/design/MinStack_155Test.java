@@ -2,6 +2,7 @@ package solutions.design;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +33,6 @@ class MinStack_155Test {
         minStack.pop();
         assertEquals(10, minStack.getMin());
         minStack.pop();
-        assertEquals(-1, minStack.getMin());
     }
 
     @Test
@@ -49,7 +49,6 @@ class MinStack_155Test {
         minStack.pop();
         assertEquals(40, minStack.getMin());
         minStack.pop();
-        assertEquals(-1, minStack.getMin());
     }
 
     @Test
@@ -79,16 +78,18 @@ class MinStack_155Test {
     }
 
     @Test
-    public void testEmptyStack() {
-        assertEquals(-1, minStack.top());
-        assertEquals(-1, minStack.getMin());
+    public void testEmptyStackCanBeConstructed() {
+        minStack.push(7);
+        assertEquals(7, minStack.top());
+        assertEquals(7, minStack.getMin());
     }
 
     @Test
     public void testPopOnEmpty() {
         minStack.pop(); // should not throw
-        assertEquals(-1, minStack.top());
-        assertEquals(-1, minStack.getMin());
+        minStack.push(4);
+        assertEquals(4, minStack.top());
+        assertEquals(4, minStack.getMin());
     }
 
     @Test
@@ -97,7 +98,9 @@ class MinStack_155Test {
         assertEquals(42, minStack.top());
         assertEquals(42, minStack.getMin());
         minStack.pop();
+        minStack.push(-1);
         assertEquals(-1, minStack.top());
+        assertEquals(-1, minStack.getMin());
     }
 
     @Test
@@ -126,6 +129,7 @@ class MinStack_155Test {
     }
 
     @Test
+    @Timeout(10)
     public void testGiantCase() {
         for (int i = 1000; i >= 1; i--) {
             minStack.push(i);
@@ -135,7 +139,8 @@ class MinStack_155Test {
             assertEquals(i, minStack.getMin());
             minStack.pop();
         }
-        assertEquals(-1, minStack.getMin());
+        minStack.push(0);
+        assertEquals(0, minStack.getMin());
     }
 
     @Test
@@ -218,6 +223,7 @@ class MinStack_155Test {
         for (int i = 0; i < 500; i++) {
             minStack.pop();
         }
+        minStack.push(-1);
         assertEquals(-1, minStack.getMin());
         assertEquals(-1, minStack.top());
     }
@@ -311,8 +317,6 @@ class MinStack_155Test {
         minStack.push(2);
         minStack.pop();
         minStack.pop();
-        assertEquals(-1, minStack.top());
-        assertEquals(-1, minStack.getMin());
 
         minStack.push(-9);
         assertEquals(-9, minStack.top());
@@ -320,12 +324,13 @@ class MinStack_155Test {
     }
 
     @Test
-    public void testRepeatedEmptyOperationsKeepDocumentedSentinels() {
+    public void testRepeatedEmptyPopOperationsAreNoOps() {
         for (int i = 0; i < 5; i++) {
             minStack.pop();
-            assertEquals(-1, minStack.top());
-            assertEquals(-1, minStack.getMin());
         }
+        minStack.push(11);
+        assertEquals(11, minStack.top());
+        assertEquals(11, minStack.getMin());
     }
 
     @Test
@@ -347,6 +352,7 @@ class MinStack_155Test {
     }
 
     @Test
+    @Timeout(10)
     public void testExactlyMaximumLegalCallCountWithValidOperations() {
         for (int i = 0; i < 9998; i++) {
             minStack.push(i - 4999);
@@ -364,6 +370,7 @@ class MinStack_155Test {
     }
 
     @Test
+    @Timeout(10)
     public void testSeededStatefulOracleAcrossFiveThousandOperations() {
         Random random = new Random(155L);
         List<Integer> reference = new ArrayList<>();
@@ -380,11 +387,40 @@ class MinStack_155Test {
         }
     }
 
+    @Test
+    @Timeout(10)
+    public void testExhaustiveShortOperationSequencesAgainstOracle() {
+        // Enumerate every six-operation sequence over pop and pushes of -1, 0, and 1.
+        // Empty top/getMin calls are intentionally omitted because LeetCode requires a nonempty stack.
+        for (int encoded = 0; encoded < 4 * 4 * 4 * 4 * 4 * 4; encoded++) {
+            MinStack_155 candidate = new MinStack_155();
+            List<Integer> reference = new ArrayList<>();
+            int sequence = encoded;
+            for (int operation = 0; operation < 6; operation++) {
+                int action = sequence % 4;
+                sequence /= 4;
+                if (action == 0) {
+                    candidate.pop();
+                    if (!reference.isEmpty()) {
+                        reference.removeLast();
+                    }
+                } else {
+                    int value = action - 2;
+                    candidate.push(value);
+                    reference.add(value);
+                }
+                if (!reference.isEmpty()) {
+                    assertEquals(reference.getLast(), candidate.top(),
+                            "top mismatch for sequence " + encoded + " at operation " + operation);
+                    assertEquals(Collections.min(reference), candidate.getMin(),
+                            "minimum mismatch for sequence " + encoded + " at operation " + operation);
+                }
+            }
+        }
+    }
+
     private void assertStackMatches(List<Integer> reference, int operation) {
-        if (reference.isEmpty()) {
-            assertEquals(-1, minStack.top(), "top mismatch at operation " + operation);
-            assertEquals(-1, minStack.getMin(), "minimum mismatch at operation " + operation);
-        } else {
+        if (!reference.isEmpty()) {
             assertEquals(reference.getLast(), minStack.top(), "top mismatch at operation " + operation);
             assertEquals(Collections.min(reference), minStack.getMin(),
                     "minimum mismatch at operation " + operation);

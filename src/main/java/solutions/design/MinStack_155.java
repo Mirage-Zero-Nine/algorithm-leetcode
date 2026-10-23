@@ -1,8 +1,8 @@
 package solutions.design;
 
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
@@ -17,58 +17,73 @@ import java.util.Objects;
  */
 
 public class MinStack_155 {
-    private final List<Integer> values;
-    private final List<Integer> minValues;
+    private final List<int[]> list;
 
     /**
-     * Two lists, one maintains all the values added to the list.
-     * The other list stores all the min values.
-     * Add the new pushed value to min list when it's less than or equal to the current min value.
+     * Creates an empty stack whose entries store both the pushed value and the minimum for the
+     * stack prefix ending at that entry. The last entry consequently contains both the top value
+     * and the current minimum, so every operation reads or removes one list entry. The empty-stack
+     * behavior of {@link #top()} and {@link #getMin()} is outside the problem contract; {@link #pop()}
+     * safely does nothing when the stack is empty.
+     * <p>
+     * Time complexity: O(1) for construction.
+     * Auxiliary space: O(1) for the initial empty stack; O(n) after n pushes.
      */
     public MinStack_155() {
-        values = new ArrayList<>();
-        minValues = new ArrayList<>();
+        list = new ArrayList<>();
     }
 
     /**
-     * Push value to the list.
+     * Pushes a value together with the smaller of that value and the previous prefix minimum.
+     * This cached minimum means that the new last entry immediately answers {@link #getMin()}.
      *
-     * @param val value to be added
+     * Time complexity: Amortized O(1); an occasional dynamic-array resize can take O(n).
+     * Auxiliary space: O(1) beyond the new entry.
+     *
+     * @param value value to add to the top of the stack
      */
-    public void push(int val) {
-        values.add(val);
-        if (minValues.isEmpty() || val <= minValues.getLast()) {
-            minValues.add(val);
-        }
+    public void push(int value) {
+        int min = list.isEmpty() ? value : Math.min(value, list.getLast()[1]);
+
+        // Entry slot 0 is the value; slot 1 is the minimum over this entry and all entries below it.
+        list.add(new int[]{value, min});
     }
 
     /**
-     * Remove the value at top.
+     * Removes the current top entry. Removing the cached pair also restores the value and minimum
+     * that belonged to the preceding stack prefix.
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1) beyond the list storage.
      */
     public void pop() {
-        if (!values.isEmpty()) {
-            if (Objects.equals(values.getLast(), minValues.getLast())) {
-                minValues.removeLast();
-            }
-            values.removeLast();
+        if (!list.isEmpty()) {
+            // The next entry, if any, already contains the correct previous prefix minimum.
+            list.removeLast();
         }
     }
 
     /**
-     * Return the top value.
+     * Returns the value in the last cached pair.
      *
-     * @return top value
+     * @return the current top value; callers must keep the stack nonempty as required by the problem
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1).
      */
     public int top() {
-        return values.isEmpty() ? -1 : values.getLast();
+        return list.getLast()[0];
     }
 
     /**
-     * Return min value.
+     * Returns the prefix minimum cached in the last pair.
      *
-     * @return min value
+     * @return the current minimum; callers must keep the stack nonempty as required by the problem
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1).
      */
     public int getMin() {
-        return minValues.isEmpty() ? -1 : minValues.getLast();
+        return list.getLast()[1];
     }
 }
