@@ -1,6 +1,7 @@
 package solutions.stack;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Given an encoded string, return its decoded string.
@@ -14,49 +15,68 @@ import java.util.Stack;
 
 public class DecodeString_394 {
     /**
-     * Use two stacks to store the repeat time and previous substring when a # of repeat time is found.
-     * When a ']' is found, concatenate repeat substring to previous non-repeat substring.
-     * The concatenated string will be the next repeating part, or becomes the final result if no repetition is found.
+     * Scans the encoding once while keeping decoded text in one builder. Each opening bracket
+     * saves the builder position; the matching repeat count and position are popped together at
+     * the closing bracket. The first copy of the group is already in the builder, so only the
+     * remaining copies are appended. A count of one needs no copy, including in nested groups.
      *
-     * @param s given encoded string
-     * @return decoded string
+     * <p>A valid problem input has encoded length {@code n} from 1 through 30, repeat counts from 1
+     * through 300, and decoded length at most 100,000. A {@code null} or empty input is returned
+     * unchanged, and empty bracket bodies are treated as empty strings. Other inputs must follow
+     * the valid encoding grammar with lowercase English letters and ASCII repeat digits. The input
+     * is not modified.
+     *
+     * <p>Time complexity: O(n + L), where {@code n} is the encoded input length and {@code L} is
+     * the decoded output length. Scanning costs O(n). Each nonempty group snapshot is matched by at
+     * least one appended copy, and all appended copies together account for at most O(L) work.
+     *
+     * <p>Auxiliary space complexity: O(L + d), where {@code d} is the maximum bracket nesting
+     * depth. The working builder and one temporary group snapshot use O(L) space, and the two
+     * stacks store O(d) counts and positions; the returned string uses O(L) output space.
+     *
+     * @param encodedString encoded input to decode
+     * @return the decoded string, or {@code null} when the input is {@code null}
      */
-    public String decodeString(String s) {
-
-        /* Corner case */
-        if (s == null || s.isEmpty()) {
-            return s;
+    public String decodeString(String encodedString) {
+        if (encodedString == null || encodedString.isEmpty()) {
+            return encodedString;
         }
 
-        Stack<Integer> repeat = new Stack<>();      // count of repeating string clip
-        Stack<String> tmp = new Stack<>();          // temporary string clip
+        // These local stacks use ArrayDeque to avoid Stack's unnecessary synchronization.
+        Deque<Integer> repeatCounts = new ArrayDeque<>();
+        Deque<Integer> groupStartIndices = new ArrayDeque<>();
+        StringBuilder decodedString = new StringBuilder();
+        int inputIndex = 0;
 
-        String out = "";
-        int i = 0;
-
-        while (i < s.length()) {
-            if (Character.isDigit(s.charAt(i))) {
-                int digit = 0;
-                while (Character.isDigit(s.charAt(i))) {
-                    digit = 10 * digit + (s.charAt(i++) - '0');      // convert char to digit
+        while (inputIndex < encodedString.length()) {
+            char currentChar = encodedString.charAt(inputIndex);
+            if (Character.isDigit(currentChar)) {
+                int number = 0;
+                while (Character.isDigit(encodedString.charAt(inputIndex))) {
+                    number = number * 10 + (encodedString.charAt(inputIndex++) - '0');
                 }
-                repeat.push(digit);
-            } else if (s.charAt(i) == '[') {
-                tmp.push(out);      // string clip must comes after repeat count
-                out = "";
-                i++;
-            } else if (s.charAt(i) == ']') {
-                StringBuilder sb = new StringBuilder(tmp.pop());     // add previous string clip to the beginning
-                int count = repeat.pop();
-                while (count-- > 0) {
-                    sb.append(out);     // add repeating string clip
+                repeatCounts.push(number);
+            } else if (currentChar == '[') {
+                groupStartIndices.push(decodedString.length());
+                inputIndex++;
+            } else if (currentChar == ']') {
+                // LIFO order pairs these values with the group opened by the matching '['.
+                int repeatCount = repeatCounts.pop();
+                int groupStartIndex = groupStartIndices.pop();
+                int groupLength = decodedString.length() - groupStartIndex;
+                // The fully decoded first copy is already in the builder; skip count-one and empty groups.
+                if (repeatCount > 1 && groupLength > 0) {
+                    // An immutable snapshot keeps appended copies from changing the source body.
+                    String groupContents = decodedString.substring(groupStartIndex);
+                    decodedString.repeat(String.valueOf(groupContents), repeatCount - 1);
                 }
-                out = sb.toString();
-                i++;
+                inputIndex++;
             } else {
-                out += s.charAt(i++);       // adding character to the end of current string clip
+                decodedString.append(currentChar);
+                inputIndex++;
             }
         }
-        return out;
+
+        return decodedString.toString();
     }
 }
