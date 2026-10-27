@@ -48,6 +48,59 @@ public class LongestCommonSubsequence_1143Test {
     }
 
     @Test
+    public void testNullAndEmptyInputs() {
+        assertEquals(0, test.longestCommonSubsequence(null, "abc"));
+        assertEquals(0, test.longestCommonSubsequence("abc", null));
+        assertEquals(0, test.longestCommonSubsequence(null, null));
+        assertEquals(0, test.longestCommonSubsequence("", ""));
+    }
+
+    @Test
+    public void testShorterStringCanBeEitherInput() {
+        assertEquals(3, test.longestCommonSubsequence("abcdefghijkl", "ace"));
+        assertEquals(3, test.longestCommonSubsequence("ace", "abcdefghijkl"));
+        assertEquals(2, test.longestCommonSubsequence("zzxyzz", "xy"));
+        assertEquals(2, test.longestCommonSubsequence("xy", "zzxyzz"));
+    }
+
+    @Test
+    public void testDiagonalAndLeftStateUpdates() {
+        assertEquals(1, test.longestCommonSubsequence("ba", "ab"));
+        assertEquals(2, test.longestCommonSubsequence("abc", "bac"));
+        assertEquals(4, test.longestCommonSubsequence("bdcaba", "abcbdab"));
+        assertEquals(4, test.longestCommonSubsequence("aabbaa", "ababa"));
+    }
+
+    @Test
+    public void testRepeatedCallsDoNotShareState() {
+        assertEquals(3, test.longestCommonSubsequence("abcde", "ace"));
+        assertEquals(0, test.longestCommonSubsequence("xxx", "yyy"));
+        assertEquals(1, test.longestCommonSubsequence("q", "q"));
+        assertEquals(3, test.longestCommonSubsequence("ace", "abcde"));
+    }
+
+    @Test
+    public void testMaximumLengthIdenticalStrings() {
+        String text = "abca".repeat(250);
+        assertEquals(1000, test.longestCommonSubsequence(text, text));
+    }
+
+    @Test
+    public void testMaximumLengthDisjointStrings() {
+        assertEquals(0, test.longestCommonSubsequence("a".repeat(1000), "b".repeat(1000)));
+    }
+
+    @Test
+    public void testMaximumLengthAsymmetricInputsAndBoundaryOverlap() {
+        String repeatedA = "a".repeat(1000);
+        String almostRepeatedA = "a".repeat(999) + "b";
+        assertEquals(1, test.longestCommonSubsequence(repeatedA, "a"));
+        assertEquals(1, test.longestCommonSubsequence("a", repeatedA));
+        assertEquals(999, test.longestCommonSubsequence(repeatedA, almostRepeatedA));
+        assertEquals(999, test.longestCommonSubsequence(almostRepeatedA, repeatedA));
+    }
+
+    @Test
     public void testReversedStrings() {
         assertEquals(1, test.longestCommonSubsequence("abc", "cba"));
         assertEquals(5, test.longestCommonSubsequence("abcba", "abcba"));

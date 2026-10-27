@@ -27,11 +27,11 @@ public class MaxSlidingWindow_239 {
      * returns an empty array.
      *
      * @param nums values to scan
-     * @param k size of each window
+     * @param k    size of each window
      * @return the maximum value for each window, or an empty array for invalid input
      */
     public int[] maxSlidingWindow(int[] nums, int k) {
-        // Return no windows when the input or requested window size cannot describe a valid window.
+        // corner cases
         if (nums == null || nums.length < k || k <= 0) {
             return new int[0];
         }
