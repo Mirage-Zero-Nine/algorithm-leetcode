@@ -1,7 +1,7 @@
 package solutions.monotonicstack;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 
 /**
  * Given an array nums, there is a sliding window of size k moving from the very left of the array to the very right.
@@ -15,43 +15,46 @@ import java.util.LinkedList;
 
 public class MaxSlidingWindow_239 {
     /**
-     * Use a deque to save the index of largest value under current sliding window.
-     * Largest is saved in head of queue.
-     * Each time, if head of queue is out of sliding window, remove it.
-     * Remove all elements starts from end of deque that is smaller than current value, and add it to the end of queue.
-     * Find value based on index stores in head of queue to obtain current sliding window max.
+     * Uses a deque, a queue that allows adding or removing at either end, to keep candidate
+     * indices from oldest to newest, with values that never increase from front to back. The
+     * front gives the current maximum. For each index {@code i}, remove expired front indices
+     * before {@code i - k + 1}, remove smaller back values, then append {@code i}. The deque starts
+     * empty, and a result is written once the first full window ends at {@code i = k - 1}. Each
+     * index is added once and removed at most once, so the scan takes
+     * {@code O(n)} time and {@code O(k)} auxiliary space for an input of length {@code n}; the
+     * returned array uses {@code O(n - k + 1)} output space. The input is not modified, and each
+     * call has independent local state. A null array or a window size outside {@code 1..n}
+     * returns an empty array.
      *
-     * @param nums given nums
-     * @param k    size of sliding window
-     * @return all max value in each sliding window
+     * @param nums values to scan
+     * @param k size of each window
+     * @return the maximum value for each window, or an empty array for invalid input
      */
     public int[] maxSlidingWindow(int[] nums, int k) {
-        int n = nums.length;
-
-        /* Corner case */
-        if (n == 0) {
-            return nums;
+        // Return no windows when the input or requested window size cannot describe a valid window.
+        if (nums == null || nums.length < k || k <= 0) {
+            return new int[0];
         }
 
-        Deque<Integer> q = new LinkedList<>();
-        int[] out = new int[n - k + 1];
+        Deque<Integer> q = new ArrayDeque<>();
+        int[] output = new int[nums.length - k + 1];
 
-        for (int i = 0; i < n; i++) {
-
-            if (!q.isEmpty() && i - q.peek() + 1 > k) {
+        for (int i = 0; i < nums.length; i++) {
+            // An index j expires when i - j + 1 > k; equality means it still belongs to this window.
+            while (!q.isEmpty() && i - q.peek() + 1 > k) {
                 q.poll();
             }
-
-            while (!q.isEmpty() && nums[i] >= nums[q.peekLast()]) {
+            // A newer, larger value stays in the window longer, so smaller tail values can never win.
+            // Keep equal values; their indices let them expire separately.
+            while (!q.isEmpty() && nums[q.peekLast()] < nums[i]) {
                 q.pollLast();
             }
-
-            q.offer(i);
+            q.add(i);
+            // Before i reaches k - 1, the input seen so far is not yet a complete window.
             if (!q.isEmpty() && i - k + 1 >= 0) {
-                out[i - k + 1] = nums[q.peek()];
+                output[i - k + 1] = nums[q.peek()];
             }
         }
-
-        return out;
+        return output;
     }
 }
