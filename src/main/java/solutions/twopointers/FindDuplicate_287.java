@@ -17,21 +17,46 @@ package solutions.twopointers;
 
 public class FindDuplicate_287 {
     /**
-     * Treat each value as the next pointer in a functional graph. Floyd's
-     * tortoise-and-hare cycle detection finds the duplicate without changing
-     * the read-only input array.
+     * Uses Floyd's tortoise-and-hare algorithm to find the cycle entrance in the
+     * graph represented by the array, without changing the read-only input.
+     * Treating {@code nums[i]} as the next node from node {@code i} makes the
+     * duplicate the cycle entrance for the walk starting at node 0: two indexes
+     * point to that value, so this walk eventually enters the cycle there.
+     * <p>
+     * For example, in {@code [1, 3, 4, 2, 2]},
+     * following values gives {@code 0 -> 1 -> 3 -> 2 -> 4 -> 2}; the repeated
+     * value is the entrance at {@code 2}. The first loop makes a one-step
+     * pointer and a two-step pointer meet inside that cycle. Resetting one
+     * pointer to node {@code 0} works because if the slow pointer takes {@code t}
+     * steps to meet the fast pointer, the fast pointer has taken {@code 2t};
+     * therefore {@code t} is a whole number of cycle lengths. If the entrance
+     * is {@code a} steps from node 0, then advancing the meeting pointer another
+     * {@code a} steps reaches that entrance, so equal one-step walks meet there.
      *
-     * @param nums given array
-     * @return duplicate number in array
+     * @param nums array containing values from 1 through {@code nums.length - 1}
+     *             with exactly one value repeated; null or empty input returns -1
+     * @return the repeated value
+     * <p>
+     * Time complexity: O(n), where n is the number of values in the array.
+     * Auxiliary space: O(1).
      */
     public int findDuplicate(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
 
-        int slow = nums[0];
-        int fast = nums[nums[0]];
+        // The two pointers start at different speeds. Every array lookup is a
+        // valid next-node lookup under the problem's value-range contract.
+        int slow = nums[0], fast = nums[nums[0]];
+
         while (slow != fast) {
             slow = nums[slow];
             fast = nums[nums[fast]];
         }
+
+        // Meeting proves that both pointers are in the cycle, but not yet at
+        // its entrance. From node 0 and from the meeting node, equal-speed
+        // walks reach that entrance at the same time modulo the cycle length.
         slow = 0;
         while (slow != fast) {
             slow = nums[slow];
