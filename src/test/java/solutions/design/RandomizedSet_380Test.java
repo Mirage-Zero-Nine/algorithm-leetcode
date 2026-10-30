@@ -7,9 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
-/** Tests the set semantics and observable random-value contract of {@link RandomizedSet_380}. */
+/**
+ * Tests the set semantics and observable random-value contract of {@link RandomizedSet_380}.
+ */
 public class RandomizedSet_380Test {
 
     @Test
@@ -146,11 +149,11 @@ public class RandomizedSet_380Test {
     @Test
     public void absentRemovalNeverChangesTheCurrentSet() {
         RandomizedSet_380 set = new RandomizedSet_380();
-        for (int value : new int[] {4, 8, 15, 16, 23, 42}) {
+        for (int value : new int[]{4, 8, 15, 16, 23, 42}) {
             assertTrue(set.insert(value));
         }
         Set<Integer> expected = Set.of(4, 8, 15, 16, 23, 42);
-        for (int value : new int[] {-1, 0, 7, 24, 43, Integer.MIN_VALUE, Integer.MAX_VALUE}) {
+        for (int value : new int[]{-1, 0, 7, 24, 43, Integer.MIN_VALUE, Integer.MAX_VALUE}) {
             assertFalse(set.remove(value));
             assertRandomValueIn(set, expected);
         }
@@ -190,25 +193,22 @@ public class RandomizedSet_380Test {
     }
 
     @Test
-    public void randomSamplesFromFourValuesHaveBroadlyBalancedFrequencies() {
+    public void samplingFourValuesLeavesEveryValueAvailableForRemoval() {
         RandomizedSet_380 set = new RandomizedSet_380();
         int[] values = {-3, -1, 2, 7};
         for (int value : values) {
             assertTrue(set.insert(value));
         }
 
-        int samples = 20_000;
-        int[] counts = new int[values.length];
-        for (int i = 0; i < samples; i++) {
-            int random = set.getRandom();
-            int index = indexOf(values, random);
-            assertTrue(index >= 0, () -> "getRandom returned an absent value: " + random);
-            counts[index]++;
+        Set<Integer> expected = Set.of(-3, -1, 2, 7);
+        // Every valid random sequence passes; frequency thresholds could reject a valid generator.
+        for (int i = 0; i < 20_000; i++) {
+            assertRandomValueIn(set, expected);
         }
-        // A very wide interval validates approximate uniformity without making this test seed-sensitive.
-        for (int count : counts) {
-            assertTrue(count > samples / 40, "a value was sampled implausibly rarely: " + count);
-            assertTrue(count < samples / 2, "a value was sampled implausibly often: " + count);
+        for (int value : values) {
+            assertFalse(set.insert(value));
+            assertTrue(set.remove(value));
+            assertFalse(set.remove(value));
         }
     }
 
@@ -247,10 +247,10 @@ public class RandomizedSet_380Test {
         for (int value = 0; value < 8; value++) {
             assertTrue(set.insert(value));
         }
-        for (int value : new int[] {2, 5, 0, 6}) {
+        for (int value : new int[]{2, 5, 0, 6}) {
             assertTrue(set.remove(value));
         }
-        for (int value : new int[] {2, 5, 0, 6}) {
+        for (int value : new int[]{2, 5, 0, 6}) {
             assertTrue(set.insert(value));
         }
         Set<Integer> expected = new HashSet<>();
@@ -271,7 +271,7 @@ public class RandomizedSet_380Test {
         Set<Integer> expected = new HashSet<>();
         Random random = new Random(380_2026L);
         int[] values = {
-            Integer.MIN_VALUE, -1_000, -7, -1, 0, 1, 7, 1_000, 42, Integer.MAX_VALUE
+                Integer.MIN_VALUE, -1_000, -7, -1, 0, 1, 7, 1_000, 42, Integer.MAX_VALUE
         };
 
         for (int i = 0; i < 6_000; i++) {
@@ -308,11 +308,11 @@ public class RandomizedSet_380Test {
     @Test
     public void smallExhaustiveInsertRemoveSequencesMatchTheOracle() {
         int[][] sequences = {
-            {0, 1, 2},
-            {2, 1, 0},
-            {1, 1, 0, 2, 1},
-            {-1, 0, -1, 1, 0},
-            {Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, 0}
+                {0, 1, 2},
+                {2, 1, 0},
+                {1, 1, 0, 2, 1},
+                {-1, 0, -1, 1, 0},
+                {Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, 0}
         };
         for (int[] sequence : sequences) {
             RandomizedSet_380 set = new RandomizedSet_380();
@@ -330,17 +330,154 @@ public class RandomizedSet_380Test {
         }
     }
 
+    @Test
+    public void zeroIsAnOrdinaryValueThroughRemovalAndReuse() {
+        RandomizedSet_380 set = new RandomizedSet_380();
+        assertTrue(set.insert(0));
+        assertTrue(set.insert(-1));
+        assertTrue(set.remove(0));
+        assertEquals(-1, set.getRandom());
+        assertTrue(set.insert(0));
+        assertFalse(set.insert(0));
+        assertTrue(set.remove(-1));
+        assertEquals(0, set.getRandom());
+    }
+
+    @Test
+    public void removingTheMovedLastValueUsesItsUpdatedIndex() {
+        RandomizedSet_380 set = new RandomizedSet_380();
+        for (int value : new int[]{4, 8, 12, 16, 20}) {
+            assertTrue(set.insert(value));
+        }
+        assertTrue(set.remove(12));
+        assertTrue(set.remove(20));
+        assertFalse(set.remove(20));
+        assertTrue(set.remove(4));
+        assertTrue(set.remove(16));
+        assertEquals(8, set.getRandom());
+    }
+
+    @Test
+    public void repeatedlyRemovingTheReplacementPreservesTheOtherSlot() {
+        RandomizedSet_380 set = new RandomizedSet_380();
+        for (int value = 1; value <= 8; value++) {
+            assertTrue(set.insert(value));
+        }
+        // Each removal replaces the first slot with the next value removed.
+        for (int value : new int[]{1, 8, 7, 6, 5, 4, 3}) {
+            assertTrue(set.remove(value));
+            assertFalse(set.remove(value));
+        }
+        assertEquals(2, set.getRandom());
+    }
+
+    @Test
+    public void duplicateInsertionAfterRelocationDoesNotLeaveAnExtraCopy() {
+        RandomizedSet_380 set = new RandomizedSet_380();
+        assertTrue(set.insert(11));
+        assertTrue(set.insert(22));
+        assertTrue(set.insert(33));
+        assertTrue(set.remove(11));
+        assertFalse(set.insert(33));
+        assertTrue(set.remove(33));
+        assertFalse(set.remove(33));
+        assertEquals(22, set.getRandom());
+    }
+
+    @Test
+    public void equalValuesOutsideTheBoxedIntegerCacheAreStillDuplicates() {
+        RandomizedSet_380 set = new RandomizedSet_380();
+        assertTrue(set.insert(10_000));
+        assertFalse(set.insert(10_000));
+        assertTrue(set.insert(-10_000));
+        assertTrue(set.remove(10_000));
+        assertFalse(set.remove(10_000));
+        assertEquals(-10_000, set.getRandom());
+    }
+
+    @Test
+    public void reinsertingTheRemovedValueAfterASwapKeepsBothValuesIndependent() {
+        RandomizedSet_380 set = new RandomizedSet_380();
+        assertTrue(set.insert(13));
+        assertTrue(set.insert(29));
+        assertTrue(set.remove(13));
+        assertTrue(set.insert(13));
+        assertFalse(set.insert(29));
+        assertTrue(set.remove(29));
+        assertEquals(13, set.getRandom());
+        assertTrue(set.remove(13));
+        assertFalse(set.remove(29));
+    }
+
+    @Test
+    public void repeatedBitPatternsRemainDistinctAcrossGrowthAndSwapRemoval() {
+        RandomizedSet_380 set = new RandomizedSet_380();
+        for (int value = 0; value < 128; value++) {
+            assertTrue(set.insert((value << 16) | value));
+        }
+        for (int value = 0; value < 128; value += 2) {
+            assertTrue(set.remove((value << 16) | value));
+        }
+        for (int value = 127; value >= 1; value -= 2) {
+            int storedValue = (value << 16) | value;
+            assertFalse(set.insert(storedValue));
+            if (value == 1) {
+                assertEquals(storedValue, set.getRandom());
+            }
+            assertTrue(set.remove(storedValue));
+        }
+        assertFalse(set.remove(0));
+    }
+
+    @Test
+    public void maximumCallBudgetCanBeUsedEntirelyForDistinctInsertions() {
+        RandomizedSet_380 set = new RandomizedSet_380();
+        // Exactly 200,000 calls also reach the largest possible number of stored values.
+        for (int value = 0; value < 200_000; value++) {
+            assertTrue(set.insert(value));
+        }
+    }
+
+    @Test
+    public void everyFiveOperationSequenceOverThreeValuesMatchesTheOracle() {
+        int[] values = {-1, 0, 1};
+        int operationCount = 2 * values.length;
+        int sequenceCount = 1;
+        for (int step = 0; step < 5; step++) {
+            sequenceCount *= operationCount;
+        }
+
+        // Six choices per step cover insert/remove for each value, including all shorter prefixes.
+        for (int sequence = 0; sequence < sequenceCount; sequence++) {
+            RandomizedSet_380 actual = new RandomizedSet_380();
+            Set<Integer> expected = new HashSet<>();
+            int remaining = sequence;
+            for (int step = 0; step < 5; step++) {
+                int operation = remaining % operationCount;
+                remaining /= operationCount;
+                int value = values[operation / 2];
+                if (operation % 2 == 0) {
+                    assertEquals(expected.add(value), actual.insert(value));
+                } else {
+                    assertEquals(expected.remove(value), actual.remove(value));
+                }
+                if (!expected.isEmpty()) {
+                    assertRandomValueIn(actual, expected);
+                }
+            }
+            // Draining all possible values checks retained membership independently of sampling.
+            for (int value : values) {
+                if (expected.size() == 1) {
+                    assertEquals(expected.iterator().next().intValue(), actual.getRandom());
+                }
+                assertEquals(expected.remove(value), actual.remove(value));
+            }
+        }
+    }
+
     private static void assertRandomValueIn(RandomizedSet_380 set, Set<Integer> expected) {
         int actual = set.getRandom();
         assertTrue(expected.contains(actual), () -> "unexpected random value: " + actual);
     }
 
-    private static int indexOf(int[] values, int target) {
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] == target) {
-                return i;
-            }
-        }
-        return -1;
-    }
 }
