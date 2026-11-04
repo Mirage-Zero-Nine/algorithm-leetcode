@@ -2,19 +2,27 @@ package solutions.design;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.InvocationInterceptor;
+import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 
-/**
- * @author BorisMirage
- * Time: 2022/11/04 23:09
- * Created with IntelliJ IDEA
- */
-
+@Timeout(15)
+@ExtendWith(MyHashMap_706Test.ProcessTimeoutExtension.class)
 public class MyHashMap_706Test {
 
     private MyHashMap_706 test;
@@ -106,6 +114,7 @@ public class MyHashMap_706Test {
     }
 
     @Test
+    @Timeout(10)
     public void testGiantOperationSequenceAcrossRehash() {
         for (int i = 0; i < 300; i++) {
             test.put(i, i * 10);
@@ -193,6 +202,7 @@ public class MyHashMap_706Test {
     }
 
     @Test
+    @Timeout(10)
     public void testStress10000OpsRandomSeed42() {
         Random rng = new Random(42L);
         HashMap<Integer, Integer> reference = new HashMap<>();
@@ -267,6 +277,48 @@ public class MyHashMap_706Test {
     }
 
     @Test
+    public void testMappingCountAndCapacityAccountingAcrossCollisionsAndThreshold() {
+        // These narrow private-field checks cover resize accounting that is otherwise invisible
+        // through map results: colliding keys still count as separate mappings, while updates and
+        // missing/repeated removals must not alter the count.
+        test.put(0, 0);
+        test.put(256, 1);
+        test.put(512, 2);
+        assertEquals(3, privateInt(test, "mapSize"));
+        assertEquals(256, privateInt(test, "maxSize"));
+
+        test.put(0, 10);
+        test.remove(768);
+        assertEquals(3, privateInt(test, "mapSize"));
+        test.remove(256);
+        test.remove(256);
+        assertEquals(2, privateInt(test, "mapSize"));
+        test.remove(0);
+        test.remove(512);
+        assertEquals(0, privateInt(test, "mapSize"));
+
+        for (int key = 0; key < 192; key++) {
+            test.put(key, key);
+        }
+        assertEquals(192, privateInt(test, "mapSize"));
+        assertEquals(256, privateInt(test, "maxSize"));
+        test.put(192, 192);
+        assertEquals(193, privateInt(test, "mapSize"));
+        assertEquals(512, privateInt(test, "maxSize"));
+        assertEquals(192, test.get(192));
+    }
+
+    private static int privateInt(MyHashMap_706 map, String fieldName) {
+        try {
+            var field = MyHashMap_706.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.getInt(map);
+        } catch (ReflectiveOperationException exception) {
+            throw new AssertionError("Unable to inspect " + fieldName, exception);
+        }
+    }
+
+    @Test
     public void testRehashPreservesMappingsFromOneCollisionChain() {
         int[] collidingKeys = {0, 256, 512, 768, 1_024, 1_280};
         for (int i = 0; i < collidingKeys.length; i++) {
@@ -301,6 +353,7 @@ public class MyHashMap_706Test {
     }
 
     @Test
+    @Timeout(10)
     public void testMultipleRehashesAndMutationsMatchReferenceMap() {
         HashMap<Integer, Integer> expected = new HashMap<>();
 
@@ -404,6 +457,7 @@ public class MyHashMap_706Test {
     }
 
     @Test
+    @Timeout(10)
     public void testExactTenThousandCallsMatchIndependentOracle() {
         HashMap<Integer, Integer> expected = new HashMap<>();
 
@@ -423,6 +477,150 @@ public class MyHashMap_706Test {
                 }
                 default -> throw new AssertionError("unreachable operation type");
             }
+        }
+    }
+
+    @Test
+    @Timeout(10)
+    public void testCollisionHeavyRehashAndRemovalMatchReferenceMap() {
+        HashMap<Integer, Integer> expected = new HashMap<>();
+
+        // Multiples of 256 deliberately collide at the initial capacity; resizing must preserve
+        // every mapping, and removing a chain member must not corrupt later resize accounting.
+        for (int i = 0; i < 2_000; i++) {
+            int key = i * 256;
+            int value = (i * 31) % 1_000_001;
+            test.put(key, value);
+            expected.put(key, value);
+        }
+        for (int i = 0; i < 2_000; i += 3) {
+            int key = i * 256;
+            test.remove(key);
+            expected.remove(key);
+        }
+        for (int i = 1; i < 2_000; i += 7) {
+            int key = i * 256;
+            int value = 1_000_000 - i;
+            test.put(key, value);
+            expected.put(key, value);
+        }
+
+        for (int i = 0; i < 2_000; i++) {
+            int key = i * 256;
+            assertEquals(expected.getOrDefault(key, -1), test.get(key),
+                    "Mismatch for colliding key " + key);
+        }
+        assertEquals(-1, test.get(2_000 * 256));
+    }
+
+    @Test
+    public void testExhaustiveBoundedStateSequences() {
+        // Complete operation sequences of lengths 0..4 over three colliding keys. Each step is
+        // checked against a fresh HashMap oracle; 1 + 12 + 144 + 1,728 + 20,736 = 22,621 cases.
+        int[] keys = {0, 256, 512};
+        int scenarioCount = enumerateSequences(keys, new int[4], 0);
+        assertEquals(22_621, scenarioCount);
+    }
+
+    private int enumerateSequences(int[] keys, int[] operations, int depth) {
+        runSequence(keys, operations, depth);
+        int count = 1;
+        if (depth == operations.length) {
+            return count;
+        }
+        for (int operation = 0; operation < 12; operation++) {
+            operations[depth] = operation;
+            count += enumerateSequences(keys, operations, depth + 1);
+        }
+        return count;
+    }
+
+    private void runSequence(int[] keys, int[] operations, int length) {
+        MyHashMap_706 actual = new MyHashMap_706();
+        HashMap<Integer, Integer> expected = new HashMap<>();
+        for (int i = 0; i < length; i++) {
+            int choice = operations[i];
+            int keyIndex = choice / 4;
+            int action = choice % 4;
+            int key = keys[keyIndex];
+            if (action == 0) {
+                actual.put(key, 0);
+                expected.put(key, 0);
+            } else if (action == 1) {
+                actual.put(key, 1);
+                expected.put(key, 1);
+            } else if (action == 2) {
+                assertEquals(expected.getOrDefault(key, -1), actual.get(key),
+                        "get mismatch at step " + i + " for sequence "
+                                + Arrays.toString(Arrays.copyOf(operations, length)));
+            } else {
+                actual.remove(key);
+                expected.remove(key);
+            }
+            for (int candidate : keys) {
+                assertEquals(expected.getOrDefault(candidate, -1), actual.get(candidate),
+                        "state mismatch at step " + i + " for sequence "
+                                + Arrays.toString(Arrays.copyOf(operations, length)));
+            }
+        }
+    }
+
+    // Hash-map loops run in the child JVM, which can be forcibly terminated if a regression hangs.
+    static final class ProcessTimeoutExtension implements InvocationInterceptor {
+        @Override
+        public void interceptTestMethod(Invocation<Void> invocation,
+                                        ReflectiveInvocationContext<Method> context,
+                                        ExtensionContext extensionContext) throws Throwable {
+            Path log = Files.createTempFile("my-hash-map-706-test-", ".log");
+            Process process = null;
+            try {
+                process = new ProcessBuilder(
+                        System.getProperty("java.home") + "/bin/java", "-cp",
+                        System.getProperty("surefire.test.class.path", System.getProperty("java.class.path")),
+                        MyHashMap_706Test.class.getName(), context.getExecutable().getName())
+                        .redirectErrorStream(true)
+                        .redirectOutput(log.toFile())
+                        .start();
+                if (!process.waitFor(10, TimeUnit.SECONDS)) {
+                    process.destroyForcibly();
+                    if (!process.waitFor(2, TimeUnit.SECONDS)) {
+                        fail("test child could not be terminated: " + context.getExecutable().getName());
+                    }
+                    fail("test method exceeded enforceable 10-second process limit: "
+                            + context.getExecutable().getName());
+                }
+                if (process.exitValue() != 0) {
+                    fail("child test failed: " + context.getExecutable().getName()
+                            + System.lineSeparator() + Files.readString(log));
+                }
+                invocation.skip();
+            } finally {
+                try {
+                    if (process != null && process.isAlive()) {
+                        process.destroyForcibly();
+                        if (!process.waitFor(2, TimeUnit.SECONDS)) {
+                            fail("test child could not be terminated: " + context.getExecutable().getName());
+                        }
+                    }
+                } finally {
+                    Files.deleteIfExists(log);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            throw new IllegalArgumentException("missing test method");
+        }
+        try {
+            MyHashMap_706Test suite = new MyHashMap_706Test();
+            suite.setUp();
+            MyHashMap_706Test.class.getDeclaredMethod(args[0]).invoke(suite);
+        } catch (InvocationTargetException exception) {
+            throw new RuntimeException(exception.getCause());
+        } catch (ReflectiveOperationException exception) {
+            throw new RuntimeException(exception);
         }
     }
 }
