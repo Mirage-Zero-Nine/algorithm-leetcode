@@ -22,94 +22,109 @@ package solutions.design;
  * Created with IntelliJ IDEA
  */
 public class MyCircularQueue_622 {
-    private final int[] arr;
+    private final int[] array;
     private int size = 0;
-    private final int limit;
-    private int front = 0;
-    private int rear = -1;
+    private int start;
 
     /**
-     * Initialization of circular queue. Set the size of the queue to be k.
+     * Initializes an empty circular queue with a fixed capacity {@code k}.
+     * <p>
+     * This queue uses a fixed-size array with a wrap-around mechanism. When the end of
+     * the array is reached, indexes loop back to zero, allowing removed slots to be
+     * reused without shifting existing elements.
+     * <p>
+     * {@code start} tracks the oldest value, and {@code size} tracks the total elements.
+     * New items are added at {@code (start + size) % k}.
+     *
+     * @param k the maximum capacity of the queue
+     * @implNote Time complexity: O(k) for array allocation. Auxiliary space: O(k).
      */
     public MyCircularQueue_622(int k) {
-        arr = new int[k];
-        limit = k;
+        start = 0;
+        array = new int[k];
     }
 
     /**
-     * Insert an element into the circular queue. Return true if the operation is successful.
-     *
-     * @param value insert value
-     * @return true if the operation is successful
+     * Adds a value at the logical tail when capacity remains.  The physical tail
+     * is computed from the front offset and current size, so it wraps to index
+     * zero after reaching the end of the array.
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1).
      */
     public boolean enQueue(int value) {
-        if (isFull()) {
-            return false;
+        if (!isFull()) {
+            // The next free logical position may be before start after wrapping.
+            int index = (start + size) % array.length;
+            array[index] = value;
+            size++;
+            return true;
         }
-
-        rear = (rear + 1) % limit;
-        arr[rear] = value;
-
-        size++;
-        return true;
+        return false;
     }
 
     /**
-     * Delete an element from the circular queue. Return true if the operation is successful.
-     *
-     * @return true if the operation is successful
+     * Removes the oldest value by advancing the front offset and reducing the
+     * logical size.  The removed array cell need not be cleared because size
+     * keeps stale storage outside the queue's logical contents.
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1).
      */
     public boolean deQueue() {
-        if (isEmpty()) {
-            return false;
+        if (!isEmpty()) {
+            // Moving start, rather than shifting values, preserves FIFO order in O(1).
+            start = (start + 1) % array.length;
+            size--;
+            return true;
         }
-
-        front = (front + 1) % limit;
-        size--;
-        return true;
+        return false;
     }
 
     /**
-     * Get the front item from the queue.
-     *
-     * @return front item from the queue (head of queue)
+     * Returns the oldest queued value, or {@code -1} when the queue is empty.
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1).
      */
     public int Front() {
         if (isEmpty()) {
             return -1;
         }
-
-        return arr[front];
+        return array[start];
     }
 
     /**
-     * Get the last item from the queue.
-     *
-     * @return last item from the queue (rear of queue)
+     * Returns the newest queued value, or {@code -1} when the queue is empty.
+     * The modulo expression locates the logical tail even after wraparound.
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1).
      */
     public int Rear() {
         if (isEmpty()) {
             return -1;
         }
-
-        return arr[rear];
+        return array[(start + size - 1) % array.length];
     }
 
     /**
-     * Checks whether the circular queue is empty or not.
-     *
-     * @return true if the queue is empty
+     * Reports whether no logical elements are stored.
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1).
      */
     public boolean isEmpty() {
         return size == 0;
     }
 
     /**
-     * Checks whether the circular queue is full or not.
-     *
-     * @return true if the queue is full
+     * Reports whether all allocated slots currently hold logical elements.
+     * <p>
+     * Time complexity: O(1).
+     * Auxiliary space: O(1).
      */
     public boolean isFull() {
-        return size == limit;
+        return size == array.length;
     }
 }
