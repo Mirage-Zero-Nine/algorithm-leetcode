@@ -8,6 +8,8 @@ import java.util.ArrayDeque;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Timeout.ThreadMode;
 
 public class MyCircularQueue_622Test {
 
@@ -104,6 +106,7 @@ public class MyCircularQueue_622Test {
     }
 
     @Test
+    @Timeout(value = 5, unit = java.util.concurrent.TimeUnit.SECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
     public void testGiantCase() {
         MyCircularQueue_622 q = new MyCircularQueue_622(1000);
         for (int i = 0; i < 1000; i++) assertTrue(q.enQueue(i));
@@ -239,6 +242,8 @@ public class MyCircularQueue_622Test {
 
     @Test
     public void testStoredMinusOneIsNotAnEmptyQueue() {
+        // The published value range is 0..1000; this retained signed-value
+        // extension verifies that occupancy, rather than the -1 sentinel, defines emptiness.
         MyCircularQueue_622 q = new MyCircularQueue_622(2);
 
         assertTrue(q.enQueue(-1));
@@ -448,6 +453,8 @@ public class MyCircularQueue_622Test {
         for (int i = 0; i < 3_000; i++) {
             switch (random.nextInt(6)) {
                 case 0 -> {
+                    // Signed values intentionally extend the published 0..1000 range;
+                    // the queue's int contract preserves them without special-casing.
                     int value = random.nextInt(2001) - 1000;
                     boolean expected = ref.size() < capacity;
                     assertEquals(expected, q.enQueue(value));
@@ -469,6 +476,58 @@ public class MyCircularQueue_622Test {
                 default -> throw new AssertionError("unreachable");
             }
             assertQueueState(q, ref, capacity);
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = java.util.concurrent.TimeUnit.SECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
+    public void testExhaustiveShortOperationSequencesAgainstIndependentOracle() {
+        // Enumerate every 7-operation sequence over enqueue, dequeue, front, and
+        // rear for capacities 1..3: 3 * 4^7 = 49,152 deterministic sequences.
+        // This bounded exhaustive set exercises every short transition, including
+        // failed operations and wraparound, while the larger tests cover scale.
+        int sequenceCount = 1;
+        for (int i = 0; i < 7; i++) {
+            sequenceCount *= 4;
+        }
+
+        for (int capacity = 1; capacity <= 3; capacity++) {
+            for (int sequence = 0; sequence < sequenceCount; sequence++) {
+                int currentSequence = sequence;
+                MyCircularQueue_622 queue = new MyCircularQueue_622(capacity);
+                ArrayDeque<Integer> reference = new ArrayDeque<>();
+                int encoded = sequence;
+                for (int step = 0; step < 7; step++) {
+                    int currentStep = step;
+                    int operation = encoded & 3;
+                    encoded >>>= 2;
+                    switch (operation) {
+                        case 0 -> {
+                            int value = sequence + step - 20;
+                            boolean expected = reference.size() < capacity;
+                            assertEquals(expected, queue.enQueue(value),
+                                    () -> "enqueue sequence=" + currentSequence + ", step=" + currentStep);
+                            if (expected) {
+                                reference.addLast(value);
+                            }
+                        }
+                        case 1 -> {
+                            boolean expected = !reference.isEmpty();
+                            assertEquals(expected, queue.deQueue(),
+                                    () -> "dequeue sequence=" + currentSequence + ", step=" + currentStep);
+                            if (expected) {
+                                reference.removeFirst();
+                            }
+                        }
+                        case 2 -> assertEquals(reference.isEmpty() ? -1 : reference.peekFirst(),
+                                queue.Front(), () -> "front sequence=" + currentSequence + ", step=" + currentStep);
+                        case 3 -> assertEquals(reference.isEmpty() ? -1 : reference.peekLast(),
+                                queue.Rear(), () -> "rear sequence=" + currentSequence + ", step=" + currentStep);
+                        default -> throw new AssertionError("unreachable operation");
+                    }
+                    assertQueueState(queue, reference, capacity);
+                }
+            }
         }
     }
 
