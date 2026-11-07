@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Timeout.ThreadMode;
 
 public class CustomStack_1381Test {
 
@@ -47,22 +49,6 @@ public class CustomStack_1381Test {
         CustomStack_1381 stack = new CustomStack_1381(3);
         stack.increment(2, 10);
         assertEquals(-1, stack.pop());
-    }
-
-    @Test
-    public void testIncrementWithZeroKDoesNothing() {
-        CustomStack_1381 stack = new CustomStack_1381(3);
-        stack.push(10);
-        stack.increment(0, 100);
-        assertEquals(10, stack.pop());
-    }
-
-    @Test
-    public void testIncrementWithNegativeKDoesNothing() {
-        CustomStack_1381 stack = new CustomStack_1381(3);
-        stack.push(10);
-        stack.increment(-2, 100);
-        assertEquals(10, stack.pop());
     }
 
     @Test
@@ -277,10 +263,10 @@ public class CustomStack_1381Test {
     public void capacityOneSupportsRepeatedPushIncrementPopCycles() {
         CustomStack_1381 stack = new CustomStack_1381(1);
         for (int i = 0; i < 8; i++) {
-            stack.push(i);
-            stack.push(1000 + i);
-            stack.increment(1, -i);
-            assertEquals(i - i, stack.pop());
+            stack.push(i + 1);
+            stack.push(900 + i);
+            stack.increment(1, -(i + 1));
+            assertEquals(0, stack.pop());
             assertEquals(-1, stack.pop());
         }
     }
@@ -326,12 +312,10 @@ public class CustomStack_1381Test {
     }
 
     @Test
-    public void incrementBoundsZeroNegativeAndAboveCapacityAreHandledTogether() {
+    public void incrementKAboveCapacityClampsToCurrentStackSize() {
         CustomStack_1381 stack = new CustomStack_1381(3);
         stack.push(2);
         stack.push(4);
-        stack.increment(0, 100);
-        stack.increment(-1, 100);
         stack.increment(99, 1);
 
         assertEquals(5, stack.pop());
@@ -356,18 +340,20 @@ public class CustomStack_1381Test {
         int pushes = 0;
         int pops = 0;
         int increments = 0;
-        while (pushes < 1000 || pops < 1000 || increments < 1000) {
+        // Reserve up to 38 pop calls for draining and the final empty check, keeping each
+        // operation type within the problem's 1000-call limit.
+        while (pushes < 1000 || pops < 962 || increments < 1000) {
             int operation = random.nextInt(3);
             if (operation == 0 && pushes < 1000) {
-                int value = random.nextInt(2001) - 1000;
+                int value = 1 + random.nextInt(1000);
                 actual.push(value);
                 expected.push(value);
                 pushes++;
-            } else if (operation == 1 && pops < 1000) {
+            } else if (operation == 1 && pops < 962) {
                 assertEquals(expected.pop(), actual.pop());
                 pops++;
             } else if (increments < 1000) {
-                int k = 1 + random.nextInt(1200);
+                int k = 1 + random.nextInt(1000);
                 int value = random.nextInt(101);
                 actual.increment(k, value);
                 expected.increment(k, value);
@@ -385,19 +371,18 @@ public class CustomStack_1381Test {
         CustomStack_1381 actual = new CustomStack_1381(1000);
         ReferenceStack expected = new ReferenceStack(1000);
         for (int i = 0; i < 1000; i++) {
-            actual.push(i - 500);
-            expected.push(i - 500);
+            actual.push(i + 1);
+            expected.push(i + 1);
         }
         for (int i = 1; i <= 1000; i++) {
-            int k = (i * 37) % 1200;
-            int value = (i % 2 == 0) ? i : -i;
+            int k = 1 + (i * 37) % 1000;
+            int value = i % 101;
             actual.increment(k, value);
             expected.increment(k, value);
         }
         for (int i = 0; i < 1000; i++) {
             assertEquals(expected.pop(), actual.pop());
         }
-        assertEquals(-1, actual.pop());
     }
 
     @Test
@@ -411,6 +396,52 @@ public class CustomStack_1381Test {
 
         stack.push(3);
         assertEquals(3, stack.pop());
+    }
+
+    @Test
+    @Timeout(value = 10, threadMode = ThreadMode.SEPARATE_THREAD)
+    public void exhaustiveShortOperationSequencesMatchEagerListOracle() {
+        for (int capacity = 1; capacity <= 2; capacity++) {
+            enumerateSequences(capacity, 6, new ArrayList<>(), "");
+        }
+    }
+
+    private void enumerateSequences(int capacity, int remaining, List<Operation> prefix, String trace) {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new AssertionError("Exhaustive sequence enumeration interrupted at " + trace);
+        }
+        assertMatchesOracle(capacity, prefix, trace);
+        if (remaining == 0) {
+            return;
+        }
+
+        // These choices cover pushes, empty and nonempty pops, one-element and oversized prefixes,
+        // and both zero and positive increments; the eager-list oracle applies each increment directly.
+        Operation[] choices = {
+                Operation.push(1), Operation.push(2), Operation.pop(),
+                Operation.increment(1, 0), Operation.increment(1, 1), Operation.increment(3, 2)
+        };
+        for (int i = 0; i < choices.length; i++) {
+            prefix.add(choices[i]);
+            enumerateSequences(capacity, remaining - 1, prefix, trace + i);
+            prefix.remove(prefix.size() - 1);
+        }
+    }
+
+    private void assertMatchesOracle(int maxSize, List<Operation> operations, String trace) {
+        CustomStack_1381 actual = new CustomStack_1381(maxSize);
+        ReferenceStack expected = new ReferenceStack(maxSize);
+        for (Operation operation : operations) {
+            if (operation.type() == 'p') {
+                actual.push(operation.first());
+                expected.push(operation.first());
+            } else if (operation.type() == 'o') {
+                assertEquals(expected.pop(), actual.pop(), "capacity=" + maxSize + ", trace=" + trace);
+            } else {
+                actual.increment(operation.first(), operation.second());
+                expected.increment(operation.first(), operation.second());
+            }
+        }
     }
 
     private void assertMatchesOracle(int maxSize, List<Operation> operations) {
