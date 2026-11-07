@@ -8,12 +8,7 @@ import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-/**
- * @author BorisMirage
- * Time: 2023/04/21 13:46
- * Created with IntelliJ IDEA
- */
+import org.junit.jupiter.api.Timeout;
 
 public class BrowserHistory_1472Test {
 
@@ -120,6 +115,7 @@ public class BrowserHistory_1472Test {
     }
 
     @Test
+    @Timeout(10)
     public void shouldHandleGiantHistoryTraversal() {
         for (int i = 1; i <= 5000; i++) {
             test.visit("site" + i + ".com");
@@ -316,6 +312,7 @@ public class BrowserHistory_1472Test {
     }
 
     @Test
+    @Timeout(10)
     public void seededOperationStreamsShouldMatchAnIndependentListOracle() {
         long[] seeds = {0L, 1L, 7L, 42L, 1472L, 2023L, 65_537L, 123_456L, 0x5EEDL,
                 0xBEEFL, 0x1234_5678L, 0x7FFF_FFFFL, 0xCAFE_BABEL, 0xDEAD_BEEFL,
@@ -327,6 +324,7 @@ public class BrowserHistory_1472Test {
     }
 
     @Test
+    @Timeout(10)
     public void exactMaximumCallWorkloadShouldMatchAnIndependentOracle() {
         BrowserHistory_1472 browser = new BrowserHistory_1472("home.com");
         HistoryOracle oracle = new HistoryOracle("home.com");
@@ -346,6 +344,81 @@ public class BrowserHistory_1472Test {
             }
         }
 
+    }
+
+    @Test
+    @Timeout(10)
+    public void exhaustivelyEnumeratedShortOperationSequencesShouldMatchAnIndependentOracle() {
+        // Enumerates all 1 + 8 + 8^2 + ... + 8^5 = 37,449 sequences, including the empty sequence,
+        // over visits to two URLs and back/forward by one, two, or three positions.  Longer and
+        // larger-step behavior is covered separately by the boundary, giant, and seeded tests.
+        int[] operations = new int[5];
+        for (int length = 0; length <= operations.length; length++) {
+            enumerateOperationSequences(operations, length, 0);
+        }
+    }
+
+    private void enumerateOperationSequences(int[] operations, int length, int depth) {
+        if (depth == length) {
+            assertOperationSequence(operations, length);
+            return;
+        }
+
+        for (int operation = 0; operation < 8; operation++) {
+            operations[depth] = operation;
+            enumerateOperationSequences(operations, length, depth + 1);
+        }
+    }
+
+    private void assertOperationSequence(int[] operations, int length) {
+        BrowserHistory_1472 browser = new BrowserHistory_1472("home.com");
+        HistoryOracle oracle = new HistoryOracle("home.com");
+
+        for (int index = 0; index < length; index++) {
+            int operation = operations[index];
+            String expected;
+            String actual;
+            if (operation == 0 || operation == 1) {
+                String url = operation == 0 ? "alpha.com" : "beta.com";
+                oracle.visit(url);
+                browser.visit(url);
+                expected = oracle.current();
+                actual = browser.back(0);
+            } else if (operation <= 4) {
+                int steps = operation - 1;
+                expected = oracle.back(steps);
+                actual = browser.back(steps);
+            } else {
+                int steps = operation - 4;
+                expected = oracle.forward(steps);
+                actual = browser.forward(steps);
+            }
+            assertEquals(expected, actual, "operation index=" + index + ", sequence="
+                    + sequenceDescription(operations, length));
+        }
+
+        assertEquals(oracle.current(), browser.back(0),
+                "final sequence=" + sequenceDescription(operations, length));
+    }
+
+    private static String sequenceDescription(int[] operations, int length) {
+        StringBuilder description = new StringBuilder("[");
+        for (int index = 0; index < length; index++) {
+            if (index > 0) {
+                description.append(", ");
+            }
+            int operation = operations[index];
+            if (operation == 0) {
+                description.append("visit alpha");
+            } else if (operation == 1) {
+                description.append("visit beta");
+            } else if (operation <= 4) {
+                description.append("back ").append(operation - 1);
+            } else {
+                description.append("forward ").append(operation - 4);
+            }
+        }
+        return description.append(']').toString();
     }
 
     private void assertSeededStream(long seed, int operationCount) {
@@ -386,7 +459,7 @@ public class BrowserHistory_1472Test {
 
         private void visit(String url) {
             while (pages.size() > position + 1) {
-                pages.remove(pages.size() - 1);
+                pages.removeLast();
             }
             pages.add(url);
             position++;

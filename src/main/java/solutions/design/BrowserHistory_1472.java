@@ -19,54 +19,73 @@ import java.util.List;
  */
 
 public class BrowserHistory_1472 {
-    private final List<String> history = new ArrayList<>();
-    private int position = 0;
+    private final List<String> history;
+    private int current;
 
     /**
-     * Keep a linked list to store the visited pages. Use an integer as the current position.
-     * Note that if visit a new page, all later history will be removed.
+     * Stores every page on the current history path in an array list and keeps the index of the
+     * displayed page.  The list contains no forward branch after {@link #visit(String)}: visiting
+     * from the middle first removes that branch, then appends the new page.  This gives constant
+     * time navigation while retaining O(n) pages for a path of length n.
      *
-     * @param homepage start page
+     * @param homepage the initial page; it becomes history position zero
+     *                 <p>
+     *                 Time complexity: O(1), because initialization stores one page.
+     *                 Auxiliary space complexity: O(1) beyond the retained history, which initially contains one
+     *                 page.
      */
     public BrowserHistory_1472(String homepage) {
-        history.add(homepage);
+        history = new ArrayList<>(List.of(homepage));
+        current = 0;
     }
 
     /**
-     * Add a new visited URL.
-     * Note that when visited a new URL, the forward history will be cleared.
+     * Visits a page from the current position.  Any pages after the current index are no longer
+     * reachable because a new visit starts a new forward branch; appending the URL then makes it
+     * the displayed page.
      *
-     * @param url visited page
+     * @param url the page to append to the current history path
+     *            <p>
+     *            Time complexity: O(f + n) worst case, where f is the number of discarded forward pages and n
+     *            is the retained history size when an ArrayList resize copies its backing array; without a
+     *            resize, the append is amortized O(1) after the O(f) clear.
+     *            Auxiliary space complexity: O(n) worst case for a temporary replacement backing array during
+     *            an ArrayList resize, where n is the retained history size; otherwise the operation reuses
+     *            the existing backing storage and only retains the resulting O(n)-page history.
      */
     public void visit(String url) {
-        history.subList(position + 1, history.size()).clear();      // clean all forward history
+        history.subList(current + 1, history.size()).clear();
         history.add(url);
-        position++;
+        current = history.size() - 1;
     }
 
     /**
-     * Move steps back in history. If steps larger than max number in history, return the largest one in history list.
+     * Moves toward the homepage by at most {@code steps}.  Clamping the index at zero handles a
+     * request larger than the available backward history without creating an invalid position.
      *
-     * @param steps move steps back in history
-     * @return the current url after moving back in history at most steps
+     * @param steps the maximum number of positions to move backward
+     * @return the page displayed after moving
+     * <p>
+     * Time complexity: O(1), independent of the number of pages and requested steps.
+     * Auxiliary space complexity: O(1), because only the current index changes.
      */
     public String back(int steps) {
-        position = Math.max(0, position - steps);
-
-        return history.get(position);
+        current = Math.max(0, current - steps);
+        return history.get(current);
     }
 
     /**
-     * Move steps forward in history. If steps larger than max number in history, return the first one in history list.
+     * Moves toward the newest page by at most {@code steps}.  The available distance is computed
+     * before adding it, so even a very large positive step cannot overflow the current index.
      *
-     * @param steps move forward x steps in the history
-     * @return the current url after forwarding in history at most steps
+     * @param steps the maximum number of positions to move forward
+     * @return the page displayed after moving
+     * <p>
+     * Time complexity: O(1), independent of the number of pages and requested steps.
+     * Auxiliary space complexity: O(1), because only the current index changes.
      */
     public String forward(int steps) {
-        int available = history.size() - 1 - position;
-        // Compare before adding so a very large positive step cannot overflow the index.
-        position = steps >= available ? history.size() - 1 : position + steps;
-
-        return history.get(position);
+        current += Math.min(history.size() - 1 - current, steps);
+        return history.get(current);
     }
 }
