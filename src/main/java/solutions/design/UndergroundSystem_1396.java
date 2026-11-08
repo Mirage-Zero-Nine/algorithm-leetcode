@@ -1,6 +1,7 @@
 package solutions.design;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implement the class UndergroundSystem that supports three methods:
@@ -23,124 +24,110 @@ import java.util.HashMap;
  */
 
 public class UndergroundSystem_1396 {
-
-    /*
-     * The checkIn map stores all the passengers in the system.
-     * The key is the passenger id, and the value is the object that stores depart station and depart time.
-     * When a passenger exits the system, the entry related to this passenger will be removed to avoid duplication. */
-    private final HashMap<Integer, StartTime> checkIn;
-
-    /*
-     * The key of checkOut map is the combination of start station and end station.
-     * Value of the map is the total time consume under this certain path, with the number of passengers. */
-    private final HashMap<String, TravelTime> checkOut;
+    // Maps each checked-in passenger id to its origin station and check-in time.
+    private final Map<Integer, Entry> checkIns;
+    // Maps each directed start-end route to [totalDuration, tripCount].
+    private final Map<String, long[]> times;
 
     /**
-     * Keep two hash maps to store the passenger information in system.
-     * First map stores all the passengers in the system.
-     * Second map stores all the paths (consists with start and end station), total time and number of passenger.
+     * Creates an empty system. {@code checkIns} uses a passenger id as its key and an {@link Entry}
+     * containing the origin station and check-in time as its value. {@code times} uses a directed
+     * {@code start-end} route key and stores [total duration, trip count], whose quotient is the
+     * route average without retaining individual trips. Station names are bounded by 10 chars.
+     *
+     * <p>Time complexity: O(1), for creating the two empty hashmaps.</p>
+     * <p>Auxiliary space complexity: O(1) initially; after later calls, retained storage is
+     * O(P + R), where {@code P} is peak active passengers and {@code R} is distinct routes.</p>
      */
     public UndergroundSystem_1396() {
-        checkIn = new HashMap<>();
-        checkOut = new HashMap<>();
+        checkIns = new HashMap<>();
+        times = new HashMap<>();
     }
 
     /**
-     * A new passenger enter the system. Add it to the check in map.
+     * Records the passenger's origin and check-in time. The contract supplies an id that is not
+     * currently checked in; checkout removes this entry before the id can be reused.
+     * <p>Time complexity: O(1) amortized expected; occasional hashmap resizing is amortized.</p>
+     * <p>Auxiliary space complexity: O(1) normally and O(P) transiently during resize, where
+     * {@code P} is the current active-passenger map size.</p>
      *
-     * @param id          passenger id
-     * @param stationName name of depart station
-     * @param t           depart time stamp
+     * @param id          passenger identifier
+     * @param stationName origin station
+     * @param t           check-in timestamp
      */
     public void checkIn(int id, String stationName, int t) {
-        checkIn.put(id, new StartTime(stationName, t));
+        checkIns.put(id, new Entry(stationName, t));
     }
 
     /**
-     * One passenger exit the system. Calculate the total travel time and remove it from the check in map.
-     * Then add the total travel time to the path from its depart station to the destination station.
-     * If the path (combined with start station and end station) exist, update the total travel time.
-     * Otherwise, create a new entry in check out map.
+     * Completes a trip, removes the passenger's temporary check-in, and adds its duration to the
+     * directed route aggregate. The aggregate stores a sum and count, so individual trips are not
+     * retained.
+     * <p>Time complexity: O(1) amortized expected; bounded-name hashing and occasional resizing
+     * are amortized.</p>
+     * <p>Auxiliary space complexity: O(1) normally and O(R) transiently when the route table
+     * resizes, where {@code R} is its current distinct-route count.</p>
      *
-     * @param id          passenger id
-     * @param stationName name of destination
-     * @param t           arrived time stamp
+     * @param id          passenger identifier
+     * @param stationName destination station
+     * @param t           check-out timestamp
      */
     public void checkOut(int id, String stationName, int t) {
-        StartTime current = checkIn.get(id);
-        checkIn.remove(id);     // the passenger has exit the system, remove it to avoid duplication
-
-        // Station names are alphanumeric, so this separator cannot occur in either name and
-        // keeps pairs such as ("AB", "C") distinct from ("A", "BC").
-        String path = pathKey(current.start, stationName);
-        int travelTime = t - current.time;
-
-        if (checkOut.containsKey(path)) {       // one new passenger travel on this exist path
-            TravelTime tmp = checkOut.get(path);
-            tmp.totalTime += travelTime;
-            tmp.count++;
-        } else {                                // one new passenger travel on a new path
-            TravelTime tmp = new TravelTime(travelTime);
-            checkOut.put(path, tmp);
-        }
+        Entry e = checkIns.get(id);
+        // Remove the temporary record so this completed trip cannot affect a later checkout.
+        checkIns.remove(id);
+        long[] arr = times.computeIfAbsent(getKey(e.stationName, stationName), _ -> new long[2]);
+        // long keeps the route total safe across the maximum number of trips; cast before division
+        // in getAverageTime so fractional averages are not truncated.
+        arr[0] += t - e.time;
+        arr[1]++;
     }
 
     /**
-     * Return the average time based on start station and end station.
-     * The check out map stores all the paths with its total travel time and the number of passengers.
+     * Returns the mean duration of completed trips on a directed route. The problem contract
+     * guarantees that the requested route has at least one completed trip.
+     * <p>Time complexity: O(1) expected under the bounded station-name contract.</p>
+     * <p>Auxiliary space complexity: O(1) for the bounded temporary route key; the aggregate is
+     * not copied.</p>
      *
-     * @param startStation name of depart station
-     * @param endStation   name of destination
-     * @return average travel time between the given start and end station
+     * @param startStation origin station
+     * @param endStation   destination station
+     * @return average travel time
      */
     public double getAverageTime(String startStation, String endStation) {
-        String path = pathKey(startStation, endStation);
-        if (checkOut.containsKey(path)) {
-            TravelTime tmp = checkOut.get(path);
-            return (double) tmp.totalTime / tmp.count;
-        }
-
-        return 0;
-    }
-
-    /** Builds an unambiguous route key for the alphanumeric station-name contract. */
-    private String pathKey(String startStation, String endStation) {
-        return startStation + '\u0000' + endStation;
+        long[] arr = times.get(getKey(startStation, endStation));
+        // Cast before division so a fractional average is not truncated by integer arithmetic.
+        return (double) arr[0] / arr[1];
     }
 
     /**
-     * Stores the total time of travel and the total number of passengers travel through this path.
+     * Builds a key for the directed route. Since station names are alphanumeric, the separator
+     * cannot occur inside either name and therefore preserves both station boundaries.
+     * <p>Time complexity: O(s + e), where {@code s} and {@code e} are station-name lengths.</p>
+     * <p>Auxiliary space complexity: O(1) excluding the O(s + e) returned key.</p>
+     *
+     * @param start origin station
+     * @param end   destination station
+     * @return route key
      */
-    static class TravelTime {
-        long totalTime;
-        int count;
-
-        /**
-         * Constructor.
-         *
-         * @param totalTime total travel time
-         */
-        TravelTime(long totalTime) {
-            this.totalTime = totalTime;
-            count = 1;
-        }
+    private String getKey(String start, String end) {
+        return start + "-" + end;
     }
 
-    /**
-     * Object stores the start timestamp and the name of depart station.
-     */
-    static class StartTime {
-        String start;
-        int time;
+    static class Entry {
+        final String stationName;
+        final int time;
 
         /**
-         * Constructor.
+         * Stores the origin and timestamp associated with one active passenger.
+         * <p>Time complexity: O(1), aside from storing the station reference.</p>
+         * <p>Auxiliary space complexity: O(1), because the station string is not copied.</p>
          *
-         * @param start start station
-         * @param time  start time
+         * @param stationName origin station
+         * @param time        check-in timestamp
          */
-        StartTime(String start, int time) {
-            this.start = start;
+        Entry(String stationName, int time) {
+            this.stationName = stationName;
             this.time = time;
         }
     }
