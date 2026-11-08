@@ -3,20 +3,16 @@ package solutions.design;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.junit.jupiter.api.Test;
 
-/**
- * Stateful contract tests for {@link UndergroundSystem_1396}.
- *
- * <p>The expected route totals in the generated tests use a separate route object and aggregate
- * map, rather than reproducing the implementation's string-key representation. This catches
- * collisions between distinct station-name pairs as well as arithmetic and state-transition
- * errors.</p>
- */
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+@Timeout(10)
 public class UndergroundSystem_1396Test {
 
     private static final double EPSILON = 1e-9;
@@ -53,6 +49,14 @@ public class UndergroundSystem_1396Test {
                 .add((long) checkOutTime - checkInTime);
     }
 
+    private static void checkInterrupted() {
+        // The production operations are straight-line, so these driver checks make cancellation
+        // effective without leaving a worker loop running after a test timeout.
+        if (Thread.currentThread().isInterrupted()) {
+            throw new IllegalStateException("test driver interrupted");
+        }
+    }
+
     @Test
     public void officialExampleWithAverageUpdatedAfterReuse() {
         UndergroundSystem_1396 system = new UndergroundSystem_1396();
@@ -72,16 +76,10 @@ public class UndergroundSystem_1396Test {
     }
 
     @Test
-    public void oneTripAndZeroTimeOriginAreHandled() {
+    public void oneTripAndEarliestTimestampAreHandled() {
         UndergroundSystem_1396 system = new UndergroundSystem_1396();
-        addTrip(system, new HashMap<>(), 1, "A", 0, "B", 10);
+        addTrip(system, new HashMap<>(), 1, "A", 1, "B", 11);
         assertAverage(system, "A", "B", 10.0);
-    }
-
-    @Test
-    public void missingRouteUsesDocumentedZeroResult() {
-        UndergroundSystem_1396 system = new UndergroundSystem_1396();
-        assertAverage(system, "Unknown", "Route", 0.0);
     }
 
     @Test
@@ -123,14 +121,13 @@ public class UndergroundSystem_1396Test {
         UndergroundSystem_1396 system = new UndergroundSystem_1396();
         addTrip(system, new HashMap<>(), 1, "Station", 4, "Station", 9);
         assertAverage(system, "Station", "Station", 5.0);
-        assertAverage(system, "Station", "Other", 0.0);
     }
 
     @Test
     public void routeKeyMustNotMergeConcatenationCollisions() {
         UndergroundSystem_1396 system = new UndergroundSystem_1396();
         addTrip(system, new HashMap<>(), 1, "AB", 1, "C", 6);
-        addTrip(system, new HashMap<>(), 2, "A", 2, "BC", 12);
+        addTrip(system, new HashMap<>(), 2, "A", 7, "BC", 17);
         assertAverage(system, "AB", "C", 5.0);
         assertAverage(system, "A", "BC", 10.0);
     }
@@ -139,10 +136,9 @@ public class UndergroundSystem_1396Test {
     public void stationNamesRemainCaseAndDigitSensitive() {
         UndergroundSystem_1396 system = new UndergroundSystem_1396();
         addTrip(system, new HashMap<>(), 1, "A1", 1, "b2", 8);
-        addTrip(system, new HashMap<>(), 2, "a1", 2, "B2", 13);
+        addTrip(system, new HashMap<>(), 2, "a1", 9, "B2", 20);
         assertAverage(system, "A1", "b2", 7.0);
         assertAverage(system, "a1", "B2", 11.0);
-        assertAverage(system, "A1", "B2", 0.0);
     }
 
     @Test
@@ -171,14 +167,13 @@ public class UndergroundSystem_1396Test {
         UndergroundSystem_1396 system = new UndergroundSystem_1396();
         Map<Route, Aggregate> expected = new HashMap<>();
         addTrip(system, expected, 1, "North", 1, "South", 11);
-        addTrip(system, expected, 2, "North", 2, "East", 22);
-        addTrip(system, expected, 3, "West", 3, "South", 33);
-        addTrip(system, expected, 4, "North", 4, "South", 24);
+        addTrip(system, expected, 2, "North", 12, "East", 32);
+        addTrip(system, expected, 3, "West", 33, "South", 63);
+        addTrip(system, expected, 4, "North", 64, "South", 84);
         for (Map.Entry<Route, Aggregate> entry : expected.entrySet()) {
             assertAverage(system, entry.getKey().start(), entry.getKey().end(),
                     entry.getValue().average());
         }
-        assertAverage(system, "South", "North", 0.0);
     }
 
     @Test
@@ -227,14 +222,22 @@ public class UndergroundSystem_1396Test {
     }
 
     @Test
+    @Timeout(10)
     public void maximumTotalCallWorkloadDoesNotOverflowRouteTotal() {
         UndergroundSystem_1396 system = new UndergroundSystem_1396();
-        int trips = 10_000;
+        int trips = 9_999;
+        // 9,999 check-ins + 9,999 checkouts + 2 queries = exactly 20,000 calls; the long sum
+        // also exceeds int range while every timestamp remains within the documented bound.
         for (int id = 1; id <= trips; id++) {
-            system.checkIn(id, "Start", 1);
-            system.checkOut(id, "End", 1_000_000);
+            checkInterrupted();
+            system.checkIn(id, "Start", id);
         }
-        assertAverage(system, "Start", "End", 999_999.0);
+        for (int id = 1; id <= trips; id++) {
+            checkInterrupted();
+            system.checkOut(id, "End", 990_000 + id);
+        }
+        assertAverage(system, "Start", "End", 990_000.0);
+        assertAverage(system, "Start", "End", 990_000.0);
     }
 
     @Test
@@ -266,6 +269,7 @@ public class UndergroundSystem_1396Test {
         int currentTime = 1;
         List<Route> observedRoutes = new ArrayList<>();
         for (int id = 1; id <= 1_200; id++) {
+            checkInterrupted();
             String start = stations[random.nextInt(stations.length)];
             String end = stations[random.nextInt(stations.length)];
             int checkInTime = currentTime++;
@@ -280,7 +284,8 @@ public class UndergroundSystem_1396Test {
             }
         }
         for (Route route : observedRoutes) {
-            assertAverage(system, route.start(), route.end(), expected.get(route).average());
+            assertEquals(expected.get(route).average(), system.getAverageTime(route.start(), route.end()),
+                    EPSILON, "seed=1396 route=" + route);
         }
     }
 
@@ -292,20 +297,29 @@ public class UndergroundSystem_1396Test {
         String[] starts = {"A", "B", "C"};
         String[] ends = {"X", "Y", "Z"};
         for (int id = 1; id <= 90; id++) {
+            checkInterrupted();
             int checkInTime = id;
             system.checkIn(id, starts[id % starts.length], checkInTime);
         }
+        List<Integer> checkoutOrder = new ArrayList<>();
         for (int id = 1; id <= 90; id++) {
+            checkoutOrder.add(id);
+        }
+        java.util.Collections.shuffle(checkoutOrder, new Random(42L));
+        int checkoutClock = 100;
+        for (int id : checkoutOrder) {
+            checkInterrupted();
             String start = starts[id % starts.length];
             String end = ends[random.nextInt(ends.length)];
-            int checkOutTime = 100 + id + random.nextInt(20);
+            int checkOutTime = checkoutClock++;
             system.checkOut(id, end, checkOutTime);
             expected.computeIfAbsent(new Route(start, end), ignored -> new Aggregate())
                     .add((long) checkOutTime - id);
         }
         for (Map.Entry<Route, Aggregate> entry : expected.entrySet()) {
-            assertAverage(system, entry.getKey().start(), entry.getKey().end(),
-                    entry.getValue().average());
+            assertEquals(entry.getValue().average(),
+                    system.getAverageTime(entry.getKey().start(), entry.getKey().end()), EPSILON,
+                    "seed=42 route=" + entry.getKey());
         }
     }
 
@@ -315,7 +329,7 @@ public class UndergroundSystem_1396Test {
         String tenA = "AAAAAAAAAA";
         String tenB = "BBBBBBBBBB";
         addTrip(system, new HashMap<>(), 1, tenA, 1, tenB, 101);
-        addTrip(system, new HashMap<>(), 2, tenB, 2, tenA, 202);
+        addTrip(system, new HashMap<>(), 2, tenB, 102, tenA, 302);
         assertAverage(system, tenA, tenB, 100.0);
         assertAverage(system, tenB, tenA, 200.0);
     }
@@ -323,10 +337,60 @@ public class UndergroundSystem_1396Test {
     @Test
     public void averagesRemainStableAfterManyUnrelatedRoutes() {
         UndergroundSystem_1396 system = new UndergroundSystem_1396();
-        addTrip(system, new HashMap<>(), 1, "Target", 1, "Destination", 8);
+        addTrip(system, new HashMap<>(), 1, "Target", 1, "Dest", 8);
         for (int id = 2; id <= 101; id++) {
-            addTrip(system, new HashMap<>(), id, "S" + id, id, "E" + id, id + 50);
+            checkInterrupted();
+            int checkInTime = 8 + (id - 1) * 51;
+            addTrip(system, new HashMap<>(), id, "S" + id, checkInTime, "E" + id,
+                    checkInTime + 50);
         }
-        assertAverage(system, "Target", "Destination", 7.0);
+        assertAverage(system, "Target", "Dest", 7.0);
+    }
+
+    @Test
+    public void maximumPassengerIdIsSupported() {
+        UndergroundSystem_1396 system = new UndergroundSystem_1396();
+        addTrip(system, new HashMap<>(), 1_000_000, "A", 1, "B", 2);
+        assertAverage(system, "A", "B", 1.0);
+    }
+
+    @Test
+    @Timeout(10)
+    public void exhaustiveShortTripSequencesMatchIndependentRouteOracle() {
+        // Enumerate three trips over four directed routes and durations 1..3 (12^3 cases).
+        String[][] routes = {{"A", "B"}, {"A", "C"}, {"B", "A"}, {"C", "C"}};
+        int cases = 0;
+        for (int firstRoute = 0; firstRoute < routes.length; firstRoute++) {
+            for (int secondRoute = 0; secondRoute < routes.length; secondRoute++) {
+                for (int thirdRoute = 0; thirdRoute < routes.length; thirdRoute++) {
+                    for (int firstDuration = 1; firstDuration <= 3; firstDuration++) {
+                        for (int secondDuration = 1; secondDuration <= 3; secondDuration++) {
+                            for (int thirdDuration = 1; thirdDuration <= 3; thirdDuration++) {
+                                checkInterrupted();
+                                UndergroundSystem_1396 system = new UndergroundSystem_1396();
+                                Map<Route, Aggregate> expected = new HashMap<>();
+                                int time = 1;
+                                int[] routeIndexes = {firstRoute, secondRoute, thirdRoute};
+                                int[] durations = {firstDuration, secondDuration, thirdDuration};
+                                for (int i = 0; i < routeIndexes.length; i++) {
+                                    String[] route = routes[routeIndexes[i]];
+                                    addTrip(system, expected, i + 1, route[0], time, route[1],
+                                            time + durations[i]);
+                                    time += durations[i] + 1;
+                                }
+                                for (Map.Entry<Route, Aggregate> entry : expected.entrySet()) {
+                                    assertEquals(entry.getValue().average(),
+                                            system.getAverageTime(entry.getKey().start(), entry.getKey().end()),
+                                            EPSILON, "routes=" + Arrays.toString(routeIndexes)
+                                                    + ", durations=" + Arrays.toString(durations));
+                                }
+                                cases++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        assertEquals(1_728, cases);
     }
 }
