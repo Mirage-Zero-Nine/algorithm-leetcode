@@ -1,13 +1,29 @@
 package solutions.backtracking;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.InvocationInterceptor;
+import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
+@Timeout(15)
+@ExtendWith(AuthenticationManager_1797Test.ProcessTimeoutExtension.class)
 class AuthenticationManager_1797Test {
 
     @Test
@@ -102,7 +118,8 @@ class AuthenticationManager_1797Test {
             manager.generate(tokenFor(i), i);
         }
         assertEquals(99, manager.countUnexpiredTokens(1_001));
-        for (int time = 1_002; time <= 2_000; time++) {
+        // Include construction in the 2,000-call budget.
+        for (int time = 1_002; time <= 1_999; time++) {
             int count = manager.countUnexpiredTokens(time);
             assertEquals(Math.max(0, 1_100 - time), count);
         }
@@ -114,8 +131,7 @@ class AuthenticationManager_1797Test {
         AuthenticationManager_1797 manager = new AuthenticationManager_1797(ttl);
         Map<String, Integer> expectedExpiry = new HashMap<>();
 
-        String[] actions = {"generate", "renew", "generate", "renew", "renew",
-                "renew", "generate", "renew", "generate", "renew", "renew"};
+        String[] actions = {"generate", "renew", "generate", "renew", "renew", "renew", "generate", "renew", "generate", "renew", "renew"};
         String[] tokens = {"aa", "aa", "bb", "bb", "aa", "bb", "cc", "cc", "dd", "dd", "miss"};
         for (int operation = 0; operation < actions.length; operation++) {
             int actionTime = operation * 2 + 1;
@@ -204,20 +220,20 @@ class AuthenticationManager_1797Test {
     }
 
     @Test
-    void testExpiredTokensAreRemovedBeforeGenerate() {
+    void testCountRemovesExpiredTokensAfterGeneration() {
         AuthenticationManager_1797 manager = new AuthenticationManager_1797(2);
         manager.generate("old", 1); // 3
         manager.generate("new", 2); // 4
-        manager.generate("lat", 4); // old and new expire before this action
+        manager.generate("lat", 4); // old and new are expired; the count cleans them up
         assertEquals(1, manager.countUnexpiredTokens(5));
     }
 
     @Test
-    void testExpiredTokensAreRemovedBeforeRenew() {
+    void testCountRemovesExpiredTokensAfterRenewal() {
         AuthenticationManager_1797 manager = new AuthenticationManager_1797(3);
         manager.generate("old", 1); // 4
         manager.generate("live", 2); // 5
-        manager.renew("live", 4);    // old removed; live -> 7
+        manager.renew("live", 4);    // live -> 7; the next count cleans up old
         assertEquals(1, manager.countUnexpiredTokens(5));
         assertEquals(0, manager.countUnexpiredTokens(7));
     }
@@ -338,8 +354,8 @@ class AuthenticationManager_1797Test {
         manager.generate("a", 1); // expires at 6
         manager.generate("b", 2); // expires at 7
         manager.generate("c", 3); // expires at 8
-        manager.renew("a", 4);     // expires at 9; moves a behind c
-        manager.renew("b", 5);     // expires at 10; moves b behind a
+        manager.renew("a", 4);     // new snapshot expires at 9; the old one remains
+        manager.renew("b", 5);     // new snapshot expires at 10
 
         assertEquals(3, manager.countUnexpiredTokens(7));
         assertEquals(2, manager.countUnexpiredTokens(8));
@@ -350,10 +366,10 @@ class AuthenticationManager_1797Test {
     @Test
     void testExpiredRenewalDoesNotAffectOtherLiveTokens() {
         AuthenticationManager_1797 manager = new AuthenticationManager_1797(4);
-        manager.generate("expired", 1); // expires at 5
+        manager.generate("old", 1);     // expires at 5
         manager.generate("live", 2);    // expires at 6
         assertEquals(2, manager.countUnexpiredTokens(3));
-        manager.renew("expired", 5);    // expires before this action; ignored
+        manager.renew("old", 5);        // expires before this action; ignored
 
         assertEquals(0, manager.countUnexpiredTokens(6));
     }
@@ -362,10 +378,10 @@ class AuthenticationManager_1797Test {
     void testUnknownRenewalDoesNotCreateOrExtendAnythingAfterCleanup() {
         AuthenticationManager_1797 manager = new AuthenticationManager_1797(3);
         manager.generate("live", 1); // expires at 4
-        manager.renew("missing", 2);
+        manager.renew("miss", 2);
         assertEquals(1, manager.countUnexpiredTokens(3));
 
-        manager.renew("missing", 4);
+        manager.renew("miss", 4);
         assertEquals(0, manager.countUnexpiredTokens(5));
     }
 
@@ -373,10 +389,183 @@ class AuthenticationManager_1797Test {
     void testIndependentManagersDoNotShareTokenState() {
         AuthenticationManager_1797 first = new AuthenticationManager_1797(5);
         AuthenticationManager_1797 second = new AuthenticationManager_1797(5);
-        first.generate("sameid", 1);
+        first.generate("same", 1);
 
         assertEquals(1, first.countUnexpiredTokens(2));
         assertEquals(0, second.countUnexpiredTokens(2));
+    }
+
+    @Test
+    void testReportedExpiredRenewalRegression() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(20);
+        assertEquals(0, manager.countUnexpiredTokens(1));
+        manager.generate("coif", 3);
+        manager.renew("usmpu", 4);
+        manager.renew("jhn", 5);
+        assertEquals(1, manager.countUnexpiredTokens(10));
+        assertEquals(1, manager.countUnexpiredTokens(12));
+        manager.generate("oh", 16);
+        assertEquals(2, manager.countUnexpiredTokens(21));
+        manager.renew("coif", 23);
+        manager.renew("cbh", 24);
+        manager.generate("icg", 28);
+
+        // coif's stale snapshot must neither crash cleanup nor delete oh or icg.
+        assertEquals(2, manager.countUnexpiredTokens(29));
+        assertEquals(1, manager.countUnexpiredTokens(36));
+        assertEquals(0, manager.countUnexpiredTokens(48));
+    }
+
+    @Test
+    void testRenewedHeapHeadDoesNotBlockAnotherTokensExpiration() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(5);
+        manager.generate("a", 1);
+        manager.generate("b", 2);
+        manager.renew("a", 3);
+
+        assertEquals(1, manager.countUnexpiredTokens(7));
+        assertEquals(0, manager.countUnexpiredTokens(8));
+    }
+
+    @Test
+    void testMaximumRenewalTimeAndTtlStayWithinIntegerRange() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(100_000_000);
+        manager.generate("a", 99_999_997);
+        manager.renew("a", 99_999_998);
+        manager.generate("b", 99_999_999);
+
+        assertEquals(2, manager.countUnexpiredTokens(100_000_000));
+    }
+
+    @Test
+    void testOutOfOrderGenerationSnapshotsBeforeLaterCounts() {
+        // Supported extension: generation order varies, but no query asks for historical state.
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(5);
+        manager.generate("a", 10);
+        manager.generate("b", 2);
+        manager.generate("c", 7);
+
+        assertEquals(2, manager.countUnexpiredTokens(11));
+        assertEquals(1, manager.countUnexpiredTokens(12));
+        assertEquals(0, manager.countUnexpiredTokens(15));
+    }
+
+    @Test
+    void testEqualTimestampSnapshotsExpireWithoutDependingOnHeapTieOrder() {
+        // Supported extension: equal times, including a renewal with the same captured timestamp.
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(5);
+        manager.generate("a", 1);
+        manager.generate("b", 1);
+        manager.renew("a", 1);
+
+        assertEquals(2, manager.countUnexpiredTokens(5));
+        assertEquals(0, manager.countUnexpiredTokens(6));
+    }
+
+    @Test
+    void testRegeneratedIdKeepsOnlyItsLatestLifetime() {
+        // Supported extension: generate replaces an existing ID, beyond the problem's unique IDs.
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(5);
+        manager.generate("a", 1);
+        manager.generate("b", 2);
+        manager.generate("a", 3);
+
+        assertEquals(2, manager.countUnexpiredTokens(6));
+        assertEquals(1, manager.countUnexpiredTokens(7));
+        assertEquals(0, manager.countUnexpiredTokens(8));
+    }
+
+    @Test
+    void testRenewalHeavyMaximumCallBudgetDrainsAllStaleSnapshots() {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(2_000);
+        manager.generate("a", 1);
+        for (int time = 2; time <= 1_997; time++) {
+            manager.renew("a", time);
+        }
+        // 1 construction + 1 generation + 1,996 renewals + 2 counts = 2,000 calls.
+        assertEquals(1, manager.countUnexpiredTokens(2_001));
+        assertEquals(0, manager.countUnexpiredTokens(3_997));
+    }
+
+    @Test
+    void testExhaustiveShortOperationSequencesAgainstReference() {
+        // All prefixes of length 0..4: five actions, gaps 1..2, and TTL 1..3.
+        // Longer histories, larger time gaps, and full value bounds have separate cases.
+        assertEquals(33_333, enumerateOperationPrefixes(new ArrayList<>(), 4, 0, 0));
+    }
+
+    @Test
+    void testSeededInterleavedHistoriesAgainstReference() {
+        Random random = new Random(1_797);
+        int[] lifetimes = {1, 2, 5, 100, 100_000_000};
+        for (int trial = 0; trial < 100; trial++) {
+            int ttl = lifetimes[trial % lifetimes.length];
+            List<Operation> operations = new ArrayList<>();
+            int time = random.nextInt(98_000_000) + 1;
+            int generated = 0;
+            for (int index = 0; index < 200; index++) {
+                time += random.nextInt(1_000) + 1;
+                switch (random.nextInt(3)) {
+                    case 0 -> operations.add(new Operation(Kind.GENERATE, tokenFor(generated++), time));
+                    case 1 ->
+                            operations.add(new Operation(Kind.RENEW, random.nextBoolean() && generated > 0 ? tokenFor(random.nextInt(generated)) : "miss", time));
+                    default -> operations.add(new Operation(Kind.COUNT, null, time));
+                }
+            }
+            assertMatchesReference(ttl, operations, "seed=1797 trial=" + trial);
+        }
+    }
+
+    private static int enumerateOperationPrefixes(List<Operation> operations, int remaining, int previousTime, int generated) {
+        for (int ttl = 1; ttl <= 3; ttl++) {
+            assertMatchesReference(ttl, operations, "exhaustive");
+        }
+        int scenarios = 3;
+        if (remaining == 0) {
+            return scenarios;
+        }
+        for (int gap = 1; gap <= 2; gap++) {
+            int time = previousTime + gap;
+            Operation[] choices = {new Operation(Kind.GENERATE, tokenFor(generated), time), new Operation(Kind.RENEW, "a", time), new Operation(Kind.RENEW, "b", time), new Operation(Kind.RENEW, "miss", time), new Operation(Kind.COUNT, null, time)};
+            for (Operation choice : choices) {
+                operations.add(choice);
+                scenarios += enumerateOperationPrefixes(operations, remaining - 1, time, generated + (choice.kind() == Kind.GENERATE ? 1 : 0));
+                operations.removeLast();
+            }
+        }
+        return scenarios;
+    }
+
+    private static void assertMatchesReference(int ttl, List<Operation> operations, String context) {
+        AuthenticationManager_1797 manager = new AuthenticationManager_1797(ttl);
+        Map<String, Integer> expectedExpiry = new HashMap<>();
+        String scenario = context + " ttl=" + ttl + " operations=" + operations;
+        // This oracle stores deadlines and scans all entries; it has no heap or stale snapshots.
+        for (Operation operation : operations) {
+            removeExpired(expectedExpiry, operation.time());
+            switch (operation.kind()) {
+                case GENERATE -> {
+                    manager.generate(operation.token(), operation.time());
+                    expectedExpiry.put(operation.token(), operation.time() + ttl);
+                }
+                case RENEW -> {
+                    manager.renew(operation.token(), operation.time());
+                    if (expectedExpiry.containsKey(operation.token())) {
+                        expectedExpiry.put(operation.token(), operation.time() + ttl);
+                    }
+                }
+                case COUNT ->
+                        assertEquals(expectedExpiry.size(), manager.countUnexpiredTokens(operation.time()), scenario + " at " + operation.time());
+            }
+        }
+        int finalTime = operations.isEmpty() ? 1 : operations.getLast().time() + 1;
+        removeExpired(expectedExpiry, finalTime);
+        assertEquals(expectedExpiry.size(), manager.countUnexpiredTokens(finalTime), scenario + " final count at " + finalTime);
+    }
+
+    private enum Kind {GENERATE, RENEW, COUNT}
+
+    private record Operation(Kind kind, String token, int time) {
     }
 
     private static String tokenFor(int number) {
@@ -394,6 +583,49 @@ class AuthenticationManager_1797Test {
             if (iterator.next().getValue() <= currentTime) {
                 iterator.remove();
             }
+        }
+    }
+
+    // Heap cleanup does not honor interruption, so a child JVM bounds every test's execution.
+    static final class ProcessTimeoutExtension implements InvocationInterceptor {
+        @Override
+        public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> context, ExtensionContext extensionContext) throws Throwable {
+            Path log = Files.createTempFile("authentication-manager-1797-test-", ".log");
+            Process process = null;
+            try {
+                process = new ProcessBuilder(System.getProperty("java.home") + "/bin/java", "-cp", System.getProperty("surefire.test.class.path", System.getProperty("java.class.path")), AuthenticationManager_1797Test.class.getName(), context.getExecutable().getName()).redirectErrorStream(true).redirectOutput(log.toFile()).start();
+                if (!process.waitFor(8, TimeUnit.SECONDS)) {
+                    fail("test exceeded enforceable 8-second process limit: " + context.getExecutable().getName());
+                }
+                if (process.exitValue() != 0) {
+                    fail("child test failed: " + context.getExecutable().getName() + System.lineSeparator() + Files.readString(log));
+                }
+                invocation.skip();
+            } finally {
+                try {
+                    if (process != null && process.isAlive()) {
+                        process.destroyForcibly();
+                        if (!process.waitFor(2, TimeUnit.SECONDS)) {
+                            fail("child test could not be terminated: " + context.getExecutable().getName());
+                        }
+                    }
+                } finally {
+                    Files.deleteIfExists(log);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            throw new IllegalArgumentException("missing test method");
+        }
+        try {
+            AuthenticationManager_1797Test.class.getDeclaredMethod(args[0]).invoke(new AuthenticationManager_1797Test());
+        } catch (InvocationTargetException exception) {
+            throw new RuntimeException(exception.getCause());
+        } catch (ReflectiveOperationException exception) {
+            throw new RuntimeException(exception);
         }
     }
 }
