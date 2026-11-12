@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import org.junit.jupiter.api.Test;
+import util.IsolatedTestProcess;
 
 /** Tests the state transitions and look-ahead contract of {@link PeekingIterator_284}. */
 public class PeekingIterator_284Test {
@@ -207,7 +208,12 @@ public class PeekingIterator_284Test {
     }
 
     @Test
-    public void testMaximumElementCountWithSequentialNextCalls() {
+    public void testMaximumElementCountWithSequentialNextCalls() throws Exception {
+        IsolatedTestProcess.run(PeekingIterator_284Test.class,
+                "scenarioMaximumElementCountWithSequentialNextCalls", 10);
+    }
+
+    private void scenarioMaximumElementCountWithSequentialNextCalls() {
         List<Integer> values = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             values.add(i + 1);
@@ -219,10 +225,15 @@ public class PeekingIterator_284Test {
     }
 
     @Test
-    public void testMaximumLegalOperationCount() {
+    public void testMaximumLegalOperationCount() throws Exception {
+        IsolatedTestProcess.run(PeekingIterator_284Test.class,
+                "scenarioMaximumLegalOperationCount", 10);
+    }
+
+    private void scenarioMaximumLegalOperationCount() {
         List<Integer> values = new ArrayList<>();
         for (int i = 0; i < 333; i++) {
-            values.add(i % 11);
+            values.add(1 + i % 11);
         }
         // Three valid calls per element give 999 calls, just below LeetCode's limit of 1000.
         PeekingIterator_284 iter = new PeekingIterator_284(values.iterator());
@@ -268,6 +279,66 @@ public class PeekingIterator_284Test {
     }
 
     @Test
+    public void testOracleAllShortOperationSequences() throws Exception {
+        IsolatedTestProcess.run(PeekingIterator_284Test.class,
+                "scenarioOracleAllShortOperationSequences", 10);
+    }
+
+    private void scenarioOracleAllShortOperationSequences() {
+        // Enumerate every array of length 1..4 over {1, 1000}, then every valid operation string
+        // of length 0..6. The array/index oracle independently checks each operation result.
+        int sequenceCount = 0;
+        for (int valueCount = 1; valueCount <= 4; valueCount++) {
+            int arrayCount = 1 << valueCount;
+            for (int arrayEncoding = 0; arrayEncoding < arrayCount; arrayEncoding++) {
+                List<Integer> values = new ArrayList<>();
+                for (int i = 0; i < valueCount; i++) {
+                    values.add((arrayEncoding & (1 << i)) == 0 ? 1 : 1000);
+                }
+                for (int length = 0; length <= 6; length++) {
+                    int total = (int) Math.pow(3, length);
+                    for (int encoded = 0; encoded < total; encoded++) {
+                        int[] operations = new int[length];
+                        int remaining = encoded;
+                        int oracleIndex = 0;
+                        boolean valid = true;
+                        for (int i = 0; i < length; i++) {
+                            operations[i] = remaining % 3;
+                            if (operations[i] != 2) {
+                                if (oracleIndex == values.size()) {
+                                    valid = false;
+                                    break;
+                                }
+                                if (operations[i] == 1) {
+                                    oracleIndex++;
+                                }
+                            }
+                            remaining /= 3;
+                        }
+                        if (!valid) {
+                            continue;
+                        }
+                        assertMatchesOracle(values, operations);
+                        sequenceCount++;
+                    }
+                }
+            }
+        }
+        assertEquals(27754, sequenceCount);
+    }
+
+    @Test
+    public void testCachedFinalValueIsAvailableAfterSourceRunsOut() {
+        ListIterator<Integer> source = Collections.singletonList(73).listIterator();
+        PeekingIterator_284 iter = new PeekingIterator_284(source);
+        assertFalse(source.hasNext());
+        assertTrue(iter.hasNext());
+        assertEquals(73, iter.peek());
+        assertEquals(73, iter.next());
+        assertFalse(iter.hasNext());
+    }
+
+    @Test
     public void testInputListRemainsUnchanged() {
         List<Integer> values = new ArrayList<>(Arrays.asList(6, 2, 4, 1));
         List<Integer> snapshot = new ArrayList<>(values);
@@ -292,16 +363,21 @@ public class PeekingIterator_284Test {
 
     private static void assertMatchesOracle(List<Integer> values, int... operations) {
         PeekingIterator_284 actual = new PeekingIterator_284(values.iterator());
-        ListIterator<Integer> oracle = values.listIterator();
-        Integer oracleNext = oracle.hasNext() ? oracle.next() : null;
-        for (int operation : operations) {
+        int oracleIndex = 0;
+        for (int step = 0; step < operations.length; step++) {
+            int operation = operations[step];
+            Integer oracleNext = oracleIndex < values.size() ? values.get(oracleIndex) : null;
+            String context = "values=" + values + ", operations=" + Arrays.toString(operations)
+                    + ", step=" + step;
             switch (operation) {
-                case 0 -> assertEquals(oracleNext, actual.peek());
+                case 0 -> assertEquals(oracleNext, actual.peek(), context);
                 case 1 -> {
-                    assertEquals(oracleNext, actual.next());
-                    oracleNext = oracle.hasNext() ? oracle.next() : null;
+                    assertEquals(oracleNext, actual.next(), context);
+                    if (oracleIndex < values.size()) {
+                        oracleIndex++;
+                    }
                 }
-                case 2 -> assertEquals(oracleNext != null, actual.hasNext());
+                case 2 -> assertEquals(oracleNext != null, actual.hasNext(), context);
                 default -> throw new IllegalArgumentException("unknown operation: " + operation);
             }
         }
