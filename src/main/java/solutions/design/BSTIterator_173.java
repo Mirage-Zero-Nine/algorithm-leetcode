@@ -2,7 +2,8 @@ package solutions.design;
 
 import library.tree.binarytree.TreeNode;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Implement an iterator over a binary search tree (BST). It will be initialized with the root node of a BST.
@@ -17,46 +18,54 @@ import java.util.Stack;
  */
 
 public class BSTIterator_173 {
-
-    private final Stack<TreeNode> stack = new Stack<>();      // save right child
+    // Pending ancestors on the traversal path; the top is the next smallest unvisited node.
+    private final Deque<TreeNode> stack = new ArrayDeque<>();
 
     /**
-     * Implement a In-order traversal with a stack.
-     * Initially, find all right child of current node and move current node to leftmost child of root.
+     * Initializes a BST iterator that visits nodes in ascending order.
+     * <p>
+     * This iterator uses a stack to keep track of the path to the smallest remaining node.
+     * When a node is returned, we check its right child and push all the way down its
+     * left side. This ensures the next smallest node is always ready at the top of the stack,
+     * leaving the original tree completely unchanged.
+     * <p>
+     * Why use a stack instead of Morris traversal?
+     * Morris traversal uses O(1) space by temporarily rewriting tree pointers, but if you
+     * stop iterating early, the tree is left modified. Using a stack takes a little extra
+     * memory, but it lets you stop iterating at any time safely.
+     * <p>
+     * Time complexity: O(h) to initialize, O(1) amortized per next() call.
+     * Space complexity: O(h) for the stack.
      *
-     * @param root given root node
+     * @param root the root node of the binary search tree
      */
     public BSTIterator_173(TreeNode root) {
-        this.leftMost(root);
+        leftMost(root);
     }
 
     /**
-     * @return the next smallest number
+     * Returns the next smallest key. The caller must only call this when {@link #hasNext()} is true.
      */
     public int next() {
         TreeNode next = stack.pop();
-        if (next.right != null) {
-            leftMost(next.right);
-        }
+        leftMost(next.right);
         return next.val;
     }
 
     /**
-     * @return whether we have a next smallest number
+     * Reports whether another node remains without advancing the traversal.
      */
     public boolean hasNext() {
-        return !this.stack.isEmpty();
+        return !stack.isEmpty();
     }
 
     /**
-     * Find left most node of given node
-     *
-     * @param node given node
+     * Adds the path from a subtree root to its smallest node to the pending path stack.
      */
-    private void leftMost(TreeNode node) {
-        while (node != null) {
-            this.stack.push(node);
-            node = node.left;
+    private void leftMost(TreeNode n) {
+        while (n != null) {
+            stack.push(n);
+            n = n.left;
         }
     }
 }

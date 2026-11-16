@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import library.tree.binarytree.TreeNode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 public class BSTIterator_173Test {
@@ -20,7 +22,9 @@ public class BSTIterator_173Test {
         return out;
     }
 
-    /** Builds a valid BST with distinct keys for generated contract cases. */
+    /**
+     * Builds a valid BST with distinct keys for generated contract cases.
+     */
     private TreeNode insert(TreeNode root, int value) {
         if (root == null) {
             return new TreeNode(value);
@@ -44,7 +48,9 @@ public class BSTIterator_173Test {
         return root;
     }
 
-    /** Independent recursive in-order oracle used instead of mirroring the implementation's stack. */
+    /**
+     * Independent recursive in-order oracle used instead of mirroring the implementation's stack.
+     */
     private List<Integer> recursiveInOrder(TreeNode node) {
         List<Integer> values = new ArrayList<>();
         collectInOrder(node, values);
@@ -63,8 +69,10 @@ public class BSTIterator_173Test {
     @Test
     public void testHappyCases() {
         TreeNode root = new TreeNode(7);
-        root.left = new TreeNode(3); root.right = new TreeNode(15);
-        root.right.left = new TreeNode(9); root.right.right = new TreeNode(20);
+        root.left = new TreeNode(3);
+        root.right = new TreeNode(15);
+        root.right.left = new TreeNode(9);
+        root.right.right = new TreeNode(20);
         BSTIterator_173 iter = new BSTIterator_173(root);
         assertEquals(3, iter.next());
         assertEquals(7, iter.next());
@@ -83,8 +91,10 @@ public class BSTIterator_173Test {
     @Test
     public void testLargeCase() {
         TreeNode root = new TreeNode(5);
-        root.left = new TreeNode(3); root.right = new TreeNode(7);
-        root.left.left = new TreeNode(1); root.left.right = new TreeNode(4);
+        root.left = new TreeNode(3);
+        root.right = new TreeNode(7);
+        root.left.left = new TreeNode(1);
+        root.left.right = new TreeNode(4);
         BSTIterator_173 iter = new BSTIterator_173(root);
         assertEquals(1, iter.next());
         assertEquals(3, iter.next());
@@ -336,9 +346,12 @@ public class BSTIterator_173Test {
     @Test
     public void testBalancedTreeTraversal() {
         TreeNode root = new TreeNode(8);
-        root.left = new TreeNode(4); root.right = new TreeNode(10);
-        root.left.left = new TreeNode(2); root.left.right = new TreeNode(6);
-        root.right.left = new TreeNode(9); root.right.right = new TreeNode(12);
+        root.left = new TreeNode(4);
+        root.right = new TreeNode(10);
+        root.left.left = new TreeNode(2);
+        root.left.right = new TreeNode(6);
+        root.right.left = new TreeNode(9);
+        root.right.right = new TreeNode(12);
         BSTIterator_173 iter = new BSTIterator_173(root);
         assertEquals(List.of(2, 4, 6, 8, 9, 10, 12), consume(iter));
     }
@@ -381,5 +394,42 @@ public class BSTIterator_173Test {
         assertEquals(1000, out.size());
         assertEquals(1, out.get(0));
         assertEquals(1000, out.get(999));
+    }
+
+    @Test
+    public void testExhaustiveInsertionOrdersThroughSevenNodes() throws Exception {
+        util.IsolatedTestProcess.run(getClass(), "exhaustiveInsertionOrders", 10);
+    }
+
+    private void exhaustiveInsertionOrders() {
+        // Every insertion order for sizes 0..7 generates all BST shapes through seven nodes.
+        for (int size = 0; size <= 7; size++) {
+            int[] values = new int[size];
+            for (int i = 0; i < size; i++) {
+                values[i] = i;
+            }
+            checkPermutations(values, 0);
+        }
+    }
+
+    private void checkPermutations(int[] values, int index) {
+        if (index == values.length) {
+            TreeNode root = null;
+            for (int value : values) {
+                root = insert(root, value);
+            }
+            List<Integer> expected = Arrays.stream(values).sorted().boxed().toList();
+            assertEquals(expected, consume(new BSTIterator_173(root)), "Insertion order " + Arrays.toString(values));
+            return;
+        }
+        for (int i = index; i < values.length; i++) {
+            int temporary = values[index];
+            values[index] = values[i];
+            values[i] = temporary;
+            checkPermutations(values, index + 1);
+            temporary = values[index];
+            values[index] = values[i];
+            values[i] = temporary;
+        }
     }
 }
