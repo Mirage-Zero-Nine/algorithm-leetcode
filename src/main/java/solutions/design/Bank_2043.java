@@ -59,7 +59,7 @@ public class Bank_2043 {
      *
      * @param account1 source account number, from 1 through the account count
      * @param account2 destination account number, from 1 through the account count
-     * @param money nonnegative amount to move
+     * @param money    nonnegative amount to move
      * @return {@code true} if the transfer succeeds; otherwise {@code false}
      */
     public boolean transfer(int account1, int account2, long money) {
@@ -86,7 +86,7 @@ public class Bank_2043 {
      * storage as the number {@code n} of accounts grows.</p>
      *
      * @param account account number, from 1 through the account count
-     * @param money nonnegative amount to add
+     * @param money   nonnegative amount to add
      * @return {@code true} if the deposit succeeds; otherwise {@code false}
      */
     public boolean deposit(int account, long money) {
@@ -107,7 +107,7 @@ public class Bank_2043 {
      * storage as the number {@code n} of accounts grows.</p>
      *
      * @param account account number, from 1 through the account count
-     * @param money nonnegative amount to remove
+     * @param money   nonnegative amount to remove
      * @return {@code true} if the withdrawal succeeds; otherwise {@code false}
      */
     public boolean withdraw(int account, long money) {
