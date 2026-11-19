@@ -339,7 +339,8 @@ class BankServiceTest {
         return result;
     }
 
-    private enum Kind { DEPOSIT, WITHDRAW, TRANSFER }
+    private enum Kind {DEPOSIT, WITHDRAW, TRANSFER}
 
-    private record Operation(Kind kind, int from, int to, long amount) { }
+    private record Operation(Kind kind, int from, int to, long amount) {
+    }
 }

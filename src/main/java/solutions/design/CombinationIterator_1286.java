@@ -27,7 +27,7 @@ public class CombinationIterator_1286 {
      *
      * <p>Auxiliary space complexity: O(k) for the retained position array.
      *
-     * @param characters distinct characters in lexicographical order
+     * @param characters        distinct characters in lexicographical order
      * @param combinationLength number of characters in each result
      */
     public CombinationIterator_1286(String characters, int combinationLength) {
@@ -81,7 +81,7 @@ public class CombinationIterator_1286 {
             characterIndices[rightmostAdvanceablePosition]++;
             // Fill later positions with the first available letters after the moved one.
             for (int position = rightmostAdvanceablePosition + 1;
-                    position < combinationLength; position++) {
+                 position < combinationLength; position++) {
                 characterIndices[position] = characterIndices[position - 1] + 1;
             }
         } else {

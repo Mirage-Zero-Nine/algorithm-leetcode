@@ -81,8 +81,8 @@ public class BankService {
      * @param initialAccounts starting account IDs and balances
      * @throws NullPointerException if the collection or an account is {@code null}
      * @implNote The service retains current account snapshots, successful transactions, and
-     *     successful request results for its lifetime. After {@code t} successful mutations, the
-     *     transaction and request maps each contain at most {@code t} entries.
+     * successful request results for its lifetime. After {@code t} successful mutations, the
+     * transaction and request maps each contain at most {@code t} entries.
      */
     public BankService(Collection<Account> initialAccounts) {
         initialAccounts.forEach(account -> accounts.put(account.id, account));
@@ -114,12 +114,12 @@ public class BankService {
      * <p>Auxiliary space complexity: O(1) temporary space, excluding entries retained for a
      * successful deposit.</p>
      *
-     * @param requestId identifier shared by retries of this exact request
-     * @param accountId account to credit
+     * @param requestId     identifier shared by retries of this exact request
+     * @param accountId     account to credit
      * @param amountInCents positive whole-cent amount to deposit
      * @return the original or newly created operation result
      * @throws IllegalArgumentException if the account is unknown or the amount is not positive
-     * @throws ArithmeticException if the amount is fractional or does not fit in a {@code long}
+     * @throws ArithmeticException      if the amount is fractional or does not fit in a {@code long}
      */
     public OperationResult deposit(
             @NonNull String requestId,
@@ -157,12 +157,12 @@ public class BankService {
      * <p>Auxiliary space complexity: O(1) temporary space, excluding entries retained for a
      * successful withdrawal.</p>
      *
-     * @param requestId identifier shared by retries of this exact request
-     * @param accountId account to debit
+     * @param requestId     identifier shared by retries of this exact request
+     * @param accountId     account to debit
      * @param amountInCents positive whole-cent amount to withdraw
      * @return the original or newly created result, or insufficient funds
      * @throws IllegalArgumentException if the account is unknown or the amount is not positive
-     * @throws ArithmeticException if the amount is fractional or does not fit in a {@code long}
+     * @throws ArithmeticException      if the amount is fractional or does not fit in a {@code long}
      */
     public OperationResult withdraw(
             @NonNull String requestId,
@@ -203,14 +203,14 @@ public class BankService {
      * <p>Auxiliary space complexity: O(1) temporary space, excluding entries retained for a
      * successful transfer.</p>
      *
-     * @param requestId identifier shared by retries of this exact request
+     * @param requestId     identifier shared by retries of this exact request
      * @param fromAccountId account to debit
-     * @param toAccountId distinct account to credit
+     * @param toAccountId   distinct account to credit
      * @param amountInCents positive whole-cent amount to transfer
      * @return the original or newly created result, or insufficient funds
      * @throws IllegalArgumentException if an account is unknown, the IDs match, or the amount is
-     *     not positive
-     * @throws ArithmeticException if the amount is fractional or does not fit in a {@code long}
+     *                                  not positive
+     * @throws ArithmeticException      if the amount is fractional or does not fit in a {@code long}
      */
     public OperationResult transfer(
             String requestId, String fromAccountId,
@@ -272,8 +272,8 @@ public class BankService {
      * the transaction remains retained by the service.</p>
      *
      * @param requestId request that produced the transaction
-     * @param type kind of successful operation
-     * @param list before-and-after balances for affected accounts
+     * @param type      kind of successful operation
+     * @param list      before-and-after balances for affected accounts
      * @return the indexed transaction
      */
     private Transaction createTransaction(
@@ -304,9 +304,9 @@ public class BankService {
      * caller-supplied {@code requestId} identifies retries of successful mutation requests.
      * Rejecting different details under a reused request ID is an optional follow-up.
      *
-     * @param id generated transaction lookup ID
-     * @param requestId caller-supplied mutation request and retry ID
-     * @param type operation represented by this transaction
+     * @param id             generated transaction lookup ID
+     * @param requestId      caller-supplied mutation request and retry ID
+     * @param type           operation represented by this transaction
      * @param balanceChanges immutable per-account before-and-after balances
      */
     public record Transaction(
@@ -318,9 +318,9 @@ public class BankService {
          * <p>Auxiliary space complexity: O(k) temporary space in the worst case while copying;
          * the returned transaction retains O(k) space for its immutable snapshot.</p>
          *
-         * @param id generated transaction lookup ID
-         * @param requestId request ID that produced the transaction
-         * @param type successful operation type
+         * @param id             generated transaction lookup ID
+         * @param requestId      request ID that produced the transaction
+         * @param type           successful operation type
          * @param balanceChanges affected account balances before and after the operation
          */
         public Transaction {
