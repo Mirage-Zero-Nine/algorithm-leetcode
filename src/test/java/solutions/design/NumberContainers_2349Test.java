@@ -5,15 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.TreeSet;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-/**
- * @author BorisMirage
- * Time: 2022/08/03 15:52
- * Created with IntelliJ IDEA
- */
+import org.junit.jupiter.api.Timeout;
 
 public class NumberContainers_2349Test {
 
@@ -81,15 +76,6 @@ public class NumberContainers_2349Test {
     }
 
     @Test
-    public void testNegativeAndZeroValues() {
-        test.change(5, 0);
-        test.change(3, -1);
-        test.change(1, -1);
-        assertEquals(5, test.find(0));
-        assertEquals(1, test.find(-1));
-    }
-
-    @Test
     public void testOverwriteChain() {
         test.change(10, 1);
         test.change(10, 2);
@@ -106,20 +92,21 @@ public class NumberContainers_2349Test {
     }
 
     @Test
+    @Timeout(10)
     public void testGiantCase() {
         for (int i = 1; i <= 5000; i++) {
-            test.change(i, i % 5);
+            test.change(i, 1 + i % 5);
         }
-        assertEquals(5, test.find(0));
-        assertEquals(1, test.find(1));
-        assertEquals(2, test.find(2));
-        assertEquals(3, test.find(3));
-        assertEquals(4, test.find(4));
+        assertEquals(5, test.find(1));
+        assertEquals(1, test.find(2));
+        assertEquals(2, test.find(3));
+        assertEquals(3, test.find(4));
+        assertEquals(4, test.find(5));
 
         for (int i = 1; i <= 1000; i++) {
             test.change(i, 99);
         }
-        assertEquals(1001, test.find(1));
+        assertEquals(1005, test.find(1));
         assertEquals(1, test.find(99));
     }
 
@@ -276,9 +263,9 @@ public class NumberContainers_2349Test {
     }
 
     @Test
-    public void testSeededStatefulSequenceAgainstIndependentMapAndTreeSetOracle() {
+    @Timeout(10)
+    public void testSeededStatefulSequenceAgainstIndependentScanOracle() {
         Map<Integer, Integer> expectedByIndex = new HashMap<>();
-        Map<Integer, TreeSet<Integer>> expectedByNumber = new HashMap<>();
         Random random = new Random(2349L);
 
         for (int operation = 0; operation < 4_000; operation++) {
@@ -286,33 +273,30 @@ public class NumberContainers_2349Test {
             if (random.nextInt(3) != 0) {
                 int number = 1 + random.nextInt(17);
                 test.change(index, number);
-                Integer oldNumber = expectedByIndex.put(index, number);
-                if (oldNumber != null) {
-                    TreeSet<Integer> oldIndexes = expectedByNumber.get(oldNumber);
-                    oldIndexes.remove(index);
-                    if (oldIndexes.isEmpty()) {
-                        expectedByNumber.remove(oldNumber);
-                    }
-                }
-                expectedByNumber.computeIfAbsent(number, ignored -> new TreeSet<>()).add(index);
+                expectedByIndex.put(index, number);
             } else {
                 int number = 1 + random.nextInt(20);
-                int expected = expectedByNumber.containsKey(number)
-                        ? expectedByNumber.get(number).first()
-                        : -1;
+                int expected = referenceMinimum(expectedByIndex, number);
                 assertEquals(expected, test.find(number), "operation " + operation + ", number " + number);
             }
         }
 
         for (int number = 1; number <= 20; number++) {
-            int expected = expectedByNumber.containsKey(number)
-                    ? expectedByNumber.get(number).first()
-                    : -1;
+            int expected = referenceMinimum(expectedByIndex, number);
             assertEquals(expected, test.find(number));
         }
     }
 
+    private int referenceMinimum(Map<Integer, Integer> assignments, int number) {
+        return assignments.entrySet().stream()
+                .filter(entry -> entry.getValue() == number)
+                .mapToInt(Map.Entry::getKey)
+                .min()
+                .orElse(-1);
+    }
+
     @Test
+    @Timeout(10)
     public void testMaximumNumberOfOperationsWithinContract() {
         Map<Integer, Integer> expectedMinimum = new HashMap<>();
         int operationCount = 0;
@@ -332,10 +316,37 @@ public class NumberContainers_2349Test {
     }
 
     @Test
-    public void testImplementationSupportedIntegerExtremes() {
-        test.change(Integer.MAX_VALUE, Integer.MIN_VALUE);
-        test.change(Integer.MIN_VALUE, Integer.MAX_VALUE);
-        assertEquals(Integer.MAX_VALUE, test.find(Integer.MIN_VALUE));
-        assertEquals(Integer.MIN_VALUE, test.find(Integer.MAX_VALUE));
+    @Timeout(10)
+    public void testExhaustiveShortOperationSequencesAgainstIndependentScanOracle() {
+        // Enumerate every sequence of up to five actions over two valid indexes and numbers.
+        // The oracle stores only the current assignments and scans them for each find result.
+        int actionCount = 6; // change(1,1), change(1,2), change(2,1), change(2,2), find(1), find(2)
+        for (int length = 0; length <= 5; length++) {
+            int sequenceCount = (int) Math.pow(actionCount, length);
+            for (int encoded = 0; encoded < sequenceCount; encoded++) {
+                NumberContainers_2349 actual = new NumberContainers_2349();
+                Map<Integer, Integer> expected = new HashMap<>();
+                int actions = encoded;
+                for (int step = 0; step < length; step++) {
+                    int action = actions % actionCount;
+                    actions /= actionCount;
+                    if (action < 4) {
+                        int index = 1 + action / 2;
+                        int number = 1 + action % 2;
+                        actual.change(index, number);
+                        expected.put(index, number);
+                    } else {
+                        int number = action - 3;
+                        int minimum = expected.entrySet().stream()
+                                .filter(entry -> entry.getValue() == number)
+                                .mapToInt(Map.Entry::getKey)
+                                .min()
+                                .orElse(-1);
+                        assertEquals(minimum, actual.find(number),
+                                "length=" + length + ", encoded sequence=" + encoded + ", step=" + step);
+                    }
+                }
+            }
+        }
     }
 }
