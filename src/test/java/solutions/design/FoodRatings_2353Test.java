@@ -12,15 +12,10 @@ import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import util.IsolatedTestProcess;
 
-/**
- * Stateful tests for the LeetCode 2353 food-rating API.
- *
- * <p>The expected result for generated operation streams is computed with independent maps and a
- * fresh sort, rather than by duplicating the production {@code TreeSet} implementation.</p>
- *
- * @author BorisMirage
- */
+@Timeout(30)
 public class FoodRatings_2353Test {
     private FoodRatings_2353 test;
 
@@ -144,6 +139,68 @@ public class FoodRatings_2353Test {
     public void unknownCuisineReturnsNull() {
         assertEquals(null, test.highestRated("thai"));
         assertEquals(null, test.highestRated(""));
+    }
+
+    @Test
+    public void unknownFoodUpdatesAreNoOpsAndEmptyConstructionHasNoWinner() {
+        test.changeRating("not-a-food", 100_000_000);
+        assertEquals("ramen", test.highestRated("japanese"));
+        FoodRatings_2353 empty = new FoodRatings_2353(new String[0], new String[0], new int[0]);
+        assertEquals(null, empty.highestRated("any-cuisine"));
+        empty.changeRating("not-a-food", 1);
+        assertEquals(null, empty.highestRated("any-cuisine"));
+    }
+
+    @Test
+    public void exhaustiveShortOperationStreamsMatchIndependentOracle() throws Exception {
+        IsolatedTestProcess.run(FoodRatings_2353Test.class, "exhaustiveShortOperationStreamsMatchIndependentOracleWorker", 15);
+    }
+
+    private void exhaustiveShortOperationStreamsMatchIndependentOracleWorker() {
+        // Enumerate all 3,906 streams of length 0..5 over four valid updates and one query.
+        String[] actions = {"a1", "a2", "b1", "b2", "query"};
+        int streamCount = 0;
+        for (int length = 0; length <= 5; length++) {
+            int count = (int) Math.pow(actions.length, length);
+            for (int encoded = 0; encoded < count; encoded++) {
+                FoodRatings_2353 actual = new FoodRatings_2353(
+                        new String[]{"a", "b"}, new String[]{"x", "x"}, new int[]{1, 2});
+                Map<String, Integer> ratings = new HashMap<>();
+                ratings.put("a", 1);
+                ratings.put("b", 2);
+                int remaining = encoded;
+                for (int step = 0; step < length; step++) {
+                    String action = actions[remaining % actions.length];
+                    remaining /= actions.length;
+                    switch (action) {
+                        case "a1" -> {
+                            actual.changeRating("a", 1);
+                            ratings.put("a", 1);
+                        }
+                        case "a2" -> {
+                            actual.changeRating("a", 2);
+                            ratings.put("a", 2);
+                        }
+                        case "b1" -> {
+                            actual.changeRating("b", 1);
+                            ratings.put("b", 1);
+                        }
+                        case "b2" -> {
+                            actual.changeRating("b", 2);
+                            ratings.put("b", 2);
+                        }
+                        case "query" -> assertEquals(
+                                ratings.get("a") >= ratings.get("b") ? "a" : "b",
+                                actual.highestRated("x"), "stream " + encoded + " at step " + step);
+                        default -> throw new AssertionError("unknown action: " + action);
+                    }
+                }
+                String expected = ratings.get("a") >= ratings.get("b") ? "a" : "b";
+                assertEquals(expected, actual.highestRated("x"), "stream " + encoded);
+                streamCount++;
+            }
+        }
+        assertEquals(3_906, streamCount);
     }
 
     @Test
@@ -288,7 +345,11 @@ public class FoodRatings_2353Test {
     }
 
     @Test
-    public void seededRandomizedOperationsMatchIndependentOracle() {
+    public void seededRandomizedOperationsMatchIndependentOracle() throws Exception {
+        IsolatedTestProcess.run(FoodRatings_2353Test.class, "seededRandomizedOperationsMatchIndependentOracleWorker", 15);
+    }
+
+    private void seededRandomizedOperationsMatchIndependentOracleWorker() {
         Random random = new Random(2_353_2026L);
         int foodCount = 80;
         String[] foods = new String[foodCount];
@@ -322,7 +383,11 @@ public class FoodRatings_2353Test {
     }
 
     @Test
-    public void maximumFoodCountAndOperationCountStayCorrect() {
+    public void maximumFoodCountAndOperationCountStayCorrect() throws Exception {
+        IsolatedTestProcess.run(FoodRatings_2353Test.class, "maximumFoodCountAndOperationCountStayCorrectWorker", 15);
+    }
+
+    private void maximumFoodCountAndOperationCountStayCorrectWorker() {
         int size = 10_000;
         String[] foods = new String[size];
         String[] cuisines = new String[size];
@@ -342,6 +407,28 @@ public class FoodRatings_2353Test {
             int cuisineNumber = operation % 10;
             assertEquals(String.format("food%05d", cuisineNumber),
                     local.highestRated("cuisine" + cuisineNumber));
+        }
+    }
+
+    @Test
+    public void maximumFoodCountConstructionKeepsWinnerAndCuisineIndexesCorrect() throws Exception {
+        IsolatedTestProcess.run(FoodRatings_2353Test.class, "maximumFoodCountConstructionWorker", 15);
+    }
+
+    private void maximumFoodCountConstructionWorker() {
+        int size = 20_000;
+        String[] foods = new String[size];
+        String[] cuisines = new String[size];
+        int[] ratings = new int[size];
+        for (int i = 0; i < size; i++) {
+            foods[i] = String.format("food%05d", i);
+            cuisines[i] = "cuisine" + (i % 10);
+            ratings[i] = 1 + (i % 100_000_000);
+        }
+        FoodRatings_2353 local = new FoodRatings_2353(foods, cuisines, ratings);
+        for (int cuisine = 0; cuisine < 10; cuisine++) {
+            String expected = String.format("food%05d", cuisine + 19_990);
+            assertEquals(expected, local.highestRated("cuisine" + cuisine));
         }
     }
 
@@ -381,7 +468,7 @@ public class FoodRatings_2353Test {
         }
     }
 
-    /** Independently sorts all foods in the requested cuisine by rating descending, then name ascending. */
+    // Independent oracle: scan all assigned foods, then sort by rating descending and name ascending.
     private static String expectedTop(Map<String, String> cuisineByFood,
                                       Map<String, Integer> ratings,
                                       String cuisine) {
